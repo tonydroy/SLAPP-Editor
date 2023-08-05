@@ -30,7 +30,7 @@ public class EmojiDemoCopy {
 
 
     private static final String text =
-            "Here is a regular symbol: '\u03f4' and are a couple logic symbols: '\u2192' and '\u2200' and 2-member symbols: '\ud835\udc9c' and '\ud835\udd04'.\n  And now emojis \ud83d\ude03!\n" +
+            "Here is a regular symbol: '\u03f4' a low range emoji number '\u2194' a couple logic symbols: '\u2192' and '\u2200' and 2-member symbols: '\ud835\udc9c' and '\ud835\udd04'.\n  And now emojis \ud83d\ude03!\n" +
                     "\uD83D\uDC4B\uD83C\uDFFC, this is some random text with some emojis " +
                     "like \uD83E\uDDD1\uD83C\uDFFC\u200D\uD83E\uDD1D\u200D\uD83E\uDDD1\uD83C\uDFFD or " +
                     "\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74\uDB40\uDC7F.\n" +

@@ -18,7 +18,8 @@ public class EditorMain extends Application {
 //        HighlightDemoCopy demo = new HighlightDemoCopy(); demo.highlightDemo(stage);
 //        ListsDemoCopy demo = new ListsDemoCopy(); demo.listsDemo(stage);
 //        EmojiDemoCopy demo = new EmojiDemoCopy(); demo.emojiDemo(stage);
-        EmojiPopupDemoCopy demo = new EmojiPopupDemoCopy(); demo.emojiPopupDemo(stage);
+//        EmojiPopupDemoCopy demo = new EmojiPopupDemoCopy(); demo.emojiPopupDemo(stage);
+        PopupAndTextDemo demo = new PopupAndTextDemo(); demo.popupAndTextDemo(stage);
 
 //        ** FullFeatureDemoCopy has its own main method **
 
