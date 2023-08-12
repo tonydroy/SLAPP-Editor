@@ -207,6 +207,11 @@ public class FullFeatureDemoCopy extends Application {
         CheckBox editableProp = new CheckBox("Editable");
         editableProp.selectedProperty().bindBidirectional(editor.editableProperty());
 
+        //created by me for test
+        Button tstButton = new Button("test");
+        tstButton.setOnAction(editor.getActionFactory().insertTestText("\u2192 and \ud835\udc34")::execute);
+        //
+
         ToolBar toolbar = new ToolBar();
         toolbar.getItems().setAll(
                 actionButton(LineAwesomeSolid.FILE,  editor.getActionFactory().newDocument()),
@@ -229,7 +234,14 @@ public class FullFeatureDemoCopy extends Application {
                 actionEmoji(),
                 actionHyperlink(LineAwesomeSolid.LINK),
                 actionTable(LineAwesomeSolid.TABLE, td -> editor.getActionFactory().insertTable(td)),
-                new Separator(Orientation.VERTICAL));
+                new Separator(Orientation.VERTICAL),
+
+                tstButton  //added by me for test
+                 );
+
+
+
+
 
         ToolBar fontsToolbar = new ToolBar();
         fontsToolbar.getItems().setAll(
