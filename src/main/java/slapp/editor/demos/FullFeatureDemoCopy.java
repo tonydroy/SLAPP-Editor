@@ -170,7 +170,7 @@ public class FullFeatureDemoCopy extends Application {
 
         ComboBox<String> fontFamilies = new ComboBox<>();
         fontFamilies.getItems().setAll(Font.getFamilies());
-        fontFamilies.setValue("Arial");
+        fontFamilies.setValue("Times New Roman");
         fontFamilies.setPrefWidth(100);
         new TextDecorateAction<>(editor, fontFamilies.valueProperty(), TextDecoration::getFontFamily, (builder, a) -> builder.fontFamily(a).build());
 
@@ -192,7 +192,7 @@ public class FullFeatureDemoCopy extends Application {
                 return Double.parseDouble(s);
             }
         });
-        fontSize.setValue(14.0);
+        fontSize.setValue(16.0);
 
         final ColorPicker textForeground = new ColorPicker();
         textForeground.getStyleClass().add("foreground");
@@ -209,7 +209,7 @@ public class FullFeatureDemoCopy extends Application {
 
         //created by me for test
         Button tstButton = new Button("test");
-        tstButton.setOnAction(editor.getActionFactory().insertTestText("\u2192 and \ud835\udc34")::execute);
+        tstButton.setOnAction(editor.getActionFactory().insertTestText("A \u0330\u228f\u0330 B")::execute);
         //
 
         ToolBar toolbar = new ToolBar();
