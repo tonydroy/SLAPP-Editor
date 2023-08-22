@@ -13,6 +13,7 @@ import com.gluonhq.richtextarea.model.ImageDecoration;
 import com.gluonhq.richtextarea.model.ParagraphDecoration;
 import com.gluonhq.richtextarea.model.TableDecoration;
 import com.gluonhq.richtextarea.model.TextDecoration;
+import javafx.event.EventHandler;
 import slapp.editor.demos.popup.EmojiPopup;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -170,8 +171,8 @@ public class FullFeatureDemoCopy extends Application {
 
         ComboBox<String> fontFamilies = new ComboBox<>();
         fontFamilies.getItems().setAll(Font.getFamilies());
-        fontFamilies.setValue("Times New Roman");
-        fontFamilies.setPrefWidth(100);
+        fontFamilies.setValue("Noto Sans");
+        fontFamilies.setPrefWidth(130);
         new TextDecorateAction<>(editor, fontFamilies.valueProperty(), TextDecoration::getFontFamily, (builder, a) -> builder.fontFamily(a).build());
 
         final ComboBox<Double> fontSize = new ComboBox<>();
@@ -192,7 +193,7 @@ public class FullFeatureDemoCopy extends Application {
                 return Double.parseDouble(s);
             }
         });
-        fontSize.setValue(16.0);
+        fontSize.setValue(15.0);
 
         final ColorPicker textForeground = new ColorPicker();
         textForeground.getStyleClass().add("foreground");
@@ -208,8 +209,17 @@ public class FullFeatureDemoCopy extends Application {
         editableProp.selectedProperty().bindBidirectional(editor.editableProperty());
 
         //created by me for test
-        Button tstButton = new Button("test");
+        final Button tstButton = new Button("test");
         tstButton.setOnAction(editor.getActionFactory().insertTestText("A \u0330\u228f\u0330 B")::execute);
+
+        final TextField unicodeField = new TextField();
+        unicodeField.setPrefColumnCount(7);
+        unicodeField.setPromptText("unicode value");
+        unicodeField.setOnAction(e -> {
+            String text = unicodeField.getText();
+            editor.getActionFactory().insertUnicode(text).execute(e);
+        });
+        //  unicodeField.setOnAction(editor.getActionFactory().insertUnicode(unicodeField.getText())::execute);  for reasons I do not understand, this does not respond to text typed in the box.
         //
 
         ToolBar toolbar = new ToolBar();
@@ -235,8 +245,8 @@ public class FullFeatureDemoCopy extends Application {
                 actionHyperlink(LineAwesomeSolid.LINK),
                 actionTable(LineAwesomeSolid.TABLE, td -> editor.getActionFactory().insertTable(td)),
                 new Separator(Orientation.VERTICAL),
-
                 tstButton  //added by me for test
+
                  );
 
 
@@ -254,6 +264,7 @@ public class FullFeatureDemoCopy extends Application {
                 createToggleButton(LineAwesomeSolid.UNDERLINE, property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
                 textForeground,
                 textBackground,
+                unicodeField,
                 new Separator(Orientation.VERTICAL),
                 editableProp);
 
@@ -520,7 +531,7 @@ public class FullFeatureDemoCopy extends Application {
 
     private enum Presets {
 
-        DEFAULT("Default",12, NORMAL, TextAlignment.LEFT),
+        DEFAULT("Default",15, NORMAL, TextAlignment.LEFT),
         HEADER1("Header 1", 32, BOLD, TextAlignment.CENTER),
         HEADER2("Header 2", 24, BOLD, TextAlignment.LEFT),
         HEADER3("Header 3", 19, BOLD, TextAlignment.LEFT);
