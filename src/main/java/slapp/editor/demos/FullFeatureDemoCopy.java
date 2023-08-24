@@ -3,6 +3,7 @@ package slapp.editor.demos;
 
 import com.gluonhq.emoji.Emoji;
 import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.action.Action;
 import com.gluonhq.richtextarea.action.DecorateAction;
 import com.gluonhq.richtextarea.action.ParagraphDecorateAction;
@@ -13,7 +14,7 @@ import com.gluonhq.richtextarea.model.ImageDecoration;
 import com.gluonhq.richtextarea.model.ParagraphDecoration;
 import com.gluonhq.richtextarea.model.TableDecoration;
 import com.gluonhq.richtextarea.model.TextDecoration;
-import javafx.event.EventHandler;
+import javafx.scene.control.*;
 import slapp.editor.demos.popup.EmojiPopup;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -25,25 +26,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Separator;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -214,12 +197,19 @@ public class FullFeatureDemoCopy extends Application {
 
         final TextField unicodeField = new TextField();
         unicodeField.setPrefColumnCount(7);
-        unicodeField.setPromptText("unicode value");
+        unicodeField.setPromptText("insert unicode");
         unicodeField.setOnAction(e -> {
             String text = unicodeField.getText();
             editor.getActionFactory().insertUnicode(text).execute(e);
         });
-        //  unicodeField.setOnAction(editor.getActionFactory().insertUnicode(unicodeField.getText())::execute);  for reasons I do not understand, this does not respond to text typed in the box.
+        //  unicodeField.setOnAction(editor.getActionFactory().insertUnicode(unicodeField.getText())::execute);  for reasons I do not understand, this does not respond to text typed in the box (but does with setText()).
+
+        final ChoiceBox<RichTextAreaSkin.KeyMapValue> keyboardSelector = new ChoiceBox<>();
+        keyboardSelector.getItems().setAll(RichTextAreaSkin.KeyMapValue.values());
+        keyboardSelector.setValue(RichTextAreaSkin.KeyMapValue.BASE);
+
+
+
         //
 
         ToolBar toolbar = new ToolBar();
@@ -255,16 +245,18 @@ public class FullFeatureDemoCopy extends Application {
 
         ToolBar fontsToolbar = new ToolBar();
         fontsToolbar.getItems().setAll(
-                presets,
                 fontFamilies,
                 fontSize,
+                keyboardSelector,
+                unicodeField,
+                new Separator(Orientation.VERTICAL),
+                presets,
                 createToggleButton(LineAwesomeSolid.BOLD, property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
                 createToggleButton(LineAwesomeSolid.ITALIC, property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build())),
                 createToggleButton(LineAwesomeSolid.STRIKETHROUGH, property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
                 createToggleButton(LineAwesomeSolid.UNDERLINE, property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
                 textForeground,
                 textBackground,
-                unicodeField,
                 new Separator(Orientation.VERTICAL),
                 editableProp);
 
@@ -325,6 +317,7 @@ public class FullFeatureDemoCopy extends Application {
         stage.show();
 
         editor.requestFocus();
+        keyboardSelector.valueProperty().bindBidirectional(((RichTextAreaSkin) editor.getSkin()).keyMapStateProperty());
     }
 
     private Button actionButton(Ikon ikon, Action action) {
