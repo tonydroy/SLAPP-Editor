@@ -14,6 +14,6 @@ module slapp.editor {
 
     opens slapp.editor to javafx.fxml;
     exports slapp.editor;
-    exports slapp.editor.demos;
-    opens slapp.editor.demos to javafx.fxml;
+    exports slapp.editor.view;
+    opens slapp.editor.view to javafx.fxml;
 }

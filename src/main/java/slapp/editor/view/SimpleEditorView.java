@@ -1,4 +1,4 @@
-package slapp.editor.demos;
+package slapp.editor.view;
 
 
 import com.gluonhq.emoji.Emoji;
@@ -15,7 +15,7 @@ import com.gluonhq.richtextarea.model.ParagraphDecoration;
 import com.gluonhq.richtextarea.model.TableDecoration;
 import com.gluonhq.richtextarea.model.TextDecoration;
 import javafx.scene.control.*;
-import slapp.editor.demos.popup.EmojiPopup;
+import slapp.editor.view.popup.EmojiPopup;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -70,17 +70,18 @@ import static javafx.scene.text.FontWeight.NORMAL;
  * <p>
  * For more basic test cases with single features, check the rest of the samples.
  */
-public class FullFeatureDemoCopy extends Application {
+public class SimpleEditorView extends Application {
 
     static {
-        try (InputStream resourceAsStream = FullFeatureDemoCopy.class.getResourceAsStream("/logging.properties")) {
+        try (InputStream resourceAsStream = SimpleEditorView.class.getResourceAsStream("/logging.properties")) {
             if (resourceAsStream != null) {
                 LogManager.getLogManager().readConfiguration(resourceAsStream);
             }
         } catch (IOException ex) {
-            Logger.getLogger(FullFeatureDemoCopy.class.getName()).log(Level.SEVERE, "Error opening logging.properties file", ex);
+            Logger.getLogger(SimpleEditorView.class.getName()).log(Level.SEVERE, "Error opening logging.properties file", ex);
         }
     }
+    public static Stage mainStage;
 
     private final List<DecorationModel> decorations;
 
@@ -117,12 +118,15 @@ public class FullFeatureDemoCopy extends Application {
     private final Label textLengthLabel = new Label();
     private final RichTextArea editor = new RichTextArea();
 
-    public static void main(String[] args) {
+/*    public static void main(String[] args) {
         launch(args);
     }
 
+
+ */
     @Override
     public void start(Stage stage) {
+        mainStage = stage;
         editor.textLengthProperty().addListener( (o, ov, nv) ->
                 textLengthLabel.setText( "Text length: " + nv)
         );
@@ -239,10 +243,6 @@ public class FullFeatureDemoCopy extends Application {
 
                  );
 
-
-
-
-
         ToolBar fontsToolbar = new ToolBar();
         fontsToolbar.getItems().setAll(
                 fontFamilies,
@@ -259,6 +259,7 @@ public class FullFeatureDemoCopy extends Application {
                 textBackground,
                 new Separator(Orientation.VERTICAL),
                 editableProp);
+
 
         ToolBar paragraphToolbar = new ToolBar();
         paragraphToolbar.getItems().setAll(
@@ -311,7 +312,7 @@ public class FullFeatureDemoCopy extends Application {
         root.setBottom(statusBar);
 
         Scene scene = new Scene(root, 960, 580);
-        scene.getStylesheets().add(FullFeatureDemoCopy.class.getClassLoader().getResource("fullFeaturedDemo.css").toExternalForm());
+        scene.getStylesheets().add(SimpleEditorView.class.getClassLoader().getResource("fullFeaturedDemo.css").toExternalForm());
         stage.titleProperty().bind(Bindings.createStringBinding(() -> "Rich Text Editor Demo" + (editor.isModified() ? " *" : ""), editor.modifiedProperty()));
         stage.setScene(scene);
         stage.show();

@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package slapp.editor.demos.popup;
+package slapp.editor.view.popup;
 
 import javafx.beans.binding.Bindings;
 import javafx.scene.Node;

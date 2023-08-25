@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package slapp.editor.demos.popup;
+package slapp.editor.view.popup;
 
 import com.gluonhq.emoji.Emoji;
 import com.gluonhq.emoji.EmojiCategory;
@@ -67,7 +67,6 @@ import javafx.util.Duration;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
