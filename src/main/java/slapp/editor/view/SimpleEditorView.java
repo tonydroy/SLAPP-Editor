@@ -16,6 +16,7 @@ import com.gluonhq.richtextarea.model.TableDecoration;
 import com.gluonhq.richtextarea.model.TextDecoration;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
+import javafx.scene.control.skin.ComboBoxListViewSkin;
 import slapp.editor.view.popup.EmojiPopup;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -129,7 +130,7 @@ public class SimpleEditorView extends Application {
     private double keyboardWindowX;
     private double keyboardWindowY;
     private double keyboardWindowWidth = 650.0;
-    private double keyboardWindowHeight = 495.0;
+    private double keyboardWindowHeight = 1015.0;
     private boolean keyboardPositionInitialized = false;
     private double primaryFontSize = 15.0;
 
@@ -198,6 +199,16 @@ public class SimpleEditorView extends Application {
             }
         });
         fontSize.setValue(15.0);
+
+        //this is to make the dropdown open to the selected item's scroll position
+        fontSize.setOnShowing(e -> {
+            ListView list = (ListView) ((ComboBoxListViewSkin<Double>) fontSize.getSkin()).getPopupContent();
+            int listIndex = fontSize.getSelectionModel().getSelectedIndex()- 3;
+            list.scrollTo(Math.max(0, listIndex));
+        });
+
+
+
         fontSize.setOnAction(e -> primaryFontSize = fontSize.getValue());
 
 
@@ -221,14 +232,15 @@ public class SimpleEditorView extends Application {
         keyboardDiagramButton.setGraphic(icon);
         keyboardDiagramButton.setOnAction(e -> {
             if (!keyboardPositionInitialized) {
-                keyboardWindowX = stage.getX() + (mainWindowWidth * .9);
-                keyboardWindowY = stage.getY() + mainWindowHeight/4;
+                keyboardWindowX = stage.getX() + mainWindowWidth;                                                   //(mainWindowWidth * .95);
+                keyboardWindowY = stage.getY() + 25;                                                // mainWindowHeight/4;
                 keyboardPositionInitialized = true;
             }
             if (keyboardDiagramButton.isSelected()) {
                 keyboardDiagram = new KeyboardDiagram(stage, simpleEditorView,  keyboardDiagramButton.selectedProperty());
             }
             else keyboardDiagram.closeKeyboardDiagram();
+            editor.requestFocus();
         });
 
         final TextField unicodeField = new TextField();
@@ -359,11 +371,13 @@ public class SimpleEditorView extends Application {
         });
         //
         stage.show();
-
         editor.requestFocus();
+
         keyboardSelector.valueProperty().bindBidirectional(((RichTextAreaSkin) editor.getSkin()).keyMapStateProperty());
         keyboardSelector.getSelectionModel().selectedItemProperty().addListener((v, ov, nv) -> {
+            ((RichTextAreaSkin) editor.getSkin()).setMaps(nv);
            if (keyboardDiagram != null) keyboardDiagram.updateTextMaps();
+//           editor.requestFocus();   //have not been able to find way to stop keyboard window from stealing focus see https://stackoverflow.com/questions/33151460/javafx-stop-new-window-stealing-focus
         });
     }
 
