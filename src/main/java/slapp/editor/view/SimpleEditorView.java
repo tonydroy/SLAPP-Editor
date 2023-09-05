@@ -17,6 +17,7 @@ import com.gluonhq.richtextarea.model.TextDecoration;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
 import javafx.scene.control.skin.ComboBoxListViewSkin;
+import javafx.scene.text.*;
 import slapp.editor.view.popup.EmojiPopup;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -35,9 +36,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Screen;
@@ -130,7 +128,7 @@ public class SimpleEditorView extends Application {
     private double keyboardWindowX;
     private double keyboardWindowY;
     private double keyboardWindowWidth = 650.0;
-    private double keyboardWindowHeight = 1015.0;
+    private double keyboardWindowHeight = 990.0;
     private boolean keyboardPositionInitialized = false;
     private double primaryFontSize = 15.0;
 
@@ -225,6 +223,20 @@ public class SimpleEditorView extends Application {
         CheckBox editableProp = new CheckBox("Editable");
         editableProp.selectedProperty().bindBidirectional(editor.editableProperty());
 
+        //overline button
+        ToggleButton overlineButton = new ToggleButton();
+        Font overlineButtonFont = Font.font("Noto Sans Math", FontWeight.LIGHT, FontPosture.REGULAR, 20);
+        Text overlineButtonText = new Text("\u035e\ud835\uddae");
+        overlineButtonText.setFont(overlineButtonFont);
+        TextFlow overlineButtonTextFlow = new TextFlow(overlineButtonText);
+        overlineButtonTextFlow.setMaxHeight(0.0);
+//        overlineButtonTextFlow.setPadding(new Insets(-6,3,-6,3));
+        overlineButton.setGraphic(overlineButtonTextFlow);
+        overlineButton.setAlignment(Pos.CENTER);
+        overlineButton.setPadding(new Insets(-10,0,-10,10));
+        overlineButton.setMaxHeight(28);
+        overlineButton.setPrefSize(32,28);
+
         //keyboardDiagramButton
         ToggleButton keyboardDiagramButton = new ToggleButton();
         FontIcon icon = new FontIcon(LineAwesomeSolid.KEYBOARD);
@@ -299,6 +311,7 @@ public class SimpleEditorView extends Application {
                 createToggleButton(LineAwesomeSolid.ITALIC, property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build())),
                 createToggleButton(LineAwesomeSolid.STRIKETHROUGH, property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
                 createToggleButton(LineAwesomeSolid.UNDERLINE, property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
+                overlineButton,
                 textForeground,
                 textBackground,
                 new Separator(Orientation.VERTICAL),
@@ -373,6 +386,7 @@ public class SimpleEditorView extends Application {
         stage.show();
         editor.requestFocus();
 
+        overlineButton.selectedProperty().bindBidirectional(((RichTextAreaSkin) editor.getSkin()).overlineOnProperty());
         keyboardSelector.valueProperty().bindBidirectional(((RichTextAreaSkin) editor.getSkin()).keyMapStateProperty());
         keyboardSelector.getSelectionModel().selectedItemProperty().addListener((v, ov, nv) -> {
             ((RichTextAreaSkin) editor.getSkin()).setMaps(nv);

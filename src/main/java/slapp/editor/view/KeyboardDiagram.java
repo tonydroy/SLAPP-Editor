@@ -334,7 +334,8 @@ public class KeyboardDiagram {
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.DIGIT9,4),36,0,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.DIGIT0,4),40,0,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.MINUS,4),44,0,4,1);
-        ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.EQUALS,4),48,0,4,1);
+//        ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.EQUALS,4),48,0,4,1);
+        ctrlShiftAltBoard.add(getFixedCharKey("\u035e\ud835\udc5c\u035e\ud835\udc5c",4),48,0,4,1);
         ctrlShiftAltBoard.add(getControlKey("BackDel", 8),52,0,8,1);
 
         ctrlShiftAltBoard.add(getControlKey("Tab",6),0,1,6,1);
@@ -387,7 +388,9 @@ public class KeyboardDiagram {
         ctrlShiftAltBoard.add(getControlKey("alternate/\n option",8),43,4,8,1);
         ctrlShiftAltBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 
-        Text ctrlChars = new Text("\ud83e\udc46 Ctrl-5, Ctrl-6, Ctrl-7, Ctrl-8, Ctrl-9 select keyboards (like the dropdown).");
+        Text ctrlChars = new Text("\ud83e\udc46 Ctrl-5, Ctrl-6, Ctrl-7, Ctrl-8, Ctrl-9 select keyboards (like the dropdown).\n\n" +
+                "\ud83e\udc46 Ctrl-A select all, -C copy, -X cut, -V paste, -Z undo, -Z (+shift) redo\n\n" +
+                "\ud83e\udc46 Ctrl-B bold, -I italic, -U underline, -0 (zero) overline");
         ctrlChars.setFont(textFont);
 
         VBox vBox = new VBox();
