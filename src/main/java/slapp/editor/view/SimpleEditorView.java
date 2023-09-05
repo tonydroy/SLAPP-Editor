@@ -14,6 +14,7 @@ import com.gluonhq.richtextarea.model.ImageDecoration;
 import com.gluonhq.richtextarea.model.ParagraphDecoration;
 import com.gluonhq.richtextarea.model.TableDecoration;
 import com.gluonhq.richtextarea.model.TextDecoration;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
 import slapp.editor.view.popup.EmojiPopup;
 import javafx.application.Application;
@@ -38,6 +39,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Screen;
 import javafx.util.StringConverter;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -81,7 +83,6 @@ public class SimpleEditorView extends Application {
             Logger.getLogger(SimpleEditorView.class.getName()).log(Level.SEVERE, "Error opening logging.properties file", ex);
         }
     }
-    public static Stage mainStage;
 
     private final List<DecorationModel> decorations;
 
@@ -116,17 +117,33 @@ public class SimpleEditorView extends Application {
             decorations, 2314);
 
     private final Label textLengthLabel = new Label();
-    private final RichTextArea editor = new RichTextArea();
 
-/*    public static void main(String[] args) {
-        launch(args);
+    private final Stage stage;
+    private final RichTextArea editor;
+    private final SimpleEditorView simpleEditorView;
+    private KeyboardDiagram keyboardDiagram;
+    private double mainWindowX;
+    private double  mainWindowY;
+    private double mainWindowWidth = 960.0;
+    private double mainWindowHeight = 800.0;
+    private double keyboardWindowX;
+    private double keyboardWindowY;
+    private double keyboardWindowWidth = 650.0;
+    private double keyboardWindowHeight = 495.0;
+    private boolean keyboardPositionInitialized = false;
+    private double primaryFontSize = 15.0;
+
+    public SimpleEditorView(Stage stage) {
+        this.simpleEditorView = this;
+        this.stage = stage;
+        editor = new RichTextArea(stage);
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+        mainWindowX = Math.max(0.0, ((bounds.getMaxX() - bounds.getMinX()) - mainWindowWidth)/3);
+        mainWindowY = Math.max(0.0, ((bounds.getMaxY() - bounds.getMinY()) - mainWindowHeight)/3);
     }
 
-
- */
     @Override
     public void start(Stage stage) {
-        mainStage = stage;
         editor.textLengthProperty().addListener( (o, ov, nv) ->
                 textLengthLabel.setText( "Text length: " + nv)
         );
@@ -181,6 +198,8 @@ public class SimpleEditorView extends Application {
             }
         });
         fontSize.setValue(15.0);
+        fontSize.setOnAction(e -> primaryFontSize = fontSize.getValue());
+
 
         final ColorPicker textForeground = new ColorPicker();
         textForeground.getStyleClass().add("foreground");
@@ -195,9 +214,22 @@ public class SimpleEditorView extends Application {
         CheckBox editableProp = new CheckBox("Editable");
         editableProp.selectedProperty().bindBidirectional(editor.editableProperty());
 
-        //created by me for test
-        final Button tstButton = new Button("test");
-        tstButton.setOnAction(editor.getActionFactory().insertTestText("A \u0330\u228f\u0330 B")::execute);
+        //keyboardDiagramButton
+        ToggleButton keyboardDiagramButton = new ToggleButton();
+        FontIcon icon = new FontIcon(LineAwesomeSolid.KEYBOARD);
+        icon.setIconSize(20);
+        keyboardDiagramButton.setGraphic(icon);
+        keyboardDiagramButton.setOnAction(e -> {
+            if (!keyboardPositionInitialized) {
+                keyboardWindowX = stage.getX() + (mainWindowWidth * .9);
+                keyboardWindowY = stage.getY() + mainWindowHeight/4;
+                keyboardPositionInitialized = true;
+            }
+            if (keyboardDiagramButton.isSelected()) {
+                keyboardDiagram = new KeyboardDiagram(stage, simpleEditorView,  keyboardDiagramButton.selectedProperty());
+            }
+            else keyboardDiagram.closeKeyboardDiagram();
+        });
 
         final TextField unicodeField = new TextField();
         unicodeField.setPrefColumnCount(7);
@@ -239,7 +271,7 @@ public class SimpleEditorView extends Application {
                 actionHyperlink(LineAwesomeSolid.LINK),
                 actionTable(LineAwesomeSolid.TABLE, td -> editor.getActionFactory().insertTable(td)),
                 new Separator(Orientation.VERTICAL),
-                tstButton  //added by me for test
+                keyboardDiagramButton  //added by me for test
 
                  );
 
@@ -311,14 +343,28 @@ public class SimpleEditorView extends Application {
         root.setTop(new VBox(menuBar, toolbar, fontsToolbar, paragraphToolbar));
         root.setBottom(statusBar);
 
-        Scene scene = new Scene(root, 960, 580);
+//        Scene scene = new Scene(root, 960, 580);
+        Scene scene = new Scene(root);
         scene.getStylesheets().add(SimpleEditorView.class.getClassLoader().getResource("fullFeaturedDemo.css").toExternalForm());
-        stage.titleProperty().bind(Bindings.createStringBinding(() -> "Rich Text Editor Demo" + (editor.isModified() ? " *" : ""), editor.modifiedProperty()));
+        stage.titleProperty().bind(Bindings.createStringBinding(() -> "SLAPP Editor" + (editor.isModified() ? " *" : ""), editor.modifiedProperty()));
         stage.setScene(scene);
+        //
+        stage.setX(mainWindowX);
+        stage.setY(mainWindowY);
+        stage.setWidth(mainWindowWidth);
+        stage.setHeight(mainWindowHeight);
+        stage.setOnCloseRequest(e -> {
+            e.consume();
+            closeWindow();
+        });
+        //
         stage.show();
 
         editor.requestFocus();
         keyboardSelector.valueProperty().bindBidirectional(((RichTextAreaSkin) editor.getSkin()).keyMapStateProperty());
+        keyboardSelector.getSelectionModel().selectedItemProperty().addListener((v, ov, nv) -> {
+           if (keyboardDiagram != null) keyboardDiagram.updateTextMaps();
+        });
     }
 
     private Button actionButton(Ikon ikon, Action action) {
@@ -558,4 +604,46 @@ public class SimpleEditorView extends Application {
             return textAlignment;
         }
     }
+
+    public void setKeyboardWindowX(double windowX) {
+        keyboardWindowX = windowX;
+    }
+    public void setKeyboardWindowY(double windowY) {
+        keyboardWindowY = windowY;
+    }
+    public void setKeyboardWindowWidth(double windowWidth) {
+        keyboardWindowWidth = windowWidth;
+    }
+    public void setKeyboardWindowHeight(double windowHeight) {
+        keyboardWindowHeight = windowHeight;
+    }
+    public double getKeyboardWindowX() {
+        return keyboardWindowX;
+    }
+    public double getKeyboardWindowY() {
+        return keyboardWindowY;
+    }
+    public double getKeyboardWindowWidth() {
+        return keyboardWindowWidth;
+    }
+    public double getKeyboardWindowHeight() {
+        return keyboardWindowHeight;
+    }
+
+    public RichTextArea getEditor() {
+        return editor;
+    }
+
+    public double getPrimaryFontSize() {
+        return primaryFontSize;
+    }
+
+    private void closeWindow() {
+        if (keyboardDiagram != null) keyboardDiagram.closeKeyboardDiagram();
+        stage.close();
+    }
+
+
+
+
 }
