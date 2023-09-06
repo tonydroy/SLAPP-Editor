@@ -204,9 +204,6 @@ public class SimpleEditorView extends Application {
             int listIndex = fontSize.getSelectionModel().getSelectedIndex()- 3;
             list.scrollTo(Math.max(0, listIndex));
         });
-
-
-
         fontSize.setOnAction(e -> primaryFontSize = fontSize.getValue());
 
 
@@ -225,7 +222,7 @@ public class SimpleEditorView extends Application {
 
         //overline button
         ToggleButton overlineButton = new ToggleButton();
-        Font overlineButtonFont = Font.font("Noto Sans Math", FontWeight.LIGHT, FontPosture.REGULAR, 20);
+        Font overlineButtonFont = Font.font("Noto Sans Math", FontWeight.LIGHT, FontPosture.REGULAR, 18);
         Text overlineButtonText = new Text("\u035e\ud835\uddae");
         overlineButtonText.setFont(overlineButtonFont);
         TextFlow overlineButtonTextFlow = new TextFlow(overlineButtonText);
@@ -233,9 +230,9 @@ public class SimpleEditorView extends Application {
 //        overlineButtonTextFlow.setPadding(new Insets(-6,3,-6,3));
         overlineButton.setGraphic(overlineButtonTextFlow);
         overlineButton.setAlignment(Pos.CENTER);
-        overlineButton.setPadding(new Insets(-10,0,-10,10));
+        overlineButton.setPadding(new Insets(-10,0,-10,11));
         overlineButton.setMaxHeight(28);
-        overlineButton.setPrefSize(32,28);
+        overlineButton.setPrefSize(34,28);
 
         //keyboardDiagramButton
         ToggleButton keyboardDiagramButton = new ToggleButton();
@@ -387,11 +384,12 @@ public class SimpleEditorView extends Application {
         editor.requestFocus();
 
         overlineButton.selectedProperty().bindBidirectional(((RichTextAreaSkin) editor.getSkin()).overlineOnProperty());
+        overlineButton.selectedProperty().addListener((v, ov, nv) -> editor.requestFocus());
         keyboardSelector.valueProperty().bindBidirectional(((RichTextAreaSkin) editor.getSkin()).keyMapStateProperty());
         keyboardSelector.getSelectionModel().selectedItemProperty().addListener((v, ov, nv) -> {
             ((RichTextAreaSkin) editor.getSkin()).setMaps(nv);
            if (keyboardDiagram != null) keyboardDiagram.updateTextMaps();
-//           editor.requestFocus();   //have not been able to find way to stop keyboard window from stealing focus see https://stackoverflow.com/questions/33151460/javafx-stop-new-window-stealing-focus
+           editor.requestFocus();   //have not been able to find way to stop keyboard window from stealing focus see https://stackoverflow.com/questions/33151460/javafx-stop-new-window-stealing-focus
         });
     }
 
