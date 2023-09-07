@@ -292,25 +292,32 @@ public class SimpleEditorView extends Application {
                 actionHyperlink(LineAwesomeSolid.LINK),
                 actionTable(LineAwesomeSolid.TABLE, td -> editor.getActionFactory().insertTable(td)),
                 new Separator(Orientation.VERTICAL),
-                keyboardDiagramButton  //added by me for test
-
+                fontFamilies,
+                fontSize,
+                presets
                  );
 
         ToolBar fontsToolbar = new ToolBar();
         fontsToolbar.getItems().setAll(
-                fontFamilies,
-                fontSize,
                 keyboardSelector,
+
                 unicodeField,
                 new Separator(Orientation.VERTICAL),
-                presets,
                 createToggleButton(LineAwesomeSolid.BOLD, property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
                 createToggleButton(LineAwesomeSolid.ITALIC, property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build())),
                 createToggleButton(LineAwesomeSolid.STRIKETHROUGH, property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
                 createToggleButton(LineAwesomeSolid.UNDERLINE, property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
                 overlineButton,
+                createToggleButton(LineAwesomeSolid.SUPERSCRIPT, property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).build())),
+                createToggleButton(LineAwesomeSolid.SUBSCRIPT, property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).build())),
+
+                createToggleButton(LineAwesomeSolid.CARET_SQUARE_UP, property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
+                createToggleButton(LineAwesomeSolid.CARET_SQUARE_DOWN, property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build())),
+
                 textForeground,
                 textBackground,
+                new Separator(Orientation.VERTICAL),
+                keyboardDiagramButton,
                 new Separator(Orientation.VERTICAL),
                 editableProp);
 

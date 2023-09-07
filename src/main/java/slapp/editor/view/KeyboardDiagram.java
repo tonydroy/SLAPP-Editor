@@ -388,9 +388,11 @@ public class KeyboardDiagram {
         ctrlShiftAltBoard.add(getControlKey("alternate/\n option",8),43,4,8,1);
         ctrlShiftAltBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 
-        Text ctrlChars = new Text("\ud83e\udc46 Ctrl-5, Ctrl-6, Ctrl-7, Ctrl-8, Ctrl-9 select keyboards (like the dropdown).\n\n" +
-                "\ud83e\udc46 Ctrl-A select all, -C copy, -X cut, -V paste, -Z undo, -Z (+shift) redo\n\n" +
-                "\ud83e\udc46 Ctrl-B bold, -I italic, -U underline, -0 (zero) overline");
+        Text ctrlChars = new Text("\ud83e\udc46 Ctrl:5, :6, :7, :8, :9 select keyboards (like keyboard dropdown).\n" +
+                "    Ctrl:B bold, :I italic, :U underline, :0 (zero) overline\n" +
+                "    Ctrl:= subscript, :=(+shift) superscript, :- back subscript, :-(+shift) back superscript\n" +
+                "    Ctrl-A select all, :C copy, :X cut, :V paste, :Z undo, :Z(+shift) redo\n\n");
+
         ctrlChars.setFont(textFont);
 
         VBox vBox = new VBox();
