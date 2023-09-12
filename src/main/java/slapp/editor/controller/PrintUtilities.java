@@ -70,16 +70,20 @@ public class PrintUtilities {
     //there is a timing issue with saving the document and then getting document from rta.  By opening
     //printer window after the save command, the problem goes away.
     public static void printRTA(RichTextArea rta, Stage owner) {
- //       rta.getActionFactory().save().getActionCmd().apply(((RichTextAreaSkin)rta.getSkin()).getViewModel());
-        rta.getActionFactory().save().execute(new ActionEvent());
- //       ((RichTextAreaSkin) rta.getSkin()).getViewModel().save();  //this is the command I need executed.  do w/o runlater?
+        rta.getActionFactory().saveNow().execute(new ActionEvent());
+        Document document = rta.getDocument();
+
+        RichTextArea printable = new RichTextArea(owner);
+
+        //         RichTextArea printable = new RichTextArea(owner);
+
 
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null) {
             boolean proceed = job.showPrintDialog(owner);
             if (proceed) {
-                Document document = rta.getDocument();
-                RichTextArea printable = new RichTextArea(owner);
+       //         Document document = rta.getDocument();
+       //         RichTextArea printable = new RichTextArea(owner);
                 printable.setDocument(document);
                 printable.setContentAreaWidth(pageLayout.getPrintableWidth());
                 printable.setPrefWidth(pageLayout.getPrintableWidth());
