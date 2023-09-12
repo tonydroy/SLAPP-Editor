@@ -17,7 +17,9 @@ import com.gluonhq.richtextarea.model.TextDecoration;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
 import javafx.scene.control.skin.ComboBoxListViewSkin;
+import javafx.scene.layout.*;
 import javafx.scene.text.*;
+import slapp.editor.controller.PrintUtilities;
 import slapp.editor.view.popup.EmojiPopup;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -30,11 +32,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -148,6 +145,7 @@ public class SimpleEditorView extends Application {
         );
 
         ComboBox<Presets> presets = new ComboBox<>();
+        presets.setTooltip(new Tooltip("Heading Level"));
         presets.getItems().setAll(Presets.values());
         presets.setValue(Presets.DEFAULT);
         presets.setPrefWidth(100);
@@ -172,15 +170,19 @@ public class SimpleEditorView extends Application {
             editor.requestFocus();
         });
 
+        //font families
         ComboBox<String> fontFamilies = new ComboBox<>();
         fontFamilies.getItems().setAll(Font.getFamilies());
-        fontFamilies.setValue("Noto Sans");
         fontFamilies.setPrefWidth(130);
+        fontFamilies.setTooltip(new Tooltip("Select Font"));
         new TextDecorateAction<>(editor, fontFamilies.valueProperty(), TextDecoration::getFontFamily, (builder, a) -> builder.fontFamily(a).build());
+        fontFamilies.setValue("Noto Sans");
 
+        //font size
         final ComboBox<Double> fontSize = new ComboBox<>();
         fontSize.setEditable(true);
         fontSize.setPrefWidth(60);
+        fontSize.setTooltip(new Tooltip("Font Size"));
         fontSize.getItems().addAll(IntStream.range(1, 100)
                 .filter(i -> i % 2 == 0 || i < 18)
                 .asDoubleStream().boxed().collect(Collectors.toList()));
@@ -208,11 +210,13 @@ public class SimpleEditorView extends Application {
 
 
         final ColorPicker textForeground = new ColorPicker();
+        textForeground.setTooltip(new Tooltip("Foreground Color"));
         textForeground.getStyleClass().add("foreground");
         new TextDecorateAction<>(editor, textForeground.valueProperty(), TextDecoration::getForeground, (builder, a) -> builder.foreground(a).build());
         textForeground.setValue(Color.BLACK);
 
         final ColorPicker textBackground = new ColorPicker();
+        textBackground.setTooltip(new Tooltip("Background Color"));
         textBackground.getStyleClass().add("background");
         new TextDecorateAction<>(editor, textBackground.valueProperty(), TextDecoration::getBackground, (builder, a) -> builder.background(a).build());
         textBackground.setValue(Color.TRANSPARENT);
@@ -222,6 +226,7 @@ public class SimpleEditorView extends Application {
 
         //overline button
         ToggleButton overlineButton = new ToggleButton();
+        overlineButton.setTooltip(new Tooltip("Overline (best on symbol fonts)"));
         Font overlineButtonFont = Font.font("Noto Sans Math", FontWeight.LIGHT, FontPosture.REGULAR, 18);
         Text overlineButtonText = new Text("\u035e\ud835\uddae");
         overlineButtonText.setFont(overlineButtonFont);
@@ -236,6 +241,7 @@ public class SimpleEditorView extends Application {
 
         //keyboardDiagramButton
         ToggleButton keyboardDiagramButton = new ToggleButton();
+        keyboardDiagramButton.setTooltip(new Tooltip("Show Keyboard Diagram"));
         FontIcon icon = new FontIcon(LineAwesomeSolid.KEYBOARD);
         icon.setIconSize(20);
         keyboardDiagramButton.setGraphic(icon);
@@ -252,7 +258,9 @@ public class SimpleEditorView extends Application {
             editor.requestFocus();
         });
 
+        //unicode field
         final TextField unicodeField = new TextField();
+        unicodeField.setTooltip(new Tooltip("Unicode (x/hex, #/decimal)"));
         unicodeField.setPrefColumnCount(7);
         unicodeField.setPromptText("insert unicode");
         unicodeField.setOnAction(e -> {
@@ -264,33 +272,65 @@ public class SimpleEditorView extends Application {
         final ChoiceBox<RichTextAreaSkin.KeyMapValue> keyboardSelector = new ChoiceBox<>();
         keyboardSelector.getItems().setAll(RichTextAreaSkin.KeyMapValue.values());
         keyboardSelector.setValue(RichTextAreaSkin.KeyMapValue.BASE);
-
-
-
+        keyboardSelector.setTooltip(new Tooltip("Select Keyboard"));
         //
 
+//        Button testOpenFolder =
+//           actionButton(LineAwesomeSolid.FOLDER_OPEN, "test", editor.getActionFactory()
+//           .open(new Document("Emoji: \uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74\uDB40\uDC7F! and \ufeff@name\ufeff!",
+//               List.of(new DecorationModel(0, 35,
+//                   TextDecoration.builder().presets().build(),
+//                   ParagraphDecoration.builder().presets().build())), 35)));
+
+
+        //print button
+        Button printButton = new Button();
+        printButton.setTooltip(new Tooltip("Print Exercise"));
+        FontIcon printerIcon = new FontIcon(LineAwesomeSolid.PRINT);
+        printerIcon.setIconSize(20);
+        printButton.setGraphic(printerIcon);
+        printButton.setOnAction(e -> {
+//            editor.getActionFactory().save().execute(e);
+
+            PrintUtilities.printRTA(editor, stage);});
+ //       printButton.setOnAction (e -> PrintUtilities.printRTA(editor, stage));
+
+
+        //page setup button
+        Button pageSetupButton = new Button();
+        pageSetupButton.setTooltip(new Tooltip("Page Setup"));
+        FontIcon pageSetupIcon = new FontIcon(LineAwesomeSolid.FILE_ALT);
+        pageSetupIcon.setIconSize(20);
+        pageSetupButton.setGraphic(pageSetupIcon);
+        pageSetupButton.setOnAction(e -> {
+            PrintUtilities.updatePageLayout(stage);
+        });
+
+
+        //toolbars
         ToolBar toolbar = new ToolBar();
         toolbar.getItems().setAll(
-                actionButton(LineAwesomeSolid.FILE,  editor.getActionFactory().newDocument()),
-                actionButton(LineAwesomeSolid.FOLDER_OPEN, editor.getActionFactory().open(document)),
-                actionButton(LineAwesomeSolid.FOLDER_OPEN, editor.getActionFactory()
-                        .open(new Document("Emoji: \uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74\uDB40\uDC7F! and \ufeff@name\ufeff!",
-                                List.of(new DecorationModel(0, 35,
-                                        TextDecoration.builder().presets().build(),
-                                        ParagraphDecoration.builder().presets().build())), 35))),
-                actionButton(LineAwesomeSolid.SAVE,  editor.getActionFactory().save()),
+                actionButton(LineAwesomeSolid.FILE, "New Assignment",  editor.getActionFactory().newDocument()),
+                actionButton(LineAwesomeSolid.FOLDER_OPEN, "Open Assignment File", editor.getActionFactory().open(document)),
+//                testOpenFolder,
+                actionButton(LineAwesomeSolid.SAVE, "Save Assignment",  editor.getActionFactory().save()),
+                printButton,
+                pageSetupButton,
                 new Separator(Orientation.VERTICAL),
-                actionButton(LineAwesomeSolid.CUT,   editor.getActionFactory().cut()),
-                actionButton(LineAwesomeSolid.COPY,  editor.getActionFactory().copy()),
-                actionButton(LineAwesomeSolid.PASTE, editor.getActionFactory().paste()),
+
+                actionButton(LineAwesomeSolid.CUT, "Cut",   editor.getActionFactory().cut()),
+                actionButton(LineAwesomeSolid.COPY, "Copy",  editor.getActionFactory().copy()),
+                actionButton(LineAwesomeSolid.PASTE, "Paste", editor.getActionFactory().paste()),
                 new Separator(Orientation.VERTICAL),
-                actionButton(LineAwesomeSolid.UNDO,  editor.getActionFactory().undo()),
-                actionButton(LineAwesomeSolid.REDO,  editor.getActionFactory().redo()),
+
+                actionButton(LineAwesomeSolid.UNDO, "Undo",  editor.getActionFactory().undo()),
+                actionButton(LineAwesomeSolid.REDO, "Redo",  editor.getActionFactory().redo()),
                 new Separator(Orientation.VERTICAL),
-                actionImage(LineAwesomeSolid.IMAGE),
-                actionEmoji(),
-                actionHyperlink(LineAwesomeSolid.LINK),
-                actionTable(LineAwesomeSolid.TABLE, td -> editor.getActionFactory().insertTable(td)),
+
+                actionImage(LineAwesomeSolid.IMAGE, "Insert Image"),
+                actionEmoji("Insert Emoji"),
+                actionHyperlink(LineAwesomeSolid.LINK, "Insert Hyperlink"),
+                actionTable(LineAwesomeSolid.TABLE, "Insert Table", td -> editor.getActionFactory().insertTable(td)),
                 new Separator(Orientation.VERTICAL),
                 fontFamilies,
                 fontSize,
@@ -300,19 +340,19 @@ public class SimpleEditorView extends Application {
         ToolBar fontsToolbar = new ToolBar();
         fontsToolbar.getItems().setAll(
                 keyboardSelector,
-
                 unicodeField,
                 new Separator(Orientation.VERTICAL),
-                createToggleButton(LineAwesomeSolid.BOLD, property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
-                createToggleButton(LineAwesomeSolid.ITALIC, property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build())),
-                createToggleButton(LineAwesomeSolid.STRIKETHROUGH, property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
-                createToggleButton(LineAwesomeSolid.UNDERLINE, property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
-                overlineButton,
-                createToggleButton(LineAwesomeSolid.SUPERSCRIPT, property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).build())),
-                createToggleButton(LineAwesomeSolid.SUBSCRIPT, property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).build())),
 
-                createToggleButton(LineAwesomeSolid.CARET_SQUARE_UP, property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
-                createToggleButton(LineAwesomeSolid.CARET_SQUARE_DOWN, property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build())),
+                createToggleButton(LineAwesomeSolid.BOLD, "Bold (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
+                createToggleButton(LineAwesomeSolid.ITALIC, "Italic (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build())),
+                createToggleButton(LineAwesomeSolid.STRIKETHROUGH, "Strikethrough", property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
+                createToggleButton(LineAwesomeSolid.UNDERLINE, "Underline", property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
+                overlineButton,
+                createToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).build())),
+                createToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).build())),
+
+                createToggleButton(LineAwesomeSolid.CARET_SQUARE_UP, "Superscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
+                createToggleButton(LineAwesomeSolid.CARET_SQUARE_DOWN, "Subscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build())),
 
                 textForeground,
                 textBackground,
@@ -324,21 +364,23 @@ public class SimpleEditorView extends Application {
 
         ToolBar paragraphToolbar = new ToolBar();
         paragraphToolbar.getItems().setAll(
-                createToggleButton(LineAwesomeSolid.ALIGN_LEFT, property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.LEFT, (builder, a) -> builder.alignment(TextAlignment.LEFT).build())),
-                createToggleButton(LineAwesomeSolid.ALIGN_CENTER, property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.CENTER, (builder, a) -> builder.alignment(a ? TextAlignment.CENTER : TextAlignment.LEFT).build())),
-                createToggleButton(LineAwesomeSolid.ALIGN_RIGHT, property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.RIGHT, (builder, a) -> builder.alignment(a ? TextAlignment.RIGHT : TextAlignment.LEFT).build())),
-                createToggleButton(LineAwesomeSolid.ALIGN_JUSTIFY, property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.JUSTIFY, (builder, a) -> builder.alignment(a ? TextAlignment.JUSTIFY : TextAlignment.LEFT).build())),
+                createToggleButton(LineAwesomeSolid.ALIGN_LEFT, "Align Left", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.LEFT, (builder, a) -> builder.alignment(TextAlignment.LEFT).build())),
+                createToggleButton(LineAwesomeSolid.ALIGN_CENTER, "Align Center", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.CENTER, (builder, a) -> builder.alignment(a ? TextAlignment.CENTER : TextAlignment.LEFT).build())),
+                createToggleButton(LineAwesomeSolid.ALIGN_RIGHT, "Align Right", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.RIGHT, (builder, a) -> builder.alignment(a ? TextAlignment.RIGHT : TextAlignment.LEFT).build())),
+                createToggleButton(LineAwesomeSolid.ALIGN_JUSTIFY, "Justify", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.JUSTIFY, (builder, a) -> builder.alignment(a ? TextAlignment.JUSTIFY : TextAlignment.LEFT).build())),
                 new Separator(Orientation.VERTICAL),
-                createSpinner("Spacing", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getSpacing(), (builder, a) -> builder.spacing(a).build())),
+
+                createSpinner("Spacing", "Space for wrapped lines (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getSpacing(), (builder, a) -> builder.spacing(a).build())),
                 new Separator(Orientation.VERTICAL),
-                createSpinner("Top", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getTopInset(), (builder, a) -> builder.topInset(a).build())),
-                createSpinner("Right", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getRightInset(), (builder, a) -> builder.rightInset(a).build())),
-                createSpinner("Bottom", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getBottomInset(), (builder, a) -> builder.bottomInset(a).build())),
-                createSpinner("Left", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getLeftInset(), (builder, a) -> builder.leftInset(a).build())),
+                createSpinner("Top", "Top Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getTopInset(), (builder, a) -> builder.topInset(a).build())),
+                createSpinner("Bottom", "Bottom Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getBottomInset(), (builder, a) -> builder.bottomInset(a).build())),
+                createSpinner("Left", "LeftMargin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getLeftInset(), (builder, a) -> builder.leftInset(a).build())),
+                createSpinner("Right", "Right Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getRightInset(), (builder, a) -> builder.rightInset(a).build())),
                 new Separator(Orientation.VERTICAL),
-                createToggleButton(LineAwesomeSolid.LIST_OL, property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == NUMBERED_LIST, (builder, a) -> builder.graphicType(a ? NUMBERED_LIST : NONE).build())),
-                createToggleButton(LineAwesomeSolid.LIST_UL, property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == BULLETED_LIST, (builder, a) -> builder.graphicType(a ? BULLETED_LIST : NONE).build())),
-                createSpinner("Indent", p -> new ParagraphDecorateAction<>(editor, p, ParagraphDecoration::getIndentationLevel, (builder, a) -> builder.indentationLevel(a).build())),
+
+                createToggleButton(LineAwesomeSolid.LIST_OL, "Numbered List", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == NUMBERED_LIST, (builder, a) -> builder.graphicType(a ? NUMBERED_LIST : NONE).build())),
+                createToggleButton(LineAwesomeSolid.LIST_UL, "Unordered List/Outline", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == BULLETED_LIST, (builder, a) -> builder.graphicType(a ? BULLETED_LIST : NONE).build())),
+                createSpinner("Indent", "Indent Level", p -> new ParagraphDecorateAction<>(editor, p, ParagraphDecoration::getIndentationLevel, (builder, a) -> builder.indentationLevel(a).build())),
                 new Separator(Orientation.VERTICAL)
         );
 
@@ -369,6 +411,8 @@ public class SimpleEditorView extends Application {
 
         editor.setPromptText("Hello!");
         BorderPane root = new BorderPane(editor);
+
+//        root.setMargin(editor, new Insets(20,20,20,20));           //I did this to compensate for taking out padding -- restore to original?
         root.setTop(new VBox(menuBar, toolbar, fontsToolbar, paragraphToolbar));
         root.setBottom(statusBar);
 
@@ -400,18 +444,20 @@ public class SimpleEditorView extends Application {
         });
     }
 
-    private Button actionButton(Ikon ikon, Action action) {
+    private Button actionButton(Ikon ikon, String tooltip, Action action) {
         Button button = new Button();
         FontIcon icon = new FontIcon(ikon);
         icon.setIconSize(20);
         button.setGraphic(icon);
+        button.setTooltip(new Tooltip(tooltip));
         button.disableProperty().bind(action.disabledProperty());
         button.setOnAction(action::execute);
         return button;
     }
 
-    private ToggleButton createToggleButton(Ikon ikon, Function<ObjectProperty<Boolean>, DecorateAction<Boolean>> function) {
+    private ToggleButton createToggleButton(Ikon ikon, String tooltip, Function<ObjectProperty<Boolean>, DecorateAction<Boolean>> function) {
         final ToggleButton toggleButton = new ToggleButton();
+        toggleButton.setTooltip(new Tooltip(tooltip));
         FontIcon icon = new FontIcon(ikon);
         icon.setIconSize(20);
         toggleButton.setGraphic(icon);
@@ -419,8 +465,9 @@ public class SimpleEditorView extends Application {
         return toggleButton;
     }
 
-    private HBox createSpinner(String text, Function<ObjectProperty<Integer>, DecorateAction<Integer>> function) {
+    private HBox createSpinner(String text, String tooltip, Function<ObjectProperty<Integer>, DecorateAction<Integer>> function) {
         Spinner<Integer> spinner = new Spinner<>();
+        spinner.setTooltip(new Tooltip(tooltip));
         SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 20);
         spinner.setValueFactory(valueFactory);
         spinner.setPrefWidth(60);
@@ -431,8 +478,9 @@ public class SimpleEditorView extends Application {
         return spinnerBox;
     }
 
-    private Button actionImage(Ikon ikon) {
+    private Button actionImage(Ikon ikon, String tooltip) {
         Button button = new Button();
+        button.setTooltip(new Tooltip(tooltip));
         FontIcon icon = new FontIcon(ikon);
         icon.setIconSize(20);
         button.setGraphic(icon);
@@ -448,10 +496,11 @@ public class SimpleEditorView extends Application {
         return button;
     }
 
-    private Button actionEmoji() {
+    private Button actionEmoji(String tooltip) {
         Region region = new Region();
         region.getStyleClass().addAll("icon", "emoji-outline");
         Button emojiButton = new Button(null, region);
+        emojiButton.setTooltip(new Tooltip("Insert Emoji"));
         emojiButton.getStyleClass().add("emoji-button");
         emojiButton.setOnAction(e -> {
             EmojiPopup emojiPopup = new EmojiPopup();
@@ -466,8 +515,9 @@ public class SimpleEditorView extends Application {
         return emojiButton;
     }
 
-    private Button actionHyperlink(Ikon ikon) {
+    private Button actionHyperlink(Ikon ikon, String tooltip) {
         Button button = new Button();
+        button.setTooltip(new Tooltip(tooltip));
         FontIcon icon = new FontIcon(ikon);
         icon.setIconSize(20);
         button.setGraphic(icon);
@@ -519,8 +569,9 @@ public class SimpleEditorView extends Application {
         return dialog;
     }
 
-    private Button actionTable(Ikon ikon, Function<TableDecoration, Action> actionFunction) {
+    private Button actionTable(Ikon ikon, String tooltip, Function<TableDecoration, Action> actionFunction) {
         Button button = new Button();
+        button.setTooltip(new Tooltip(tooltip));
         FontIcon icon = new FontIcon(ikon);
         icon.setIconSize(20);
         button.setGraphic(icon);
@@ -674,6 +725,7 @@ public class SimpleEditorView extends Application {
     private void closeWindow() {
         if (keyboardDiagram != null) keyboardDiagram.closeKeyboardDiagram();
         stage.close();
+//        System.exit(0);
     }
 
 
