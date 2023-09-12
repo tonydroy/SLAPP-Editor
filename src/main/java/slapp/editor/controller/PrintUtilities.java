@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.print.*;
 import javafx.scene.Node;
 import javafx.stage.Stage;
+import slapp.editor.EditorAlerts;
 
 public class PrintUtilities {
 
@@ -26,24 +27,18 @@ public class PrintUtilities {
         if (job != null) {
             boolean proceed = job.showPrintDialog(owner);
             if (proceed) {
-                System.out.println("print dialog: true");
-                System.out.println("node height: " + ((RichTextArea) node).getHeight());
-                System.out.println("node width: " + ((RichTextArea) node).getWidth());
-                System.out.println("PageLayout: " + job.getJobSettings().getPageLayout().toString());
                     boolean printed = job.printPage(pageLayout, node);
                     if (printed) {
                         job.endJob();
-                        System.out.println("job complete");
                     }
                     else {
-                        System.out.println("job failed");
-                    }
-                }
+                        EditorAlerts.showSimpleAlert(owner, "Print problem", "Print job failed.");
+                    }                }
             else {
-                System.out.println("print dialog: false");
+                EditorAlerts.showSimpleAlert(owner,"Print problem", "Failed to open printer dialog");
             }
         } else {
-            System.out.println("failed to create printer job");
+            EditorAlerts.showSimpleAlert(owner, "Print problem", "Failed to create printer job");
         }
     }
 
@@ -57,53 +52,30 @@ public class PrintUtilities {
                 job.endJob();
             }
             else {
-                System.out.println("page setup dialog: false");            }
+                EditorAlerts.showSimpleAlert(owner, "Layout problem", "Failed to open page layout dialog");
+            }
         }
         else {
-            System.out.println("failed to create printer job");
+            EditorAlerts.showSimpleAlert(owner, "Layout problem", "Failed to create layout job");
         }
     }
     public static PageLayout getPageLayout() {
         return pageLayout;
     }
 
-    //there is a timing issue with saving the document and then getting document from rta.  By opening
-    //printer window after the save command, the problem goes away.
     public static void printRTA(RichTextArea rta, Stage owner) {
         rta.getActionFactory().saveNow().execute(new ActionEvent());
         Document document = rta.getDocument();
 
         RichTextArea printable = new RichTextArea(owner);
+        printable.setDocument(document);
+        printable.setContentAreaWidth(pageLayout.getPrintableWidth());
+        printable.setPrefWidth(pageLayout.getPrintableWidth());
+        printable.setPrefHeight(pageLayout.getPrintableHeight() * 2);
+        //this height is is a kludge - if rta goes over its prefHeight, it generates a scrollbar (how?).
+        // Print cuts page off, so the scroll bar makes no sense.
 
-        //         RichTextArea printable = new RichTextArea(owner);
-
-
-        PrinterJob job = PrinterJob.createPrinterJob();
-        if (job != null) {
-            boolean proceed = job.showPrintDialog(owner);
-            if (proceed) {
-       //         Document document = rta.getDocument();
-       //         RichTextArea printable = new RichTextArea(owner);
-                printable.setDocument(document);
-                printable.setContentAreaWidth(pageLayout.getPrintableWidth());
-                printable.setPrefWidth(pageLayout.getPrintableWidth());
-                printable.setPrefHeight(pageLayout.getPrintableHeight() * 2);   //this is a kludge - if rta goes over its prefHeight, it generates a scrollbar (how?).  Print cuts page off, so the scroll bar makes no sense.  don't save to disk, just doc
-
-                boolean printed = job.printPage(pageLayout, printable);
-                if (printed) {
-                    job.endJob();
-                    System.out.println("job complete");
-                } else {
-                    System.out.println("job failed");
-                }
-            } else {
-                System.out.println("print dialog: false");
-            }
-        } else {
-            System.out.println("failed to create printer job");
-        }
+        printNode(printable, owner);
     }
-
-
 
 }
