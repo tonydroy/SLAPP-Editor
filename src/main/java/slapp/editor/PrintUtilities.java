@@ -1,4 +1,4 @@
-package slapp.editor.controller;
+package slapp.editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.model.Document;
