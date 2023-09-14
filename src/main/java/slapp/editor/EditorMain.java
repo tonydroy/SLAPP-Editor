@@ -15,7 +15,7 @@ public class EditorMain extends Application {
     public void start(Stage stage) {
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon32x32.png")));
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
-        SimpleEditorView simpleView = new SimpleEditorView(stage); simpleView.start(stage);
+        SimpleEditorView simpleView = new SimpleEditorView(stage); simpleView.start();
     }
 
 

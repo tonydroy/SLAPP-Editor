@@ -27,16 +27,12 @@ public class PrintUtilities {
         if (job != null) {
             boolean proceed = job.showPrintDialog(owner);
             if (proceed) {
-                    boolean printed = job.printPage(pageLayout, node);
-                    if (printed) {
-                        job.endJob();
-                    }
-                    else {
-                        EditorAlerts.showSimpleAlert(owner, "Print problem", "Print job failed.");
-                    }                }
-            else {
-                EditorAlerts.showSimpleAlert(owner,"Print problem", "Failed to open printer dialog");
+                boolean printed = job.printPage(pageLayout, node);
+                if (!printed) {
+                    EditorAlerts.showSimpleAlert(owner, "Print problem", "Print job failed.");
+                }
             }
+            job.endJob();
         } else {
             EditorAlerts.showSimpleAlert(owner, "Print problem", "Failed to create printer job");
         }
@@ -49,18 +45,12 @@ public class PrintUtilities {
             boolean proceed = job.showPageSetupDialog(owner);
             if (proceed) {
                 pageLayout = job.getJobSettings().getPageLayout();
-                job.endJob();
             }
-            else {
-                EditorAlerts.showSimpleAlert(owner, "Layout problem", "Failed to open page layout dialog");
-            }
+            job.endJob();
         }
         else {
             EditorAlerts.showSimpleAlert(owner, "Layout problem", "Failed to create layout job");
         }
-    }
-    public static PageLayout getPageLayout() {
-        return pageLayout;
     }
 
     public static void printRTA(RichTextArea rta, Stage owner) {

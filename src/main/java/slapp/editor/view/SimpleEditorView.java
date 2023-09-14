@@ -68,7 +68,7 @@ import static javafx.scene.text.FontWeight.NORMAL;
  * <p>
  * For more basic test cases with single features, check the rest of the samples.
  */
-public class SimpleEditorView extends Application {
+public class SimpleEditorView  {
 
     static {
         try (InputStream resourceAsStream = SimpleEditorView.class.getResourceAsStream("/logging.properties")) {
@@ -138,8 +138,8 @@ public class SimpleEditorView extends Application {
         mainWindowY = Math.max(0.0, ((bounds.getMaxY() - bounds.getMinY()) - mainWindowHeight)/3);
     }
 
-    @Override
-    public void start(Stage stage) {
+
+    public void start() {
         editor.textLengthProperty().addListener( (o, ov, nv) ->
                 textLengthLabel.setText( "Text length: " + nv)
         );
@@ -269,6 +269,7 @@ public class SimpleEditorView extends Application {
         });
         //  unicodeField.setOnAction(editor.getActionFactory().insertUnicode(unicodeField.getText())::execute);  for reasons I do not understand, this does not respond to text typed in the box (but does with setText()).
 
+        //keyboard selector
         final ChoiceBox<RichTextAreaSkin.KeyMapValue> keyboardSelector = new ChoiceBox<>();
         keyboardSelector.getItems().setAll(RichTextAreaSkin.KeyMapValue.values());
         keyboardSelector.setValue(RichTextAreaSkin.KeyMapValue.BASE);
