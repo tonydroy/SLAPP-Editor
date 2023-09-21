@@ -25,13 +25,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package slapp.editor.view.popup;
+package slapp.editor.decorated_rta;
 
 import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
 import javafx.scene.control.Skin;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import slapp.editor.decorated_rta.EmojiPopup;
 
 public class EmojiPopupSkin implements Skin<EmojiPopup> {
     private final BorderPane content;

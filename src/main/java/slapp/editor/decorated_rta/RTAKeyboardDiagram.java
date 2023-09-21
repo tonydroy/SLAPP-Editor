@@ -1,7 +1,7 @@
-package slapp.editor.view;
+package slapp.editor.decorated_rta;
 
 import com.gluonhq.richtextarea.RichTextAreaSkin;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,12 +16,13 @@ import javafx.scene.text.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import slapp.editor.EditorMain;
+
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class KeyboardDiagram {
-    private SimpleEditorView editorView;
+public class RTAKeyboardDiagram {
+    private DecoratedRTA editorView;
     private Stage keyboardDiagramStage;
     private BooleanProperty keyboardDiagramButtonSelected;
     private Map<Character, Text> keyTypedTextMap = new HashMap<>();
@@ -32,16 +33,16 @@ public class KeyboardDiagram {
     private Font titleFont = Font.font("Noto Sans", FontWeight.BOLD, FontPosture.REGULAR, 20);
     private int baseKeyWidth = 10;  //the width of a standard key is 4 of these units
 
-       KeyboardDiagram(Stage mainStage, SimpleEditorView editorView, BooleanProperty keyboardDiagramButtonSelected) {
-        this.editorView = editorView;
+       RTAKeyboardDiagram(DecoratedRTA decoratedRTA, BooleanProperty keyboardDiagramButtonSelected) {
+        this.editorView = decoratedRTA;
         this.keyboardDiagramButtonSelected = keyboardDiagramButtonSelected;
-        this.primaryFontSize = editorView.getPrimaryFontSize();
+        this.primaryFontSize = decoratedRTA.getPrimaryFontSize();
         textFont = Font.font("Noto Sans", FontWeight.NORMAL, FontPosture.REGULAR, primaryFontSize);
         symbolFont = Font.font("Noto Sans Math", FontWeight.NORMAL, FontPosture.REGULAR, primaryFontSize);
 
         //initialize text maps
-        Map<Character, String> keyTypedCharMap = ((RichTextAreaSkin) editorView.getEditor().getSkin()).getKeyTypedCharMap();
-        Map<KeyCodeCombination, String> keyPressedCharMap = ((RichTextAreaSkin) editorView.getEditor().getSkin()).getKeyPressedCharMap();
+        Map<Character, String> keyTypedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyTypedCharMap();
+        Map<KeyCodeCombination, String> keyPressedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyPressedCharMap();
         for (char key : keyTypedCharMap.keySet()) {
             keyTypedTextMap.put(key, new Text());
         }
@@ -407,7 +408,7 @@ public class KeyboardDiagram {
 
         ScrollPane scrollPane = new ScrollPane(vBox);
         scrollPane.setPadding(new Insets(10,10,10,10));
-        //why does scroll pane think keyboards are so wide??
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         Scene scene = new Scene(scrollPane);
         keyboardDiagramStage = new Stage();
@@ -419,10 +420,10 @@ public class KeyboardDiagram {
         keyboardDiagramStage.setScene(scene);
         keyboardDiagramStage.setTitle("Keyboard Diagrams");
         keyboardDiagramStage.initModality(Modality.NONE);
-        keyboardDiagramStage.setX(editorView.getKeyboardWindowX());
-        keyboardDiagramStage.setY(editorView.getKeyboardWindowY());
-        keyboardDiagramStage.setWidth(editorView.getKeyboardWindowWidth());
-        keyboardDiagramStage.setHeight(editorView.getKeyboardWindowHeight());
+        keyboardDiagramStage.setX(decoratedRTA.getKeyboardWindowX());
+        keyboardDiagramStage.setY(decoratedRTA.getKeyboardWindowY());
+        keyboardDiagramStage.setWidth(decoratedRTA.getKeyboardWindowWidth());
+        keyboardDiagramStage.setHeight(decoratedRTA.getKeyboardWindowHeight());
         keyboardDiagramStage.show();
     }
     StackPane getControlKey(String name, int width) {

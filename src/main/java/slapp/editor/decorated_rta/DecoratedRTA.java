@@ -1,4 +1,4 @@
-package slapp.editor.view;
+package slapp.editor.decorated_rta;
 
 
 import com.gluonhq.emoji.Emoji;
@@ -8,19 +8,7 @@ import com.gluonhq.richtextarea.action.Action;
 import com.gluonhq.richtextarea.action.DecorateAction;
 import com.gluonhq.richtextarea.action.ParagraphDecorateAction;
 import com.gluonhq.richtextarea.action.TextDecorateAction;
-import com.gluonhq.richtextarea.model.DecorationModel;
-import com.gluonhq.richtextarea.model.Document;
-import com.gluonhq.richtextarea.model.ImageDecoration;
-import com.gluonhq.richtextarea.model.ParagraphDecoration;
-import com.gluonhq.richtextarea.model.TableDecoration;
-import com.gluonhq.richtextarea.model.TextDecoration;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.control.*;
-import javafx.scene.control.skin.ComboBoxListViewSkin;
-import javafx.scene.layout.*;
-import javafx.scene.text.*;
-import slapp.editor.PrintUtilities;
-import slapp.editor.view.popup.EmojiPopup;
+import com.gluonhq.richtextarea.model.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
@@ -28,22 +16,28 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.skin.ComboBoxListViewSkin;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.*;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
+import slapp.editor.EditorMain;
+import slapp.editor.main_window.MainWindowView;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -52,97 +46,47 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.gluonhq.richtextarea.model.ParagraphDecoration.GraphicType.BULLETED_LIST;
-import static com.gluonhq.richtextarea.model.ParagraphDecoration.GraphicType.NONE;
-import static com.gluonhq.richtextarea.model.ParagraphDecoration.GraphicType.NUMBERED_LIST;
+import static com.gluonhq.richtextarea.model.ParagraphDecoration.GraphicType.*;
 import static javafx.scene.text.FontPosture.ITALIC;
 import static javafx.scene.text.FontPosture.REGULAR;
 import static javafx.scene.text.FontWeight.BOLD;
 import static javafx.scene.text.FontWeight.NORMAL;
 
-/**
- * This is an advance sample that shows how to create a rich text editor, by using
- * the RichTextArea control and adding actions for the user interaction, via toolbars and
- * menus, and most of the features of the control are showcased in this sample.
- * <p>
- * For more basic test cases with single features, check the rest of the samples.
- */
-public class SimpleEditorView  {
+public class DecoratedRTA {
 
     static {
-        try (InputStream resourceAsStream = SimpleEditorView.class.getResourceAsStream("/logging.properties")) {
+        try (InputStream resourceAsStream = DecoratedRTA.class.getResourceAsStream("/logging.properties")) {
             if (resourceAsStream != null) {
                 LogManager.getLogManager().readConfiguration(resourceAsStream);
             }
         } catch (IOException ex) {
-            Logger.getLogger(SimpleEditorView.class.getName()).log(Level.SEVERE, "Error opening logging.properties file", ex);
+            Logger.getLogger(DecoratedRTA.class.getName()).log(Level.SEVERE, "Error opening logging.properties file", ex);
         }
     }
 
-    private final List<DecorationModel> decorations;
-
-    {
-        TextDecoration bold14 = TextDecoration.builder().presets().fontWeight(BOLD).fontSize(14).build();
-        TextDecoration preset = TextDecoration.builder().presets().build();
-        ParagraphDecoration center63 = ParagraphDecoration.builder().presets().alignment(TextAlignment.CENTER).topInset(6).bottomInset(3).build();
-        ParagraphDecoration justify22 = ParagraphDecoration.builder().presets().alignment(TextAlignment.JUSTIFY).topInset(2).bottomInset(2).build();
-        ParagraphDecoration right22 = ParagraphDecoration.builder().presets().alignment(TextAlignment.RIGHT).topInset(2).bottomInset(2).build();
-        ParagraphDecoration left535 = ParagraphDecoration.builder().presets().alignment(TextAlignment.LEFT).topInset(5).bottomInset(3).spacing(5).build();
-        ParagraphDecoration center42 = ParagraphDecoration.builder().presets().alignment(TextAlignment.CENTER).topInset(4).bottomInset(2).build();
-        TableDecoration tdec = new TableDecoration(2, 3, new TextAlignment[][]{{TextAlignment.CENTER, TextAlignment.LEFT, TextAlignment.RIGHT}, {TextAlignment.JUSTIFY, TextAlignment.RIGHT, TextAlignment.CENTER}});
-        ParagraphDecoration table = ParagraphDecoration.builder().presets().alignment(TextAlignment.CENTER).tableDecoration(tdec).build();
-        decorations = List.of(
-                new DecorationModel(0, 21, bold14, center63),
-                new DecorationModel(21, 575, preset, justify22),
-                new DecorationModel(596, 18, bold14, center63),
-                new DecorationModel(614, 614, preset, right22),
-                new DecorationModel(1228, 27, bold14, table),
-                new DecorationModel(1255, 764, preset, left535),
-                new DecorationModel(2019, 295, preset, center42)
-        );
-    }
-
-    private final Document document = new Document("What is Lorem Ipsum?\n" +
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\n" +
-            "Why do we use it?\n" +
-            "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).\n" +
-            "Where does\u200bit\u200bcome\u200bfrom?\u200b\u200b\n" +
-            "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, \"Lorem ipsum dolor sit amet..\", comes from a line in section 1.10.32.\n" +
-            "The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from \"de Finibus Bonorum et Malorum\" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.\n",
-            decorations, 2314);
-
-    private final Label textLengthLabel = new Label();
-
-    private final Stage stage;
+    private static Stage mainStage;
     private final RichTextArea editor;
-    private final SimpleEditorView simpleEditorView;
-    private KeyboardDiagram keyboardDiagram;
-    private double mainWindowX;
-    private double  mainWindowY;
-    private double mainWindowWidth = 960.0;
-    private double mainWindowHeight = 800.0;
+    private final DecoratedRTA decoratedRTA;
+    private RTAKeyboardDiagram rtaKeyboardDiagram;
     private double keyboardWindowX;
     private double keyboardWindowY;
     private double keyboardWindowWidth = 650.0;
-    private double keyboardWindowHeight = 990.0;
+    private double keyboardWindowHeight = 940.0;
     private boolean keyboardPositionInitialized = false;
-    private double primaryFontSize = 15.0;
-
-    public SimpleEditorView(Stage stage) {
-        this.simpleEditorView = this;
-        this.stage = stage;
-        editor = new RichTextArea(stage);
-        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-        mainWindowX = Math.max(0.0, ((bounds.getMaxX() - bounds.getMinX()) - mainWindowWidth)/3);
-        mainWindowY = Math.max(0.0, ((bounds.getMaxY() - bounds.getMinY()) - mainWindowHeight)/3);
+    private double primaryFontSize = 14.0;  //see corresponding value in TextDecoration.java
+    private ToolBar editToolbar;
+    private ToolBar fontsToolbar;
+    private ToolBar paragraphToolbar;
+    private ToggleButton overlineButton;
+    ChoiceBox<RichTextAreaSkin.KeyMapValue> keyboardSelector;
+    public DecoratedRTA() {
+        decoratedRTA = this;
+        this.mainStage = EditorMain.mainStage;
+        this.editor = new RichTextArea(mainStage);
+        setup();
     }
-
-
-    public void start() {
-        editor.textLengthProperty().addListener( (o, ov, nv) ->
-                textLengthLabel.setText( "Text length: " + nv)
-        );
-
+    public void setup() {
+        //presets combo box
         ComboBox<Presets> presets = new ComboBox<>();
         presets.setTooltip(new Tooltip("Heading Level"));
         presets.getItems().setAll(Presets.values());
@@ -153,7 +97,6 @@ public class SimpleEditorView  {
             public String toString(Presets presets) {
                 return presets.getName();
             }
-
             @Override
             public Presets fromString(String s) {
                 return Presets.valueOf(s.replaceAll(" ", ""));
@@ -169,7 +112,7 @@ public class SimpleEditorView  {
             editor.requestFocus();
         });
 
-        //font families
+        //font families combo box
         ComboBox<String> fontFamilies = new ComboBox<>();
         fontFamilies.getItems().setAll(Font.getFamilies());
         fontFamilies.setPrefWidth(130);
@@ -177,7 +120,7 @@ public class SimpleEditorView  {
         new TextDecorateAction<>(editor, fontFamilies.valueProperty(), TextDecoration::getFontFamily, (builder, a) -> builder.fontFamily(a).build());
         fontFamilies.setValue("Noto Sans");
 
-        //font size
+        //font size box
         final ComboBox<Double> fontSize = new ComboBox<>();
         fontSize.setEditable(true);
         fontSize.setPrefWidth(60);
@@ -197,8 +140,7 @@ public class SimpleEditorView  {
                 return Double.parseDouble(s);
             }
         });
-        fontSize.setValue(15.0);
-
+        fontSize.setValue(primaryFontSize);
         //this is to make the dropdown open to the selected item's scroll position
         fontSize.setOnShowing(e -> {
             ListView list = (ListView) ((ComboBoxListViewSkin<Double>) fontSize.getSkin()).getPopupContent();
@@ -207,7 +149,7 @@ public class SimpleEditorView  {
         });
         fontSize.setOnAction(e -> primaryFontSize = fontSize.getValue());
 
-
+        //color pickers
         final ColorPicker textForeground = new ColorPicker();
         textForeground.setTooltip(new Tooltip("Foreground Color"));
         textForeground.getStyleClass().add("foreground");
@@ -220,11 +162,8 @@ public class SimpleEditorView  {
         new TextDecorateAction<>(editor, textBackground.valueProperty(), TextDecoration::getBackground, (builder, a) -> builder.background(a).build());
         textBackground.setValue(Color.TRANSPARENT);
 
-        CheckBox editableProp = new CheckBox("Editable");
-        editableProp.selectedProperty().bindBidirectional(editor.editableProperty());
-
         //overline button
-        ToggleButton overlineButton = new ToggleButton();
+        overlineButton = new ToggleButton();
         overlineButton.setTooltip(new Tooltip("Overline (best on symbol fonts)"));
         Font overlineButtonFont = Font.font("Noto Sans Math", FontWeight.LIGHT, FontPosture.REGULAR, 18);
         Text overlineButtonText = new Text("\u035e\ud835\uddae");
@@ -246,14 +185,14 @@ public class SimpleEditorView  {
         keyboardDiagramButton.setGraphic(icon);
         keyboardDiagramButton.setOnAction(e -> {
             if (!keyboardPositionInitialized) {
-                keyboardWindowX = stage.getX() + mainWindowWidth;                                                   //(mainWindowWidth * .95);
-                keyboardWindowY = stage.getY() + 25;                                                // mainWindowHeight/4;
+                keyboardWindowX = mainStage.getX() + editor.getScene().getWindow().getWidth();
+                keyboardWindowY = mainStage.getY() + 25;
                 keyboardPositionInitialized = true;
             }
             if (keyboardDiagramButton.isSelected()) {
-                keyboardDiagram = new KeyboardDiagram(stage, simpleEditorView,  keyboardDiagramButton.selectedProperty());
+                rtaKeyboardDiagram = new RTAKeyboardDiagram(decoratedRTA,  keyboardDiagramButton.selectedProperty());
             }
-            else keyboardDiagram.closeKeyboardDiagram();
+            else rtaKeyboardDiagram.closeKeyboardDiagram();
             editor.requestFocus();
         });
 
@@ -269,179 +208,96 @@ public class SimpleEditorView  {
         //  unicodeField.setOnAction(editor.getActionFactory().insertUnicode(unicodeField.getText())::execute);  for reasons I do not understand, this does not respond to text typed in the box (but does with setText()).
 
         //keyboard selector
-        final ChoiceBox<RichTextAreaSkin.KeyMapValue> keyboardSelector = new ChoiceBox<>();
+        keyboardSelector = new ChoiceBox<>();
         keyboardSelector.getItems().setAll(RichTextAreaSkin.KeyMapValue.values());
         keyboardSelector.setValue(RichTextAreaSkin.KeyMapValue.BASE);
         keyboardSelector.setTooltip(new Tooltip("Select Keyboard"));
-        //
-
-//        Button testOpenFolder =
-//           actionButton(LineAwesomeSolid.FOLDER_OPEN, "test", editor.getActionFactory()
-//           .open(new Document("Emoji: \uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74\uDB40\uDC7F! and \ufeff@name\ufeff!",
-//               List.of(new DecorationModel(0, 35,
-//                   TextDecoration.builder().presets().build(),
-//                   ParagraphDecoration.builder().presets().build())), 35)));
-
-
-        //print button
-        Button printButton = new Button();
-        printButton.setTooltip(new Tooltip("Print Exercise"));
-        FontIcon printerIcon = new FontIcon(LineAwesomeSolid.PRINT);
-        printerIcon.setIconSize(20);
-        printButton.setGraphic(printerIcon);
-        printButton.setOnAction(e -> {
-//            editor.getActionFactory().save().execute(e);
-
-            PrintUtilities.printRTA(editor, stage);});
- //       printButton.setOnAction (e -> PrintUtilities.printRTA(editor, stage));
-
-
-        //page setup button
-        Button pageSetupButton = new Button();
-        pageSetupButton.setTooltip(new Tooltip("Page Setup"));
-        FontIcon pageSetupIcon = new FontIcon(LineAwesomeSolid.FILE_ALT);
-        pageSetupIcon.setIconSize(20);
-        pageSetupButton.setGraphic(pageSetupIcon);
-        pageSetupButton.setOnAction(e -> {
-            PrintUtilities.updatePageLayout(stage);
-        });
-
 
         //toolbars
-        ToolBar toolbar = new ToolBar();
-        toolbar.getItems().setAll(
-                actionButton(LineAwesomeSolid.FILE, "New Assignment",  editor.getActionFactory().newDocument()),
-                actionButton(LineAwesomeSolid.FOLDER_OPEN, "Open Assignment File", editor.getActionFactory().open(document)),
-//                testOpenFolder,
-                actionButton(LineAwesomeSolid.SAVE, "Save Assignment",  editor.getActionFactory().save()),
-                printButton,
-                pageSetupButton,
-                new Separator(Orientation.VERTICAL),
+        editToolbar = new ToolBar();
+        editToolbar.getItems().setAll(
+                actionButton(LineAwesomeSolid.SAVE, "Save",  editor.getActionFactory().save()),
+                wideSeparator(5),
 
                 actionButton(LineAwesomeSolid.CUT, "Cut",   editor.getActionFactory().cut()),
                 actionButton(LineAwesomeSolid.COPY, "Copy",  editor.getActionFactory().copy()),
                 actionButton(LineAwesomeSolid.PASTE, "Paste", editor.getActionFactory().paste()),
-                new Separator(Orientation.VERTICAL),
-
                 actionButton(LineAwesomeSolid.UNDO, "Undo",  editor.getActionFactory().undo()),
                 actionButton(LineAwesomeSolid.REDO, "Redo",  editor.getActionFactory().redo()),
-                new Separator(Orientation.VERTICAL),
+                wideSeparator(8),
 
                 actionImage(LineAwesomeSolid.IMAGE, "Insert Image"),
                 actionEmoji("Insert Emoji"),
                 actionHyperlink(LineAwesomeSolid.LINK, "Insert Hyperlink"),
                 actionTable(LineAwesomeSolid.TABLE, "Insert Table", td -> editor.getActionFactory().insertTable(td)),
-                new Separator(Orientation.VERTICAL),
+                wideSeparator(8),
+
                 fontFamilies,
                 fontSize,
-                presets
-                 );
+                presets,
+                keyboardDiagramButton
+            );
+//       editToolbar.setPadding(new Insets(3,0,3,20));
 
-        ToolBar fontsToolbar = new ToolBar();
+        fontsToolbar = new ToolBar();
         fontsToolbar.getItems().setAll(
                 keyboardSelector,
                 unicodeField,
-                new Separator(Orientation.VERTICAL),
+                wideSeparator(15),
 
                 createToggleButton(LineAwesomeSolid.BOLD, "Bold (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
                 createToggleButton(LineAwesomeSolid.ITALIC, "Italic (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build())),
                 createToggleButton(LineAwesomeSolid.STRIKETHROUGH, "Strikethrough", property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
                 createToggleButton(LineAwesomeSolid.UNDERLINE, "Underline", property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
                 overlineButton,
-                createToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).build())),
-                createToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).build())),
+                wideSeparator(15),
 
-                createToggleButton(LineAwesomeSolid.CARET_SQUARE_UP, "Superscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
-                createToggleButton(LineAwesomeSolid.CARET_SQUARE_DOWN, "Subscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build())),
+                createToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).transSuperscript(false).transSubscript(false).build())),
+                createColoredToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
+                createToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).transSuperscript(false).transSubscript(false).build())),
+                createColoredToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build())),
+                wideSeparator(16),
 
                 textForeground,
-                textBackground,
-                new Separator(Orientation.VERTICAL),
-                keyboardDiagramButton,
-                new Separator(Orientation.VERTICAL),
-                editableProp);
+                textBackground
+            );
+//       fontsToolbar.setPadding(new Insets(3,0,3,20));
 
-
-        ToolBar paragraphToolbar = new ToolBar();
+        paragraphToolbar = new ToolBar();
         paragraphToolbar.getItems().setAll(
                 createToggleButton(LineAwesomeSolid.ALIGN_LEFT, "Align Left", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.LEFT, (builder, a) -> builder.alignment(TextAlignment.LEFT).build())),
                 createToggleButton(LineAwesomeSolid.ALIGN_CENTER, "Align Center", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.CENTER, (builder, a) -> builder.alignment(a ? TextAlignment.CENTER : TextAlignment.LEFT).build())),
                 createToggleButton(LineAwesomeSolid.ALIGN_RIGHT, "Align Right", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.RIGHT, (builder, a) -> builder.alignment(a ? TextAlignment.RIGHT : TextAlignment.LEFT).build())),
                 createToggleButton(LineAwesomeSolid.ALIGN_JUSTIFY, "Justify", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.JUSTIFY, (builder, a) -> builder.alignment(a ? TextAlignment.JUSTIFY : TextAlignment.LEFT).build())),
-                new Separator(Orientation.VERTICAL),
 
                 createSpinner("Spacing", "Space for wrapped lines (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getSpacing(), (builder, a) -> builder.spacing(a).build())),
-                new Separator(Orientation.VERTICAL),
                 createSpinner("Top", "Top Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getTopInset(), (builder, a) -> builder.topInset(a).build())),
                 createSpinner("Bottom", "Bottom Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getBottomInset(), (builder, a) -> builder.bottomInset(a).build())),
                 createSpinner("Left", "LeftMargin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getLeftInset(), (builder, a) -> builder.leftInset(a).build())),
                 createSpinner("Right", "Right Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getRightInset(), (builder, a) -> builder.rightInset(a).build())),
-                new Separator(Orientation.VERTICAL),
 
                 createToggleButton(LineAwesomeSolid.LIST_OL, "Numbered List", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == NUMBERED_LIST, (builder, a) -> builder.graphicType(a ? NUMBERED_LIST : NONE).build())),
                 createToggleButton(LineAwesomeSolid.LIST_UL, "Unordered List/Outline", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == BULLETED_LIST, (builder, a) -> builder.graphicType(a ? BULLETED_LIST : NONE).build())),
-                createSpinner("Indent", "Indent Level", p -> new ParagraphDecorateAction<>(editor, p, ParagraphDecoration::getIndentationLevel, (builder, a) -> builder.indentationLevel(a).build())),
-                new Separator(Orientation.VERTICAL)
-        );
+                createSpinner("Indent", "Indent Level", p -> new ParagraphDecorateAction<>(editor, p, ParagraphDecoration::getIndentationLevel, (builder, a) -> builder.indentationLevel(a).build()))
+            );
+//        paragraphToolbar.setPadding(new Insets(3,0,3,20));
+    }
 
-        HBox statusBar = new HBox(10);
-        statusBar.getStyleClass().add("status-bar");
-        statusBar.setAlignment(Pos.CENTER_RIGHT);
-        statusBar.getChildren().setAll(textLengthLabel);
-
-        Menu fileMenu = new Menu("File");
-        CheckMenuItem autoSaveMenuItem = new CheckMenuItem("Auto Save");
-        editor.autoSaveProperty().bind(autoSaveMenuItem.selectedProperty());
-        fileMenu.getItems().addAll(
-                actionMenuItem("New Text", LineAwesomeSolid.FILE, editor.getActionFactory().newDocument()),
-                actionMenuItem("Open Text", LineAwesomeSolid.FOLDER_OPEN, editor.getActionFactory().open(document)),
-                new SeparatorMenuItem(),
-                autoSaveMenuItem,
-                actionMenuItem("Save Text", LineAwesomeSolid.SAVE, editor.getActionFactory().save()));
-        Menu editMenu = new Menu("Edit");
-        editMenu.getItems().addAll(
-                actionMenuItem("Undo", LineAwesomeSolid.UNDO, editor.getActionFactory().undo()),
-                actionMenuItem("Redo", LineAwesomeSolid.REDO, editor.getActionFactory().redo()),
-                new SeparatorMenuItem(),
-                actionMenuItem("Copy", LineAwesomeSolid.COPY, editor.getActionFactory().copy()),
-                actionMenuItem("Cut", LineAwesomeSolid.CUT, editor.getActionFactory().cut()),
-                actionMenuItem("Paste", LineAwesomeSolid.PASTE, editor.getActionFactory().paste()));
-        MenuBar menuBar = new MenuBar(fileMenu, editMenu);
-//        menuBar.setUseSystemMenuBar(true);
-
-        editor.setPromptText("Hello!");
-        BorderPane root = new BorderPane(editor);
-
-//        root.setMargin(editor, new Insets(20,20,20,20));           //I did this to compensate for taking out padding -- restore to original?
-        root.setTop(new VBox(menuBar, toolbar, fontsToolbar, paragraphToolbar));
-        root.setBottom(statusBar);
-
-//        Scene scene = new Scene(root, 960, 580);
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(SimpleEditorView.class.getClassLoader().getResource("fullFeaturedDemo.css").toExternalForm());
-        stage.titleProperty().bind(Bindings.createStringBinding(() -> "SLAPP Editor" + (editor.isModified() ? " *" : ""), editor.modifiedProperty()));
-        stage.setScene(scene);
-        //
-        stage.setX(mainWindowX);
-        stage.setY(mainWindowY);
-        stage.setWidth(mainWindowWidth);
-        stage.setHeight(mainWindowHeight);
-        stage.setOnCloseRequest(e -> {
-            e.consume();
-            closeWindow();
-        });
-        //
-        stage.show();
-        editor.requestFocus();
-
+    public void setRtaListeners() {
         overlineButton.selectedProperty().bindBidirectional(((RichTextAreaSkin) editor.getSkin()).overlineOnProperty());
         overlineButton.selectedProperty().addListener((v, ov, nv) -> editor.requestFocus());
         keyboardSelector.valueProperty().bindBidirectional(((RichTextAreaSkin) editor.getSkin()).keyMapStateProperty());
         keyboardSelector.getSelectionModel().selectedItemProperty().addListener((v, ov, nv) -> {
             ((RichTextAreaSkin) editor.getSkin()).setMaps(nv);
-           if (keyboardDiagram != null) keyboardDiagram.updateTextMaps();
-           editor.requestFocus();   //have not been able to find way to stop keyboard window from stealing focus see https://stackoverflow.com/questions/33151460/javafx-stop-new-window-stealing-focus
+            if (rtaKeyboardDiagram != null) rtaKeyboardDiagram.updateTextMaps();
+            editor.requestFocus();   //have not been able to find way to stop keyboard window from stealing focus see https://stackoverflow.com/questions/33151460/javafx-stop-new-window-stealing-focus
         });
+    }
+
+    private Separator wideSeparator(double inset) {
+        Separator separator = new Separator(Orientation.VERTICAL);
+        separator.setPadding(new Insets(0, inset,0, inset));
+        return separator;
     }
 
     private Button actionButton(Ikon ikon, String tooltip, Action action) {
@@ -465,12 +321,23 @@ public class SimpleEditorView  {
         return toggleButton;
     }
 
+    private ToggleButton createColoredToggleButton(Ikon ikon, String tooltip, Function<ObjectProperty<Boolean>, DecorateAction<Boolean>> function) {
+        final ToggleButton toggleButton = new ToggleButton();
+        toggleButton.setTooltip(new Tooltip(tooltip));
+        toggleButton.setStyle("-fx-border-color:LIGHTGREEN;-fx-border-radius:3;-fx-border-width:1;");
+        FontIcon icon = new FontIcon(ikon);
+        icon.setIconSize(20);
+        toggleButton.setGraphic(icon);
+        function.apply(toggleButton.selectedProperty().asObject());
+        return toggleButton;
+    }
+
     private HBox createSpinner(String text, String tooltip, Function<ObjectProperty<Integer>, DecorateAction<Integer>> function) {
         Spinner<Integer> spinner = new Spinner<>();
         spinner.setTooltip(new Tooltip(tooltip));
         SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 20);
         spinner.setValueFactory(valueFactory);
-        spinner.setPrefWidth(60);
+        spinner.setPrefWidth(55);
         spinner.setEditable(false);
         function.apply(valueFactory.valueProperty());
         HBox spinnerBox = new HBox(5, new Label(text), spinner);
@@ -655,7 +522,7 @@ public class SimpleEditorView  {
 
     private enum Presets {
 
-        DEFAULT("Default",15, NORMAL, TextAlignment.LEFT),
+        DEFAULT("Default",13, NORMAL, TextAlignment.LEFT),
         HEADER1("Header 1", 32, BOLD, TextAlignment.CENTER),
         HEADER2("Header 2", 24, BOLD, TextAlignment.LEFT),
         HEADER3("Header 3", 19, BOLD, TextAlignment.LEFT);
@@ -722,13 +589,20 @@ public class SimpleEditorView  {
         return primaryFontSize;
     }
 
-    private void closeWindow() {
-        if (keyboardDiagram != null) keyboardDiagram.closeKeyboardDiagram();
-        stage.close();
-//        System.exit(0);
+    public ToolBar getEditToolbar() {
+        return editToolbar;
     }
 
+    public ToolBar getFontsToolbar() {
+        return fontsToolbar;
+    }
 
+    public ToolBar getParagraphToolbar() {
+        return paragraphToolbar;
+    }
 
+    public RTAKeyboardDiagram getRtaKeyboardDiagram() {
+        return rtaKeyboardDiagram;
+    }
 
 }

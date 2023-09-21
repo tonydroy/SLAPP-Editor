@@ -12,14 +12,25 @@
     -fx-graphic: url("HTMLEditor-Background-Color.png");
 }
 
+.tool-bar {
+    -fx-spacing: 5px;
+
+}
+
+.menu-bar {
+    -fx-background-color: aliceblue;
+    -fx-border-color: white;
+
+}
+
 .status-bar {
-    -fx-padding: 10;
+/*    -fx-padding: 20;*/
 }
 
 .rich-text-area {
 
    -fx-background-color: whitesmoke;
-   -fx-padding: 20; /* - taking this out removes colored border on RTA -- restored through border pane margin -- but also eliminates the colored read-only border*/
+/*   -fx-padding: 10; /* - taking this out removes colored border on RTA -- restored through border pane margin -- but also eliminates the colored read-only border*/
 }
 
 .rich-text-area > .paragraph-list-view {
@@ -29,7 +40,7 @@
 }
 
 .rich-text-area:readonly .paragraph-list-view {
-    -fx-background-color: lightblue;
+    -fx-background-color: aliceblue;
     /*-fx-border-color: darkgray;*/
 }
 
