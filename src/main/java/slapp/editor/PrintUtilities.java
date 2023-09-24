@@ -71,4 +71,12 @@ public class PrintUtilities {
         printNode(printable);
     }
 
+    public static double getPageHeight() {
+        return pageLayout.getPrintableHeight();
+    }
+
+    public static double getPageWidth() {
+        return pageLayout.getPrintableWidth();
+    }
+
 }

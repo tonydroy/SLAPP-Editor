@@ -417,7 +417,7 @@ public class ExtendedDemo {
 
 //        Scene scene = new Scene(root, 960, 580);
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(ExtendedDemo.class.getClassLoader().getResource("fullFeaturedDemo.css").toExternalForm());
+        scene.getStylesheets().add(ExtendedDemo.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
         stage.titleProperty().bind(Bindings.createStringBinding(() -> "SLAPP Editor" + (editor.isModified() ? " *" : ""), editor.modifiedProperty()));
         stage.setScene(scene);
         //

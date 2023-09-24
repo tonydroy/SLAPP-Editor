@@ -73,7 +73,7 @@ public class DecoratedRTA {
     private double keyboardWindowWidth = 650.0;
     private double keyboardWindowHeight = 940.0;
     private boolean keyboardPositionInitialized = false;
-    private double primaryFontSize = 14.0;  //see corresponding value in TextDecoration.java
+    private double primaryFontSize = 11.0;  //see corresponding value in TextDecoration.java
     private ToolBar editToolbar;
     private ToolBar fontsToolbar;
     private ToolBar paragraphToolbar;
@@ -199,8 +199,8 @@ public class DecoratedRTA {
         //unicode field
         final TextField unicodeField = new TextField();
         unicodeField.setTooltip(new Tooltip("Unicode (x/hex, #/decimal)"));
-        unicodeField.setPrefColumnCount(7);
-        unicodeField.setPromptText("insert unicode");
+        unicodeField.setPrefColumnCount(6);
+        unicodeField.setPromptText("unicode val");
         unicodeField.setOnAction(e -> {
             String text = unicodeField.getText();
             editor.getActionFactory().insertUnicode(text).execute(e);
@@ -243,20 +243,20 @@ public class DecoratedRTA {
         fontsToolbar.getItems().setAll(
                 keyboardSelector,
                 unicodeField,
-                wideSeparator(15),
+                wideSeparator(1.3),
 
                 createToggleButton(LineAwesomeSolid.BOLD, "Bold (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
                 createToggleButton(LineAwesomeSolid.ITALIC, "Italic (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build())),
                 createToggleButton(LineAwesomeSolid.STRIKETHROUGH, "Strikethrough", property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
                 createToggleButton(LineAwesomeSolid.UNDERLINE, "Underline", property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
                 overlineButton,
-                wideSeparator(15),
+ //               wideSeparator(0),
 
                 createToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).transSuperscript(false).transSubscript(false).build())),
                 createColoredToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
                 createToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).transSuperscript(false).transSubscript(false).build())),
                 createColoredToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build())),
-                wideSeparator(16),
+                wideSeparator(1.3),
 
                 textForeground,
                 textBackground
@@ -280,10 +280,14 @@ public class DecoratedRTA {
                 createToggleButton(LineAwesomeSolid.LIST_UL, "Unordered List/Outline", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == BULLETED_LIST, (builder, a) -> builder.graphicType(a ? BULLETED_LIST : NONE).build())),
                 createSpinner("Indent", "Indent Level", p -> new ParagraphDecorateAction<>(editor, p, ParagraphDecoration::getIndentationLevel, (builder, a) -> builder.indentationLevel(a).build()))
             );
-//        paragraphToolbar.setPadding(new Insets(3,0,3,20));
+        setRtaListeners();
     }
 
     public void setRtaListeners() {
+        BorderPane tempPane = new BorderPane(editor);
+        Scene tempScene = new Scene(tempPane);
+        editor.applyCss();
+        editor.layout();
         overlineButton.selectedProperty().bindBidirectional(((RichTextAreaSkin) editor.getSkin()).overlineOnProperty());
         overlineButton.selectedProperty().addListener((v, ov, nv) -> editor.requestFocus());
         keyboardSelector.valueProperty().bindBidirectional(((RichTextAreaSkin) editor.getSkin()).keyMapStateProperty());

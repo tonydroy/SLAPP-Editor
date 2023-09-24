@@ -14,13 +14,11 @@
 
 .tool-bar {
     -fx-spacing: 5px;
-
 }
 
 .menu-bar {
     -fx-background-color: aliceblue;
     -fx-border-color: white;
-
 }
 
 .status-bar {
@@ -28,10 +26,20 @@
 }
 
 .rich-text-area {
-
-   -fx-background-color: whitesmoke;
-/*   -fx-padding: 10; /* - taking this out removes colored border on RTA -- restored through border pane margin -- but also eliminates the colored read-only border*/
+    -fx-padding: 5;
+    -fx-background-color: WHITE;
+    -fx-border-width: 2;
+    -fx-border-color: LIGHTGREY;
 }
+
+.rich-text-area:focused {
+    -fx-border-width: 2;
+    -fx-border-color: LIGHTBLUE;
+
+}
+
+*/
+
 
 .rich-text-area > .paragraph-list-view {
     -fx-padding: 10;
