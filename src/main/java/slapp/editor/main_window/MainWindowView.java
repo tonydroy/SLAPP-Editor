@@ -30,12 +30,16 @@ public class MainWindowView {
     private ToolBar fontsToolbar;
     private ToolBar paragraphToolbar;
     private DoubleProperty scaleProperty = new SimpleDoubleProperty(1.0);
-    private double scale = 1.20;  //this is a stub and should be set by spinner
+    private double scale = 1.0;
     MenuBar menuBar;
     private VBox topBox;
-    private Spinner zoomSpinner;
+    private VBox centerBox;
+    private Spinner<Integer> zoomSpinner;
     private Label zoomLabel;
     ObjectProperty<VBox> topPane = new SimpleObjectProperty<>();
+    int minStageWidth = 858;
+
+    private Scene scene;
 
     public MainWindowView(Stage stage, MainWindowController controller) {
         this.stage = stage;
@@ -66,23 +70,24 @@ public class MainWindowView {
         Menu helpMenu = new Menu("Help");
         menuBar = new MenuBar(assignmentMenu, exerciseMenu, nextExerciseMenu, previousExerciseMenu, goToExerciseMenu, printMenu, helpMenu);
 
-        zoomLabel = new Label("Zoom ");
+        zoomLabel = new Label(" Zoom ");
         zoomSpinner = new Spinner(25, 500, 100, 5);
         zoomSpinner.setPrefSize(60,25);
+        zoomSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = zoomSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = zoomSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
 
-        DoubleProperty zoomPercentProperty = new SimpleDoubleProperty();
-        zoomPercentProperty.bind(Bindings.multiply(scaleProperty, 100));
-        zoomPercentProperty.bind(zoomSpinner.valueProperty());
-
-
+            updateZoom(nv);
+        });
 
         topBox = new VBox(menuBar, editToolbar, fontsToolbar, paragraphToolbar);
         root.setTop(topBox);
         root.topProperty().bind(topPane);
 
-        VBox centerBox = new VBox(statementNode, contentNode, commentNode);
-        centerBox.setScaleX(scale);
-        centerBox.setScaleY(scale);
+        centerBox = new VBox(statementNode, contentNode, commentNode);
+
         centerBox.setSpacing(3);
         Group centerGroup = new Group(centerBox);
         root.setCenter(centerGroup);
@@ -95,11 +100,11 @@ public class MainWindowView {
         statusBar.getChildren().setAll(new Label("Assignment/Exercise info:"));
         root.setBottom(statusBar);
 
-        Scene scene = new Scene(root);
+        scene = new Scene(root);
         scene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("SLAPP Editor");
-        stage.setMinWidth(855);
+        stage.setMinWidth(minStageWidth);
         // suffices for the toolbars to appear in window
         // when topBox gets replaced, it appears that the window "looses" box dimensions both vertically and horizontally
         // this replaces the horizontal value
@@ -123,6 +128,7 @@ public class MainWindowView {
         //similarly for height.
         commentDecoratedRTA.getEditor().setPrefWidth(PrintUtilities.getPageWidth() );
 
+
         // with content box enclosed in Group, the content pane does not size with window.
         // this restores sizing (inserting height from top box manually)
         double fixedHeight = (statementNode.getLayoutBounds().getHeight() + commentNode.getLayoutBounds().getHeight())  * scale + statusBar.getHeight() + 250;
@@ -134,6 +140,13 @@ public class MainWindowView {
         currentExercise.getExerciseView().getContentHeightProperty().bind(centerHeightProperty);
 
         Platform.runLater(() -> contentNode.requestFocus());
+    }
+
+    private void updateZoom(int zoom) {
+        scale = (double)zoom/100.0;
+        centerBox.setScaleX(scale);
+        centerBox.setScaleY(scale);
+        scene.getWindow().setWidth(Math.max(minStageWidth, PrintUtilities.getPageWidth() * scale + 55));
     }
 
     public void editorInFocus(RichTextArea editor, ToolBar editToolbar, ToolBar fontsToolbar, ToolBar paragraphToolbar){

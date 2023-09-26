@@ -11,8 +11,13 @@ import com.gluonhq.richtextarea.action.TextDecorateAction;
 import com.gluonhq.richtextarea.model.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -22,6 +27,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.skin.ComboBoxListViewSkin;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
@@ -243,7 +250,7 @@ public class DecoratedRTA {
         fontsToolbar.getItems().setAll(
                 keyboardSelector,
                 unicodeField,
-                wideSeparator(1.3),
+                wideSeparator(1.1),
 
                 createToggleButton(LineAwesomeSolid.BOLD, "Bold (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
                 createToggleButton(LineAwesomeSolid.ITALIC, "Italic (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build())),
@@ -256,12 +263,11 @@ public class DecoratedRTA {
                 createColoredToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
                 createToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).transSuperscript(false).transSubscript(false).build())),
                 createColoredToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build())),
-                wideSeparator(1.3),
+                wideSeparator(1.1),
 
                 textForeground,
                 textBackground
             );
-//       fontsToolbar.setPadding(new Insets(3,0,3,20));
 
         paragraphToolbar = new ToolBar();
         paragraphToolbar.getItems().setAll(
@@ -270,11 +276,11 @@ public class DecoratedRTA {
                 createToggleButton(LineAwesomeSolid.ALIGN_RIGHT, "Align Right", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.RIGHT, (builder, a) -> builder.alignment(a ? TextAlignment.RIGHT : TextAlignment.LEFT).build())),
                 createToggleButton(LineAwesomeSolid.ALIGN_JUSTIFY, "Justify", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.JUSTIFY, (builder, a) -> builder.alignment(a ? TextAlignment.JUSTIFY : TextAlignment.LEFT).build())),
 
-                createSpinner("Spacing", "Space for wrapped lines (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getSpacing(), (builder, a) -> builder.spacing(a).build())),
-                createSpinner("Top", "Top Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getTopInset(), (builder, a) -> builder.topInset(a).build())),
-                createSpinner("Bottom", "Bottom Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getBottomInset(), (builder, a) -> builder.bottomInset(a).build())),
-                createSpinner("Left", "LeftMargin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getLeftInset(), (builder, a) -> builder.leftInset(a).build())),
-                createSpinner("Right", "Right Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getRightInset(), (builder, a) -> builder.rightInset(a).build())),
+                createJumpSpinner("Spacing", "Space for wrapped lines (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getSpacing(), (builder, a) -> builder.spacing(a).build())),
+                createJumpSpinner("Top", "Top Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getTopInset(), (builder, a) -> builder.topInset(a).build())),
+                createJumpSpinner("Bottom", "Bottom Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getBottomInset(), (builder, a) -> builder.bottomInset(a).build())),
+                createJumpSpinner("Left", "LeftMargin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getLeftInset(), (builder, a) -> builder.leftInset(a).build())),
+                createJumpSpinner("Right", "Right Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getRightInset(), (builder, a) -> builder.rightInset(a).build())),
 
                 createToggleButton(LineAwesomeSolid.LIST_OL, "Numbered List", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == NUMBERED_LIST, (builder, a) -> builder.graphicType(a ? NUMBERED_LIST : NONE).build())),
                 createToggleButton(LineAwesomeSolid.LIST_UL, "Unordered List/Outline", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == BULLETED_LIST, (builder, a) -> builder.graphicType(a ? BULLETED_LIST : NONE).build())),
@@ -336,8 +342,22 @@ public class DecoratedRTA {
         return toggleButton;
     }
 
+
+
     private HBox createSpinner(String text, String tooltip, Function<ObjectProperty<Integer>, DecorateAction<Integer>> function) {
         Spinner<Integer> spinner = new Spinner<>();
+        //
+        //this is a kludge because the spinners do not stop on mouse release.  This behavior only appeared after I started
+        //switching headers on focus.  It doesn't happen to a spinner by itself, but only in combination with some application.
+        //this "fix" prevents mouse down spinning, but that will be ok for me. I absolutly do not understand how this happens!
+        //see https://stackoverflow.com/questions/55933513/javafx-spinner-keeps-going-after-removed-from-scene
+        spinner.valueProperty().addListener((obs, ov, nv) -> {
+           Node increment = spinner.lookup(".increment-arrow-button");
+           if (increment != null) increment.getOnMouseReleased().handle(null);
+           Node decrement = spinner.lookup(".decrement-arrow-button");
+           if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+        //
         spinner.setTooltip(new Tooltip(tooltip));
         SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 20);
         spinner.setValueFactory(valueFactory);
@@ -348,6 +368,32 @@ public class DecoratedRTA {
         spinnerBox.setAlignment(Pos.CENTER);
         return spinnerBox;
     }
+
+    //
+    private HBox createJumpSpinner(String text, String tooltip, Function<ObjectProperty<Integer>, DecorateAction<Integer>> function) {
+        Spinner<Integer> spinner = new Spinner<>();
+        //
+        //this is a kludge because the spinners do not stop on mouse release.  This behavior only appeared after I started
+        //switching headers on focus.  It doesn't happen to a spinner by itself, but only in combination with RTA logic.
+        //this "fix" prevents mouse down spinning, but that will be ok for me. I absolutly do not understand how this happens!
+        spinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = spinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = spinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+        //
+        spinner.setTooltip(new Tooltip(tooltip));
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 20,0,2);
+        spinner.setValueFactory(valueFactory);
+        spinner.setPrefWidth(55);
+        spinner.setEditable(false);
+        function.apply(valueFactory.valueProperty());
+        HBox spinnerBox = new HBox(5, new Label(text), spinner);
+        spinnerBox.setAlignment(Pos.CENTER);
+        return spinnerBox;
+    }
+    //
 
     private Button actionImage(Ikon ikon, String tooltip) {
         Button button = new Button();
