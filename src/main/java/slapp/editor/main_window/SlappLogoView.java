@@ -38,6 +38,10 @@ public class SlappLogoView implements ExerciseView<Label, Label> {
     }
 
     @Override
+    public double getStatementHeight() { return 0.0; }
+    @Override
+    public double getCommentHeight() { return 0.0; }
+    @Override
     public String getExerciseName() { return name; }
     @Override
     public void setExerciseName(String name) {this.name = name; }

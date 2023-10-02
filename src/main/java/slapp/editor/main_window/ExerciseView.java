@@ -6,6 +6,8 @@ import javafx.scene.Node;
 import slapp.editor.decorated_rta.DecoratedRTA;
 
 public interface ExerciseView<T,U> {
+    double getStatementHeight();
+    double getCommentHeight();
     String getExerciseName();
     void setExerciseName(String name);
     T getExerciseStatement();

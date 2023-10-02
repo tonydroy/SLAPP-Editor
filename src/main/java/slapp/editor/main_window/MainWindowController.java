@@ -30,6 +30,7 @@ public class MainWindowController {
         SimpleEditModel dummy = new SimpleEditModel("test", false, 0, new Document("exercise statement"), new Document(), new Document());
         currentExercise = new SimpleEditExercise(dummy, this);
         mainView.setCurrentExerciseView((ExerciseView) currentExercise.getExerciseView());
+        mainView.setupExercise();
     }
 
     public MainWindowView getMainView() { return mainView; }

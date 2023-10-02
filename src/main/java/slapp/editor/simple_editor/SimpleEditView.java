@@ -18,6 +18,9 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, DecoratedRTA> 
     Node exerciseControl = null;
     MainWindowView mainView;
 
+    double statementPrefHeight = 80.0;
+    double commentPrefHeight = 80.0;
+
 
     public SimpleEditView(SimpleEditExercise exercise) {
         this.mainView = exercise.getMainWindowController().getMainView();
@@ -32,8 +35,8 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, DecoratedRTA> 
         RichTextArea exerciseContentEditor = exerciseContent.getEditor();
         RichTextArea exerciseCommentEditor = exerciseComment.getEditor();
 
-        exerciseStatementEditor.setPrefHeight(70);
-        exerciseCommentEditor.setPrefHeight(70);
+        exerciseStatementEditor.setPrefHeight(statementPrefHeight);
+        exerciseCommentEditor.setPrefHeight(commentPrefHeight);
         exerciseStatementEditor.setPromptText("Problem:");
         exerciseCommentEditor.setPromptText("Comment:");
         exerciseContentEditor.setPromptText("Response:");
@@ -54,6 +57,13 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, DecoratedRTA> 
             }
         });
     }
+
+    @Override
+    public double getStatementHeight() { return statementPrefHeight; }
+    @Override
+    public double getCommentHeight() { return commentPrefHeight; }
+
+
 
     @Override
     public String getExerciseName() {return exerciseName; }

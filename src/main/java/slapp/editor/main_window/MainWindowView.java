@@ -50,6 +50,10 @@ public class MainWindowView {
     private DecoratedRTA commentDecoratedRTA;
     private Node commentNode;
     private Node controlNode;
+    private VBox statusBar;
+    private HBox upperStatusBox;
+    private HBox lowerStatusBox;
+    private DoubleProperty centerHeightProperty;
 
 
     public MainWindowView(MainWindowController controller) {
@@ -61,9 +65,6 @@ public class MainWindowView {
 
     private void setupWindow() {
 
-
-
-
         Menu assignmentMenu = new Menu("Assignment");
         Menu exerciseMenu = new Menu("Exercise");
         Menu nextExerciseMenu = new Menu("Next");
@@ -73,10 +74,7 @@ public class MainWindowView {
         Menu helpMenu = new Menu("Help");
         menuBar = new MenuBar(assignmentMenu, exerciseMenu, nextExerciseMenu, previousExerciseMenu, goToExerciseMenu, printMenu, helpMenu);
 
-
         exerciseMenu.getItems().add(newExerciseItem);
-
-
 
         zoomLabel = new Label(" Zoom ");
         zoomSpinner = new Spinner(25, 500, 100, 5);
@@ -89,31 +87,31 @@ public class MainWindowView {
             updateZoom(nv);
         });
 
-        centerBox = new VBox(statementNode, contentNode, commentNode);
-
+        centerBox = new VBox();
         centerBox.setSpacing(3);
-        Group centerGroup = new Group(centerBox);
-        borderPane.setCenter(centerGroup);
-        borderPane.setMargin(centerGroup, new Insets(20,20,0,20));
 
-        VBox statusBar = new VBox(5);
-        HBox upperStatusBox = new HBox(10);
-        HBox lowerStatusBox = new HBox(10);
-        statusBar.setPadding(new Insets(10,20,20,20));
-        upperStatusBox.getChildren().add(new Label("Exercise: " + currentExerciseView.getExerciseName()));
+//        ScrollPane scrollPane = new ScrollPane(centerBox);
+
+        Group centerGroup = new Group(centerBox);  //this lets scene width scale with nodes https://stackoverflow.com/questions/67724906/javafx-scaling-does-not-resize-the-component-in-parent-container
+
+
+
+
+        borderPane.setCenter(centerGroup);
+        borderPane.setMargin(centerGroup, new Insets(10,20,0,20));
+
+        statusBar = new VBox(5);
+        upperStatusBox = new HBox(10);
+        lowerStatusBox = new HBox(10);
+        statusBar.setPadding(new Insets(0,20,20,20));
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         lowerStatusBox.getChildren().add(new Label(dtf.format(LocalDateTime.now())));
         statusBar.getChildren().addAll(upperStatusBox, lowerStatusBox);
-     //   lowerStatusBox.getChildren().add()
-
-     //   HBox statusBar = new HBox(10);
-     //   statusBar.getStyleClass().add("status-bar");
-     //   statusBar.setAlignment(Pos.TOP_LEFT);
-
-     //   statusBar.getChildren().setAll(new Label("Assignment/Exercise info:"));
         borderPane.setBottom(statusBar);
 
         borderPane.setLeft(controlNode);
+
+
 
         scene = new Scene(borderPane);
         scene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
@@ -139,33 +137,54 @@ public class MainWindowView {
             stage.close();
         });
 
-        //this seems odd: print utilities gives its value in pt.  RTA documentation says it is measured in px.
-        //so I expect to set width at 16/12 * px.  But this gives a page too wide.  Is RTA measuring in pt?
-        //similarly for height.
-        commentDecoratedRTA.getEditor().setPrefWidth(PrintUtilities.getPageWidth());
+
 
         stage.show();
 
-        // with content box enclosed in Group, the content pane does not size with window.
-        // this restores sizing (inserting height from top box manually)
-        double fixedHeight = (statementNode.getLayoutBounds().getHeight() + commentDecoratedRTA.getEditor().getLayoutBounds().getHeight())  * scale + statusBar.getHeight() + 250;
-        DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
-        DoubleProperty maximumHeightProperty = new SimpleDoubleProperty(PrintUtilities.getPageHeight() );
-        DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
-        DoubleProperty centerHeightProperty = new SimpleDoubleProperty();
-        centerHeightProperty.bind(Bindings.min(maximumHeightProperty, (stage.heightProperty().subtract(fixedValueProperty)).divide(scaleProperty)));
-        currentExerciseView.getContentHeightProperty().bind(centerHeightProperty);
 
-        Platform.runLater(() -> contentNode.requestFocus());
+
+
     }
 
-    private void setupExercise() {
+    public void setupExercise() {
         this.statementNode = currentExerciseView.getExerciseStatementNode();
         this.contentNode = currentExerciseView.getExerciseContentNode();
         this.commentDecoratedRTA = currentExerciseView.getExerciseComment();
         this.commentNode = commentDecoratedRTA.getEditor();
         this.controlNode = currentExerciseView.getExerciseControl();
 
+        //this seems odd: print utilities gives its value in pt.  RTA documentation says it is measured in px.
+        //so I expect to set width at 16/12 * px.  But this gives a page too wide.  Is RTA measuring in pt?
+        //similarly for height.
+        commentDecoratedRTA.getEditor().setPrefWidth(PrintUtilities.getPageWidth());
+
+        centerBox.getChildren().clear();
+        centerBox.getChildren().addAll(statementNode, contentNode, commentNode);
+
+        upperStatusBox.getChildren().clear();
+        upperStatusBox.getChildren().add(new Label("Exercise: " + currentExerciseView.getExerciseName()));
+
+        centerBox.layout();
+
+        setCenterHgrow();
+
+
+
+
+
+        Platform.runLater(() -> contentNode.requestFocus());
+    }
+
+    private void setCenterHgrow() {
+        // with content box enclosed in Group, the content pane does not size with window.
+        // this restores sizing (inserting height from top box manually)
+        double fixedHeight = (currentExerciseView.getStatementHeight() + currentExerciseView.getCommentHeight())  * scale + statusBar.getHeight() + 250;
+        DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
+        DoubleProperty maximumHeightProperty = new SimpleDoubleProperty(PrintUtilities.getPageHeight() );
+        DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
+        centerHeightProperty = new SimpleDoubleProperty();
+        centerHeightProperty.bind(Bindings.min(maximumHeightProperty, (stage.heightProperty().subtract(fixedValueProperty)).divide(scaleProperty)));
+        currentExerciseView.getContentHeightProperty().bind(centerHeightProperty);
     }
 
     private void updateZoom(int zoom) {
@@ -173,6 +192,7 @@ public class MainWindowView {
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
         scene.getWindow().setWidth(Math.max(minStageWidth, PrintUtilities.getPageWidth() * scale + 55));
+        setCenterHgrow();
     }
 
     public void editorInFocus(DecoratedRTA decoratedRTA){
