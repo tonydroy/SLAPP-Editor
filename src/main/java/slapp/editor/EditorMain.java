@@ -19,11 +19,10 @@ public class EditorMain extends Application {
         this.mainStage = stage;
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon32x32.png")));
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
-        MainWindowController mainWindowController = new MainWindowController(stage);
+        MainWindowController mainWindowController = new MainWindowController();
 
 //        ExtendedDemo demo = new ExtendedDemo(stage); demo.start();
     }
-
 
 
 }

@@ -1,32 +1,41 @@
 package slapp.editor.main_window;
 
-import com.gluonhq.richtextarea.model.DecorationModel;
 import com.gluonhq.richtextarea.model.Document;
-import com.gluonhq.richtextarea.model.ParagraphDecoration;
-import com.gluonhq.richtextarea.model.TextDecoration;
-import javafx.stage.Stage;
-
-import java.util.List;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.ChoiceBox;
+import slapp.editor.EditorMain;
+import slapp.editor.simple_editor.SimpleEditExercise;
+import javafx.stage.Popup;
+import slapp.editor.simple_editor.SimpleEditModel;
 
 public class MainWindowController {
 
-    MainWindowController mainController;
     MainWindowView mainView;
     MainWindowModel mainModel;
+    Exercise currentExercise;
 
-    public MainWindowController(Stage stage) {
-        mainController = this;
-        mainView = new MainWindowView(stage, mainController);
+    public MainWindowController() {
         mainModel = new MainWindowModel();
+        mainView = new MainWindowView(this);
+
+        setup();
     }
 
-    //stub
-    public Document getAssignmentInfo() {
-        Document assignmentInfo = new Document("Assignment Info:\n More info:",
-               List.of(new DecorationModel(0, 27,
-                   TextDecoration.builder().presets().fontSize(11).build(),
-                   ParagraphDecoration.builder().presets().build())), 0);
-        return assignmentInfo;
+    void setup() {
+        mainView.getNewExerciseItem().setOnAction(e -> getNewExercise());
     }
+
+    void getNewExercise(){
+        SimpleEditModel dummy = new SimpleEditModel("test", false, 0, new Document("exercise statement"), new Document(), new Document());
+        currentExercise = new SimpleEditExercise(dummy, this);
+        mainView.setCurrentExerciseView((ExerciseView) currentExercise.getExerciseView());
+    }
+
+    public MainWindowView getMainView() { return mainView; }
+
+
+
+
 
 }

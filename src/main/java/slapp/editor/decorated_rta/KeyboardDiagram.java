@@ -1,7 +1,8 @@
 package slapp.editor.decorated_rta;
 
 import com.gluonhq.richtextarea.RichTextAreaSkin;
-import javafx.beans.property.*;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,44 +17,100 @@ import javafx.scene.text.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import slapp.editor.EditorMain;
+
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class KeyboardDiagram {
-    private ExtendedDemo editorView;
-    private Stage keyboardDiagramStage;
-    private BooleanProperty keyboardDiagramButtonSelected;
+    private DecoratedRTA decoratedRTA;
     private Map<Character, Text> keyTypedTextMap = new HashMap<>();
     private Map<KeyCombination, Text> keyPressedTextMap = new HashMap<>();
-    private double primaryFontSize;
+    private double mapFontSize = 14.0;
     private Font textFont;
     private Font symbolFont;
-    private Font titleFont = Font.font("Noto Sans", FontWeight.BOLD, FontPosture.REGULAR, 20);
-    private int baseKeyWidth = 10;  //the width of a standard key is 4 of these units
+    private Text title1;
+    private GridPane normalBoard;
+    private Text title2;
+    private GridPane shiftBoard;
+    private Text title3;
+    private GridPane altBoard;
+    private Text title4;
+    private GridPane shiftAltBoard;
+    private Text title5;
+    private GridPane ctrlShiftAltBoard;
+    private Text ctrlChars;
+    private boolean shown = false;
+    private static KeyboardDiagram uniqueKeyboardDiagram;
+    private static Font titleFont;
+    private static int baseKeyWidth;  //the width of a standard key is 4 of these units
+    private static DoubleProperty keyboardWindowX;
+    private static DoubleProperty keyboardWindowY;
+    private static DoubleProperty keyboardWindowWidth;
+    private static DoubleProperty keyboardWindowHeight;
+    private static VBox boardsBox;
+    private static ScrollPane scrollPane;
+    private static Scene scene;
+    private static Stage stage;
 
-       KeyboardDiagram(Stage mainStage, ExtendedDemo editorView, BooleanProperty keyboardDiagramButtonSelected) {
-        this.editorView = editorView;
-        this.keyboardDiagramButtonSelected = keyboardDiagramButtonSelected;
-        this.primaryFontSize = editorView.getPrimaryFontSize();
-        textFont = Font.font("Noto Sans", FontWeight.NORMAL, FontPosture.REGULAR, primaryFontSize);
-        symbolFont = Font.font("Noto Sans Math", FontWeight.NORMAL, FontPosture.REGULAR, primaryFontSize);
+    static {
+        titleFont = titleFont = Font.font("Noto Sans", FontWeight.BOLD, FontPosture.REGULAR, 20);
+        baseKeyWidth = 10;
+        boardsBox = new VBox();
+        boardsBox.setAlignment(Pos.CENTER_LEFT);
+        boardsBox.setSpacing(20.0);
+        scrollPane = new ScrollPane(boardsBox);
+        scrollPane.setPadding(new Insets(10,10,10,10));
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scene = new Scene(scrollPane);
+        stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("Keyboard Diagrams");
+        stage.initModality(Modality.NONE);
+        stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
 
-        //initialize text maps
-        Map<Character, String> keyTypedCharMap = ((RichTextAreaSkin) editorView.getEditor().getSkin()).getKeyTypedCharMap();
-        Map<KeyCodeCombination, String> keyPressedCharMap = ((RichTextAreaSkin) editorView.getEditor().getSkin()).getKeyPressedCharMap();
+        keyboardWindowX = new SimpleDoubleProperty();
+        keyboardWindowY = new SimpleDoubleProperty();
+        keyboardWindowHeight = new SimpleDoubleProperty();
+        keyboardWindowWidth = new SimpleDoubleProperty();
+        keyboardWindowX.bind(stage.xProperty());
+        keyboardWindowY.bind(stage.yProperty());
+        keyboardWindowWidth.bind(stage.widthProperty());
+        keyboardWindowHeight.bind(stage.heightProperty());
+    }
+    private KeyboardDiagram(){}
+    public static KeyboardDiagram getInstance() {
+        if (uniqueKeyboardDiagram == null) {
+            uniqueKeyboardDiagram = new KeyboardDiagram();
+        }
+        return uniqueKeyboardDiagram;
+    }
+
+    public void initialize(DecoratedRTA decoratedRTA, double scale) {
+        this.decoratedRTA = decoratedRTA;
+        this.mapFontSize = decoratedRTA.getPrimaryFontSize() * scale;
+        textFont = Font.font("Noto Sans", FontWeight.NORMAL, FontPosture.REGULAR, mapFontSize);
+        symbolFont = Font.font("Noto Sans Math", FontWeight.NORMAL, FontPosture.REGULAR, mapFontSize);
+        stage.setOnCloseRequest(e -> {
+            e.consume();
+            hide();
+        });
+
+        //initialize blank text maps
+        Map<Character, String> keyTypedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyTypedCharMap();
+        Map<KeyCodeCombination, String> keyPressedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyPressedCharMap();
         for (char key : keyTypedCharMap.keySet()) {
-            keyTypedTextMap.put(key, new Text());
+        keyTypedTextMap.put(key, new Text());
         }
         for (KeyCombination key : keyPressedCharMap.keySet()) {
-            keyPressedTextMap.put(key, new Text());
+        keyPressedTextMap.put(key, new Text());
         }
-        updateTextMaps();
 
-        Text title1 = new Text("Normal");
+        //initialize keyboards
+        title1 = new Text("Normal");
         title1.setFont(titleFont);
 
-        GridPane normalBoard = new GridPane();
+        normalBoard = new GridPane();
         normalBoard.add(getTypedKey('`',4),0,0, 4, 1);
         normalBoard.add(getTypedKey('1',4),4,0,4,1);
         normalBoard.add(getTypedKey('2',4),8,0,4,1);
@@ -117,10 +174,10 @@ public class KeyboardDiagram {
         normalBoard.add(getControlKey("alternate/\n option",8),43,4,8,1);
         normalBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 
-        Text title2 = new Text("Shift");
+        title2 = new Text("Shift");
         title2.setFont(titleFont);
 
-        GridPane shiftBoard = new GridPane();
+        shiftBoard = new GridPane();
         shiftBoard.add(getTypedKey('~',4),0,0, 4, 1);
         shiftBoard.add(getTypedKey('!',4),4,0,4,1);
         shiftBoard.add(getTypedKey('@',4),8,0,4,1);
@@ -184,10 +241,10 @@ public class KeyboardDiagram {
         shiftBoard.add(getControlKey("alternate/\n option",8),43,4,8,1);
         shiftBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 
-        Text title3 = new Text("Alt");
+        title3 = new Text("Alt");
         title3.setFont(titleFont);
 
-        GridPane altBoard = new GridPane();
+        altBoard = new GridPane();
         altBoard.add(getAltKey(KeyCode.BACK_QUOTE,4),0,0, 4, 1);
         altBoard.add(getAltKey(KeyCode.DIGIT1,4),4,0,4,1);
         altBoard.add(getAltKey(KeyCode.DIGIT2,4),8,0,4,1);
@@ -251,10 +308,10 @@ public class KeyboardDiagram {
         altBoard.add(getControlKey("alternate/\n option",8),43,4,8,1);
         altBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 
-        Text title4 = new Text("Shift-Alt");
+        title4 = new Text("Shift-Alt");
         title4.setFont(titleFont);
 
-        GridPane shiftAltBoard = new GridPane();
+        shiftAltBoard = new GridPane();
         shiftAltBoard.add(getShiftAltKey(KeyCode.BACK_QUOTE,4),0,0, 4, 1);
         shiftAltBoard.add(getShiftAltKey(KeyCode.DIGIT1,4),4,0,4,1);
         shiftAltBoard.add(getShiftAltKey(KeyCode.DIGIT2,4),8,0,4,1);
@@ -318,10 +375,10 @@ public class KeyboardDiagram {
         shiftAltBoard.add(getControlKey("alternate/\n option",8),43,4,8,1);
         shiftAltBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 
-        Text title5 = new Text("Ctrl-Shift-Alt");
+        title5 = new Text("Ctrl-Shift-Alt");
         title5.setFont(titleFont);
 
-        GridPane ctrlShiftAltBoard = new GridPane();
+        ctrlShiftAltBoard = new GridPane();
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.BACK_QUOTE,4),0,0, 4, 1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.DIGIT1,4),4,0,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.DIGIT2,4),8,0,4,1);
@@ -334,11 +391,11 @@ public class KeyboardDiagram {
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.DIGIT9,4),36,0,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.DIGIT0,4),40,0,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.MINUS,4),44,0,4,1);
-//        ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.EQUALS,4),48,0,4,1);
+
         ctrlShiftAltBoard.add(getFixedCharKey("\u035e\ud835\udc5c\u035e\ud835\udc5c",4),48,0,4,1);
         ctrlShiftAltBoard.add(getControlKey("BackDel", 8),52,0,8,1);
-
         ctrlShiftAltBoard.add(getControlKey("Tab",6),0,1,6,1);
+
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.Q,4),6,1,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.W,4),10,1,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.E,4),14,1,4,1);
@@ -388,46 +445,16 @@ public class KeyboardDiagram {
         ctrlShiftAltBoard.add(getControlKey("alternate/\n option",8),43,4,8,1);
         ctrlShiftAltBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 
-        Text ctrlChars = new Text("\ud83e\udc46 Ctrl:5, :6, :7, :8, :9 select keyboards (like keyboard dropdown).\n" +
-                "    Ctrl:B bold, :I italic, :U underline, :0 (zero) overline\n" +
-                "    Ctrl:= subscript, :=(+shift) superscript, :- back subscript, :-(+shift) back superscript\n" +
-                "    Ctrl-A select all, :C copy, :X cut, :V paste, :Z undo, :Z(+shift) redo\n\n");
+        ctrlChars = new Text("\ud83e\udc46 Ctrl:5, :6, :7, :8, :9 select keyboards (like keyboard dropdown).\n" +
+        "    Ctrl:B bold, :I italic, :U underline, :0 (zero) overline\n" +
+        "    Ctrl:= subscript, :=(+shift) superscript, :- back subscript, :-(+shift) back superscript\n" +
+        "    Ctrl-A select all, :C copy, :X cut, :V paste, :Z undo, :Z(+shift) redo\n\n");
 
         ctrlChars.setFont(textFont);
-
-        VBox vBox = new VBox();
-        vBox.getChildren().addAll(title1, normalBoard, title2, shiftBoard, title3, altBoard, title4, shiftAltBoard, title5, ctrlShiftAltBoard, ctrlChars);
-        vBox.setAlignment(Pos.CENTER_LEFT);
-        VBox.setMargin(normalBoard, new Insets(0,0,20,0));
-        vBox.setMargin(shiftBoard, new Insets(0,0,20,0));
-        vBox.setMargin(altBoard, new Insets(0,0,20,0));
-        vBox.setMargin(shiftAltBoard, new Insets(0,0,20,0));
-        vBox.setMargin(ctrlShiftAltBoard, new Insets(0,0,20,0));
-        vBox.setMargin(ctrlChars, new Insets(0,0,20,0));
-
-        ScrollPane scrollPane = new ScrollPane(vBox);
-        scrollPane.setPadding(new Insets(10,10,10,10));
-        //why does scroll pane think keyboards are so wide??
-
-        Scene scene = new Scene(scrollPane);
-        keyboardDiagramStage = new Stage();
-        keyboardDiagramStage.setOnCloseRequest(e -> {
-           e.consume();
-           closeKeyboardDiagram();
-        });
-        keyboardDiagramStage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
-        keyboardDiagramStage.setScene(scene);
-        keyboardDiagramStage.setTitle("Keyboard Diagrams");
-        keyboardDiagramStage.initModality(Modality.NONE);
-        keyboardDiagramStage.setX(editorView.getKeyboardWindowX());
-        keyboardDiagramStage.setY(editorView.getKeyboardWindowY());
-        keyboardDiagramStage.setWidth(editorView.getKeyboardWindowWidth());
-        keyboardDiagramStage.setHeight(editorView.getKeyboardWindowHeight());
-        keyboardDiagramStage.show();
-    }
+        }
     StackPane getControlKey(String name, int width) {
         Text text = new Text(name);
-        text.setFont(new Font("Noto Sans",primaryFontSize * 2/3));
+        text.setFont(new Font("Noto Sans", mapFontSize * 2/3));
         TextFlow flow = new TextFlow(text);
         flow.setTextAlignment(TextAlignment.CENTER);
         StackPane pane = new StackPane(flow);
@@ -498,9 +525,9 @@ public class KeyboardDiagram {
         return pane;
     }
 
-    public void updateTextMaps() {
-        Map<Character, String> keyTypedCharMap = ((RichTextAreaSkin) editorView.getEditor().getSkin()).getKeyTypedCharMap();
-        Map<KeyCodeCombination, String> keyPressedCharMap = ((RichTextAreaSkin) editorView.getEditor().getSkin()).getKeyPressedCharMap();
+    public void updateAndShow() {
+        Map<Character, String> keyTypedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyTypedCharMap();
+        Map<KeyCodeCombination, String> keyPressedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyPressedCharMap();
 
         for (Map.Entry<Character, Text> entry : keyTypedTextMap.entrySet()) {
             entry.getValue().setText(keyTypedCharMap.get(entry.getKey()));
@@ -508,16 +535,80 @@ public class KeyboardDiagram {
         for (Map.Entry<KeyCombination, Text> entry : keyPressedTextMap.entrySet()) {
             entry.getValue().setText(keyPressedCharMap.get(entry.getKey()));
         }
+        boardsBox.getChildren().clear();
+        boardsBox.getChildren().addAll(title1, normalBoard, title2, shiftBoard, title3, altBoard, title4, shiftAltBoard, title5, ctrlShiftAltBoard, ctrlChars);
+        if (!shown) {
+            stage.setX(EditorMain.mainStage.getX() + 860);
+            stage.setY(EditorMain.mainStage.getY() + 25);
+            stage.setWidth(650);
+            stage.setHeight(940);
+            shown = true;
+        }
+        stage.show();
     }
 
-    public void closeKeyboardDiagram() {
-        editorView.setKeyboardWindowX(keyboardDiagramStage.getX());
-        editorView.setKeyboardWindowY(keyboardDiagramStage.getY());
-        editorView.setKeyboardWindowWidth(keyboardDiagramStage.getWidth());
-        editorView.setKeyboardWindowHeight(keyboardDiagramStage.getHeight());
-        keyboardDiagramButtonSelected.setValue(false);
-        keyboardDiagramStage.close();
+    public void hide() {
+        stage.hide();
+        decoratedRTA.getEditor().requestFocus();
     }
+
+    public void close() {
+        hide();
+        stage.close();
+    }
+
+    public static double getKeyboardWindowX() {
+        return keyboardWindowX.get();
+    }
+
+    public static DoubleProperty keyboardWindowXProperty() {
+        return keyboardWindowX;
+    }
+
+    public static void setKeyboardWindowX(double keyboardWindowX) {
+        KeyboardDiagram.keyboardWindowX.set(keyboardWindowX);
+    }
+
+    public static double getKeyboardWindowY() {
+        return keyboardWindowY.get();
+    }
+
+    public static DoubleProperty keyboardWindowYProperty() {
+        return keyboardWindowY;
+    }
+
+    public static void setKeyboardWindowY(double keyboardWindowY) {
+        KeyboardDiagram.keyboardWindowY.set(keyboardWindowY);
+    }
+
+    public static double getKeyboardWindowWidth() {
+        return keyboardWindowWidth.get();
+    }
+
+    public static DoubleProperty keyboardWindowWidthProperty() {
+        return keyboardWindowWidth;
+    }
+
+    public static void setKeyboardWindowWidth(double keyboardWindowWidth) {
+        KeyboardDiagram.keyboardWindowWidth.set(keyboardWindowWidth);
+    }
+
+    public static double getKeyboardWindowHeight() {
+        return keyboardWindowHeight.get();
+    }
+
+    public static DoubleProperty keyboardWindowHeightProperty() {
+        return keyboardWindowHeight;
+    }
+
+    public static void setKeyboardWindowHeight(double keyboardWindowHeight) {
+        KeyboardDiagram.keyboardWindowHeight.set(keyboardWindowHeight);
+    }
+
+    public boolean isShowing() {
+        return stage.isShowing();
+    }
+
 }
 
 

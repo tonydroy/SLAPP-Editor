@@ -115,7 +115,7 @@ public class ExtendedDemo {
     private final Stage stage;
     private final RichTextArea editor;
     private final ExtendedDemo simpleEditorView;
-    private KeyboardDiagram keyboardDiagram;
+    private ExDemKeybdDiagram keyboardDiagram;
     private double mainWindowX;
     private double  mainWindowY;
     private double mainWindowWidth = 960.0;
@@ -250,7 +250,7 @@ public class ExtendedDemo {
                 keyboardPositionInitialized = true;
             }
             if (keyboardDiagramButton.isSelected()) {
-                keyboardDiagram = new KeyboardDiagram(stage, simpleEditorView,  keyboardDiagramButton.selectedProperty());
+                keyboardDiagram = new ExDemKeybdDiagram(stage, simpleEditorView,  keyboardDiagramButton.selectedProperty());
             }
             else keyboardDiagram.closeKeyboardDiagram();
             editor.requestFocus();

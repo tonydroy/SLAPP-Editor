@@ -11,36 +11,26 @@ import com.gluonhq.richtextarea.action.TextDecorateAction;
 import com.gluonhq.richtextarea.model.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.skin.ComboBoxListViewSkin;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.stage.FileChooser;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 import slapp.editor.EditorMain;
-import slapp.editor.main_window.MainWindowView;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,17 +64,13 @@ public class DecoratedRTA {
     private static Stage mainStage;
     private final RichTextArea editor;
     private final DecoratedRTA decoratedRTA;
-    private RTAKeyboardDiagram rtaKeyboardDiagram;
-    private double keyboardWindowX;
-    private double keyboardWindowY;
-    private double keyboardWindowWidth = 650.0;
-    private double keyboardWindowHeight = 940.0;
-    private boolean keyboardPositionInitialized = false;
     private double primaryFontSize = 11.0;  //see corresponding value in TextDecoration.java
     private ToolBar editToolbar;
     private ToolBar fontsToolbar;
     private ToolBar paragraphToolbar;
     private ToggleButton overlineButton;
+
+    private ToggleButton keyboardDiagramButton;
     ChoiceBox<RichTextAreaSkin.KeyMapValue> keyboardSelector;
     public DecoratedRTA() {
         decoratedRTA = this;
@@ -185,22 +171,16 @@ public class DecoratedRTA {
         overlineButton.setPrefSize(34,28);
 
         //keyboardDiagramButton
-        ToggleButton keyboardDiagramButton = new ToggleButton();
+        keyboardDiagramButton = new ToggleButton();
         keyboardDiagramButton.setTooltip(new Tooltip("Show Keyboard Diagram"));
         FontIcon icon = new FontIcon(LineAwesomeSolid.KEYBOARD);
         icon.setIconSize(20);
         keyboardDiagramButton.setGraphic(icon);
         keyboardDiagramButton.setOnAction(e -> {
-            if (!keyboardPositionInitialized) {
-                keyboardWindowX = mainStage.getX() + editor.getScene().getWindow().getWidth();
-                keyboardWindowY = mainStage.getY() + 25;
-                keyboardPositionInitialized = true;
-            }
             if (keyboardDiagramButton.isSelected()) {
-                rtaKeyboardDiagram = new RTAKeyboardDiagram(decoratedRTA,  keyboardDiagramButton.selectedProperty());
+                KeyboardDiagram.getInstance().updateAndShow();
             }
-            else rtaKeyboardDiagram.closeKeyboardDiagram();
-            editor.requestFocus();
+            else KeyboardDiagram.getInstance().hide();
         });
 
         //unicode field
@@ -250,7 +230,7 @@ public class DecoratedRTA {
         fontsToolbar.getItems().setAll(
                 keyboardSelector,
                 unicodeField,
-                wideSeparator(1.1),
+                wideSeparator(0.9),
 
                 createToggleButton(LineAwesomeSolid.BOLD, "Bold (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
                 createToggleButton(LineAwesomeSolid.ITALIC, "Italic (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build())),
@@ -263,7 +243,7 @@ public class DecoratedRTA {
                 createColoredToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
                 createToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).transSuperscript(false).transSubscript(false).build())),
                 createColoredToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build())),
-                wideSeparator(1.1),
+                wideSeparator(0.9),
 
                 textForeground,
                 textBackground
@@ -299,7 +279,7 @@ public class DecoratedRTA {
         keyboardSelector.valueProperty().bindBidirectional(((RichTextAreaSkin) editor.getSkin()).keyMapStateProperty());
         keyboardSelector.getSelectionModel().selectedItemProperty().addListener((v, ov, nv) -> {
             ((RichTextAreaSkin) editor.getSkin()).setMaps(nv);
-            if (rtaKeyboardDiagram != null) rtaKeyboardDiagram.updateTextMaps();
+            if (KeyboardDiagram.getInstance().isShowing()) KeyboardDiagram.getInstance().updateAndShow();
             editor.requestFocus();   //have not been able to find way to stop keyboard window from stealing focus see https://stackoverflow.com/questions/33151460/javafx-stop-new-window-stealing-focus
         });
     }
@@ -606,31 +586,6 @@ public class DecoratedRTA {
         }
     }
 
-    public void setKeyboardWindowX(double windowX) {
-        keyboardWindowX = windowX;
-    }
-    public void setKeyboardWindowY(double windowY) {
-        keyboardWindowY = windowY;
-    }
-    public void setKeyboardWindowWidth(double windowWidth) {
-        keyboardWindowWidth = windowWidth;
-    }
-    public void setKeyboardWindowHeight(double windowHeight) {
-        keyboardWindowHeight = windowHeight;
-    }
-    public double getKeyboardWindowX() {
-        return keyboardWindowX;
-    }
-    public double getKeyboardWindowY() {
-        return keyboardWindowY;
-    }
-    public double getKeyboardWindowWidth() {
-        return keyboardWindowWidth;
-    }
-    public double getKeyboardWindowHeight() {
-        return keyboardWindowHeight;
-    }
-
     public RichTextArea getEditor() {
         return editor;
     }
@@ -651,8 +606,9 @@ public class DecoratedRTA {
         return paragraphToolbar;
     }
 
-    public RTAKeyboardDiagram getRtaKeyboardDiagram() {
-        return rtaKeyboardDiagram;
+    public ToggleButton getKeyboardDiagramButton () {
+        return keyboardDiagramButton;
     }
+
 
 }

@@ -1,12 +1,30 @@
 package slapp.editor.main_window;
 
-public interface ExerciseModel {
+import com.gluonhq.richtextarea.model.Document;
+
+import java.io.Serializable;
+
+public interface ExerciseModel<T, U> {
 
     //insert as stub for future versions
     // int check requests
     // int help requests
 
     ExerciseType getExerciseType();
-    ExerciseModel getExerciseModel();
-    void setExerciseModel();
+    String getExerciseName();
+    void setExerciseName(String name);
+    boolean isStarted();
+    void setStarted(boolean started);
+    int getPointsPossible();
+    void setPointsPossible(int pointsPossible);
+    T getExerciseStatement();
+    void setExerciseStatement(T exerciseStatement);
+    U getExerciseContent();
+    void setExerciseContent(U exerciseContent);
+    Document getExerciseComment();
+    void setExerciseComment(Document exerciseComment);
+
+
 }
+
+

@@ -45,7 +45,7 @@
 }
 
 .rich-text-area:readonly .paragraph-list-view {
-    -fx-background-color: aliceblue;
+   /* -fx-background-color: aliceblue;*/
     /*-fx-border-color: darkgray;*/
 }
 

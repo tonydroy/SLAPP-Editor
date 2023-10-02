@@ -1,12 +1,11 @@
 package slapp.editor.main_window;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -17,49 +16,53 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
+import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.simple_editor.SimpleEditExercise;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class MainWindowView {
-    private Stage stage;
+    private Stage stage = EditorMain.mainStage;
     private MainWindowController mainWindowController;
     private RichTextArea currentEditor;
-    private Exercise currentExercise;
-    private ToolBar editToolbar;
-    private ToolBar fontsToolbar;
-    private ToolBar paragraphToolbar;
+//    private Exercise currentExercise;
+    private ToolBar editToolbar = new ToolBar();
+    private ToolBar fontsToolbar = new ToolBar();
+    private ToolBar paragraphToolbar = new ToolBar();
     private DoubleProperty scaleProperty = new SimpleDoubleProperty(1.0);
     private double scale = 1.0;
     MenuBar menuBar;
-    private VBox topBox;
+    MenuItem newExerciseItem = new MenuItem("New");
+    private VBox topBox = new VBox();
     private VBox centerBox;
     private Spinner<Integer> zoomSpinner;
     private Label zoomLabel;
-    ObjectProperty<VBox> topPane = new SimpleObjectProperty<>();
-    int minStageWidth = 858;
-
+    int minStageWidth = 860;
+    private BorderPane borderPane = new BorderPane();
     private Scene scene;
+    private ExerciseView currentExerciseView;
+    private Node statementNode;
+    private Node contentNode;
+    private DecoratedRTA commentDecoratedRTA;
+    private Node commentNode;
+    private Node controlNode;
 
-    public MainWindowView(Stage stage, MainWindowController controller) {
-        this.stage = stage;
+
+    public MainWindowView(MainWindowController controller) {
         this.mainWindowController = controller;
-        currentExercise = new SimpleEditExercise(this);
-        setup();
+        this.currentExerciseView = new SlappLogoView(this);
+        setupWindow();
+        setupExercise();
     }
 
-    private void setup() {
-        BorderPane root = new BorderPane();
+    private void setupWindow() {
 
-        Node statementNode = currentExercise.getExerciseView().getExerciseStatementNode();
-        Node contentNode = currentExercise.getExerciseView().getExerciseContentNode();
-        DecoratedRTA commentDecoratedRTA = currentExercise.getExerciseView().getExerciseComment();
-        Node commentNode = commentDecoratedRTA.getEditor();
 
-        this.currentEditor = commentDecoratedRTA.getEditor();
-        this.editToolbar = commentDecoratedRTA.getEditToolbar();
-        this.fontsToolbar = commentDecoratedRTA.getFontsToolbar();
-        this.paragraphToolbar = commentDecoratedRTA.getParagraphToolbar();
+
 
         Menu assignmentMenu = new Menu("Assignment");
         Menu exerciseMenu = new Menu("Exercise");
@@ -70,6 +73,11 @@ public class MainWindowView {
         Menu helpMenu = new Menu("Help");
         menuBar = new MenuBar(assignmentMenu, exerciseMenu, nextExerciseMenu, previousExerciseMenu, goToExerciseMenu, printMenu, helpMenu);
 
+
+        exerciseMenu.getItems().add(newExerciseItem);
+
+
+
         zoomLabel = new Label(" Zoom ");
         zoomSpinner = new Spinner(25, 500, 100, 5);
         zoomSpinner.setPrefSize(60,25);
@@ -78,29 +86,36 @@ public class MainWindowView {
             if (increment != null) increment.getOnMouseReleased().handle(null);
             Node decrement = zoomSpinner.lookup(".decrement-arrow-button");
             if (decrement != null) decrement.getOnMouseReleased().handle(null);
-
             updateZoom(nv);
         });
-
-        topBox = new VBox(menuBar, editToolbar, fontsToolbar, paragraphToolbar);
-        root.setTop(topBox);
-        root.topProperty().bind(topPane);
 
         centerBox = new VBox(statementNode, contentNode, commentNode);
 
         centerBox.setSpacing(3);
         Group centerGroup = new Group(centerBox);
-        root.setCenter(centerGroup);
-        root.setMargin(centerGroup, new Insets(20,20,0,20));
+        borderPane.setCenter(centerGroup);
+        borderPane.setMargin(centerGroup, new Insets(20,20,0,20));
 
-        HBox statusBar = new HBox(10);
-        statusBar.getStyleClass().add("status-bar");
-        statusBar.setAlignment(Pos.TOP_LEFT);
+        VBox statusBar = new VBox(5);
+        HBox upperStatusBox = new HBox(10);
+        HBox lowerStatusBox = new HBox(10);
         statusBar.setPadding(new Insets(10,20,20,20));
-        statusBar.getChildren().setAll(new Label("Assignment/Exercise info:"));
-        root.setBottom(statusBar);
+        upperStatusBox.getChildren().add(new Label("Exercise: " + currentExerciseView.getExerciseName()));
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        lowerStatusBox.getChildren().add(new Label(dtf.format(LocalDateTime.now())));
+        statusBar.getChildren().addAll(upperStatusBox, lowerStatusBox);
+     //   lowerStatusBox.getChildren().add()
 
-        scene = new Scene(root);
+     //   HBox statusBar = new HBox(10);
+     //   statusBar.getStyleClass().add("status-bar");
+     //   statusBar.setAlignment(Pos.TOP_LEFT);
+
+     //   statusBar.getChildren().setAll(new Label("Assignment/Exercise info:"));
+        borderPane.setBottom(statusBar);
+
+        borderPane.setLeft(controlNode);
+
+        scene = new Scene(borderPane);
         scene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("SLAPP Editor");
@@ -115,31 +130,42 @@ public class MainWindowView {
         stage.setX(mainWindowX);
         stage.setY(mainWindowY);
 
+        stage.setHeight(800); //this added to keep SlappLogoView on screen (adjust with actual logo) ok in general?
+
+
         stage.setOnCloseRequest(e -> {
             e.consume();
-            //if not null, close keyborad diagram
+            KeyboardDiagram.getInstance().close();
             stage.close();
         });
-
-        stage.show();
 
         //this seems odd: print utilities gives its value in pt.  RTA documentation says it is measured in px.
         //so I expect to set width at 16/12 * px.  But this gives a page too wide.  Is RTA measuring in pt?
         //similarly for height.
-        commentDecoratedRTA.getEditor().setPrefWidth(PrintUtilities.getPageWidth() );
+        commentDecoratedRTA.getEditor().setPrefWidth(PrintUtilities.getPageWidth());
 
+        stage.show();
 
         // with content box enclosed in Group, the content pane does not size with window.
         // this restores sizing (inserting height from top box manually)
-        double fixedHeight = (statementNode.getLayoutBounds().getHeight() + commentNode.getLayoutBounds().getHeight())  * scale + statusBar.getHeight() + 250;
+        double fixedHeight = (statementNode.getLayoutBounds().getHeight() + commentDecoratedRTA.getEditor().getLayoutBounds().getHeight())  * scale + statusBar.getHeight() + 250;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
         DoubleProperty maximumHeightProperty = new SimpleDoubleProperty(PrintUtilities.getPageHeight() );
         DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
         DoubleProperty centerHeightProperty = new SimpleDoubleProperty();
         centerHeightProperty.bind(Bindings.min(maximumHeightProperty, (stage.heightProperty().subtract(fixedValueProperty)).divide(scaleProperty)));
-        currentExercise.getExerciseView().getContentHeightProperty().bind(centerHeightProperty);
+        currentExerciseView.getContentHeightProperty().bind(centerHeightProperty);
 
         Platform.runLater(() -> contentNode.requestFocus());
+    }
+
+    private void setupExercise() {
+        this.statementNode = currentExerciseView.getExerciseStatementNode();
+        this.contentNode = currentExerciseView.getExerciseContentNode();
+        this.commentDecoratedRTA = currentExerciseView.getExerciseComment();
+        this.commentNode = commentDecoratedRTA.getEditor();
+        this.controlNode = currentExerciseView.getExerciseControl();
+
     }
 
     private void updateZoom(int zoom) {
@@ -149,32 +175,34 @@ public class MainWindowView {
         scene.getWindow().setWidth(Math.max(minStageWidth, PrintUtilities.getPageWidth() * scale + 55));
     }
 
-    public void editorInFocus(RichTextArea editor, ToolBar editToolbar, ToolBar fontsToolbar, ToolBar paragraphToolbar){
-        if (!fontsToolbar.getItems().contains(zoomSpinner)) {
-            fontsToolbar.getItems().add(zoomLabel);
-            fontsToolbar.getItems().add(zoomSpinner);
+    public void editorInFocus(DecoratedRTA decoratedRTA){
+        editToolbar = decoratedRTA.getEditToolbar();
+        fontsToolbar = decoratedRTA.getFontsToolbar();
+        paragraphToolbar = decoratedRTA.getParagraphToolbar();
+
+        KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
+        keyboardDiagram.initialize(decoratedRTA, scale);
+        if (keyboardDiagram.isShowing()) {
+            keyboardDiagram.updateAndShow();
         }
+        decoratedRTA.getKeyboardDiagramButton().selectedProperty().setValue(KeyboardDiagram.getInstance().isShowing());
 
+        if (!fontsToolbar.getItems().contains(zoomSpinner)) {
+            fontsToolbar.getItems().addAll(zoomLabel, zoomSpinner);
+        }
+        this.currentEditor = decoratedRTA.getEditor();
         VBox topBox = new VBox(menuBar, editToolbar, fontsToolbar, paragraphToolbar);
-        setTopPane(topBox);
-        this.currentEditor = editor;
-
-        //if it is non-null, update keyboard diagram - a first click on keyboard diagram button uses the current editor
+        topBox.layout();
+        borderPane.topProperty().setValue(topBox);
     }
 
-    void keyMapChanged(RichTextArea editor){
-        //if non-null, update keyboard diagram
+    MenuItem getNewExerciseItem() { return newExerciseItem; }
+
+    public void setCurrentExerciseView(ExerciseView currentExerciseView) {
+        this.currentExerciseView = currentExerciseView;
     }
 
-    public final VBox getTopPane() {
-        return topPane.get();
-    }
-    public final void setTopPane(VBox box) {
-        topPane.set(box);
-    }
-    public final ObjectProperty<VBox> topPanePoperty() {
-        return topPane;
-    }
+
 
 
 }

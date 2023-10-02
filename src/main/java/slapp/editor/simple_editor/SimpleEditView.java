@@ -2,76 +2,95 @@ package slapp.editor.simple_editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
-import slapp.editor.PrintUtilities;
+import javafx.scene.control.Button;
+import javafx.scene.layout.*;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
 
-public class SimpleEditView implements ExerciseView {
+public class SimpleEditView implements ExerciseView<DecoratedRTA, DecoratedRTA> {
 
+    String exerciseName;
     DecoratedRTA exerciseStatement;
     DecoratedRTA exerciseContent;
     DecoratedRTA exerciseComment;
+    Node exerciseControl = null;
     MainWindowView mainView;
 
 
-    public SimpleEditView(MainWindowView mainView) {
+    public SimpleEditView(SimpleEditExercise exercise) {
+        this.mainView = exercise.getMainWindowController().getMainView();
         this.exerciseStatement = new DecoratedRTA();
         this.exerciseContent = new DecoratedRTA();
         this.exerciseComment = new DecoratedRTA();
-        this.mainView = mainView;
-        setup();
+        setup(exercise);
     }
 
-    private void setup() {
+    private void setup(SimpleEditExercise exercise) {
         RichTextArea exerciseStatementEditor = exerciseStatement.getEditor();
         RichTextArea exerciseContentEditor = exerciseContent.getEditor();
         RichTextArea exerciseCommentEditor = exerciseComment.getEditor();
 
         exerciseStatementEditor.setPrefHeight(70);
         exerciseCommentEditor.setPrefHeight(70);
-
-//        exerciseCommentEditor.setPrefWidth(PrintUtilities.getPageWidth() );
-//        double pageWidth = PrintUtilities.getPageWidth() * 12.0/16.0;
-//        exerciseContentEditor.setPrefWidth(pageWidth);
-//        exerciseContentEditor.setContentAreaWidth(pageWidth - 20); this does not force scrollbar when window is too small
-
         exerciseStatementEditor.setPromptText("Problem:");
         exerciseCommentEditor.setPromptText("Comment:");
         exerciseContentEditor.setPromptText("Response:");
 
         exerciseStatementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(exerciseStatementEditor, exerciseStatement.getEditToolbar(), exerciseStatement.getFontsToolbar(), exerciseStatement.getParagraphToolbar());
+                mainView.editorInFocus(exerciseStatement);
             }
         });
         exerciseContentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(exerciseContentEditor, exerciseContent.getEditToolbar(), exerciseContent.getFontsToolbar(), exerciseContent.getParagraphToolbar());
+                mainView.editorInFocus(exerciseContent);
             }
         });
         exerciseCommentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(exerciseCommentEditor, exerciseComment.getEditToolbar(), exerciseComment.getFontsToolbar(), exerciseComment.getParagraphToolbar());
+                mainView.editorInFocus(exerciseComment);
             }
         });
-
     }
 
     @Override
-    public Node getExerciseStatementNode() { return exerciseStatement.getEditor(); }
+    public String getExerciseName() {return exerciseName; }
     @Override
-    public Node getExerciseContentNode() {
-        return exerciseContent.getEditor();
+    public void setExerciseName(String name) { this.exerciseName = name; }
+    @Override
+    public DecoratedRTA getExerciseStatement() { return exerciseStatement; }
+    @Override
+    public void setExerciseStatement(DecoratedRTA exerciseStatement) {
+        this.exerciseStatement = exerciseStatement;
     }
+    @Override
+    public DecoratedRTA getExerciseContent() {
+        return exerciseContent;
+    }
+    @Override
+    public void setExerciseContent(DecoratedRTA exerciseContent) { this.exerciseContent = exerciseContent; }
     @Override
     public DecoratedRTA getExerciseComment() {
         return exerciseComment;
     }
-    public DoubleProperty getContentHeightProperty() { return exerciseContent.getEditor().prefHeightProperty(); }
+    @Override
+    public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment; }
+    @Override
+    public Node getExerciseControl() { return exerciseControl; }
+    public void setExerciseControl(Node control) { this.exerciseControl = control; }
+    public Node getExerciseStatementNode() {
+        return exerciseStatement.getEditor();
+    }
+    public Node getExerciseContentNode() {
+        return exerciseContent.getEditor();
+    }
+    public DoubleProperty getContentHeightProperty() {
+        return exerciseContent.getEditor().prefHeightProperty();
+    }
+
+
 
 
 }
