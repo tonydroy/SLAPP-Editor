@@ -12,5 +12,6 @@ public enum ExerciseType {
     private ExerciseType(String label) {
         this.label = label;
     }
+    public String toString() { return label; }
 
 }

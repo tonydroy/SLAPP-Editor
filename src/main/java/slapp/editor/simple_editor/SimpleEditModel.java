@@ -8,14 +8,14 @@ import java.io.Serializable;
 
 public class SimpleEditModel implements ExerciseModel<Document, Document>, Serializable {
 
-
+    private ExerciseType exerciseType = ExerciseType.SIMPLE_EDITOR;
     private String exerciseName = new String("");
     private boolean started = false;
     private int pointsPossible = 0;
     private Document exerciseStatement = new Document();
     private Document exerciseContent = new Document();
     private Document exerciseComment = new Document();
-    private ExerciseType exerciseType = ExerciseType.SIMPLE_EDITOR;
+
 
     public SimpleEditModel() {}
     public SimpleEditModel(String name, boolean started, int pointsPossible, Document exerciseStatement, Document exerciseContent, Document exerciseComment) {

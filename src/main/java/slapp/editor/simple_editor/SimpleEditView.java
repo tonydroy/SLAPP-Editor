@@ -4,7 +4,9 @@ import com.gluonhq.richtextarea.RichTextArea;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.*;
+import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
@@ -37,6 +39,9 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, DecoratedRTA> 
 
         exerciseStatementEditor.setPrefHeight(statementPrefHeight);
         exerciseCommentEditor.setPrefHeight(commentPrefHeight);
+
+
+
         exerciseStatementEditor.setPromptText("Problem:");
         exerciseCommentEditor.setPromptText("Comment:");
         exerciseContentEditor.setPromptText("Response:");

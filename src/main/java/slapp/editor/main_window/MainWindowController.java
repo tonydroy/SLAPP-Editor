@@ -1,12 +1,7 @@
 package slapp.editor.main_window;
 
 import com.gluonhq.richtextarea.model.Document;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.ChoiceBox;
-import slapp.editor.EditorMain;
 import slapp.editor.simple_editor.SimpleEditExercise;
-import javafx.stage.Popup;
 import slapp.editor.simple_editor.SimpleEditModel;
 
 public class MainWindowController {
@@ -23,7 +18,12 @@ public class MainWindowController {
     }
 
     void setup() {
-        mainView.getNewExerciseItem().setOnAction(e -> getNewExercise());
+        mainView.getNewExerciseItem().setOnAction(e -> dummyNewExercise());
+    }
+
+    void dummyNewExercise() {
+        ExerciseType exerciseType = ExerciseTypePopup.getType();
+        System.out.println(exerciseType);
     }
 
     void getNewExercise(){
