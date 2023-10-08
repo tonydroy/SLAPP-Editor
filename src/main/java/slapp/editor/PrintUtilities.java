@@ -62,7 +62,7 @@ public class PrintUtilities {
 
         RichTextArea printable = new RichTextArea(EditorMain.mainStage);
         printable.setDocument(document);
-        printable.setContentAreaWidth(pageLayout.getPrintableWidth());
+        printable.setContentAreaWidth(PrintUtilities.getPageWidth());
         printable.setPrefWidth(pageLayout.getPrintableWidth());
         printable.setPrefHeight(pageLayout.getPrintableHeight() * 2);
         //this height is is a kludge - if rta goes over its prefHeight, it generates a scrollbar (how?).

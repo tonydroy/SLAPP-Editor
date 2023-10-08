@@ -23,12 +23,13 @@ public class MainWindowController {
 
     void dummyNewExercise() {
         ExerciseType exerciseType = ExerciseTypePopup.getType();
-        System.out.println(exerciseType);
+        TypeSelectorFactories typeFactories = new TypeSelectorFactories(this);
+        typeFactories.createExerciseOfType(exerciseType);
     }
 
-    void getNewExercise(){
-        SimpleEditModel dummy = new SimpleEditModel("test", false, 0, new Document("exercise statement"), new Document(), new Document());
-        currentExercise = new SimpleEditExercise(dummy, this);
+    public void getNewExercise(Exercise exercise){
+//        SimpleEditModel dummy = new SimpleEditModel("test", false, 0, new Document("exercise statement"), new Document(), new Document());
+        currentExercise = exercise;
         mainView.setCurrentExerciseView((ExerciseView) currentExercise.getExerciseView());
         mainView.setupExercise();
     }

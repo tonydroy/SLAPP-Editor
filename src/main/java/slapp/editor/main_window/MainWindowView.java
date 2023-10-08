@@ -1,13 +1,11 @@
 package slapp.editor.main_window;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -20,7 +18,6 @@ import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
-import slapp.editor.simple_editor.SimpleEditExercise;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -90,12 +87,7 @@ public class MainWindowView {
         centerBox = new VBox();
         centerBox.setSpacing(3);
 
-//        ScrollPane scrollPane = new ScrollPane(centerBox);
-
         Group centerGroup = new Group(centerBox);  //this lets scene width scale with nodes https://stackoverflow.com/questions/67724906/javafx-scaling-does-not-resize-the-component-in-parent-container
-
-
-
 
         borderPane.setCenter(centerGroup);
         borderPane.setMargin(centerGroup, new Insets(10,20,0,20));
@@ -110,7 +102,6 @@ public class MainWindowView {
         borderPane.setBottom(statusBar);
 
         borderPane.setLeft(controlNode);
-
 
 
         scene = new Scene(borderPane);
@@ -129,21 +120,11 @@ public class MainWindowView {
         stage.setY(mainWindowY);
 
         stage.setHeight(800); //this added to keep SlappLogoView on screen (adjust with actual logo) ok in general?
-
-
         stage.setOnCloseRequest(e -> {
             e.consume();
-            KeyboardDiagram.getInstance().close();
-            stage.close();
+            closeWindow();
         });
-
-
-
         stage.show();
-
-
-
-
     }
 
     public void setupExercise() {
@@ -157,7 +138,6 @@ public class MainWindowView {
         //so I expect to set width at 16/12 * px.  But this gives a page too wide.  Is RTA measuring in pt?
         //similarly for height.
         commentDecoratedRTA.getEditor().setPrefWidth(PrintUtilities.getPageWidth());
-
         centerBox.getChildren().clear();
         centerBox.getChildren().addAll(statementNode, contentNode, commentNode);
 
@@ -166,16 +146,11 @@ public class MainWindowView {
 
         centerBox.layout();
 
-        setCenterHgrow();
-
-
-
-
-
+        setCenterVgrow();
         Platform.runLater(() -> contentNode.requestFocus());
     }
 
-    private void setCenterHgrow() {
+    private void setCenterVgrow() {
         // with content box enclosed in Group, the content pane does not size with window.
         // this restores sizing (inserting height from top box manually)
         double fixedHeight = (currentExerciseView.getStatementHeight() + currentExerciseView.getCommentHeight())  * scale + statusBar.getHeight() + 250;
@@ -185,6 +160,7 @@ public class MainWindowView {
         centerHeightProperty = new SimpleDoubleProperty();
         centerHeightProperty.bind(Bindings.min(maximumHeightProperty, (stage.heightProperty().subtract(fixedValueProperty)).divide(scaleProperty)));
         currentExerciseView.getContentHeightProperty().bind(centerHeightProperty);
+
     }
 
     private void updateZoom(int zoom) {
@@ -192,7 +168,7 @@ public class MainWindowView {
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
         scene.getWindow().setWidth(Math.max(minStageWidth, PrintUtilities.getPageWidth() * scale + 55));
-        setCenterHgrow();
+        setCenterVgrow();
     }
 
     public void editorInFocus(DecoratedRTA decoratedRTA){
@@ -214,6 +190,11 @@ public class MainWindowView {
         VBox topBox = new VBox(menuBar, editToolbar, fontsToolbar, paragraphToolbar);
         topBox.layout();
         borderPane.topProperty().setValue(topBox);
+    }
+
+    private void closeWindow() {
+        KeyboardDiagram.getInstance().close();
+        stage.close();
     }
 
     MenuItem getNewExerciseItem() { return newExerciseItem; }

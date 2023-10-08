@@ -15,4 +15,16 @@ public class EditorAlerts {
         alert.initOwner(EditorMain.mainStage);
         alert.showAndWait();
     }
+
+    public static Alert confirmationAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.initOwner(EditorMain.mainStage);
+        return alert;
+    }
+
+
 }
