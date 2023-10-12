@@ -1,6 +1,7 @@
 package slapp.editor.simple_editor;
 
 import com.gluonhq.richtextarea.model.Document;
+import javafx.event.ActionEvent;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
 
@@ -18,12 +19,11 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     }
 
     void setView() {
-        view.getExerciseStatement().getEditor().setDocument(model.getExerciseStatement());
-        view.getExerciseContent().getEditor().setDocument(model.getExerciseContent());
-        view.getExerciseComment().getEditor().setDocument(model.getExerciseComment());
+        view.updateExerciseStatement(model.getExerciseStatement());
+        view.updateExerciseContent(model.getExerciseContent());
+        view.updateExerciseComment(model.getExerciseComment());
         view.setExerciseName(model.getExerciseName());
     }
-
 
     @Override
     public SimpleEditModel getExerciseModel() {

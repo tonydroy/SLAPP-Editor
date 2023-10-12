@@ -1,9 +1,5 @@
 package slapp.editor.main_window;
 
-import com.gluonhq.richtextarea.model.Document;
-import slapp.editor.simple_editor.SimpleEditExercise;
-import slapp.editor.simple_editor.SimpleEditModel;
-
 public class MainWindowController {
 
     MainWindowView mainView;
@@ -18,17 +14,18 @@ public class MainWindowController {
     }
 
     void setup() {
-        mainView.getNewExerciseItem().setOnAction(e -> dummyNewExercise());
+        mainView.getNewExerciseItem().setOnAction(e -> generateNewExercise());
     }
 
-    void dummyNewExercise() {
+    void generateNewExercise() {
         ExerciseType exerciseType = ExerciseTypePopup.getType();
-        TypeSelectorFactories typeFactories = new TypeSelectorFactories(this);
-        typeFactories.createExerciseOfType(exerciseType);
+        if (exerciseType != null) {
+            TypeSelectorFactories typeFactories = new TypeSelectorFactories(this);
+            typeFactories.createExerciseOfType(exerciseType);
+        }
     }
 
-    public void getNewExercise(Exercise exercise){
-//        SimpleEditModel dummy = new SimpleEditModel("test", false, 0, new Document("exercise statement"), new Document(), new Document());
+    public void setUpNewExercise(Exercise exercise){
         currentExercise = exercise;
         mainView.setCurrentExerciseView((ExerciseView) currentExercise.getExerciseView());
         mainView.setupExercise();

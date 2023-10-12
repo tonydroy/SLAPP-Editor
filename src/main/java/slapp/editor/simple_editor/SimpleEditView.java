@@ -1,6 +1,8 @@
 package slapp.editor.simple_editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.RichTextAreaSkin;
+import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -20,8 +22,6 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, DecoratedRTA> 
     Node exerciseControl = null;
     MainWindowView mainView;
 
-    double statementPrefHeight = 80.0;
-    double commentPrefHeight = 80.0;
 
 
     public SimpleEditView(SimpleEditExercise exercise) {
@@ -37,8 +37,11 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, DecoratedRTA> 
         RichTextArea exerciseContentEditor = exerciseContent.getEditor();
         RichTextArea exerciseCommentEditor = exerciseComment.getEditor();
 
-        exerciseStatementEditor.setPrefHeight(statementPrefHeight);
-        exerciseCommentEditor.setPrefHeight(commentPrefHeight);
+        exerciseStatementEditor.setPrefWidth(PrintUtilities.getPageWidth());
+        exerciseContentEditor.setPrefWidth(PrintUtilities.getPageWidth());
+        exerciseStatementEditor.setPrefHeight(80.0);
+        exerciseCommentEditor.setPrefHeight(80.0);
+
 
 
 
@@ -63,10 +66,21 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, DecoratedRTA> 
         });
     }
 
+    public void updateExerciseStatement(Document statementDocument) {
+        exerciseStatement.getEditor().setDocument(statementDocument);
+//        exerciseStatement.getEditor().setEditable(false);
+    }
+    public void updateExerciseContent(Document contentDocument) {
+        exerciseContent.getEditor().setDocument(contentDocument);
+    }
+    public void updateExerciseComment(Document commentDocument) {
+        exerciseComment.getEditor().setDocument(commentDocument);
+    }
+
     @Override
-    public double getStatementHeight() { return statementPrefHeight; }
+    public double getStatementHeight() { return exerciseStatement.getEditor().getHeight(); }
     @Override
-    public double getCommentHeight() { return commentPrefHeight; }
+    public double getCommentHeight() { return exerciseComment.getEditor().getHeight(); }
 
 
 
@@ -103,6 +117,10 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, DecoratedRTA> 
     }
     public DoubleProperty getContentHeightProperty() {
         return exerciseContent.getEditor().prefHeightProperty();
+    }
+
+    public void setStatementPrefHeight(double height) {
+        exerciseStatement.getEditor().setPrefHeight(height);
     }
 
 

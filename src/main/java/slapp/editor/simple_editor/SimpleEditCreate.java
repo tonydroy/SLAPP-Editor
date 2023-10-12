@@ -9,10 +9,9 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -29,7 +28,6 @@ import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseType;
 import slapp.editor.main_window.MainWindowController;
-import javafx.scene.shape.Path;
 
 import java.util.Optional;
 
@@ -184,9 +182,39 @@ public class SimpleEditCreate {
         else return;
 
     }
+
+
+
+
     private void viewExercise() {
-       SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainController);
-       mainController.getNewExercise(exercise);
+        RichTextAreaSkin richTextAreaSkin = (RichTextAreaSkin) statementEditor.getSkin();
+        int originalCaretPosition = richTextAreaSkin.getCaretPosition();
+        int length = statementEditor.textLengthProperty().get();
+        richTextAreaSkin.setCaretPosition(length);
+        statementEditor.requestFocus();
+        richTextAreaSkin.updateCursorLatch();
+        Task<Double> viewTask = new Task<>() {
+            @Override
+            public Double call() {
+                try {
+                    richTextAreaSkin.cursorLatch.await();
+                }
+                catch (InterruptedException e) {}
+                return richTextAreaSkin.getCaretHeight();
+            }
+        };
+
+        viewTask.setOnSucceeded(e -> {
+            Double result = viewTask.getValue();
+            richTextAreaSkin.setCaretPosition(originalCaretPosition);
+            SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainController);
+            exercise.getExerciseView().setStatementPrefHeight(result + 35.0);
+            mainController.setUpNewExercise(exercise);
+        });
+
+        new Thread(viewTask).start();
+
+
     }
     private void saveExercise() {
         nameModified = false;
@@ -207,13 +235,6 @@ public class SimpleEditCreate {
     private SimpleEditModel extractModelFromWindow() {
         String name = nameField.getText();
         statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
-        int length = statementEditor.textLengthProperty().get();
-
-        //for my attempt to get height
-        RichTextAreaSkin richTextAreaSkin = (RichTextAreaSkin) statementEditor.getSkin();
-        double posY = richTextAreaSkin.getEndCursorPositionY(length);
-        System.out.println("posY: " + posY);
-
         Document statementDocument = statementEditor.getDocument();
         SimpleEditModel model = new SimpleEditModel(name, false, 0, statementDocument, new Document(), new Document());
         return model;

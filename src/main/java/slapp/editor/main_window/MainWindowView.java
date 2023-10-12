@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -73,6 +74,7 @@ public class MainWindowView {
 
         exerciseMenu.getItems().add(newExerciseItem);
 
+
         zoomLabel = new Label(" Zoom ");
         zoomSpinner = new Spinner(25, 500, 100, 5);
         zoomSpinner.setPrefSize(60,25);
@@ -134,6 +136,7 @@ public class MainWindowView {
         this.commentNode = commentDecoratedRTA.getEditor();
         this.controlNode = currentExerciseView.getExerciseControl();
 
+
         //this seems odd: print utilities gives its value in pt.  RTA documentation says it is measured in px.
         //so I expect to set width at 16/12 * px.  But this gives a page too wide.  Is RTA measuring in pt?
         //similarly for height.
@@ -153,6 +156,7 @@ public class MainWindowView {
     private void setCenterVgrow() {
         // with content box enclosed in Group, the content pane does not size with window.
         // this restores sizing (inserting height from top box manually)
+
         double fixedHeight = (currentExerciseView.getStatementHeight() + currentExerciseView.getCommentHeight())  * scale + statusBar.getHeight() + 250;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
         DoubleProperty maximumHeightProperty = new SimpleDoubleProperty(PrintUtilities.getPageHeight() );
