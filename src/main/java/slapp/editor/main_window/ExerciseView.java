@@ -8,6 +8,8 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 public interface ExerciseView<T,U> {
     double getStatementHeight();
     double getCommentHeight();
+    DoubleProperty getContentHeightProperty();
+
     String getExerciseName();
     void setExerciseName(String name);
     T getExerciseStatement();
@@ -20,7 +22,7 @@ public interface ExerciseView<T,U> {
     void setExerciseControl(Node exerciseControl);
     Node getExerciseStatementNode();
     Node getExerciseContentNode();
-    DoubleProperty getContentHeightProperty();
+
 
 
 }
