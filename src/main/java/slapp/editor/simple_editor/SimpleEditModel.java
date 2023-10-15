@@ -5,26 +5,35 @@ import slapp.editor.main_window.ExerciseModel;
 import slapp.editor.main_window.ExerciseType;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
-public class SimpleEditModel implements ExerciseModel<Document, Document>, Serializable {
+public class SimpleEditModel implements ExerciseModel<Document, ArrayList<Document>>, Serializable {
 
     private ExerciseType exerciseType = ExerciseType.SIMPLE_EDITOR;
     private String exerciseName = new String("");
     private boolean started = false;
-    private int pointsPossible = 0;
     private Document exerciseStatement = new Document();
-    private Document exerciseContent = new Document();
     private Document exerciseComment = new Document();
-
+    private ArrayList<Document> exerciseContent = new ArrayList<>();
 
     public SimpleEditModel() {}
-    public SimpleEditModel(String name, boolean started, int pointsPossible, Document exerciseStatement, Document exerciseContent, Document exerciseComment) {
+    public SimpleEditModel(String name, boolean started, Document exerciseStatement, Document exerciseComment, ArrayList<Document> exerciseContent) {
         this.exerciseName = name;
         this.started = started;
-        this.pointsPossible = pointsPossible;
         this.exerciseStatement = exerciseStatement;
-        this.exerciseContent = exerciseContent;
         this.exerciseComment = exerciseComment;
+        this.exerciseContent = exerciseContent;
+        if (exerciseContent.isEmpty()) exerciseContent.add(new Document());
+    }
+
+    void addBlankContentPage(int position) {
+        exerciseContent.add(position, new Document());
+    }
+    void removeContentPage(int position) {
+        exerciseContent.remove(position);
+    }
+    Document getContentPage(int position) {
+        return exerciseContent.get(position);
     }
 
     @Override
@@ -48,10 +57,6 @@ public class SimpleEditModel implements ExerciseModel<Document, Document>, Seria
         this.started = started;
     }
     @Override
-    public int getPointsPossible() { return pointsPossible; }
-    @Override
-    public void setPointsPossible(int pointsPossible) { this.pointsPossible = pointsPossible; }
-    @Override
     public Document getExerciseStatement() {
         return exerciseStatement;
     }
@@ -60,11 +65,11 @@ public class SimpleEditModel implements ExerciseModel<Document, Document>, Seria
         this.exerciseStatement = exerciseStatement;
     }
     @Override
-    public Document getExerciseContent() {
+    public ArrayList<Document> getExerciseContent() {
         return exerciseContent;
     }
     @Override
-    public void setExerciseContent(Document exerciseContent) {
+    public void setExerciseContent(ArrayList<Document> exerciseContent) {
         this.exerciseContent = exerciseContent;
     }
     @Override

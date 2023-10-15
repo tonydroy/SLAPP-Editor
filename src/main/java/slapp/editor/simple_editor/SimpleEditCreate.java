@@ -29,6 +29,7 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseType;
 import slapp.editor.main_window.MainWindowController;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
@@ -236,7 +237,7 @@ public class SimpleEditCreate {
         String name = nameField.getText();
         statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
         Document statementDocument = statementEditor.getDocument();
-        SimpleEditModel model = new SimpleEditModel(name, false, 0, statementDocument, new Document(), new Document());
+        SimpleEditModel model = new SimpleEditModel(name, false, statementDocument, new Document(), new ArrayList<Document>());
         return model;
     }
 

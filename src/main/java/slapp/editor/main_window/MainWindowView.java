@@ -52,6 +52,7 @@ public class MainWindowView {
     private HBox upperStatusBox;
     private HBox lowerStatusBox;
     private DoubleProperty centerHeightProperty;
+    private DoubleProperty contentHeightProperty;
 
 
     public MainWindowView(MainWindowController controller) {
@@ -92,7 +93,11 @@ public class MainWindowView {
         Group centerGroup = new Group(centerBox);  //this lets scene width scale with nodes https://stackoverflow.com/questions/67724906/javafx-scaling-does-not-resize-the-component-in-parent-container
 
         borderPane.setCenter(centerGroup);
-        borderPane.setMargin(centerGroup, new Insets(10,20,0,20));
+        borderPane.setMargin(centerGroup, new Insets(10,0,0,0));
+
+
+
+
 
         statusBar = new VBox(5);
         upperStatusBox = new HBox(10);
@@ -136,16 +141,20 @@ public class MainWindowView {
         this.commentNode = commentDecoratedRTA.getEditor();
         this.controlNode = currentExerciseView.getExerciseControl();
 
+        this.contentHeightProperty = currentExerciseView.getContentHeightProperty();
+
 
         //this seems odd: print utilities gives its value in pt.  RTA documentation says it is measured in px.
         //so I expect to set width at 16/12 * px.  But this gives a page too wide.  Is RTA measuring in pt?
         //similarly for height.
         commentDecoratedRTA.getEditor().setPrefWidth(PrintUtilities.getPageWidth());
         centerBox.getChildren().clear();
-        centerBox.getChildren().addAll(statementNode, contentNode, commentNode);
+        centerBox.getChildren().addAll(commentNode, statementNode, contentNode);
 
         upperStatusBox.getChildren().clear();
         upperStatusBox.getChildren().add(new Label("Exercise: " + currentExerciseView.getExerciseName()));
+
+        borderPane.setLeft(controlNode);
 
         centerBox.layout();
 
@@ -153,7 +162,7 @@ public class MainWindowView {
         Platform.runLater(() -> contentNode.requestFocus());
     }
 
-    private void setCenterVgrow() {
+    public void setCenterVgrow() {
         // with content box enclosed in Group, the content pane does not size with window.
         // this restores sizing (inserting height from top box manually)
 
@@ -163,7 +172,8 @@ public class MainWindowView {
         DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
         centerHeightProperty = new SimpleDoubleProperty();
         centerHeightProperty.bind(Bindings.min(maximumHeightProperty, (stage.heightProperty().subtract(fixedValueProperty)).divide(scaleProperty)));
-        currentExerciseView.getContentHeightProperty().bind(centerHeightProperty);
+//        currentExerciseView.getContentHeightProperty().bind(centerHeightProperty);
+        contentHeightProperty.bind(centerHeightProperty);
 
     }
 
@@ -171,7 +181,7 @@ public class MainWindowView {
         scale = (double)zoom/100.0;
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
-        scene.getWindow().setWidth(Math.max(minStageWidth, PrintUtilities.getPageWidth() * scale + 55));
+        scene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth() + PrintUtilities.getPageWidth() * scale + 55));
         setCenterVgrow();
     }
 
@@ -205,6 +215,10 @@ public class MainWindowView {
 
     public void setCurrentExerciseView(ExerciseView currentExerciseView) {
         this.currentExerciseView = currentExerciseView;
+    }
+
+    public void setContentHeightProperty(DoubleProperty contentHeight) {
+        this.contentHeightProperty = contentHeight;
     }
 
 

@@ -15,8 +15,6 @@ public interface ExerciseModel<T, U> {
     void setExerciseName(String name);
     boolean isStarted();
     void setStarted(boolean started);
-    int getPointsPossible();
-    void setPointsPossible(int pointsPossible);
     T getExerciseStatement();
     void setExerciseStatement(T exerciseStatement);
     U getExerciseContent();

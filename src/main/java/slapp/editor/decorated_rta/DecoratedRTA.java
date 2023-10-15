@@ -383,6 +383,10 @@ public class DecoratedRTA {
         button.setGraphic(icon);
         button.setOnAction(e -> {
             final FileChooser fileChooser = new FileChooser();
+
+            File homeDir = new File(System.getProperty("user.home"));
+            fileChooser.setInitialDirectory(homeDir);
+
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image", "*.png", ".jpeg", ".gif"));
             File file = fileChooser.showOpenDialog(button.getScene().getWindow());
             if (file != null) {

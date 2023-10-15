@@ -35,8 +35,8 @@
 .rich-text-area:focused {
     -fx-border-width: 2;
     -fx-border-color: LIGHTBLUE;
-
 }
+
 
 .rich-text-area > .paragraph-list-view {
     -fx-padding: 5;
