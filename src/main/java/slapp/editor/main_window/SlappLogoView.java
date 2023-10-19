@@ -4,6 +4,7 @@ import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
 import slapp.editor.decorated_rta.DecoratedRTA;
 
 public class SlappLogoView implements ExerciseView<Label, Label> {
@@ -20,7 +21,7 @@ public class SlappLogoView implements ExerciseView<Label, Label> {
         this.exerciseStatement = new Label("");
         this.exerciseContent = new Label("");
         this.exerciseComment = new DecoratedRTA();
-        this.exerciseControl = null;
+        this.exerciseControl = new Region();
         exerciseStatement.setVisible(false);
         exerciseStatement.setManaged(false);
         exerciseContent.setVisible(false);
@@ -58,7 +59,7 @@ public class SlappLogoView implements ExerciseView<Label, Label> {
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) {}
     @Override
-    public Node getExerciseControl() { return null; }
+    public Node getExerciseControl() { return exerciseControl; }
     @Override
     public void setExerciseControl(Node exerciseControl) {}
     @Override
@@ -69,4 +70,6 @@ public class SlappLogoView implements ExerciseView<Label, Label> {
     public DoubleProperty getContentHeightProperty() {
         return exerciseContent.prefHeightProperty();
     }
+    @Override
+    public void setContentPrompt(String prompt) {}
 }

@@ -203,7 +203,7 @@ public class DecoratedRTA {
         //toolbars
         editToolbar = new ToolBar();
         editToolbar.getItems().setAll(
-                actionButton(LineAwesomeSolid.SAVE, "Save",  editor.getActionFactory().save()),
+//                actionButton(LineAwesomeSolid.SAVE, "Save",  editor.getActionFactory().save()),
                 wideSeparator(5),
 
                 actionButton(LineAwesomeSolid.CUT, "Cut",   editor.getActionFactory().cut()),

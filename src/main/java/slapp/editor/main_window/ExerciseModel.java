@@ -4,7 +4,7 @@ import com.gluonhq.richtextarea.model.Document;
 
 import java.io.Serializable;
 
-public interface ExerciseModel<T, U> {
+public interface ExerciseModel<T, U> extends Serializable {
 
     //insert as stub for future versions
     // int check requests
@@ -15,6 +15,8 @@ public interface ExerciseModel<T, U> {
     void setExerciseName(String name);
     boolean isStarted();
     void setStarted(boolean started);
+    String getContentPrompt();
+    void setContentPrompt(String prompt);
     T getExerciseStatement();
     void setExerciseStatement(T exerciseStatement);
     U getExerciseContent();

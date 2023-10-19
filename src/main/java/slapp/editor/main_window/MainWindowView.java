@@ -1,11 +1,9 @@
 package slapp.editor.main_window;
 
-import com.gluonhq.richtextarea.RichTextArea;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -15,6 +13,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
@@ -25,16 +25,12 @@ import java.time.format.DateTimeFormatter;
 
 public class MainWindowView {
     private Stage stage = EditorMain.mainStage;
-    private MainWindowController mainWindowController;
-    private RichTextArea currentEditor;
-//    private Exercise currentExercise;
+    private MainWindow mainWindowController;
     private ToolBar editToolbar = new ToolBar();
     private ToolBar fontsToolbar = new ToolBar();
     private ToolBar paragraphToolbar = new ToolBar();
-    private DoubleProperty scaleProperty = new SimpleDoubleProperty(1.0);
     private double scale = 1.0;
     MenuBar menuBar;
-    MenuItem newExerciseItem = new MenuItem("New");
     private VBox topBox = new VBox();
     private VBox centerBox;
     private Spinner<Integer> zoomSpinner;
@@ -53,9 +49,19 @@ public class MainWindowView {
     private HBox lowerStatusBox;
     private DoubleProperty centerHeightProperty;
     private DoubleProperty contentHeightProperty;
+    private Button saveButton;
+    private MenuItem newExerciseItem = new MenuItem("New");
+    private MenuItem saveExerciseItem = new MenuItem("Save");
+    private MenuItem saveAsExerciseItem = new MenuItem("Save As");
+    private MenuItem openExerciseItem = new MenuItem("Open");
+    private MenuItem clearExerciseItem = new MenuItem("Clear");
+    private MenuItem newAssignmentItem = new MenuItem("New");
+    private MenuItem saveAssignmentItem = new MenuItem("Save");
+    private MenuItem saveAsAssignmentItem = new MenuItem("Save As");
+    private MenuItem openAssignmentItem = new MenuItem("Open");
 
 
-    public MainWindowView(MainWindowController controller) {
+    public MainWindowView(MainWindow controller) {
         this.mainWindowController = controller;
         this.currentExerciseView = new SlappLogoView(this);
         setupWindow();
@@ -73,7 +79,8 @@ public class MainWindowView {
         Menu helpMenu = new Menu("Help");
         menuBar = new MenuBar(assignmentMenu, exerciseMenu, nextExerciseMenu, previousExerciseMenu, goToExerciseMenu, printMenu, helpMenu);
 
-        exerciseMenu.getItems().add(newExerciseItem);
+        exerciseMenu.getItems().addAll(saveExerciseItem, saveAsExerciseItem, openExerciseItem, clearExerciseItem, newExerciseItem);
+        assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, newAssignmentItem);
 
 
         zoomLabel = new Label(" Zoom ");
@@ -86,6 +93,13 @@ public class MainWindowView {
             if (decrement != null) decrement.getOnMouseReleased().handle(null);
             updateZoom(nv);
         });
+
+        saveButton = new Button();
+        FontIcon icon = new FontIcon(LineAwesomeSolid.SAVE);
+        icon.setIconSize(20);
+        saveButton.setGraphic(icon);
+        saveButton.setTooltip(new Tooltip("Save assignment if open and otherwise exercise"));
+
 
         centerBox = new VBox();
         centerBox.setSpacing(3);
@@ -143,6 +157,9 @@ public class MainWindowView {
 
         this.contentHeightProperty = currentExerciseView.getContentHeightProperty();
 
+        statementNode.setFocusTraversable(false);
+        statementNode.setMouseTransparent(true);
+
 
         //this seems odd: print utilities gives its value in pt.  RTA documentation says it is measured in px.
         //so I expect to set width at 16/12 * px.  But this gives a page too wide.  Is RTA measuring in pt?
@@ -172,7 +189,6 @@ public class MainWindowView {
         DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
         centerHeightProperty = new SimpleDoubleProperty();
         centerHeightProperty.bind(Bindings.min(maximumHeightProperty, (stage.heightProperty().subtract(fixedValueProperty)).divide(scaleProperty)));
-//        currentExerciseView.getContentHeightProperty().bind(centerHeightProperty);
         contentHeightProperty.bind(centerHeightProperty);
 
     }
@@ -197,10 +213,13 @@ public class MainWindowView {
         }
         decoratedRTA.getKeyboardDiagramButton().selectedProperty().setValue(KeyboardDiagram.getInstance().isShowing());
 
+        if (!editToolbar.getItems().contains(saveButton)) {
+            editToolbar.getItems().add(0, saveButton);
+        }
+
         if (!fontsToolbar.getItems().contains(zoomSpinner)) {
             fontsToolbar.getItems().addAll(zoomLabel, zoomSpinner);
         }
-        this.currentEditor = decoratedRTA.getEditor();
         VBox topBox = new VBox(menuBar, editToolbar, fontsToolbar, paragraphToolbar);
         topBox.layout();
         borderPane.topProperty().setValue(topBox);
@@ -211,7 +230,7 @@ public class MainWindowView {
         stage.close();
     }
 
-    MenuItem getNewExerciseItem() { return newExerciseItem; }
+
 
     public void setCurrentExerciseView(ExerciseView currentExerciseView) {
         this.currentExerciseView = currentExerciseView;
@@ -221,7 +240,41 @@ public class MainWindowView {
         this.contentHeightProperty = contentHeight;
     }
 
+    public Button getSaveButton() {
+        return saveButton;
+    }
 
+    MenuItem getNewExerciseItem() { return newExerciseItem; }
 
+    public MenuItem getSaveExerciseItem() {
+        return saveExerciseItem;
+    }
 
+    public MenuItem getSaveAsExerciseItem() {
+        return saveAsExerciseItem;
+    }
+
+    public MenuItem getSaveAssignmentItem() {
+        return saveAssignmentItem;
+    }
+
+    public MenuItem getSaveAsAssignmentItem() {
+        return saveAsAssignmentItem;
+    }
+
+    public MenuItem getOpenExerciseItem() {
+        return openExerciseItem;
+    }
+
+    public MenuItem getNewAssignmentItem() {
+        return newAssignmentItem;
+    }
+
+    public MenuItem getOpenAssignmentItem() {
+        return openAssignmentItem;
+    }
+
+    public MenuItem getClearExerciseItem() {
+        return clearExerciseItem;
+    }
 }

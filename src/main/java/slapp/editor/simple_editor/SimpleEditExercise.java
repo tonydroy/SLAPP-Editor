@@ -5,28 +5,30 @@ import com.gluonhq.richtextarea.model.Document;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Pagination;
 import slapp.editor.EditorAlerts;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import slapp.editor.DiskUtilities;
 
 import static javafx.scene.control.ButtonType.OK;
 
 public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditView> {
-    MainWindowController mainController;
+    MainWindow mainWindow;
     SimpleEditModel model;
     SimpleEditView view;
 
     MainWindowView mainView;
 
 
-    public SimpleEditExercise(SimpleEditModel model, MainWindowController mainController) {
-        this.mainController = mainController;
+
+
+    public SimpleEditExercise(SimpleEditModel model, MainWindow mainWindow) {
+        this.mainWindow = mainWindow;
         this.model = model;
-        this.mainView = mainController.getMainView();
+        this.mainView = mainWindow.getMainView();
         this.view = new SimpleEditView(mainView);
 
 
@@ -37,6 +39,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
 
 
         view.setExerciseName(editModel.getExerciseName());
+        view.setContentPrompt(editModel.getContentPrompt());
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
@@ -132,13 +135,44 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         this.view = view;
     }
     @Override
-    public MainWindowController getMainWindowController() { return mainController; }
+    public MainWindow getMainWindowController() { return mainWindow; }
 
 
     @Override
-    public void saveExercise() {    }
+    public void saveExercise(boolean saveAs) {
+        DiskUtilities.saveExercise(saveAs, getModelFromView()); }
     @Override
     public void printExercise() {    }
-    @Override
-    public void printAssignment() {    }
+
+    private SimpleEditModel getModelFromView() {
+        RichTextArea commentRTA = view.getExerciseComment().getEditor();
+        commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        Document commentDocument = commentRTA.getDocument();
+
+        boolean changed = false;
+        ArrayList<DecoratedRTA> exerciseContent = view.getExerciseContent();
+        ArrayList<Document> contentList = new ArrayList<>();
+        for (DecoratedRTA drta : exerciseContent) {
+            RichTextArea editor = drta.getEditor();
+            if (editor.isModified()) changed = true;
+            editor.getActionFactory().saveNow().execute(new ActionEvent());
+            contentList.add(editor.getDocument());
+        }
+        String name = model.getExerciseName();
+        String prompt = model.getContentPrompt();
+        boolean started = (model.isStarted() || changed);
+        Document statementDocument = model.getExerciseStatement();
+        SimpleEditModel newModel = new SimpleEditModel(name, started, prompt, statementDocument, commentDocument, contentList);
+        return newModel;
+    }
+
+    public SimpleEditExercise getEmptyExercise() {
+        SimpleEditExercise emptyExercise = new SimpleEditExercise(model.getContentClearedModel(), mainWindow);
+        return emptyExercise;
+    }
+
+    public boolean isModified() {
+        return false;
+    }
+
 }

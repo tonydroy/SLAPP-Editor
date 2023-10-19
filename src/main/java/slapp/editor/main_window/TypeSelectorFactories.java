@@ -1,24 +1,40 @@
 package slapp.editor.main_window;
 
 import slapp.editor.simple_editor.SimpleEditCreate;
+import slapp.editor.simple_editor.SimpleEditExercise;
+import slapp.editor.simple_editor.SimpleEditModel;
 
 public class TypeSelectorFactories {
-    private MainWindowController mainController;
+    private MainWindow mainWindow;
 
-    TypeSelectorFactories(MainWindowController mainController) {
-        this.mainController = mainController;
+    TypeSelectorFactories(MainWindow mainController) {
+        this.mainWindow = mainController;
     }
 
-    public Exercise castModelToType(ExerciseModel model) {
-        return null;
+    public Exercise getExerciseFromModelObject(Object objectModel) {
+        String modelClassName = objectModel.getClass().getSimpleName();
+
+        switch (modelClassName) {
+
+            case "SimpleEditModel": {
+                SimpleEditModel editModel = (SimpleEditModel) objectModel;
+                return new SimpleEditExercise(editModel, mainWindow);
+            }
+            default: {
+                System.out.println("something wrong");
+                return null;
+            }
+        }
+
     }
+
 
     public void createExerciseOfType(ExerciseType type) {
 
         switch(type) {
 
             case SIMPLE_EDITOR: {
-                SimpleEditCreate simpleEditCreate = new SimpleEditCreate(mainController);
+                SimpleEditCreate simpleEditCreate = new SimpleEditCreate(mainWindow);
                 break;
             }
             case AB_EXPLAIN: {
@@ -27,6 +43,8 @@ public class TypeSelectorFactories {
 
         }
     }
+
+
 
 
 }

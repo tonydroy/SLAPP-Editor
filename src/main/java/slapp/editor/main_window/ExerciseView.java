@@ -22,6 +22,7 @@ public interface ExerciseView<T,U> {
     void setExerciseControl(Node exerciseControl);
     Node getExerciseStatementNode();
     Node getExerciseContentNode();
+    void setContentPrompt(String prompt);
 
 
 

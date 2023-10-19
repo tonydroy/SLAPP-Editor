@@ -12,14 +12,16 @@ public class SimpleEditModel implements ExerciseModel<Document, ArrayList<Docume
     private ExerciseType exerciseType = ExerciseType.SIMPLE_EDITOR;
     private String exerciseName = new String("");
     private boolean started = false;
+    private String prompt = "";
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
     private ArrayList<Document> exerciseContent = new ArrayList<>();
 
     public SimpleEditModel() {}
-    public SimpleEditModel(String name, boolean started, Document exerciseStatement, Document exerciseComment, ArrayList<Document> exerciseContent) {
+    public SimpleEditModel(String name, boolean started, String prompt, Document exerciseStatement, Document exerciseComment, ArrayList<Document> exerciseContent) {
         this.exerciseName = name;
         this.started = started;
+        this.prompt = prompt;
         this.exerciseStatement = exerciseStatement;
         this.exerciseComment = exerciseComment;
         this.exerciseContent = exerciseContent;
@@ -34,6 +36,13 @@ public class SimpleEditModel implements ExerciseModel<Document, ArrayList<Docume
     }
     Document getContentPage(int position) {
         return exerciseContent.get(position);
+    }
+
+    public SimpleEditModel getContentClearedModel() {
+        ArrayList<Document> clearList = new ArrayList<>();
+        clearList.add(new Document());
+        exerciseContent = clearList;
+        return this;
     }
 
     @Override
@@ -79,5 +88,15 @@ public class SimpleEditModel implements ExerciseModel<Document, ArrayList<Docume
     @Override
     public void setExerciseComment(Document exerciseComment) {
         this.exerciseComment = exerciseComment;
+    }
+
+    @Override
+    public String getContentPrompt() {
+        return prompt;
+    }
+
+    @Override
+    public void setContentPrompt(String prompt) {
+        this.prompt = prompt;
     }
 }

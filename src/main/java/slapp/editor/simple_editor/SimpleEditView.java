@@ -21,6 +21,7 @@ import java.util.ArrayList;
 public class SimpleEditView implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA>> {
 
     private String exerciseName = new String();
+    private String contentPrompt = new String();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private ArrayList<DecoratedRTA> exerciseContent = new ArrayList<>();
@@ -45,6 +46,7 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, ArrayList<Deco
             return DRTApage.getEditor();
         });
 
+
         this.addPageButton = new Button("Insert Page");
         addPageButton.setTooltip(new Tooltip("Add after current page"));
         addPageButton.setPrefWidth(90.0);
@@ -68,7 +70,7 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, ArrayList<Deco
         exerciseComment.getEditor().setPrefHeight(80.0);
         exerciseComment.getEditor().setPromptText("Comment:");
         if (!exerciseContent.isEmpty()) {
-            exerciseContent.get(0).getEditor().setPromptText("Response:");
+            exerciseContent.get(0).getEditor().setPromptText(contentPrompt);
         }
         pagination.setPageCount(exerciseContent.size());
     }
@@ -137,6 +139,10 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, ArrayList<Deco
 
     public void setStatementPrefHeight(double height) {
         exerciseStatement.getEditor().setPrefHeight(height);
+    }
+
+    public void setContentPrompt(String prompt) {
+        contentPrompt = prompt;
     }
 
 

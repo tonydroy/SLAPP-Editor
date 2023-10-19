@@ -3,8 +3,7 @@ package slapp.editor;
 import javafx.scene.image.Image;
 import javafx.stage.*;
 import javafx.application.*;
-import slapp.editor.decorated_rta.ExtendedDemo;
-import slapp.editor.main_window.MainWindowController;
+import slapp.editor.main_window.MainWindow;
 
 public class EditorMain extends Application {
 
@@ -19,7 +18,7 @@ public class EditorMain extends Application {
         this.mainStage = stage;
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon32x32.png")));
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
-        MainWindowController mainWindowController = new MainWindowController();
+        MainWindow mainWindowController = new MainWindow();
 
 //        ExtendedDemo demo = new ExtendedDemo(stage); demo.start();
     }

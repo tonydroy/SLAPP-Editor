@@ -27,7 +27,7 @@ import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseType;
-import slapp.editor.main_window.MainWindowController;
+import slapp.editor.main_window.MainWindow;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -35,20 +35,23 @@ import java.util.Optional;
 import static javafx.scene.control.ButtonType.OK;
 
 public class SimpleEditCreate {
-    private MainWindowController mainController;
+    private MainWindow mainWindow;
     private RichTextArea statementEditor;
     private boolean nameModified = false;
-
     private TextField nameField;
+    private TextField promptField;
     private ChangeListener nameListener;
     private double scale =1.0;
     private Scene scene;
     private Stage stage;
     private SimpleDoubleProperty centerHeightProperty;
     private DecoratedRTA statementRTA;
+    private TextArea helpArea;
+    private VBox centerBox;
 
-    public SimpleEditCreate(MainWindowController mainController) {
-        this.mainController = mainController;
+
+    public SimpleEditCreate(MainWindow mainController) {
+        this.mainWindow = mainController;
         setupWindow();
     }
 
@@ -68,6 +71,7 @@ public class SimpleEditCreate {
 
         Label typeLabel = new Label("Exercise type: " + ExerciseType.SIMPLE_EDITOR);
         Label nameLabel = new Label("Exercise Name: ");
+        nameLabel.setPrefWidth(95);
         nameField  = new TextField();
         nameField.setPromptText("(plain text)");
         nameListener = new ChangeListener() {
@@ -79,13 +83,37 @@ public class SimpleEditCreate {
         };
         nameField.textProperty().addListener(nameListener);
 
+        Label promptLabel = new Label("Content prompt: ");
+        promptLabel.setPrefWidth(95);
+        promptField = new TextField();
+        promptField.setPromptText("(plain text)");
+
+
 
         HBox nameBox = new HBox(nameLabel, nameField);
-        nameBox.setPadding(new Insets(20,50,20,82));
         nameBox.setAlignment(Pos.BASELINE_LEFT);
+        HBox promptBox = new HBox(promptLabel, promptField);
+        promptBox.setAlignment(Pos.BASELINE_LEFT);
+        VBox nameNpromptBox = new VBox(10,nameBox,promptBox);
+        nameNpromptBox.setPadding(new Insets(20,0,20,70));
 
-        Group centerGroup = new Group(statementEditor);
+        String helpText = "Simple Edit Exercise is appropriate for any exercise that calls for a text response (which may include special symbols).  The response may range from short answer to multiple pages. All the usual edit commands apply.\n\n" +
+                "For the Simple Edit Exercise, you need only provide the exercise name, exercise statement and, if desired, a prompt that will appear in an empty content area (you may not see the prompt until the content area gains focus).";
+        helpArea = new TextArea(helpText);
+        helpArea.setWrapText(true);
+        helpArea.setPrefHeight(130);
+        helpArea.setEditable(false);
+        helpArea.setFocusTraversable(false);
+        helpArea.setMouseTransparent(true);
+        helpArea.setStyle("-fx-text-fill: mediumslateblue");
+
+        centerBox = new VBox(10, statementEditor, helpArea);
+
+        Group centerGroup = new Group(centerBox);
         borderPane.setCenter(centerGroup);
+
+        Button openButton = new Button("Open");
+        openButton.setOnAction(e -> openExercise());
 
         Button closeButton = new Button("Close");
         closeButton.setOnAction(e -> closeWindow());
@@ -99,8 +127,11 @@ public class SimpleEditCreate {
         Button saveButton = new Button ("Save");
         saveButton.setOnAction(e -> saveExercise());
 
-        HBox buttonBox = new HBox(saveButton, viewButton, clearButton, closeButton);
-        buttonBox.setSpacing(40);
+        Button saveAsButton = new Button("Save As");
+        saveAsButton.setOnAction(e -> saveAsExercise());
+
+        HBox buttonBox = new HBox(saveAsButton, saveButton, openButton, viewButton, clearButton, closeButton);
+        buttonBox.setSpacing(30);
         buttonBox.setPadding(new Insets(20,50,20,50));
         buttonBox.setAlignment(Pos.BASELINE_CENTER);
         borderPane.setBottom(buttonBox);
@@ -117,11 +148,8 @@ public class SimpleEditCreate {
             Node decrement = zoomSpinner.lookup(".decrement-arrow-button");
             if (decrement != null) decrement.getOnMouseReleased().handle(null);
 
-            double scalePercent = nv;
-
-            scale = scalePercent/100.0;
-            statementEditor.setScaleX(scale);
-            statementEditor.setScaleY(scale);
+            scale = (double) nv/100;
+            updateZoom();
             scene.getWindow().setWidth(Math.max(860, PrintUtilities.getPageWidth() * scale + 55));
             setCenterVgrow();
 
@@ -129,7 +157,7 @@ public class SimpleEditCreate {
         ToolBar fontsToolBar = statementRTA.getFontsToolbar();
         fontsToolBar.getItems().addAll(zoomLabel, zoomSpinner);
 
-        VBox topBox = new VBox(menuBar, statementRTA.getEditToolbar(), fontsToolBar, statementRTA.getParagraphToolbar(), nameBox );
+        VBox topBox = new VBox(menuBar, statementRTA.getEditToolbar(), fontsToolBar, statementRTA.getParagraphToolbar(), nameNpromptBox );
         borderPane.setTop(topBox);
 
         stage = new Stage();
@@ -146,20 +174,20 @@ public class SimpleEditCreate {
         stage.show();
         statementEditor.getActionFactory().save().execute(new ActionEvent());
 
+        centerBox.layout();
         setCenterVgrow();
         Platform.runLater(() -> nameField.requestFocus());
     }
 
-    private void updateZoom(int zoom) {
-        scale = (double)zoom/100.0;
-        statementEditor.setScaleX(scale);
-        statementEditor.setScaleY(scale);
+    private void updateZoom() {
+        centerBox.setScaleX(scale);
+        centerBox.setScaleY(scale);
         scene.getWindow().setWidth(Math.max(860, PrintUtilities.getPageWidth() * scale + 55));
         setCenterVgrow();
     }
 
     private void setCenterVgrow() {
-        double fixedHeight = 320;
+        double fixedHeight = helpArea.getHeight() * scale + 400;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
         DoubleProperty maximumHeightProperty = new SimpleDoubleProperty(PrintUtilities.getPageHeight() );
         DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
@@ -169,23 +197,24 @@ public class SimpleEditCreate {
     }
 
     private void closeWindow() {
-        if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) stage.close();
-        else return;
+        if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
+            SimpleEditExercise emptyExercise = new SimpleEditExercise(new SimpleEditModel("", false, "", new Document(), new Document(), new ArrayList<Document>()), mainWindow);
+            mainWindow.setUpExercise(emptyExercise);  //in case there is no current exercise
+            mainWindow.restoreCurrentExercise();
+            stage.close();
+        }
     }
 
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
+            nameModified = false;
+            nameField.textProperty().addListener(nameListener);
             statementEditor.getActionFactory().newDocument().execute(new ActionEvent());
-            statementEditor.getActionFactory().save().execute(new ActionEvent());
-
+            statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
+            viewExercise();
         }
-        else return;
-
     }
-
-
-
 
     private void viewExercise() {
         RichTextAreaSkin richTextAreaSkin = (RichTextAreaSkin) statementEditor.getSkin();
@@ -208,19 +237,78 @@ public class SimpleEditCreate {
         viewTask.setOnSucceeded(e -> {
             Double result = viewTask.getValue();
             richTextAreaSkin.setCaretPosition(originalCaretPosition);
-            SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainController);
+
+            boolean isModified = statementEditor.isModified();
+            SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
+            ((RichTextAreaSkin) statementEditor.getSkin()).resetSavedProperty(!isModified);
+
             exercise.getExerciseView().setStatementPrefHeight(result + 35.0);
-            mainController.setUpNewExercise(exercise);
+            mainWindow.setUpExercise(exercise);
         });
-
         new Thread(viewTask).start();
-
-
     }
     private void saveExercise() {
         nameModified = false;
         nameField.textProperty().addListener(nameListener);
-        statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
+        RichTextAreaSkin richTextAreaSkin = (RichTextAreaSkin) statementEditor.getSkin();
+        int originalCaretPosition = richTextAreaSkin.getCaretPosition();
+        int length = statementEditor.textLengthProperty().get();
+        richTextAreaSkin.setCaretPosition(length);
+        statementEditor.requestFocus();
+        richTextAreaSkin.updateCursorLatch();
+        Task<Double> viewTask = new Task<>() {
+            @Override
+            public Double call() {
+                try {
+                    richTextAreaSkin.cursorLatch.await();
+                }
+                catch (InterruptedException e) {}
+                return richTextAreaSkin.getCaretHeight();
+            }
+        };
+
+        viewTask.setOnSucceeded(e -> {
+            Double result = viewTask.getValue();
+            richTextAreaSkin.setCaretPosition(originalCaretPosition);
+            SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
+            exercise.getExerciseView().setStatementPrefHeight(result + 35.0);
+            mainWindow.setUpExercise(exercise);
+            mainWindow.saveExercise(false);
+
+        });
+        new Thread(viewTask).start();
+    }
+
+    private void saveAsExercise() {
+        nameModified = false;
+        nameField.textProperty().addListener(nameListener);
+        RichTextAreaSkin richTextAreaSkin = (RichTextAreaSkin) statementEditor.getSkin();
+        int originalCaretPosition = richTextAreaSkin.getCaretPosition();
+        int length = statementEditor.textLengthProperty().get();
+        richTextAreaSkin.setCaretPosition(length);
+        statementEditor.requestFocus();
+        richTextAreaSkin.updateCursorLatch();
+        Task<Double> viewTask = new Task<>() {
+            @Override
+            public Double call() {
+                try {
+                    richTextAreaSkin.cursorLatch.await();
+                }
+                catch (InterruptedException e) {}
+                return richTextAreaSkin.getCaretHeight();
+            }
+        };
+
+        viewTask.setOnSucceeded(e -> {
+            Double result = viewTask.getValue();
+            richTextAreaSkin.setCaretPosition(originalCaretPosition);
+            SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
+            exercise.getExerciseView().setStatementPrefHeight(result + 35.0);
+            mainWindow.setUpExercise(exercise);
+            mainWindow.saveExercise(true);
+
+        });
+        new Thread(viewTask).start();
     }
 
     private boolean checkContinue(String title, String content) {
@@ -235,10 +323,13 @@ public class SimpleEditCreate {
 
     private SimpleEditModel extractModelFromWindow() {
         String name = nameField.getText();
+        String prompt = promptField.getText();
         statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
         Document statementDocument = statementEditor.getDocument();
-        SimpleEditModel model = new SimpleEditModel(name, false, statementDocument, new Document(), new ArrayList<Document>());
+        SimpleEditModel model = new SimpleEditModel(name, false, prompt, statementDocument, new Document(), new ArrayList<Document>());
         return model;
     }
+
+    private void openExercise() {}
 
 }

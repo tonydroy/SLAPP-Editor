@@ -2,15 +2,16 @@ package slapp.editor.main_window;
 
 public interface Exercise<T,U> {
 
-    MainWindowController getMainWindowController();
+    MainWindow getMainWindowController();
     T getExerciseModel();
     void setExerciseModel(T model);
     U getExerciseView();
     void setExerciseView(U view);
 
-    void saveExercise();
+    void saveExercise(boolean saveAs);
     void printExercise();
-    void printAssignment();
+    Exercise<T,U> getEmptyExercise();
+    boolean isModified();
 
 
 
