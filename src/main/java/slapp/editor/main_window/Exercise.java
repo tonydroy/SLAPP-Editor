@@ -10,8 +10,11 @@ public interface Exercise<T,U> {
 
     void saveExercise(boolean saveAs);
     void printExercise();
+    Exercise<T,U> getContentClearExercise();
+
     Exercise<T,U> getEmptyExercise();
-    boolean isModified();
+    boolean isContentModified();
+
 
 
 

@@ -41,6 +41,7 @@ public class DiskUtilities {
 
         try (FileOutputStream fs = new FileOutputStream(fileToSave, false); ObjectOutputStream os = new ObjectOutputStream(fs);) {
             os.writeObject(exerciseModel);
+            EditorAlerts.fleetingPopup(fileToSave.getName() + " saved.");
         }
         catch (IOException e) {
 //            e.printStackTrace();

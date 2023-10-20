@@ -31,7 +31,6 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         this.mainView = mainWindow.getMainView();
         this.view = new SimpleEditView(mainView);
 
-
         setView(model);
     }
 
@@ -44,6 +43,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
         statementEditor.setDocument(editModel.getExerciseStatement());
+        view.setStatementPrefHeight(editModel.getStatementPrefHeight());
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(statementDRTA);
@@ -161,18 +161,37 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         String name = model.getExerciseName();
         String prompt = model.getContentPrompt();
         boolean started = (model.isStarted() || changed);
+        model.setStarted(started);
+        double statementHeight = view.getExerciseStatement().getEditor().getPrefHeight();
         Document statementDocument = model.getExerciseStatement();
-        SimpleEditModel newModel = new SimpleEditModel(name, started, prompt, statementDocument, commentDocument, contentList);
+        SimpleEditModel newModel = new SimpleEditModel(name, started, prompt, statementHeight, statementDocument, commentDocument, contentList);
         return newModel;
     }
 
+    public SimpleEditExercise getContentClearExercise() {
+        SimpleEditModel currentModel = getModelFromView();
+        SimpleEditExercise clearExercise = new SimpleEditExercise(currentModel.getContentClearedModel(), mainWindow);
+        return clearExercise;
+    }
+
     public SimpleEditExercise getEmptyExercise() {
-        SimpleEditExercise emptyExercise = new SimpleEditExercise(model.getContentClearedModel(), mainWindow);
+        SimpleEditModel emptyModel = new SimpleEditModel("",false,"",80,new Document(), new Document(), new ArrayList<>());
+        SimpleEditExercise emptyExercise = new SimpleEditExercise(emptyModel, mainWindow);
         return emptyExercise;
     }
 
-    public boolean isModified() {
-        return false;
+    @Override
+    public boolean isContentModified() {
+        boolean modified = false;
+        ArrayList<DecoratedRTA> exerciseContent = view.getExerciseContent();
+        for (DecoratedRTA drta : exerciseContent) {
+            RichTextArea editor = drta.getEditor();
+            if (editor.isModified()) {
+                modified = true;
+            }
+        }
+        return modified;
     }
+
 
 }

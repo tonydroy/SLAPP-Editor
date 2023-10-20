@@ -1,6 +1,7 @@
 package slapp.editor.simple_editor;
 
 import com.gluonhq.richtextarea.model.Document;
+import javafx.event.ActionEvent;
 import slapp.editor.main_window.ExerciseModel;
 import slapp.editor.main_window.ExerciseType;
 
@@ -13,15 +14,17 @@ public class SimpleEditModel implements ExerciseModel<Document, ArrayList<Docume
     private String exerciseName = new String("");
     private boolean started = false;
     private String prompt = "";
+    private double statementPrefHeight = 80;
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
     private ArrayList<Document> exerciseContent = new ArrayList<>();
 
     public SimpleEditModel() {}
-    public SimpleEditModel(String name, boolean started, String prompt, Document exerciseStatement, Document exerciseComment, ArrayList<Document> exerciseContent) {
+    public SimpleEditModel(String name, boolean started, String prompt, double statementPrefHeight, Document exerciseStatement, Document exerciseComment, ArrayList<Document> exerciseContent) {
         this.exerciseName = name;
         this.started = started;
         this.prompt = prompt;
+        this.statementPrefHeight = statementPrefHeight;
         this.exerciseStatement = exerciseStatement;
         this.exerciseComment = exerciseComment;
         this.exerciseContent = exerciseContent;
@@ -98,5 +101,13 @@ public class SimpleEditModel implements ExerciseModel<Document, ArrayList<Docume
     @Override
     public void setContentPrompt(String prompt) {
         this.prompt = prompt;
+    }
+
+    public double getStatementPrefHeight() {
+        return statementPrefHeight;
+    }
+
+    public void setStatementPrefHeight(double statementPrefHeight) {
+        this.statementPrefHeight = statementPrefHeight;
     }
 }

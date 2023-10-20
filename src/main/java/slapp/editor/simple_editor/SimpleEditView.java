@@ -25,6 +25,7 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, ArrayList<Deco
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private ArrayList<DecoratedRTA> exerciseContent = new ArrayList<>();
+    private double statementPrefHeight = 80;
 
     private Node exerciseControlNode = new VBox();
     private Pagination pagination;
@@ -66,7 +67,7 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, ArrayList<Deco
     }
 
     public void initializeViewDetails() {
-        exerciseStatement.getEditor().setPrefHeight(80.0);
+        exerciseStatement.getEditor().setPrefHeight(statementPrefHeight);
         exerciseComment.getEditor().setPrefHeight(80.0);
         exerciseComment.getEditor().setPromptText("Comment:");
         if (!exerciseContent.isEmpty()) {
@@ -136,14 +137,14 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, ArrayList<Deco
     public DoubleProperty getContentHeightProperty() {
         return exerciseContent.get(pagination.getCurrentPageIndex()).getEditor().prefHeightProperty();
     }
-
     public void setStatementPrefHeight(double height) {
+        statementPrefHeight = height;
         exerciseStatement.getEditor().setPrefHeight(height);
     }
-
     public void setContentPrompt(String prompt) {
         contentPrompt = prompt;
     }
+
 
 
 

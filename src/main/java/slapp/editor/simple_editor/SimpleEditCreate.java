@@ -17,17 +17,20 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseType;
 import slapp.editor.main_window.MainWindow;
+import slapp.editor.main_window.TypeSelectorFactories;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -35,17 +38,18 @@ import java.util.Optional;
 import static javafx.scene.control.ButtonType.OK;
 
 public class SimpleEditCreate {
-    private MainWindow mainWindow;
     private RichTextArea statementEditor;
-    private boolean nameModified = false;
+    private DecoratedRTA statementDRTA;
     private TextField nameField;
     private TextField promptField;
+    private boolean nameModified = false;
+    private MainWindow mainWindow;
     private ChangeListener nameListener;
     private double scale =1.0;
     private Scene scene;
     private Stage stage;
     private SimpleDoubleProperty centerHeightProperty;
-    private DecoratedRTA statementRTA;
+
     private TextArea helpArea;
     private VBox centerBox;
 
@@ -55,14 +59,25 @@ public class SimpleEditCreate {
         setupWindow();
     }
 
+    public SimpleEditCreate(MainWindow mainController, SimpleEditExercise originalExercise) {
+        this(mainController);
+        RichTextArea originalRTA = originalExercise.getExerciseView().getExerciseStatement().getEditor();
+        statementEditor.setDocument(originalRTA.getDocument());
+        statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
+        nameField.setText(originalExercise.getExerciseModel().getExerciseName());
+        nameModified = false;
+        nameField.textProperty().addListener(nameListener);
+        promptField.setText(originalExercise.getExerciseModel().getContentPrompt());
+    }
+
     private void setupWindow() {
         BorderPane borderPane = new BorderPane();
 
         Menu helpMenu = new Menu("Help");
         MenuBar menuBar = new MenuBar(helpMenu);
 
-        statementRTA = new DecoratedRTA();
-        statementEditor = statementRTA.getEditor();
+        statementDRTA = new DecoratedRTA();
+        statementEditor = statementDRTA.getEditor();
         statementEditor.setPromptText("Exercise Statement:");
         statementEditor.setMaxWidth(PrintUtilities.getPageWidth());
         statementEditor.setPrefWidth(PrintUtilities.getPageWidth());
@@ -112,9 +127,6 @@ public class SimpleEditCreate {
         Group centerGroup = new Group(centerBox);
         borderPane.setCenter(centerGroup);
 
-        Button openButton = new Button("Open");
-        openButton.setOnAction(e -> openExercise());
-
         Button closeButton = new Button("Close");
         closeButton.setOnAction(e -> closeWindow());
 
@@ -130,7 +142,7 @@ public class SimpleEditCreate {
         Button saveAsButton = new Button("Save As");
         saveAsButton.setOnAction(e -> saveAsExercise());
 
-        HBox buttonBox = new HBox(saveAsButton, saveButton, openButton, viewButton, clearButton, closeButton);
+        HBox buttonBox = new HBox(saveAsButton, saveButton, viewButton, clearButton, closeButton);
         buttonBox.setSpacing(30);
         buttonBox.setPadding(new Insets(20,50,20,50));
         buttonBox.setAlignment(Pos.BASELINE_CENTER);
@@ -154,15 +166,16 @@ public class SimpleEditCreate {
             setCenterVgrow();
 
         });
-        ToolBar fontsToolBar = statementRTA.getFontsToolbar();
+        ToolBar fontsToolBar = statementDRTA.getFontsToolbar();
         fontsToolBar.getItems().addAll(zoomLabel, zoomSpinner);
 
-        VBox topBox = new VBox(menuBar, statementRTA.getEditToolbar(), fontsToolBar, statementRTA.getParagraphToolbar(), nameNpromptBox );
+        VBox topBox = new VBox(menuBar, statementDRTA.getEditToolbar(), fontsToolBar, statementDRTA.getParagraphToolbar(), nameNpromptBox );
         borderPane.setTop(topBox);
 
         stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Create Simple Edit Exercise:");
+        stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -198,7 +211,7 @@ public class SimpleEditCreate {
 
     private void closeWindow() {
         if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
-            SimpleEditExercise emptyExercise = new SimpleEditExercise(new SimpleEditModel("", false, "", new Document(), new Document(), new ArrayList<Document>()), mainWindow);
+            SimpleEditExercise emptyExercise = new SimpleEditExercise(new SimpleEditModel("", false, "", 80.0, new Document(), new Document(), new ArrayList<Document>()), mainWindow);
             mainWindow.setUpExercise(emptyExercise);  //in case there is no current exercise
             mainWindow.restoreCurrentExercise();
             stage.close();
@@ -272,6 +285,7 @@ public class SimpleEditCreate {
             richTextAreaSkin.setCaretPosition(originalCaretPosition);
             SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
             exercise.getExerciseView().setStatementPrefHeight(result + 35.0);
+            exercise.getExerciseModel().setStatementPrefHeight(result + 35.0);
             mainWindow.setUpExercise(exercise);
             mainWindow.saveExercise(false);
 
@@ -304,6 +318,7 @@ public class SimpleEditCreate {
             richTextAreaSkin.setCaretPosition(originalCaretPosition);
             SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
             exercise.getExerciseView().setStatementPrefHeight(result + 35.0);
+            exercise.getExerciseModel().setStatementPrefHeight(result + 35.0);
             mainWindow.setUpExercise(exercise);
             mainWindow.saveExercise(true);
 
@@ -326,10 +341,9 @@ public class SimpleEditCreate {
         String prompt = promptField.getText();
         statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
         Document statementDocument = statementEditor.getDocument();
-        SimpleEditModel model = new SimpleEditModel(name, false, prompt, statementDocument, new Document(), new ArrayList<Document>());
+        SimpleEditModel model = new SimpleEditModel(name, false, prompt, 80.0, statementDocument, new Document(), new ArrayList<Document>());
         return model;
     }
 
-    private void openExercise() {}
 
 }

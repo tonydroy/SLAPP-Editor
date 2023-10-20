@@ -23,6 +23,7 @@ public interface ExerciseView<T,U> {
     Node getExerciseStatementNode();
     Node getExerciseContentNode();
     void setContentPrompt(String prompt);
+    void setStatementPrefHeight(double height);
 
 
 

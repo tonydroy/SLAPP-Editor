@@ -25,7 +25,7 @@ import java.time.format.DateTimeFormatter;
 
 public class MainWindowView {
     private Stage stage = EditorMain.mainStage;
-    private MainWindow mainWindowController;
+    private MainWindow mainWindow;
     private ToolBar editToolbar = new ToolBar();
     private ToolBar fontsToolbar = new ToolBar();
     private ToolBar paragraphToolbar = new ToolBar();
@@ -50,19 +50,24 @@ public class MainWindowView {
     private DoubleProperty centerHeightProperty;
     private DoubleProperty contentHeightProperty;
     private Button saveButton;
-    private MenuItem newExerciseItem = new MenuItem("New");
+    private MenuItem createNewExerciseItem = new MenuItem("Create New");
+    private MenuItem createRevisedExerciseItem = new MenuItem("Create Revised");
     private MenuItem saveExerciseItem = new MenuItem("Save");
     private MenuItem saveAsExerciseItem = new MenuItem("Save As");
     private MenuItem openExerciseItem = new MenuItem("Open");
+    private MenuItem printExerciseItem = new MenuItem("Print");
+    private MenuItem exportToPDFExerciseItem = new MenuItem("Export to PDF");
     private MenuItem clearExerciseItem = new MenuItem("Clear");
+    private MenuItem closeExerciseItem = new MenuItem("Close");
     private MenuItem newAssignmentItem = new MenuItem("New");
     private MenuItem saveAssignmentItem = new MenuItem("Save");
     private MenuItem saveAsAssignmentItem = new MenuItem("Save As");
     private MenuItem openAssignmentItem = new MenuItem("Open");
 
 
+
     public MainWindowView(MainWindow controller) {
-        this.mainWindowController = controller;
+        this.mainWindow = controller;
         this.currentExerciseView = new SlappLogoView(this);
         setupWindow();
         setupExercise();
@@ -79,7 +84,7 @@ public class MainWindowView {
         Menu helpMenu = new Menu("Help");
         menuBar = new MenuBar(assignmentMenu, exerciseMenu, nextExerciseMenu, previousExerciseMenu, goToExerciseMenu, printMenu, helpMenu);
 
-        exerciseMenu.getItems().addAll(saveExerciseItem, saveAsExerciseItem, openExerciseItem, clearExerciseItem, newExerciseItem);
+        exerciseMenu.getItems().addAll(saveExerciseItem, saveAsExerciseItem, openExerciseItem, clearExerciseItem, closeExerciseItem, printExerciseItem, exportToPDFExerciseItem, createRevisedExerciseItem, createNewExerciseItem);
         assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, newAssignmentItem);
 
 
@@ -244,8 +249,6 @@ public class MainWindowView {
         return saveButton;
     }
 
-    MenuItem getNewExerciseItem() { return newExerciseItem; }
-
     public MenuItem getSaveExerciseItem() {
         return saveExerciseItem;
     }
@@ -276,5 +279,25 @@ public class MainWindowView {
 
     public MenuItem getClearExerciseItem() {
         return clearExerciseItem;
+    }
+
+    public MenuItem getCreateNewExerciseItem() {
+        return createNewExerciseItem;
+    }
+
+    public MenuItem getCreateRevisedExerciseItem() {
+        return createRevisedExerciseItem;
+    }
+
+    public MenuItem getPrintExerciseItem() {
+        return printExerciseItem;
+    }
+
+    public MenuItem getExportToPDFExerciseItem() {
+        return exportToPDFExerciseItem;
+    }
+
+    public MenuItem getCloseExerciseItem() {
+        return closeExerciseItem;
     }
 }

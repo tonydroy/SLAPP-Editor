@@ -72,4 +72,7 @@ public class SlappLogoView implements ExerciseView<Label, Label> {
     }
     @Override
     public void setContentPrompt(String prompt) {}
+
+    @Override
+    public void setStatementPrefHeight(double height) { }
 }
