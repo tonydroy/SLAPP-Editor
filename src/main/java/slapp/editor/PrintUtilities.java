@@ -18,7 +18,7 @@ public class PrintUtilities {
             pageLayout = job.getJobSettings().getPageLayout();
         }
         else {
-            System.out.println("problem initializing page layout");
+            EditorAlerts.showSimpleAlert("Print Problem", "Failed to create printer job.");
         }
     }
 
@@ -37,7 +37,7 @@ public class PrintUtilities {
             }
             job.endJob();
         } else {
-            EditorAlerts.showSimpleAlert("Print problem", "Failed to create printer job");
+            EditorAlerts.showSimpleAlert("Print Problem", "Failed to create printer job");
         }
     }
 

@@ -20,9 +20,11 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
@@ -79,8 +81,8 @@ public class SimpleEditCreate {
         statementDRTA = new DecoratedRTA();
         statementEditor = statementDRTA.getEditor();
         statementEditor.setPromptText("Exercise Statement:");
-        statementEditor.setMaxWidth(PrintUtilities.getPageWidth());
-        statementEditor.setPrefWidth(PrintUtilities.getPageWidth());
+       statementEditor.setPrefWidth(PrintUtilities.getPageWidth() + 20);
+        statementEditor.setContentAreaWidth(PrintUtilities.getPageWidth());
         statementEditor.setPrefHeight(200);
 
 
@@ -230,100 +232,33 @@ public class SimpleEditCreate {
     }
 
     private void viewExercise() {
-        RichTextAreaSkin richTextAreaSkin = (RichTextAreaSkin) statementEditor.getSkin();
-        int originalCaretPosition = richTextAreaSkin.getCaretPosition();
-        int length = statementEditor.textLengthProperty().get();
-        richTextAreaSkin.setCaretPosition(length);
-        statementEditor.requestFocus();
-        richTextAreaSkin.updateCursorLatch();
-        Task<Double> viewTask = new Task<>() {
-            @Override
-            public Double call() {
-                try {
-                    richTextAreaSkin.cursorLatch.await();
-                }
-                catch (InterruptedException e) {}
-                return richTextAreaSkin.getCaretHeight();
-            }
-        };
-
-        viewTask.setOnSucceeded(e -> {
-            Double result = viewTask.getValue();
-            richTextAreaSkin.setCaretPosition(originalCaretPosition);
-
-            boolean isModified = statementEditor.isModified();
-            SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
-            ((RichTextAreaSkin) statementEditor.getSkin()).resetSavedProperty(!isModified);
-
-            exercise.getExerciseView().setStatementPrefHeight(result + 35.0);
-            mainWindow.setUpExercise(exercise);
-        });
-        new Thread(viewTask).start();
+        SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
+        RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
+        double height = rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth());
+        exercise.getExerciseView().setStatementPrefHeight(height + 35.0);
+        mainWindow.setUpExercise(exercise);
     }
     private void saveExercise() {
-        nameModified = false;
-        nameField.textProperty().addListener(nameListener);
-        RichTextAreaSkin richTextAreaSkin = (RichTextAreaSkin) statementEditor.getSkin();
-        int originalCaretPosition = richTextAreaSkin.getCaretPosition();
-        int length = statementEditor.textLengthProperty().get();
-        richTextAreaSkin.setCaretPosition(length);
-        statementEditor.requestFocus();
-        richTextAreaSkin.updateCursorLatch();
-        Task<Double> viewTask = new Task<>() {
-            @Override
-            public Double call() {
-                try {
-                    richTextAreaSkin.cursorLatch.await();
-                }
-                catch (InterruptedException e) {}
-                return richTextAreaSkin.getCaretHeight();
-            }
-        };
-
-        viewTask.setOnSucceeded(e -> {
-            Double result = viewTask.getValue();
-            richTextAreaSkin.setCaretPosition(originalCaretPosition);
-            SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
-            exercise.getExerciseView().setStatementPrefHeight(result + 35.0);
-            exercise.getExerciseModel().setStatementPrefHeight(result + 35.0);
-            mainWindow.setUpExercise(exercise);
-            mainWindow.saveExercise(false);
-
-        });
-        new Thread(viewTask).start();
+        SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
+        RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
+        double height = rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth());
+        exercise.getExerciseView().setStatementPrefHeight(height + 35.0);
+        exercise.getExerciseModel().setStatementPrefHeight(height + 35.0);
+        mainWindow.setUpExercise(exercise);
+        mainWindow.saveExercise(false);
     }
 
     private void saveAsExercise() {
-        nameModified = false;
-        nameField.textProperty().addListener(nameListener);
-        RichTextAreaSkin richTextAreaSkin = (RichTextAreaSkin) statementEditor.getSkin();
-        int originalCaretPosition = richTextAreaSkin.getCaretPosition();
-        int length = statementEditor.textLengthProperty().get();
-        richTextAreaSkin.setCaretPosition(length);
-        statementEditor.requestFocus();
-        richTextAreaSkin.updateCursorLatch();
-        Task<Double> viewTask = new Task<>() {
-            @Override
-            public Double call() {
-                try {
-                    richTextAreaSkin.cursorLatch.await();
-                }
-                catch (InterruptedException e) {}
-                return richTextAreaSkin.getCaretHeight();
-            }
-        };
-
-        viewTask.setOnSucceeded(e -> {
-            Double result = viewTask.getValue();
-            richTextAreaSkin.setCaretPosition(originalCaretPosition);
-            SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
-            exercise.getExerciseView().setStatementPrefHeight(result + 35.0);
-            exercise.getExerciseModel().setStatementPrefHeight(result + 35.0);
-            mainWindow.setUpExercise(exercise);
-            mainWindow.saveExercise(true);
-
-        });
-        new Thread(viewTask).start();
+        SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
+        RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
+        double height = rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth());
+        exercise.getExerciseView().setStatementPrefHeight(height + 35.0);
+        exercise.getExerciseModel().setStatementPrefHeight(height + 35.0);
+        mainWindow.setUpExercise(exercise);
+        mainWindow.saveExercise(true);
     }
 
     private boolean checkContinue(String title, String content) {

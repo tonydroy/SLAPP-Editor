@@ -91,8 +91,6 @@ public class MainWindow {
         if (currentExercise != null) {
             if (!((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
                 currentExercise.saveExercise(saveAs);
-
-                System.out.println(((ExerciseModel<?, ?>) currentExercise.getExerciseModel()).isStarted());
             }
             else EditorAlerts.showSimpleAlert("Cannot Save", "No named exercise to save.");
         }

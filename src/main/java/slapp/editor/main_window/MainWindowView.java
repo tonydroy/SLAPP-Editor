@@ -1,5 +1,7 @@
 package slapp.editor.main_window;
 
+import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
@@ -169,7 +171,8 @@ public class MainWindowView {
         //this seems odd: print utilities gives its value in pt.  RTA documentation says it is measured in px.
         //so I expect to set width at 16/12 * px.  But this gives a page too wide.  Is RTA measuring in pt?
         //similarly for height.
-        commentDecoratedRTA.getEditor().setPrefWidth(PrintUtilities.getPageWidth());
+        commentDecoratedRTA.getEditor().setContentAreaWidth(PrintUtilities.getPageWidth());
+        commentDecoratedRTA.getEditor().setPrefWidth(PrintUtilities.getPageWidth() +20);
         centerBox.getChildren().clear();
         centerBox.getChildren().addAll(commentNode, statementNode, contentNode);
 
