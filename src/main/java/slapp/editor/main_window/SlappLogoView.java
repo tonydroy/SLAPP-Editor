@@ -29,6 +29,8 @@ public class SlappLogoView implements ExerciseView<Label, Label> {
 
         exerciseComment.getEditor().setDocument(new Document("Logo Here"));
         exerciseComment.getEditor().setEditable(false);
+        exerciseComment.getEditor().setFocusTraversable(false);
+        exerciseComment.getEditor().setMouseTransparent(true);
 
         exerciseComment.getEditor().setPrefHeight(500);
         exerciseComment.getEditor().focusedProperty().addListener((o, ov, nv) -> {
@@ -36,6 +38,7 @@ public class SlappLogoView implements ExerciseView<Label, Label> {
                 mainView.editorInFocus(exerciseComment);
             }
         });
+
     }
 
     @Override

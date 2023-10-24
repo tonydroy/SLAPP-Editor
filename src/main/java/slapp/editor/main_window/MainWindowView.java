@@ -65,6 +65,7 @@ public class MainWindowView {
     private MenuItem saveAssignmentItem = new MenuItem("Save");
     private MenuItem saveAsAssignmentItem = new MenuItem("Save As");
     private MenuItem openAssignmentItem = new MenuItem("Open");
+    private MenuItem pageSetupItem = new MenuItem("Page Setup");
 
 
 
@@ -88,6 +89,7 @@ public class MainWindowView {
 
         exerciseMenu.getItems().addAll(saveExerciseItem, saveAsExerciseItem, openExerciseItem, clearExerciseItem, closeExerciseItem, printExerciseItem, exportToPDFExerciseItem, createRevisedExerciseItem, createNewExerciseItem);
         assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, newAssignmentItem);
+        printMenu.getItems().addAll(pageSetupItem);
 
 
         zoomLabel = new Label(" Zoom ");
@@ -172,7 +174,7 @@ public class MainWindowView {
         //so I expect to set width at 16/12 * px.  But this gives a page too wide.  Is RTA measuring in pt?
         //similarly for height.
         commentDecoratedRTA.getEditor().setContentAreaWidth(PrintUtilities.getPageWidth());
-        commentDecoratedRTA.getEditor().setPrefWidth(PrintUtilities.getPageWidth() +20);
+        commentDecoratedRTA.getEditor().setPrefWidth(PrintUtilities.getPageWidth() +40);
         centerBox.getChildren().clear();
         centerBox.getChildren().addAll(commentNode, statementNode, contentNode);
 
@@ -302,5 +304,9 @@ public class MainWindowView {
 
     public MenuItem getCloseExerciseItem() {
         return closeExerciseItem;
+    }
+
+    public MenuItem getPageSetupItem() {
+        return pageSetupItem;
     }
 }

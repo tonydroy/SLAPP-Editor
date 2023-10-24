@@ -1,15 +1,29 @@
 package slapp.editor.simple_editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
 import slapp.editor.EditorAlerts;
+import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import slapp.editor.DiskUtilities;
 
@@ -21,6 +35,8 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     SimpleEditView view;
 
     MainWindowView mainView;
+
+
 
 
 
@@ -141,8 +157,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     @Override
     public void saveExercise(boolean saveAs) {
         DiskUtilities.saveExercise(saveAs, getModelFromView()); }
-    @Override
-    public void printExercise() {    }
+
 
     private SimpleEditModel getModelFromView() {
         RichTextArea commentRTA = view.getExerciseComment().getEditor();
@@ -191,6 +206,78 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
             }
         }
         return modified;
+    }
+
+    @Override
+    public void printExercise() {
+        PrintUtilities.printExercise(getPrintNodes());
+    }
+
+    private ArrayList<Node> getPrintNodes() {
+        ArrayList<Node> nodeList = new ArrayList<>();
+        model = getModelFromView();
+        SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
+        double nodeWidth = PrintUtilities.getPageWidth();
+
+        //header node
+        Label exerciseName = new Label(model.getExerciseName());
+        exerciseName.setStyle("-fx-font-weight: bold;");
+        Region spacer = new Region();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        Label exerciseDate = new Label(dtf.format(LocalDateTime.now()));
+        HBox hbox = new HBox(exerciseName, spacer, exerciseDate);
+        hbox.setHgrow(spacer, Priority.ALWAYS);
+        hbox.setPadding(new Insets(0,0,10,0));
+        hbox.setPrefWidth(nodeWidth);
+
+        Group headerRoot = new Group();
+        Scene headerScene = new Scene(headerRoot);
+        headerRoot.getChildren().add(hbox);
+        headerRoot.applyCss();
+        headerRoot.layout();
+        double boxHeight = hbox.getHeight();
+        hbox.setPrefHeight(boxHeight);
+        nodeList.add(hbox);
+        nodeList.add(new Separator(Orientation.HORIZONTAL));
+
+        //comment node
+        RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
+        double commentHeight = Math.min(PrintUtilities.getPageHeight(), commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
+        commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
+        commentRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
+        commentRTA.setPrefWidth(nodeWidth);
+//        commentRTA.setPadding(new Insets(0, 0,10,0));
+        nodeList.add(commentRTA);
+        nodeList.add(new Separator(Orientation.HORIZONTAL));
+
+        //statement node
+        RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
+        double statementHeight = Math.min(PrintUtilities.getPageHeight(), statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
+        statementRTA.setPrefHeight(statementHeight + 35.0);
+        statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
+        statementRTA.setPrefWidth(nodeWidth);
+ //       statementRTA.setPadding(new Insets(0, 0,10,0));
+        nodeList.add(statementRTA);
+        nodeList.add(new Separator(Orientation.HORIZONTAL));
+
+        //content nodes
+        ArrayList<DecoratedRTA> pageList = exercise.getExerciseView().getExerciseContent();
+        for (DecoratedRTA drta : pageList) {
+            RichTextArea pageRTA = drta.getEditor();
+            RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
+            double pageHeight = Math.min(PrintUtilities.getPageHeight(), pageRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
+            pageRTA.setPrefHeight(pageHeight + 35.0);
+            pageRTA.setContentAreaWidth(nodeWidth);
+            pageRTA.setPrefWidth(nodeWidth);
+
+
+//            pageRTA.setPadding(new Insets(0,0,10,0));
+            nodeList.add(pageRTA);
+        }
+
+        return nodeList;
     }
 
 

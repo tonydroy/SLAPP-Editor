@@ -37,9 +37,9 @@ public class EditorAlerts {
         label.setAlignment(Pos.CENTER);
         label.setStyle("-fx-background-color: aliceblue; -fx-border-color: blue;");
 
-        label.setMinWidth(100);
+        label.setMinWidth(200);
         label.setMaxWidth(1000);
-        label.setMinHeight(30);
+        label.setMinHeight(100);
         popup.getContent().add(label);
 
         PauseTransition delay = new PauseTransition(Duration.seconds(2));

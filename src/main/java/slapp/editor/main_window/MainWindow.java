@@ -4,6 +4,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
+import slapp.editor.PrintUtilities;
 
 import java.util.Optional;
 
@@ -32,10 +33,12 @@ public class MainWindow {
         mainView.getOpenExerciseItem().setOnAction(e -> openExercise());
         mainView.getClearExerciseItem().setOnAction(e -> clearExercise());
         mainView.getCloseExerciseItem().setOnAction(e -> closeExercise());
+        mainView.getPrintExerciseItem().setOnAction(e -> printExercise());
         mainView.getNewAssignmentItem().setOnAction(e -> newAssignment());
         mainView.getSaveAssignmentItem().setOnAction(e -> saveAssignment(false));
         mainView.getSaveAsAssignmentItem().setOnAction(e -> saveAssignment(true));
         mainView.getOpenAssignmentItem().setOnAction(e -> openAssignment());
+        mainView.getPageSetupItem().setOnAction(e -> pageSetup());
     }
 
     public void restoreCurrentExercise() {
@@ -121,6 +124,10 @@ public class MainWindow {
         }
     }
 
+    private void printExercise() {
+        currentExercise.printExercise();
+    }
+
     private boolean checkContinue(String title, String content) {
         boolean okContinue = true;
         if (currentExercise.isContentModified()) {
@@ -129,6 +136,11 @@ public class MainWindow {
             if (result.get() != OK) okContinue = false;
         }
         return okContinue;
+    }
+
+    private void pageSetup() {
+        PrintUtilities.updatePageLayout();
+        mainView.setupExercise();
     }
 
     public void newAssignment(){}

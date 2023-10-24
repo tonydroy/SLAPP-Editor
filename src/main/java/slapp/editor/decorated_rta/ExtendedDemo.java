@@ -296,10 +296,12 @@ public class ExtendedDemo {
         printerIcon.setIconSize(20);
         printButton.setGraphic(printerIcon);
         printButton.setOnAction(e -> {
-//            editor.getActionFactory().save().execute(e);
+            editor.getActionFactory().save().execute(e);
 
-            PrintUtilities.printRTA(editor);});
+           PrintUtilities.printRTA(editor);});
  //       printButton.setOnAction (e -> PrintUtilities.printRTA(editor, stage));
+
+
 
 
         //page setup button
