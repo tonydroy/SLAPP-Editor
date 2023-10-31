@@ -1,10 +1,14 @@
 package slapp.editor.main_window;
 
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
+import slapp.editor.front_page.FrontPageExercise;
 
 import java.util.Optional;
 
@@ -17,14 +21,32 @@ public class MainWindow {
     Exercise currentExercise;
     Assignment currentAssignment = null;
     int assignmentIndex = 0;
+    ChangeListener<Node> focusListener;
+    Node lastFocusOwner;
 
 
     public MainWindow() {
         mainView = new MainWindowView(this);
-        setup();
+        setupMainWindow();
+
+        focusListener = (ob, ov, nv) ->  {
+            if (nv.focusedProperty().get() == true) {
+                lastFocusOwner = ov;
+                updateNodeContainerHeight(nv, false);
+            }
+        };
+        setUpExercise(new FrontPageExercise(this));
+        mainView.getMainScene().focusOwnerProperty().addListener(focusListener);
     }
 
-    private void setup() {
+    /* Comment:
+    I do not understand how the focusOwnerProperty listener works.  In particular, a single listener responds to
+    focus changes on buttons and such, but not to focus changes on the comment, statement or content.  With a
+    second assignment of the same (!) listener as in setUpExercise below it fires twice but on all nodes -- a
+    remove command prevents adding another fire each time the exercise is changed.  WTF?
+     */
+
+    private void setupMainWindow() {
 
         mainView.getCreateNewExerciseItem().setOnAction(e -> createNewExercise());
         mainView.getCreateRevisedExerciseItem().setOnAction(e -> createRevisedExercise());
@@ -39,7 +61,25 @@ public class MainWindow {
         mainView.getSaveAsAssignmentItem().setOnAction(e -> saveAssignment(true));
         mainView.getOpenAssignmentItem().setOnAction(e -> openAssignment());
         mainView.getPageSetupItem().setOnAction(e -> pageSetup());
+        mainView.getPrintExerciseItemPM().setOnAction(e -> printExercise());
+
+        mainView.getUpdateHeightButton().setOnAction(e -> {
+            updateNodeContainerHeight(lastFocusOwner, true);
+        });
+
     }
+
+
+    public void setUpExercise(Exercise exercise) {
+        mainView.getMainScene().focusOwnerProperty().removeListener(focusListener);
+        currentExercise = exercise;
+        mainView.setupExercise();
+        mainView.getSaveButton().setOnAction(e -> saveAction());
+        mainView.getMainScene().focusOwnerProperty().get();
+        mainView.getMainScene().focusOwnerProperty().addListener(focusListener);
+    }
+
+
 
     public void restoreCurrentExercise() {
         if (currentAssignment != null) {
@@ -69,13 +109,6 @@ public class MainWindow {
     }
 
 
-
-    public void setUpExercise(Exercise exercise){
-        currentExercise = exercise;
-        mainView.setCurrentExerciseView((ExerciseView) currentExercise.getExerciseView());
-        mainView.setupExercise();
-        mainView.getSaveButton().setOnAction(e -> saveAction());
-    }
 
     public void saveAction(){
         if (currentAssignment != null) {
@@ -138,9 +171,29 @@ public class MainWindow {
         return okContinue;
     }
 
+    private void updateNodeContainerHeight(Node element, boolean isRequired) {
+        if (isContainer(mainView.getContentNode(), element)) currentExercise.updateContentHeight(isRequired);
+        else if (isContainer(mainView.getCommentNode(), element)) currentExercise.updateCommentHeight(isRequired);
+        else if (isContainer(mainView.getStatementNode(), element)) currentExercise.updateStatementHeight(isRequired);
+    }
+
+    private boolean isContainer(Node container, Node element) {
+        if (element == null)
+            return false;
+        Node current = element;
+        while (current != null) {
+            if (current == container)
+                return true;
+            current = current.getParent();
+        }
+        return false;
+    }
+
     private void pageSetup() {
         PrintUtilities.updatePageLayout();
         mainView.setupExercise();
+        mainView.updateZoom(mainView.getZoomSpinner().getValue());
+        mainView.updatePageHeightLabel(PrintUtilities.getPageHeight());
     }
 
     public void newAssignment(){}

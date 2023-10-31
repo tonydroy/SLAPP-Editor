@@ -1,7 +1,5 @@
 package slapp.editor.main_window;
 
-import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
@@ -21,6 +19,7 @@ import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
+import slapp.editor.front_page.FrontPageView;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,7 +38,7 @@ public class MainWindowView {
     private Label zoomLabel;
     int minStageWidth = 860;
     private BorderPane borderPane = new BorderPane();
-    private Scene scene;
+    private Scene mainScene;
     private ExerciseView currentExerciseView;
     private Node statementNode;
     private Node contentNode;
@@ -52,6 +51,11 @@ public class MainWindowView {
     private DoubleProperty centerHeightProperty;
     private DoubleProperty contentHeightProperty;
     private Button saveButton;
+    private Button updateHeightButton = new Button("update");
+    private Label nodeHeightLabel = new Label("0");
+    private Label pageHeightLabel = new Label("100");
+    private Label nodePercentageLabel = new Label("0");
+
     private MenuItem createNewExerciseItem = new MenuItem("Create New");
     private MenuItem createRevisedExerciseItem = new MenuItem("Create Revised");
     private MenuItem saveExerciseItem = new MenuItem("Save");
@@ -66,14 +70,15 @@ public class MainWindowView {
     private MenuItem saveAsAssignmentItem = new MenuItem("Save As");
     private MenuItem openAssignmentItem = new MenuItem("Open");
     private MenuItem pageSetupItem = new MenuItem("Page Setup");
+    private MenuItem printExerciseItemPM = new MenuItem("Print Exercise");
+
+
 
 
 
     public MainWindowView(MainWindow controller) {
         this.mainWindow = controller;
-        this.currentExerciseView = new SlappLogoView(this);
         setupWindow();
-        setupExercise();
     }
 
     private void setupWindow() {
@@ -89,7 +94,7 @@ public class MainWindowView {
 
         exerciseMenu.getItems().addAll(saveExerciseItem, saveAsExerciseItem, openExerciseItem, clearExerciseItem, closeExerciseItem, printExerciseItem, exportToPDFExerciseItem, createRevisedExerciseItem, createNewExerciseItem);
         assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, newAssignmentItem);
-        printMenu.getItems().addAll(pageSetupItem);
+        printMenu.getItems().addAll(pageSetupItem, printExerciseItemPM);
 
 
         zoomLabel = new Label(" Zoom ");
@@ -124,19 +129,34 @@ public class MainWindowView {
 
         statusBar = new VBox(5);
         upperStatusBox = new HBox(10);
-        lowerStatusBox = new HBox(10);
+        lowerStatusBox = new HBox(0);
         statusBar.setPadding(new Insets(0,20,20,20));
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        lowerStatusBox.getChildren().add(new Label(dtf.format(LocalDateTime.now())));
+        Region spacer = new Region();
+        Label slashLabel = new Label("/");
+        Label percentSignLabel = new Label("%");
+        updateHeightButton.setPrefHeight(4.0);
+
+
+        lowerStatusBox.getChildren().addAll(new Label(dtf.format(LocalDateTime.now())), spacer, nodeHeightLabel, slashLabel, pageHeightLabel, nodePercentageLabel, percentSignLabel, updateHeightButton);
+        lowerStatusBox.setHgrow(spacer, Priority.ALWAYS);
+        lowerStatusBox.setMargin(updateHeightButton, new Insets(0,0,0,10));
+        lowerStatusBox.setMargin(nodePercentageLabel, new Insets(0,0,0,5));
+        lowerStatusBox.setMargin(slashLabel, new Insets(0,2,0,2));
+        updatePageHeightLabel(PrintUtilities.getPageHeight());
+
         statusBar.getChildren().addAll(upperStatusBox, lowerStatusBox);
         borderPane.setBottom(statusBar);
 
         borderPane.setLeft(controlNode);
 
 
-        scene = new Scene(borderPane);
-        scene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
-        stage.setScene(scene);
+        mainScene = new Scene(borderPane);
+
+
+
+        mainScene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
+        stage.setScene(mainScene);
         stage.setTitle("SLAPP Editor");
         stage.setMinWidth(minStageWidth);
         // suffices for the toolbars to appear in window
@@ -158,7 +178,10 @@ public class MainWindowView {
     }
 
     public void setupExercise() {
+
+        this.currentExerciseView = (ExerciseView) mainWindow.currentExercise.getExerciseView();
         this.statementNode = currentExerciseView.getExerciseStatementNode();
+
         this.contentNode = currentExerciseView.getExerciseContentNode();
         this.commentDecoratedRTA = currentExerciseView.getExerciseComment();
         this.commentNode = commentDecoratedRTA.getEditor();
@@ -166,8 +189,8 @@ public class MainWindowView {
 
         this.contentHeightProperty = currentExerciseView.getContentHeightProperty();
 
-        statementNode.setFocusTraversable(false);
-        statementNode.setMouseTransparent(true);
+ //       statementNode.setFocusTraversable(false);
+ //       statementNode.setMouseTransparent(true);
 
 
         //this seems odd: print utilities gives its value in pt.  RTA documentation says it is measured in px.
@@ -189,6 +212,22 @@ public class MainWindowView {
         Platform.runLater(() -> contentNode.requestFocus());
     }
 
+    public void updateNodeHeightLabel(double nodeHeight) {
+        double pageHeight = Double.parseDouble(pageHeightLabel.getText());
+        double percentValue = (nodeHeight / pageHeight) * 100;
+        nodeHeightLabel.setText(Integer.toString((int) Math.round(nodeHeight)));
+        nodePercentageLabel.setText(Integer.toString((int) Math.round(percentValue)));
+    }
+
+    public void updatePageHeightLabel(double pageHeight) {
+        double nodeHeight = Double.parseDouble(nodeHeightLabel.getText());
+        double percentValue = (nodeHeight / pageHeight) * 100;
+        pageHeightLabel.setText(Integer.toString((int) Math.round(pageHeight)));
+        nodePercentageLabel.setText(Integer.toString((int) Math.round(percentValue)));
+    }
+
+
+
     public void setCenterVgrow() {
         // with content box enclosed in Group, the content pane does not size with window.
         // this restores sizing (inserting height from top box manually)
@@ -203,11 +242,11 @@ public class MainWindowView {
 
     }
 
-    private void updateZoom(int zoom) {
+    public void updateZoom(int zoom) {
         scale = (double)zoom/100.0;
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
-        scene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth() + PrintUtilities.getPageWidth() * scale + 55));
+        mainScene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth() + PrintUtilities.getPageWidth() * scale + 85));
         setCenterVgrow();
     }
 
@@ -248,6 +287,14 @@ public class MainWindowView {
 
     public void setContentHeightProperty(DoubleProperty contentHeight) {
         this.contentHeightProperty = contentHeight;
+    }
+
+    public Spinner<Integer> getZoomSpinner() {
+        return zoomSpinner;
+    }
+
+    public Button getUpdateHeightButton() {
+        return updateHeightButton;
     }
 
     public Button getSaveButton() {
@@ -308,5 +355,25 @@ public class MainWindowView {
 
     public MenuItem getPageSetupItem() {
         return pageSetupItem;
+    }
+
+    public Scene getMainScene() {
+        return mainScene;
+    }
+
+    public Node getStatementNode() {
+        return statementNode;
+    }
+
+    public Node getContentNode() {
+        return contentNode;
+    }
+
+    public Node getCommentNode() {
+        return commentNode;
+    }
+
+    public MenuItem getPrintExerciseItemPM() {
+        return printExerciseItemPM;
     }
 }

@@ -1,4 +1,4 @@
-package slapp.editor.main_window;
+package slapp.editor.front_page;
 
 import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.property.DoubleProperty;
@@ -6,8 +6,10 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import slapp.editor.decorated_rta.DecoratedRTA;
+import slapp.editor.main_window.ExerciseView;
+import slapp.editor.main_window.MainWindowView;
 
-public class SlappLogoView implements ExerciseView<Label, Label> {
+public class FrontPageView implements ExerciseView<Label, Label> {
 
     String name = "";
     Label exerciseStatement;
@@ -16,7 +18,7 @@ public class SlappLogoView implements ExerciseView<Label, Label> {
     Node exerciseControl;
     MainWindowView mainView;
 
-    SlappLogoView(MainWindowView mainView) {
+    public FrontPageView(MainWindowView mainView) {
         this.mainView = mainView;
         this.exerciseStatement = new Label("");
         this.exerciseContent = new Label("");
@@ -33,6 +35,13 @@ public class SlappLogoView implements ExerciseView<Label, Label> {
         exerciseComment.getEditor().setMouseTransparent(true);
 
         exerciseComment.getEditor().setPrefHeight(500);
+
+        exerciseComment.getFontsToolbar().setFocusTraversable(false);
+        exerciseComment.getFontsToolbar().setMouseTransparent(true);
+        exerciseComment.getParagraphToolbar().setFocusTraversable(false);
+        exerciseComment.getParagraphToolbar().setMouseTransparent(true);
+        exerciseComment.getEditToolbar().setFocusTraversable(false);
+        exerciseComment.getEditToolbar().setMouseTransparent(true);
         exerciseComment.getEditor().focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(exerciseComment);

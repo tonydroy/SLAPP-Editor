@@ -16,6 +16,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import slapp.editor.EditorAlerts;
+import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
@@ -35,6 +36,10 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     SimpleEditView view;
 
     MainWindowView mainView;
+    boolean contentChanged = false;
+
+    Node lastFocusedNode;
+    int lastPageNum = -1;
 
 
 
@@ -130,6 +135,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
             if (okContinue) {
                 model.getExerciseContent().remove(currentPageIndex);
                 view.removeContentPage(currentPageIndex);
+                contentChanged = true;
             }
         }
     }
@@ -156,7 +162,9 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
 
     @Override
     public void saveExercise(boolean saveAs) {
-        DiskUtilities.saveExercise(saveAs, getModelFromView()); }
+        DiskUtilities.saveExercise(saveAs, getModelFromView());
+        contentChanged = false;
+    }
 
 
     private SimpleEditModel getModelFromView() {
@@ -164,18 +172,18 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
 
-        boolean changed = false;
+
         ArrayList<DecoratedRTA> exerciseContent = view.getExerciseContent();
         ArrayList<Document> contentList = new ArrayList<>();
         for (DecoratedRTA drta : exerciseContent) {
             RichTextArea editor = drta.getEditor();
-            if (editor.isModified()) changed = true;
+            if (editor.isModified()) contentChanged = true;
             editor.getActionFactory().saveNow().execute(new ActionEvent());
             contentList.add(editor.getDocument());
         }
         String name = model.getExerciseName();
         String prompt = model.getContentPrompt();
-        boolean started = (model.isStarted() || changed);
+        boolean started = (model.isStarted() || contentChanged);
         model.setStarted(started);
         double statementHeight = view.getExerciseStatement().getEditor().getPrefHeight();
         Document statementDocument = model.getExerciseStatement();
@@ -205,7 +213,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
                 modified = true;
             }
         }
-        return modified;
+        return modified || contentChanged;
     }
 
     @Override
@@ -243,22 +251,21 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         //comment node
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
         RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
-        double commentHeight = Math.min(PrintUtilities.getPageHeight(), commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
+        double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
         commentRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         commentRTA.setPrefWidth(nodeWidth);
-//        commentRTA.setPadding(new Insets(0, 0,10,0));
         nodeList.add(commentRTA);
         nodeList.add(new Separator(Orientation.HORIZONTAL));
 
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
+        statementRTA.setEditable(true);
         RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
-        double statementHeight = Math.min(PrintUtilities.getPageHeight(), statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
+        double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         statementRTA.setPrefWidth(nodeWidth);
- //       statementRTA.setPadding(new Insets(0, 0,10,0));
         nodeList.add(statementRTA);
         nodeList.add(new Separator(Orientation.HORIZONTAL));
 
@@ -267,17 +274,58 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         for (DecoratedRTA drta : pageList) {
             RichTextArea pageRTA = drta.getEditor();
             RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
-            double pageHeight = Math.min(PrintUtilities.getPageHeight(), pageRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
+            double pageHeight = pageRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
             pageRTA.setPrefHeight(pageHeight + 35.0);
             pageRTA.setContentAreaWidth(nodeWidth);
             pageRTA.setPrefWidth(nodeWidth);
-
-
-//            pageRTA.setPadding(new Insets(0,0,10,0));
             nodeList.add(pageRTA);
         }
 
         return nodeList;
+    }
+
+    public void updateContentHeight(boolean isRequired){
+        int contentPageNum = view.getContentPageIndex();
+        if (isRequired || lastFocusedNode != view.getExerciseContentNode() || lastPageNum != contentPageNum) {
+            lastFocusedNode = view.getExerciseContentNode();
+            lastPageNum = contentPageNum;
+
+            SimpleEditModel model = getModelFromView();
+            SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
+            ArrayList<DecoratedRTA> pageList = exercise.getExerciseView().getExerciseContent();
+            RichTextArea pageRTA = pageList.get(contentPageNum).getEditor();
+            RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
+            double pageHeight = pageRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+            mainWindow.getMainView().updateNodeHeightLabel(pageHeight + 35);
+        }
+    }
+    public void updateCommentHeight(boolean isRequired){
+        if (isRequired || lastFocusedNode != view.getExerciseComment().getEditor()) {
+            lastFocusedNode = view.getExerciseComment().getEditor();
+            lastPageNum = -1;
+
+            SimpleEditModel model = getModelFromView();
+            SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
+            RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+            RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
+            double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+            mainWindow.getMainView().updateNodeHeightLabel(Math.max(70, commentHeight + 35));
+        }
+
+    }
+    public void updateStatementHeight(boolean isRequired){
+        if (isRequired || lastFocusedNode != view.getExerciseStatementNode()) {
+            lastFocusedNode = view.getExerciseStatementNode();
+            lastPageNum = -1;
+
+            model = getModelFromView();
+            SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
+            RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
+            statementRTA.setEditable(true);
+            RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
+            double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+            mainWindow.getMainView().updateNodeHeightLabel(statementHeight + 35);
+        }
     }
 
 

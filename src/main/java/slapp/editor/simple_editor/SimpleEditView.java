@@ -68,6 +68,7 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, ArrayList<Deco
 
     public void initializeViewDetails() {
         exerciseStatement.getEditor().setPrefHeight(statementPrefHeight);
+        exerciseStatement.getEditor().setEditable(false);
         exerciseComment.getEditor().setPrefHeight(70.0);
         exerciseComment.getEditor().setPromptText("Comment:");
         if (!exerciseContent.isEmpty()) {

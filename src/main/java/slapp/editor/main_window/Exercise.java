@@ -15,6 +15,10 @@ public interface Exercise<T,U> {
     Exercise<T,U> getEmptyExercise();
     boolean isContentModified();
 
+    void updateContentHeight(boolean isRequired);
+    void updateCommentHeight(boolean isRequired);
+    void updateStatementHeight(boolean isRequired);
+
 
 
 
