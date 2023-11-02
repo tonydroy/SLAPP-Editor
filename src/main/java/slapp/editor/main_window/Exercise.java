@@ -10,6 +10,7 @@ public interface Exercise<T,U> {
 
     void saveExercise(boolean saveAs);
     void printExercise();
+    void exportToPDF();
     Exercise<T,U> getContentClearExercise();
 
     Exercise<T,U> getEmptyExercise();
@@ -18,6 +19,8 @@ public interface Exercise<T,U> {
     void updateContentHeight(boolean isRequired);
     void updateCommentHeight(boolean isRequired);
     void updateStatementHeight(boolean isRequired);
+
+
 
 
 

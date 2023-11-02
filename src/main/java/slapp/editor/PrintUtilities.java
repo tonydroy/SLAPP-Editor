@@ -1,22 +1,16 @@
 package slapp.editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.model.Document;
-import javafx.event.ActionEvent;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.print.*;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
-import slapp.editor.EditorAlerts;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -30,6 +24,7 @@ public class PrintUtilities {
     //this is the layout visible to the rest of the program for the printable area
     private static PageLayout internalPageLayout;
     // this is the layout with space for footer, for internal use
+    private static Printer pdfPrinter = null;
     private static Region spacer = new Region();
 
     static {
@@ -67,65 +62,107 @@ public class PrintUtilities {
         }
     }
 
+    public static void exportSetup() {
+        if (!runExportSetup())  EditorAlerts.showSimpleAlert("Print Problem", "Export setup failed");
+    }
+    private static boolean runExportSetup() {
+        boolean isExportSetup = false;
+        String os = System.getProperty("os.name");
+        if (os.startsWith("Mac")) {
+            EditorAlerts.showSimpleAlert("Use Print Option", "On Macintosh there is no independent PDF export option.  To create a PDF, select 'Print' and from the dropdown at the bottom of the print dialog, 'Save to PDF'.\n\n" +
+                    "Export works by a \"PDF printer\".  Recent versions of the MAC OS exclude such printers from the printer list -- preferring to require the internal MAC option.");
+        }
+        else {
+            PrinterJob job = PrinterJob.createPrinterJob();
+            if (job != null) {
+                String current = "None";
+                if (pdfPrinter != null) current = pdfPrinter.toString();
+                EditorAlerts.showSimpleAlert("Select Printer", "Please select a PDF printer from the following window.\n\n" +
+                        "There are a variety of such printers, each with slightly different characteristics.  On PC, 'Microsoft Print to PDF' works fine.\n\n" +
+                        "Current: " + current);
+                boolean proceed = job.showPrintDialog(EditorMain.mainStage);
+                if (proceed) {
+                    pdfPrinter = job.getPrinter();
+                    isExportSetup = true;
+                }
+                job.endJob();
+            }
+        }
+        return isExportSetup;
+    }
+
+    public static void printNodes(ArrayList<Node> nodeList, PrinterJob job) {
+        boolean success = true;
+        int pageNum = 0;
+        VBox pageBox = new VBox();
+        double netHeight = 0;
+        int i = 0;
+
+        while (i < nodeList.size()) {
+            Node node = nodeList.get(i);
+            double newHeight = getNodeHeight(node) + netHeight;
+            //if the node fits on the page add to page
+            if (newHeight <= pageLayout.getPrintableHeight()) {
+                pageBox.getChildren().add(node);
+                netHeight = newHeight;
+                i++;
+                //if all the nodes have been added print page
+                if (i == nodeList.size()) {
+                    spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 16.0));
+                    pageBox.getChildren().addAll(spacer, new Label(Integer.toString(++pageNum)));
+                    success = (job.printPage(internalPageLayout, pageBox) && success);
+                }
+                //if the node does not fit on this page, print page and start new
+            } else if (!pageBox.getChildren().isEmpty()) {
+                spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 16.0));
+                pageBox.getChildren().addAll(spacer, new Label(Integer.toString(++pageNum)));
+                success = (job.printPage(internalPageLayout, pageBox) && success);
+                netHeight = 0;
+                pageBox.getChildren().clear();
+                //node is too big for a page, truncate and print anyway (human check says ok)
+            } else {
+                //the pageBox is too tall with this node, so we need another approach
+                Rectangle nodeBox = new Rectangle(pageLayout.getPrintableWidth(), pageLayout.getPrintableHeight());
+                node.setClip(nodeBox);
+                Label pageLabel = new Label(Integer.toString(++pageNum));
+
+                StackPane pane = new StackPane(node, pageLabel);
+                pane.setAlignment(pageLabel, Pos.TOP_LEFT);
+                pageLabel.setTranslateY(internalPageLayout.getPrintableHeight() - 16.0);
+                pageLabel.setTranslateX(0.0);
+                success = (job.printPage(internalPageLayout, pane) && success);
+                i++;
+            }
+        }
+        if (success) EditorAlerts.fleetingPopup("Print job complete.");
+        else EditorAlerts.fleetingPopup("Print job did not complete.");
+    }
+
     public static void printExercise(ArrayList<Node> nodeList) {
         if (checkExerciseNodeHeights(nodeList)) {
             PrinterJob job = PrinterJob.createPrinterJob();
-
-            //                job.getJobSettings().setOutputFile("C:/Users/tonyd/OneDrive/Desktop/test.pdf");
-
             if (job != null) {
                 boolean proceed = job.showPrintDialog(EditorMain.mainStage);
-                if (proceed) {
-                    boolean success = true;
-                    int pageNum = 0;
-                    VBox pageBox = new VBox();
-                    double netHeight = 0;
-                    int i = 0;
-
-                    while (i < nodeList.size()) {
-                        Node node = nodeList.get(i);
-                        double newHeight = getNodeHeight(node) + netHeight;
-                        //if the node fits on the page add to page
-                        if (newHeight <= pageLayout.getPrintableHeight()) {
-                            pageBox.getChildren().add(node);
-                            netHeight = newHeight;
-                            i++;
-                            //if all the nodes have been added print page
-                            if (i == nodeList.size()) {
-                                spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 16.0));
-                                pageBox.getChildren().addAll(spacer, new Label(Integer.toString(++pageNum)));
-                                success = (job.printPage(internalPageLayout, pageBox) && success);
-                            }
-                        //if the node does not fit on this page, print page and start new
-                        } else if (!pageBox.getChildren().isEmpty()) {
-                            spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 16.0));
-                            pageBox.getChildren().addAll(spacer, new Label(Integer.toString(++pageNum)));
-                            success = (job.printPage(internalPageLayout, pageBox) && success);
-                            netHeight = 0;
-                            pageBox.getChildren().clear();
-                        //node is too big for a page, truncate and print anyway (human check says ok)
-                        } else {
-                            //the pageBox is too tall with this node, so we need another approach
-                            Rectangle nodeBox = new Rectangle(pageLayout.getPrintableWidth(), pageLayout.getPrintableHeight());
-                            node.setClip(nodeBox);
-                            Label pageLabel = new Label(Integer.toString(++pageNum));
-
-                            StackPane pane = new StackPane(node, pageLabel);
-                            pane.setAlignment(pageLabel, Pos.TOP_LEFT);
-                            pageLabel.setTranslateY(internalPageLayout.getPrintableHeight() - 16.0);
-                            pageLabel.setTranslateX(0.0);
-                            success = (job.printPage(internalPageLayout, pane) && success);
-                            i++;
-                        }
-                    }
-                    if (success) EditorAlerts.fleetingPopup("Print job complete.");
-                    else EditorAlerts.fleetingPopup("Print job failed.");
-                }
+                if (proceed) printNodes(nodeList, job);
                 job.endJob();
-            } else {
-                EditorAlerts.showSimpleAlert("Print Problem", "Failed to create printer job");
+            }
+            else  EditorAlerts.showSimpleAlert("Print Problem", "Failed to create printer job");
+        }
+    }
+
+    public static void exportExerciseToPDF(ArrayList<Node> nodeList) {
+        boolean success = false;
+        if (pdfPrinter != null || runExportSetup()) {
+            if (checkExerciseNodeHeights(nodeList)) {
+                PrinterJob job = PrinterJob.createPrinterJob(pdfPrinter);
+                if (job != null) {
+                    printNodes(nodeList, job);
+                    success = true;
+                    job.endJob();
+                }
             }
         }
+        if (!success) EditorAlerts.showSimpleAlert("Print Problem", "Failed to create export job");
     }
 
     private static double getNodeHeight(Node node) {

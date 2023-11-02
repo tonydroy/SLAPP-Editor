@@ -1,7 +1,7 @@
 package slapp.editor;
 
 import javafx.stage.FileChooser;
-import slapp.editor.main_window.Assignment;
+import slapp.editor.main_window.assignment.Assignment;
 import slapp.editor.main_window.ExerciseModel;
 
 import java.io.*;

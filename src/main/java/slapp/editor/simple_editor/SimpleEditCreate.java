@@ -234,8 +234,10 @@ public class SimpleEditCreate {
     private void viewExercise() {
         SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
+        rta.setEditable(true);
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
         double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
+        rta.setEditable(false);
         exercise.getExerciseView().setStatementPrefHeight(height + 35.0);
         mainWindow.setUpExercise(exercise);
     }
@@ -244,8 +246,10 @@ public class SimpleEditCreate {
         nameField.textProperty().addListener(nameListener);
         SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
+        rta.setEditable(true);
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
         double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
+        rta.setEditable(false);
         exercise.getExerciseView().setStatementPrefHeight(height + 35.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 35.0);
         mainWindow.setUpExercise(exercise);
@@ -257,8 +261,10 @@ public class SimpleEditCreate {
         nameField.textProperty().addListener(nameListener);
         SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
+        rta.setEditable(true);
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
         double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
+        rta.setEditable(false);
         exercise.getExerciseView().setStatementPrefHeight(height + 35.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 35.0);
         mainWindow.setUpExercise(exercise);

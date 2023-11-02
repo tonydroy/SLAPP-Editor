@@ -25,6 +25,8 @@ public interface ExerciseModel<T, U> extends Serializable {
     void setExerciseComment(Document exerciseComment);
     double getStatementPrefHeight();
     void setStatementPrefHeight(double height);
+    String toString();
+
 
 
 }

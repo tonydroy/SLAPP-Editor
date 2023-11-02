@@ -1,6 +1,5 @@
 package slapp.editor.main_window;
 
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -9,6 +8,7 @@ import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.front_page.FrontPageExercise;
+import slapp.editor.main_window.assignment.Assignment;
 
 import java.util.Optional;
 
@@ -16,10 +16,9 @@ import static javafx.scene.control.ButtonType.OK;
 
 
 public class MainWindow {
-
     MainWindowView mainView;
     Exercise currentExercise;
-    Assignment currentAssignment = null;
+    Assignment currentAssignment = new Assignment();
     int assignmentIndex = 0;
     ChangeListener<Node> focusListener;
     Node lastFocusOwner;
@@ -43,7 +42,7 @@ public class MainWindow {
     I do not understand how the focusOwnerProperty listener works.  In particular, a single listener responds to
     focus changes on buttons and such, but not to focus changes on the comment, statement or content.  With a
     second assignment of the same (!) listener as in setUpExercise below it fires twice but on all nodes -- a
-    remove command prevents adding another fire each time the exercise is changed.  WTF?
+    remove command prevents adding another fire each time the exercise is changed.  ??
      */
 
     private void setupMainWindow() {
@@ -56,17 +55,31 @@ public class MainWindow {
         mainView.getClearExerciseItem().setOnAction(e -> clearExercise());
         mainView.getCloseExerciseItem().setOnAction(e -> closeExercise());
         mainView.getPrintExerciseItem().setOnAction(e -> printExercise());
-        mainView.getNewAssignmentItem().setOnAction(e -> newAssignment());
+        mainView.getExportToPDFExerciseItem().setOnAction(e -> exportExerciseToPDF());
+
         mainView.getSaveAssignmentItem().setOnAction(e -> saveAssignment(false));
-        mainView.getSaveAsAssignmentItem().setOnAction(e -> saveAssignment(true));
+        mainView.getSaveAsAssignmentItem().setOnAction(e -> saveAsAssignment(true));
         mainView.getOpenAssignmentItem().setOnAction(e -> openAssignment());
-        mainView.getPageSetupItem().setOnAction(e -> pageSetup());
+        mainView.getCloseAssignmentItem().setOnAction(e -> closeAssignment());
+        mainView.getPrintAssignmentItem().setOnAction(e -> printAssignment());
+        mainView.getExportAssignmentToPDFItem().setOnAction(e -> exportAssignment());
+        mainView.getCreateRevisedAssignmentItem().setOnAction(e -> createRevisedAssignment());
+        mainView.getCreateNewAssignmentItem().setOnAction(e -> createNewAssignment());
+
         mainView.getPrintExerciseItemPM().setOnAction(e -> printExercise());
+        mainView.getExportExerciseToPDFItemPM().setOnAction(e -> exportExerciseToPDF());
+        mainView.getPrintAssignmentItemPM().setOnAction(e -> printAssignment());
+        mainView.getExportAssignmentToPDFItemPM().setOnAction(e -> exportAssignment());
+        mainView.getPageSetupItem().setOnAction(e -> pageSetup());
+        mainView.getExportSetupItem().setOnAction(e -> exportSetup());
 
         mainView.getUpdateHeightButton().setOnAction(e -> {
             updateNodeContainerHeight(lastFocusOwner, true);
         });
-
+        mainView.getPreviousExerciseMenu().onShownProperty().setValue(e -> {mainView.getPreviousExerciseMenu().hide(); previousExercise();});
+        mainView.getNextExerciseMenu().onShownProperty().setValue(e -> {mainView.getNextExerciseMenu().hide(); nextExercise();});
+        mainView.getGoToExerciseMenu().onShownProperty().setValue(e -> {mainView.getGoToExerciseMenu().hide(); goToExercise();});
+        mainView.getAssignmentCommentMenu().onShownProperty().setValue(e -> {mainView.getAssignmentCommentMenu().hide(); assignmentComment();});
     }
 
 
@@ -80,10 +93,20 @@ public class MainWindow {
     }
 
 
-
     public void restoreCurrentExercise() {
+
         if (currentAssignment != null) {
-            setUpExercise(currentAssignment.getExercise(assignmentIndex));
+            System.out.println("restore exercise from assignment after create window closes?");
+            /*
+            ExerciseModel exerciseModelObject = currentAssignment.getExercise(assignmentIndex);
+
+            if (exerciseModelObject != null) {
+                TypeSelectorFactories typeFactories = new TypeSelectorFactories(this);
+                Exercise exercise = typeFactories.getExerciseFromModelObject(exerciseModelObject);
+                if (exercise != null)
+                    setUpExercise(exercise);
+            }
+             */
         }
     }
 
@@ -108,11 +131,9 @@ public class MainWindow {
         }
     }
 
-
-
     public void saveAction(){
         if (currentAssignment != null) {
-            if (!currentAssignment.getAssignmentName().isEmpty()) {
+            if (!currentAssignment.getHeader().getAssignmentName().isEmpty()) {
                 saveAssignment(false);
             }
         }
@@ -143,9 +164,7 @@ public class MainWindow {
         }
     }
 
-    public void saveAssignment(boolean saveAs){ System.out.println("save assignment action"); }
-
-    public void openExercise(){
+    private void openExercise(){
         if (currentExercise == null || checkContinue("Confirm Open", "This exercise appears to have been changed, and will be overwritten by the new one.  Continue to open exercise?")) {
             Object exerciseModelObject = DiskUtilities.openExerciseModelObject();
             if (exerciseModelObject != null) {
@@ -157,9 +176,9 @@ public class MainWindow {
         }
     }
 
-    private void printExercise() {
-        currentExercise.printExercise();
-    }
+    private void exportExerciseToPDF() { currentExercise.exportToPDF(); }
+
+    private void printExercise() { currentExercise.printExercise(); }
 
     private boolean checkContinue(String title, String content) {
         boolean okContinue = true;
@@ -189,6 +208,8 @@ public class MainWindow {
         return false;
     }
 
+    private void exportSetup() { PrintUtilities.exportSetup(); }
+
     private void pageSetup() {
         PrintUtilities.updatePageLayout();
         mainView.setupExercise();
@@ -196,18 +217,24 @@ public class MainWindow {
         mainView.updatePageHeightLabel(PrintUtilities.getPageHeight());
     }
 
-    public void newAssignment(){}
-    public void openAssignment(){}
+
+    public void assignmentComment() { System.out.println("assignment comment action"); }
+    public void saveAssignment(boolean saveAs){ currentAssignment.save(); }
+    public void saveAsAssignment(boolean saveAs) { currentAssignment.saveAs(); }
+    public void openAssignment(){ System.out.println("open assignment action"); }
+    public void closeAssignment() { System.out.println("close assignment action"); }
+    public void printAssignment() { currentAssignment.print(); }
+    public void exportAssignment() { currentAssignment.exportToPdf(); }
+    public void createRevisedAssignment() { System.out.println("create revised assignment action"); }
+    public void createNewAssignment(){ System.out.println("create new assignment action"); }
+
+    public void previousExercise() { System.out.println("previous exercise action"); }
+    public void nextExercise() { System.out.println("next exercise action"); }
+    public void goToExercise() { System.out.println("go to exercise action (has to show list)"); }
 
 
 
 
     public MainWindowView getMainView() { return mainView; }
-
-
-
-
-
-
 
 }

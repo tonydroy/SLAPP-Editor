@@ -221,6 +221,10 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         PrintUtilities.printExercise(getPrintNodes());
     }
 
+    public void exportToPDF() { PrintUtilities.exportExerciseToPDF(getPrintNodes()); }
+
+
+
     private ArrayList<Node> getPrintNodes() {
         ArrayList<Node> nodeList = new ArrayList<>();
         model = getModelFromView();
@@ -283,6 +287,8 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
 
         return nodeList;
     }
+
+
 
     public void updateContentHeight(boolean isRequired){
         int contentPageNum = view.getContentPageIndex();

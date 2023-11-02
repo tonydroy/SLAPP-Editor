@@ -47,8 +47,10 @@ public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView
 
     @Override
     public void printExercise() {
-
     }
+
+    @Override
+    public void exportToPDF(){}
 
     @Override
     public Exercise<FrontPageModel, FrontPageView> getContentClearExercise() {

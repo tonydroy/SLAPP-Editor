@@ -5,12 +5,14 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -51,7 +53,7 @@ public class MainWindowView {
     private DoubleProperty centerHeightProperty;
     private DoubleProperty contentHeightProperty;
     private Button saveButton;
-    private Button updateHeightButton = new Button("update");
+    private Button updateHeightButton = new Button("+");
     private Label nodeHeightLabel = new Label("0");
     private Label pageHeightLabel = new Label("100");
     private Label nodePercentageLabel = new Label("0");
@@ -65,14 +67,27 @@ public class MainWindowView {
     private MenuItem exportToPDFExerciseItem = new MenuItem("Export to PDF");
     private MenuItem clearExerciseItem = new MenuItem("Clear");
     private MenuItem closeExerciseItem = new MenuItem("Close");
-    private MenuItem newAssignmentItem = new MenuItem("New");
+
     private MenuItem saveAssignmentItem = new MenuItem("Save");
     private MenuItem saveAsAssignmentItem = new MenuItem("Save As");
     private MenuItem openAssignmentItem = new MenuItem("Open");
-    private MenuItem pageSetupItem = new MenuItem("Page Setup");
+    private MenuItem closeAssignmentItem = new MenuItem("Close");
+    private MenuItem printAssignmentItem = new MenuItem("Print");
+    private MenuItem exportAssignmentToPDFItem = new MenuItem("Export to PDF");
+    private MenuItem createNewAssignmentItem = new MenuItem("Create New");
+    private MenuItem createRevisedAssignmentItem = new MenuItem("Create Revised");
+
+    private MenuItem exportExerciseToPDFItemPM = new MenuItem("Export Exercise");
     private MenuItem printExerciseItemPM = new MenuItem("Print Exercise");
-
-
+    private MenuItem printAssignmentItemPM = new MenuItem("Print Assignment");
+    private MenuItem exportAssignmentToPDFItemPM = new MenuItem("Export Assignment");
+    private MenuItem pageSetupItem = new MenuItem("Page Setup");
+    private MenuItem exportSetupItem = new MenuItem("Export Setup");
+    Menu previousExerciseMenu = new Menu("Previous");
+    Menu nextExerciseMenu = new Menu("Next");
+    Menu goToExerciseMenu = new Menu("Jump");
+    Menu assignmentCommentMenu = new Menu("Comment");
+    HBox menuBox;
 
 
 
@@ -83,19 +98,41 @@ public class MainWindowView {
 
     private void setupWindow() {
 
+        //dummy items
+        previousExerciseMenu.getItems().add(new MenuItem());
+        nextExerciseMenu.getItems().add(new MenuItem());
+        goToExerciseMenu.getItems().add(new MenuItem());
+        assignmentCommentMenu.getItems().add(new MenuItem());
+
+
         Menu assignmentMenu = new Menu("Assignment");
         Menu exerciseMenu = new Menu("Exercise");
-        Menu nextExerciseMenu = new Menu("Next");
-        Menu previousExerciseMenu = new Menu("Previous");
-        Menu goToExerciseMenu = new Menu("Jump");
         Menu printMenu = new Menu("Print");
         Menu helpMenu = new Menu("Help");
-        menuBar = new MenuBar(assignmentMenu, exerciseMenu, nextExerciseMenu, previousExerciseMenu, goToExerciseMenu, printMenu, helpMenu);
+        menuBar = new MenuBar(assignmentMenu, exerciseMenu, nextExerciseMenu, previousExerciseMenu, goToExerciseMenu, assignmentCommentMenu, printMenu, helpMenu);
 
         exerciseMenu.getItems().addAll(saveExerciseItem, saveAsExerciseItem, openExerciseItem, clearExerciseItem, closeExerciseItem, printExerciseItem, exportToPDFExerciseItem, createRevisedExerciseItem, createNewExerciseItem);
-        assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, newAssignmentItem);
-        printMenu.getItems().addAll(pageSetupItem, printExerciseItemPM);
+        assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, closeAssignmentItem, printAssignmentItem, exportAssignmentToPDFItem, createRevisedAssignmentItem, createNewAssignmentItem);
+        printMenu.getItems().addAll(printExerciseItemPM, exportExerciseToPDFItemPM, printAssignmentItemPM, exportAssignmentToPDFItemPM, pageSetupItem, exportSetupItem);
 
+        Region spacer = new Region();
+        Label slashLabel = new Label("/");
+        Label percentSignLabel = new Label("%");
+        Label heightLabel = new Label("Block Height: ");
+        menuBox = new HBox(menuBar, spacer, heightLabel, nodeHeightLabel, slashLabel, pageHeightLabel, nodePercentageLabel, percentSignLabel, updateHeightButton);
+        menuBox.setStyle("-fx-background-color: aliceblue; fx-border-color: white;");
+        menuBox.setPadding(new Insets(0,15,0,0));
+        menuBox.setMaxWidth(minStageWidth - 20);
+        menuBox.setMargin(heightLabel, new Insets(8,2,0,0));
+        menuBox.setMargin(nodeHeightLabel, new Insets(8,0,0,0));
+        menuBox.setMargin(slashLabel, new Insets(8,0,0,0));
+        menuBox.setMargin(pageHeightLabel, new Insets(8,0,0,0));
+        menuBox.setMargin(nodePercentageLabel, new Insets(8,0,0,5));
+        menuBox.setMargin(percentSignLabel, new Insets(8,0,0,0));
+        menuBox.setMargin(updateHeightButton, new Insets(6,0,0,10));
+        menuBox.setHgrow(spacer, Priority.ALWAYS);
+        updateHeightButton.setPadding(new Insets(1,4,1,4));
+        updatePageHeightLabel(PrintUtilities.getPageHeight());
 
         zoomLabel = new Label(" Zoom ");
         zoomSpinner = new Spinner(25, 500, 100, 5);
@@ -114,47 +151,25 @@ public class MainWindowView {
         saveButton.setGraphic(icon);
         saveButton.setTooltip(new Tooltip("Save assignment if open and otherwise exercise"));
 
-
         centerBox = new VBox();
         centerBox.setSpacing(3);
-
         Group centerGroup = new Group(centerBox);  //this lets scene width scale with nodes https://stackoverflow.com/questions/67724906/javafx-scaling-does-not-resize-the-component-in-parent-container
 
         borderPane.setCenter(centerGroup);
         borderPane.setMargin(centerGroup, new Insets(10,0,0,0));
-
-
-
-
 
         statusBar = new VBox(5);
         upperStatusBox = new HBox(10);
         lowerStatusBox = new HBox(0);
         statusBar.setPadding(new Insets(0,20,20,20));
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        Region spacer = new Region();
-        Label slashLabel = new Label("/");
-        Label percentSignLabel = new Label("%");
-        updateHeightButton.setPrefHeight(4.0);
-
-
-        lowerStatusBox.getChildren().addAll(new Label(dtf.format(LocalDateTime.now())), spacer, nodeHeightLabel, slashLabel, pageHeightLabel, nodePercentageLabel, percentSignLabel, updateHeightButton);
-        lowerStatusBox.setHgrow(spacer, Priority.ALWAYS);
-        lowerStatusBox.setMargin(updateHeightButton, new Insets(0,0,0,10));
-        lowerStatusBox.setMargin(nodePercentageLabel, new Insets(0,0,0,5));
-        lowerStatusBox.setMargin(slashLabel, new Insets(0,2,0,2));
-        updatePageHeightLabel(PrintUtilities.getPageHeight());
-
+        lowerStatusBox.getChildren().addAll(new Label(dtf.format(LocalDateTime.now())));
         statusBar.getChildren().addAll(upperStatusBox, lowerStatusBox);
         borderPane.setBottom(statusBar);
 
         borderPane.setLeft(controlNode);
 
-
         mainScene = new Scene(borderPane);
-
-
-
         mainScene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
         stage.setScene(mainScene);
         stage.setTitle("SLAPP Editor");
@@ -181,17 +196,11 @@ public class MainWindowView {
 
         this.currentExerciseView = (ExerciseView) mainWindow.currentExercise.getExerciseView();
         this.statementNode = currentExerciseView.getExerciseStatementNode();
-
         this.contentNode = currentExerciseView.getExerciseContentNode();
         this.commentDecoratedRTA = currentExerciseView.getExerciseComment();
         this.commentNode = commentDecoratedRTA.getEditor();
         this.controlNode = currentExerciseView.getExerciseControl();
-
         this.contentHeightProperty = currentExerciseView.getContentHeightProperty();
-
- //       statementNode.setFocusTraversable(false);
- //       statementNode.setMouseTransparent(true);
-
 
         //this seems odd: print utilities gives its value in pt.  RTA documentation says it is measured in px.
         //so I expect to set width at 16/12 * px.  But this gives a page too wide.  Is RTA measuring in pt?
@@ -226,8 +235,6 @@ public class MainWindowView {
         nodePercentageLabel.setText(Integer.toString((int) Math.round(percentValue)));
     }
 
-
-
     public void setCenterVgrow() {
         // with content box enclosed in Group, the content pane does not size with window.
         // this restores sizing (inserting height from top box manually)
@@ -239,7 +246,6 @@ public class MainWindowView {
         centerHeightProperty = new SimpleDoubleProperty();
         centerHeightProperty.bind(Bindings.min(maximumHeightProperty, (stage.heightProperty().subtract(fixedValueProperty)).divide(scaleProperty)));
         contentHeightProperty.bind(centerHeightProperty);
-
     }
 
     public void updateZoom(int zoom) {
@@ -269,7 +275,7 @@ public class MainWindowView {
         if (!fontsToolbar.getItems().contains(zoomSpinner)) {
             fontsToolbar.getItems().addAll(zoomLabel, zoomSpinner);
         }
-        VBox topBox = new VBox(menuBar, editToolbar, fontsToolbar, paragraphToolbar);
+        VBox topBox = new VBox(menuBox, editToolbar, fontsToolbar, paragraphToolbar);
         topBox.layout();
         borderPane.topProperty().setValue(topBox);
     }
@@ -278,8 +284,6 @@ public class MainWindowView {
         KeyboardDiagram.getInstance().close();
         stage.close();
     }
-
-
 
     public void setCurrentExerciseView(ExerciseView currentExerciseView) {
         this.currentExerciseView = currentExerciseView;
@@ -321,8 +325,8 @@ public class MainWindowView {
         return openExerciseItem;
     }
 
-    public MenuItem getNewAssignmentItem() {
-        return newAssignmentItem;
+    public MenuItem getCreateNewAssignmentItem() {
+        return createNewAssignmentItem;
     }
 
     public MenuItem getOpenAssignmentItem() {
@@ -375,5 +379,53 @@ public class MainWindowView {
 
     public MenuItem getPrintExerciseItemPM() {
         return printExerciseItemPM;
+    }
+
+    public MenuItem getExportExerciseToPDFItemPM() {
+        return exportExerciseToPDFItemPM;
+    }
+
+    public MenuItem getExportSetupItem() {
+        return exportSetupItem;
+    }
+
+    public MenuItem getCloseAssignmentItem() {
+        return closeAssignmentItem;
+    }
+
+    public MenuItem getPrintAssignmentItem() {
+        return printAssignmentItem;
+    }
+
+    public MenuItem getCreateRevisedAssignmentItem() {
+        return createRevisedAssignmentItem;
+    }
+
+    public MenuItem getExportAssignmentToPDFItem() {
+        return exportAssignmentToPDFItem;
+    }
+
+    public MenuItem getPrintAssignmentItemPM() {
+        return printAssignmentItemPM;
+    }
+
+    public MenuItem getExportAssignmentToPDFItemPM() {
+        return exportAssignmentToPDFItemPM;
+    }
+
+    public Menu getPreviousExerciseMenu() {
+        return previousExerciseMenu;
+    }
+
+    public Menu getNextExerciseMenu() {
+        return nextExerciseMenu;
+    }
+
+    public Menu getGoToExerciseMenu() {
+        return goToExerciseMenu;
+    }
+
+    public Menu getAssignmentCommentMenu() {
+        return assignmentCommentMenu;
     }
 }

@@ -110,4 +110,10 @@ public class SimpleEditModel implements ExerciseModel<Document, ArrayList<Docume
     public void setStatementPrefHeight(double statementPrefHeight) {
         this.statementPrefHeight = statementPrefHeight;
     }
+
+    @Override
+    public String toString() {
+        String name = getExerciseName();
+        return name;
+    }
 }
