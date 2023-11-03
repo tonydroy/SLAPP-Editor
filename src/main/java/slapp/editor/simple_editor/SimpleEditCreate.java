@@ -56,8 +56,8 @@ public class SimpleEditCreate {
     private VBox centerBox;
 
 
-    public SimpleEditCreate(MainWindow mainController) {
-        this.mainWindow = mainController;
+    public SimpleEditCreate(MainWindow mainWindow) {
+        this.mainWindow = mainWindow;
         setupWindow();
     }
 
@@ -75,7 +75,7 @@ public class SimpleEditCreate {
     private void setupWindow() {
         BorderPane borderPane = new BorderPane();
 
-        Menu helpMenu = new Menu("Help");
+        Menu helpMenu = new Menu("");
         MenuBar menuBar = new MenuBar(helpMenu);
 
         statementDRTA = new DecoratedRTA();
@@ -214,8 +214,7 @@ public class SimpleEditCreate {
     private void closeWindow() {
         if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
             SimpleEditExercise emptyExercise = new SimpleEditExercise(new SimpleEditModel("", false, "", 80.0, new Document(), new Document(), new ArrayList<Document>()), mainWindow);
-            mainWindow.setUpExercise(emptyExercise);  //in case there is no current exercise
-            mainWindow.restoreCurrentExercise();
+            mainWindow.setUpExercise(emptyExercise);
             stage.close();
         }
     }

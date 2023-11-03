@@ -9,6 +9,7 @@ import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.front_page.FrontPageExercise;
 import slapp.editor.main_window.assignment.Assignment;
+import slapp.editor.main_window.assignment.CreateAssignment;
 
 import java.util.Optional;
 
@@ -90,24 +91,6 @@ public class MainWindow {
         mainView.getSaveButton().setOnAction(e -> saveAction());
         mainView.getMainScene().focusOwnerProperty().get();
         mainView.getMainScene().focusOwnerProperty().addListener(focusListener);
-    }
-
-
-    public void restoreCurrentExercise() {
-
-        if (currentAssignment != null) {
-            System.out.println("restore exercise from assignment after create window closes?");
-            /*
-            ExerciseModel exerciseModelObject = currentAssignment.getExercise(assignmentIndex);
-
-            if (exerciseModelObject != null) {
-                TypeSelectorFactories typeFactories = new TypeSelectorFactories(this);
-                Exercise exercise = typeFactories.getExerciseFromModelObject(exerciseModelObject);
-                if (exercise != null)
-                    setUpExercise(exercise);
-            }
-             */
-        }
     }
 
 
@@ -225,8 +208,24 @@ public class MainWindow {
     public void closeAssignment() { System.out.println("close assignment action"); }
     public void printAssignment() { currentAssignment.print(); }
     public void exportAssignment() { currentAssignment.exportToPdf(); }
-    public void createRevisedAssignment() { System.out.println("create revised assignment action"); }
-    public void createNewAssignment(){ System.out.println("create new assignment action"); }
+    public void createRevisedAssignment() {
+        if (currentExercise == null || checkContinue("Confirm Create", "The current exercise appears to have been changed, and will be overwritten in the creation process.\n\nContinue to create assignment?")) {
+            Assignment assignment = DiskUtilities.openAssignment();
+            if (assignment != null) {
+                if (!assignment.isStarted()) {
+                    new CreateAssignment(assignment, this);
+                }
+                else {
+                    EditorAlerts.showSimpleAlert("Cannot Modify", "This assignment appears to have been started.  Cannot open in create window.");
+                }
+            }
+        }
+    }
+    public void createNewAssignment(){
+        if (currentExercise == null || checkContinue("Confirm Create", "The current exercise appears to have been changed, and will be overwritten in the creation process.\n\nContinue to create assignment?")) {
+            new CreateAssignment(new Assignment(), this);
+        }
+    }
 
     public void previousExercise() { System.out.println("previous exercise action"); }
     public void nextExercise() { System.out.println("next exercise action"); }
@@ -236,5 +235,6 @@ public class MainWindow {
 
 
     public MainWindowView getMainView() { return mainView; }
+    public Assignment getCurrentAssignment() { return currentAssignment; }
 
 }

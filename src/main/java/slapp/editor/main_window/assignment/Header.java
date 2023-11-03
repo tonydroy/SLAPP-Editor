@@ -1,30 +1,34 @@
 package slapp.editor.main_window.assignment;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
-public class Header {
-    private int creationID;
-    private int workingID;
-    private String assignmentName;
-    private String studentName;
-    private ArrayList<HeaderItem> headerItems = new ArrayList<>();
+public class Header implements Serializable {
+    private String creationID = "";
+    private String workingID = "";
+    private String assignmentName = "";
+    private String studentName = "";
+
+    private List<HeaderItem> instructorItems = new ArrayList<>();
+    private List<HeaderItem> studentItems = new ArrayList<>();
+
+    public Header(){ }
 
 
-
-
-    public int getCreationID() {
+    public String getCreationID() {
         return creationID;
     }
 
-    public void setCreationID(int creationID) {
+    public void setCreationID(String creationID) {
         this.creationID = creationID;
     }
 
-    public int getWorkingID() {
+    public String getWorkingID() {
         return workingID;
     }
 
-    public void setWorkingID(int workingID) {
+    public void setWorkingID(String workingID) {
         this.workingID = workingID;
     }
 
@@ -44,11 +48,19 @@ public class Header {
         this.studentName = studentName;
     }
 
-    public ArrayList<HeaderItem> getHeaderItems() {
-        return headerItems;
+    public List<HeaderItem> getInstructorItems() {
+        return instructorItems;
     }
 
-    public void setHeaderItems(ArrayList<HeaderItem> headerItems) {
-        this.headerItems = headerItems;
+    public void setInstructorItems(List<HeaderItem> instructorItems) {
+        this.instructorItems = instructorItems;
+    }
+
+    public List<HeaderItem> getStudentItems() {
+        return studentItems;
+    }
+
+    public void setStudentItems(List<HeaderItem> studentItems) {
+        this.studentItems = studentItems;
     }
 }
