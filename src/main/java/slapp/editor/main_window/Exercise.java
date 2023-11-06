@@ -1,5 +1,9 @@
 package slapp.editor.main_window;
 
+import javafx.scene.Node;
+
+import java.util.List;
+
 public interface Exercise<T,U> {
 
     MainWindow getMainWindowController();
@@ -14,11 +18,13 @@ public interface Exercise<T,U> {
     Exercise<T,U> getContentClearExercise();
 
     Exercise<T,U> getEmptyExercise();
-    boolean isContentModified();
-
+    boolean isExerciseModified();
+    void setExerciseModified(boolean modified);
     void updateContentHeight(boolean isRequired);
     void updateCommentHeight(boolean isRequired);
     void updateStatementHeight(boolean isRequired);
+    ExerciseModel<T, U> getExerciseModelFromView();
+    List<Node> getPrintNodes();
 
 
 

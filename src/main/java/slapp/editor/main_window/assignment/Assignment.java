@@ -1,7 +1,6 @@
 package slapp.editor.main_window.assignment;
 
 import com.gluonhq.richtextarea.model.Document;
-import slapp.editor.main_window.Exercise;
 import slapp.editor.main_window.ExerciseModel;
 
 import java.io.Serializable;
@@ -10,7 +9,7 @@ import java.util.List;
 
 public class Assignment implements Serializable {
 
-    private Header header = new Header();
+    private AssignmentHeader header = new AssignmentHeader();
     private Document comment = new Document();
     private List<ExerciseModel> exerciseModels = new ArrayList<>();
 
@@ -26,25 +25,20 @@ public class Assignment implements Serializable {
         exerciseModels.add(index, exerciseModel);
     }
 
-    public void addComment(){}
 
 
-    public void save() { System.out.println("save assignment"); }
-    public void saveAs() { System.out.println("save assignment as"); }
+
+
     public void print(){ System.out.println("print assignment"); }
     public void exportToPdf() {System.out.println("export assignment to pdf"); }
 
-    public boolean isStarted() {
-        boolean isStarted = false;
-        for (ExerciseModel mod : exerciseModels) {
-            if (mod.isStarted()) isStarted = true;
-        }
-        return isStarted;
+    public boolean hasCompletedHeader() {
+        return !getHeader().getStudentName().isEmpty();
     }
 
-    public Header getHeader() { return header; }
+    public AssignmentHeader getHeader() { return header; }
 
-    public void setHeader(Header header) { this.header = header; }
+    public void setHeader(AssignmentHeader header) { this.header = header; }
 
     public Document getComment() { return comment; }
 

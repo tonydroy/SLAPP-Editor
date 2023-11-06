@@ -1,10 +1,13 @@
 package slapp.editor.main_window;
 
+import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -15,6 +18,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 import slapp.editor.EditorMain;
@@ -22,9 +26,12 @@ import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.front_page.FrontPageView;
+import slapp.editor.main_window.assignment.AssignmentHeader;
+import slapp.editor.main_window.assignment.AssignmentHeaderItem;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class MainWindowView {
     private Stage stage = EditorMain.mainStage;
@@ -49,7 +56,7 @@ public class MainWindowView {
     private Node controlNode;
     private VBox statusBar;
     private HBox upperStatusBox;
-    private HBox lowerStatusBox;
+    private FlowPane lowerStatusPane;
     private DoubleProperty centerHeightProperty;
     private DoubleProperty contentHeightProperty;
     private Button saveButton;
@@ -105,11 +112,13 @@ public class MainWindowView {
         assignmentCommentMenu.getItems().add(new MenuItem());
 
 
+
+
         Menu assignmentMenu = new Menu("Assignment");
         Menu exerciseMenu = new Menu("Exercise");
         Menu printMenu = new Menu("Print");
         Menu helpMenu = new Menu("Help");
-        menuBar = new MenuBar(assignmentMenu, exerciseMenu, nextExerciseMenu, previousExerciseMenu, goToExerciseMenu, assignmentCommentMenu, printMenu, helpMenu);
+        menuBar = new MenuBar(assignmentMenu, exerciseMenu, previousExerciseMenu, nextExerciseMenu, goToExerciseMenu, assignmentCommentMenu, printMenu, helpMenu);
 
         exerciseMenu.getItems().addAll(saveExerciseItem, saveAsExerciseItem, openExerciseItem, clearExerciseItem, closeExerciseItem, printExerciseItem, exportToPDFExerciseItem, createRevisedExerciseItem, createNewExerciseItem);
         assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, closeAssignmentItem, printAssignmentItem, exportAssignmentToPDFItem, createRevisedAssignmentItem, createNewAssignmentItem);
@@ -159,12 +168,12 @@ public class MainWindowView {
         borderPane.setMargin(centerGroup, new Insets(10,0,0,0));
 
         statusBar = new VBox(5);
-        upperStatusBox = new HBox(10);
-        lowerStatusBox = new HBox(0);
+        upperStatusBox = new HBox(40);
+        lowerStatusPane = new FlowPane();
+        lowerStatusPane.setHgap(40);
         statusBar.setPadding(new Insets(0,20,20,20));
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        lowerStatusBox.getChildren().addAll(new Label(dtf.format(LocalDateTime.now())));
-        statusBar.getChildren().addAll(upperStatusBox, lowerStatusBox);
+
+        statusBar.getChildren().addAll(upperStatusBox, lowerStatusPane);
         borderPane.setBottom(statusBar);
 
         borderPane.setLeft(controlNode);
@@ -210,8 +219,14 @@ public class MainWindowView {
         centerBox.getChildren().clear();
         centerBox.getChildren().addAll(commentNode, statementNode, contentNode);
 
+
+
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         upperStatusBox.getChildren().clear();
+        lowerStatusPane.getChildren().clear();
         upperStatusBox.getChildren().add(new Label("Exercise: " + currentExerciseView.getExerciseName()));
+        lowerStatusPane.getChildren().add(new Label("Date: " + dtf.format(LocalDateTime.now())));
 
         borderPane.setLeft(controlNode);
 
@@ -219,6 +234,28 @@ public class MainWindowView {
 
         setCenterVgrow();
         Platform.runLater(() -> contentNode.requestFocus());
+    }
+
+    public void setUpLowerAssignmentBar() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        upperStatusBox.getChildren().clear();
+        lowerStatusPane.getChildren().clear();
+
+        AssignmentHeader header = mainWindow.getCurrentAssignment().getHeader();
+        int exerciseNum = mainWindow.getAssignmentIndex() + 1;
+        upperStatusBox.getChildren().addAll(new Label("Student Name: " + header.getStudentName()), new Label("Assignment: " + header.getAssignmentName()),
+                new Label("Exercise: " + currentExerciseView.getExerciseName() + " (" + exerciseNum + "/" + mainWindow.getCurrentAssignment().getExerciseModels().size() + ")"),
+                new Label("ID: " + header.getCreationID() + "-" + header.getWorkingID()) );
+        lowerStatusPane.getChildren().add(new Label("Date: " + dtf.format(LocalDateTime.now())));
+        for (int i = 0; i < header.getInstructorItems().size(); i++) {
+            AssignmentHeaderItem headerItem = header.getInstructorItems().get(i);
+            lowerStatusPane.getChildren().add(new Label(headerItem.getLabel() + ": " + headerItem.getValue()));
+        }
+        for (int i = 0; i < header.getStudentItems().size(); i++) {
+            AssignmentHeaderItem headerItem = header.getStudentItems().get(i);
+            lowerStatusPane.getChildren().add(new Label( headerItem.getLabel() + ": " + headerItem.getValue()));
+        }
+
     }
 
     public void updateNodeHeightLabel(double nodeHeight) {
@@ -283,6 +320,66 @@ public class MainWindowView {
     private void closeWindow() {
         KeyboardDiagram.getInstance().close();
         stage.close();
+    }
+
+    public VBox getAssignmentHeader() {
+        VBox headerBox = new VBox(10);
+        AssignmentHeader header = mainWindow.getCurrentAssignment().getHeader();
+
+        Label studentNameLabel = new Label(header.getStudentName());
+        studentNameLabel.setStyle("-fx-font-weight: bold;");
+        HBox nameBox = new HBox(studentNameLabel);
+        nameBox.setAlignment(Pos.CENTER);
+
+        VBox leftBox = new VBox(0);
+        leftBox.getChildren().add(new Label("Assignment: " + header.getAssignmentName()));
+        for (AssignmentHeaderItem item : header.getStudentItems()) {
+            leftBox.getChildren().add(new Label(item.getLabel() + ": " + item.getValue()));
+        }
+        leftBox.setAlignment(Pos.TOP_LEFT);
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        VBox rightBox = new VBox(0);
+        rightBox.getChildren().add(new Label("Date: " + dtf.format(LocalDateTime.now())));
+        for (AssignmentHeaderItem item : header.getInstructorItems()) {
+            rightBox.getChildren().add(new Label(item.getLabel() + ": " + item.getValue()));
+        }
+        rightBox.setAlignment(Pos.TOP_LEFT);
+
+        Region spacer = new Region();
+        HBox itemsBox = new HBox(leftBox, spacer, rightBox);
+        itemsBox.setHgrow(spacer, Priority.ALWAYS);
+
+        Separator separator = new Separator();
+        separator.setOrientation(Orientation.HORIZONTAL);
+
+
+        RichTextArea commentArea = new RichTextArea(EditorMain.mainStage);
+
+
+
+
+        Scene tempScene = new Scene(commentArea);
+        Stage tempStage = new Stage();
+        tempStage.initStyle(StageStyle.TRANSPARENT);
+        tempStage.toBack();
+        tempStage.setScene(tempScene);
+        tempStage.show();
+        RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentArea.getSkin());
+        commentArea.setDocument(header.getComment());
+        commentArea.setContentAreaWidth(PrintUtilities.getPageWidth());
+        commentArea.setPrefWidth(PrintUtilities.getPageWidth());
+        double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+        commentArea.setPrefHeight(Math.max(70, commentHeight + 35.0));
+        commentArea.requestFocus();
+        tempStage.close();
+
+
+
+
+        headerBox.getChildren().addAll(nameBox,itemsBox, separator, commentArea );
+        headerBox.setPadding(new Insets(0,0,20,0));
+        return headerBox;
     }
 
     public void setCurrentExerciseView(ExerciseView currentExerciseView) {

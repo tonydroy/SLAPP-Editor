@@ -1,19 +1,23 @@
 package slapp.editor.main_window.assignment;
 
+import com.gluonhq.richtextarea.model.Document;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Header implements Serializable {
+public class AssignmentHeader implements Serializable {
     private String creationID = "";
     private String workingID = "";
     private String assignmentName = "";
     private String studentName = "";
+    private Document comment = new Document();
 
-    private List<HeaderItem> instructorItems = new ArrayList<>();
-    private List<HeaderItem> studentItems = new ArrayList<>();
 
-    public Header(){ }
+    private List<AssignmentHeaderItem> instructorItems = new ArrayList<>();
+    private List<AssignmentHeaderItem> studentItems = new ArrayList<>();
+
+    public AssignmentHeader(){ }
 
 
     public String getCreationID() {
@@ -48,19 +52,28 @@ public class Header implements Serializable {
         this.studentName = studentName;
     }
 
-    public List<HeaderItem> getInstructorItems() {
+    public List<AssignmentHeaderItem> getInstructorItems() {
         return instructorItems;
     }
 
-    public void setInstructorItems(List<HeaderItem> instructorItems) {
+    public void setInstructorItems(List<AssignmentHeaderItem> instructorItems) {
         this.instructorItems = instructorItems;
     }
 
-    public List<HeaderItem> getStudentItems() {
+    public List<AssignmentHeaderItem> getStudentItems() {
         return studentItems;
     }
 
-    public void setStudentItems(List<HeaderItem> studentItems) {
+    public void setStudentItems(List<AssignmentHeaderItem> studentItems) {
         this.studentItems = studentItems;
     }
+
+    public Document getComment() {
+        return comment;
+    }
+
+    public void setComment(Document comment) {
+        this.comment = comment;
+    }
+
 }

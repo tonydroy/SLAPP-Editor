@@ -67,6 +67,15 @@ public class CreateAssignment {
         assignmentNameField = new TextField(assignment.getHeader().getAssignmentName());
         Label creationIDLabel = new Label("Creation ID: ");
 
+        ChangeListener<String> nameListener = new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ob, String ov, String nv) {
+                isModified = true;
+                assignmentNameField.textProperty().removeListener(this);
+            }
+        };
+        assignmentNameField.textProperty().addListener(nameListener);
+
         Label creationIDNum = new Label(creationID);
         Region spacer1 = new Region();
 
@@ -120,6 +129,7 @@ public class CreateAssignment {
             valueFields.add(insItemIndex, new TextField());
             valueFields.get(insItemIndex).setPromptText("Value");
             optionalItemsPane.add(valueFields.get(insItemIndex), 2, insItemIndex + 1);
+            labelFields.get(insItemIndex).requestFocus();
             insItemIndex++;
         });
         removeOptionalItemsButton.setOnAction(e -> {
@@ -283,6 +293,25 @@ public class CreateAssignment {
 
         borderPane.setRight(buttonBox);
 
+        String helpText = "Name the assignment.  Optional identifying fields may be included as appropriate.\n\n" +
+                "Build an assignment by opening a folder with SlAPP exercise files (*.sle).  A selected exercise is added to the assignment above or below a selected assignment item by the add buttons.  " +
+                "And similarly a selected assignment item is removed by the 'remove' button.";
+
+
+        TextArea helpArea = new TextArea(helpText);
+        helpArea.setWrapText(true);
+        helpArea.setPrefHeight(110);
+        helpArea.setEditable(false);
+        helpArea.setFocusTraversable(false);
+        helpArea.setMouseTransparent(true);
+        helpArea.setPadding(new Insets(5,5,5,5));
+        helpArea.setStyle("-fx-text-fill: mediumslateblue");
+
+        borderPane.setBottom(helpArea);
+
+
+
+
         Scene scene = new Scene(borderPane);
 
         stage = new Stage();
@@ -303,13 +332,13 @@ public class CreateAssignment {
 
     private Assignment getAssignmentFromWindow() {
         Assignment assignment = new Assignment();
-        Header assignmentHeader = assignment.getHeader();
+        AssignmentHeader assignmentHeader = assignment.getHeader();
         assignmentHeader.setCreationID(creationID);
         assignmentHeader.setAssignmentName(assignmentNameField.getText());
-        List<HeaderItem> instructorItems = assignmentHeader.getInstructorItems();
+        List<AssignmentHeaderItem> instructorItems = assignmentHeader.getInstructorItems();
         instructorItems.clear();
         for (int i = 0; i < labelFields.size(); i++) {
-            instructorItems.add(new HeaderItem(labelFields.get(i).getText(), valueFields.get(i).getText()));
+            instructorItems.add(new AssignmentHeaderItem(labelFields.get(i).getText(), valueFields.get(i).getText()));
         }
         assignment.setExerciseModels(new ArrayList<ExerciseModel>(assignmentList.getItems()));
 
@@ -323,7 +352,10 @@ public class CreateAssignment {
             Optional<ButtonType> result = confirm.showAndWait();
             if (result.get() != OK) okContinue = false;
         }
-        if (okContinue)  stage.close();
+        if (okContinue) {
+            mainWindow.closeExercise();
+            stage.close();
+        }
     }
 
 

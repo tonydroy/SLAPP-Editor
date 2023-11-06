@@ -8,8 +8,8 @@ import slapp.editor.simple_editor.SimpleEditModel;
 public class TypeSelectorFactories {
     private MainWindow mainWindow;
 
-    public TypeSelectorFactories(MainWindow mainController) {
-        this.mainWindow = mainController;
+    public TypeSelectorFactories(MainWindow mainWindow) {
+        this.mainWindow = mainWindow;
     }
 
     public Exercise getExerciseFromModelObject(Object objectModel) {

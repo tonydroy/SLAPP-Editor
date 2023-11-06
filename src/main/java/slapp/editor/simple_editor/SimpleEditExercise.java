@@ -14,9 +14,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
 import slapp.editor.EditorAlerts;
-import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
@@ -36,7 +34,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     SimpleEditView view;
 
     MainWindowView mainView;
-    boolean contentChanged = false;
+    boolean exerciseModified = false;
 
     Node lastFocusedNode;
     int lastPageNum = -1;
@@ -135,7 +133,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
             if (okContinue) {
                 model.getExerciseContent().remove(currentPageIndex);
                 view.removeContentPage(currentPageIndex);
-                contentChanged = true;
+                exerciseModified = true;
             }
         }
     }
@@ -163,11 +161,14 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     @Override
     public void saveExercise(boolean saveAs) {
         DiskUtilities.saveExercise(saveAs, getModelFromView());
-        contentChanged = false;
+        exerciseModified = false;
     }
 
+    public ExerciseModel getExerciseModelFromView() {
+        return (ExerciseModel) getModelFromView();
+    }
 
-    private SimpleEditModel getModelFromView() {
+    public SimpleEditModel getModelFromView() {
         RichTextArea commentRTA = view.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
@@ -177,13 +178,13 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         ArrayList<Document> contentList = new ArrayList<>();
         for (DecoratedRTA drta : exerciseContent) {
             RichTextArea editor = drta.getEditor();
-            if (editor.isModified()) contentChanged = true;
+            if (editor.isModified()) exerciseModified = true;
             editor.getActionFactory().saveNow().execute(new ActionEvent());
             contentList.add(editor.getDocument());
         }
         String name = model.getExerciseName();
         String prompt = model.getContentPrompt();
-        boolean started = (model.isStarted() || contentChanged);
+        boolean started = (model.isStarted() || exerciseModified);
         model.setStarted(started);
         double statementHeight = view.getExerciseStatement().getEditor().getPrefHeight();
         Document statementDocument = model.getExerciseStatement();
@@ -204,29 +205,35 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     }
 
     @Override
-    public boolean isContentModified() {
-        boolean modified = false;
+    public boolean isExerciseModified() {
+        RichTextArea commentEditor = view.getExerciseComment().getEditor();
+        if (commentEditor.isModified()) exerciseModified = true;
         ArrayList<DecoratedRTA> exerciseContent = view.getExerciseContent();
         for (DecoratedRTA drta : exerciseContent) {
             RichTextArea editor = drta.getEditor();
             if (editor.isModified()) {
-                modified = true;
+                exerciseModified = true;
             }
         }
-        return modified || contentChanged;
+        return exerciseModified;
+    }
+
+    @Override
+    public void setExerciseModified(boolean modified) {
+        this.exerciseModified = modified;
     }
 
     @Override
     public void printExercise() {
-        PrintUtilities.printExercise(getPrintNodes());
+        PrintUtilities.printExercise(getPrintNodes(), model.getExerciseName());
     }
 
-    public void exportToPDF() { PrintUtilities.exportExerciseToPDF(getPrintNodes()); }
+    public void exportToPDF() { PrintUtilities.exportExerciseToPDF(getPrintNodes(), model.getExerciseName()); }
 
 
 
-    private ArrayList<Node> getPrintNodes() {
-        ArrayList<Node> nodeList = new ArrayList<>();
+    public List<Node> getPrintNodes() {
+        List<Node> nodeList = new ArrayList<>();
         model = getModelFromView();
         SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
         double nodeWidth = PrintUtilities.getPageWidth();
@@ -234,13 +241,8 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         //header node
         Label exerciseName = new Label(model.getExerciseName());
         exerciseName.setStyle("-fx-font-weight: bold;");
-        Region spacer = new Region();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        Label exerciseDate = new Label(dtf.format(LocalDateTime.now()));
-        HBox hbox = new HBox(exerciseName, spacer, exerciseDate);
-        hbox.setHgrow(spacer, Priority.ALWAYS);
+        HBox hbox = new HBox(exerciseName);
         hbox.setPadding(new Insets(0,0,10,0));
-        hbox.setPrefWidth(nodeWidth);
 
         Group headerRoot = new Group();
         Scene headerScene = new Scene(headerRoot);

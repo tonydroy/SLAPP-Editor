@@ -61,8 +61,8 @@ public class SimpleEditCreate {
         setupWindow();
     }
 
-    public SimpleEditCreate(MainWindow mainController, SimpleEditExercise originalExercise) {
-        this(mainController);
+    public SimpleEditCreate(MainWindow mainWindow, SimpleEditExercise originalExercise) {
+        this(mainWindow);
         RichTextArea originalRTA = originalExercise.getExerciseView().getExerciseStatement().getEditor();
         statementEditor.setDocument(originalRTA.getDocument());
         statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
@@ -251,8 +251,7 @@ public class SimpleEditCreate {
         rta.setEditable(false);
         exercise.getExerciseView().setStatementPrefHeight(height + 35.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 35.0);
-        mainWindow.setUpExercise(exercise);
-        mainWindow.saveExercise(false);
+        exercise.saveExercise(false);
     }
 
     private void saveAsExercise() {
@@ -266,8 +265,7 @@ public class SimpleEditCreate {
         rta.setEditable(false);
         exercise.getExerciseView().setStatementPrefHeight(height + 35.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 35.0);
-        mainWindow.setUpExercise(exercise);
-        mainWindow.saveExercise(true);
+        exercise.saveExercise(true);
     }
 
     private boolean checkContinue(String title, String content) {

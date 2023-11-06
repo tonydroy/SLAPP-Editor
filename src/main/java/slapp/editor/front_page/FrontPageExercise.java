@@ -1,9 +1,11 @@
 package slapp.editor.front_page;
 
+import javafx.scene.Node;
 import slapp.editor.main_window.Exercise;
+import slapp.editor.main_window.ExerciseModel;
 import slapp.editor.main_window.MainWindow;
-import slapp.editor.simple_editor.SimpleEditModel;
-import slapp.editor.simple_editor.SimpleEditView;
+
+import java.util.List;
 
 public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView> {
     private FrontPageView view;
@@ -63,9 +65,11 @@ public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView
     }
 
     @Override
-    public boolean isContentModified() {
+    public boolean isExerciseModified() {
         return false;
     }
+    @Override
+    public void setExerciseModified(boolean modified){}
 
     @Override
     public void updateContentHeight(boolean isRequired) {
@@ -78,7 +82,13 @@ public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView
     }
 
     @Override
-    public void updateStatementHeight(boolean isRequired) {
+    public void updateStatementHeight(boolean isRequired) {    }
 
+    @Override
+    public ExerciseModel<FrontPageModel, FrontPageView> getExerciseModelFromView() { return (ExerciseModel) new FrontPageModel(); }
+
+    @Override
+    public List<Node> getPrintNodes() {
+        return null;
     }
 }

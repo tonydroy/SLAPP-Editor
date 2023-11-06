@@ -58,9 +58,8 @@ public class FrontPageModel implements ExerciseModel<Document, Document> {
     }
 
     @Override
-    public void setExerciseContent(Document exerciseContent) {
+    public void setExerciseContent(Document exerciseContent) {    }
 
-    }
 
     @Override
     public Document getExerciseComment() {

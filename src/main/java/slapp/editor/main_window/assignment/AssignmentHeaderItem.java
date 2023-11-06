@@ -2,13 +2,13 @@ package slapp.editor.main_window.assignment;
 
 import java.io.Serializable;
 
-public class HeaderItem implements Serializable {
+public class AssignmentHeaderItem implements Serializable {
 
     String label = "";
     String value = "";
 
-    public HeaderItem(){};
-    public HeaderItem(String label, String value) {
+    public AssignmentHeaderItem(){};
+    public AssignmentHeaderItem(String label, String value) {
         this.label = label;
         this.value = value;
     }
