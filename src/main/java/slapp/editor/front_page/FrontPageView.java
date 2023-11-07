@@ -9,14 +9,19 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
 
+/**
+ * Simple view including just comment area, to support FrontPageExercise
+ * (need to update "logo here" to some final displayed content)
+ */
+
 public class FrontPageView implements ExerciseView<Label, Label> {
 
-    String name = "";
-    Label exerciseStatement;
-    Label exerciseContent;
-    DecoratedRTA exerciseComment;
-    Node exerciseControl;
-    MainWindowView mainView;
+    private String name = "";
+    private Label exerciseStatement;
+    private Label exerciseContent;
+    private DecoratedRTA exerciseComment;
+    private Node exerciseControl;
+    private MainWindowView mainView;
 
     public FrontPageView(MainWindowView mainView) {
         this.mainView = mainView;
@@ -33,7 +38,6 @@ public class FrontPageView implements ExerciseView<Label, Label> {
         exerciseComment.getEditor().setEditable(false);
         exerciseComment.getEditor().setFocusTraversable(false);
         exerciseComment.getEditor().setMouseTransparent(true);
-
         exerciseComment.getEditor().setPrefHeight(500);
 
         exerciseComment.getFontsToolbar().setFocusTraversable(false);
@@ -47,44 +51,39 @@ public class FrontPageView implements ExerciseView<Label, Label> {
                 mainView.editorInFocus(exerciseComment);
             }
         });
-
     }
 
-    @Override
-    public double getStatementHeight() { return 0.0; }
-    @Override
-    public double getCommentHeight() { return 0.0; }
     @Override
     public String getExerciseName() { return name; }
     @Override
     public void setExerciseName(String name) {this.name = name; }
     @Override
+    public DecoratedRTA getExerciseComment() { return exerciseComment; }
+    @Override
+    public void setExerciseComment(DecoratedRTA exerciseComment) {}
+    @Override
+    public double getCommentHeight() { return 0.0; }
+    @Override
     public Label getExerciseStatement() { return exerciseStatement; }
     @Override
     public void setExerciseStatement(Label exerciseStatement) {}
+    @Override
+    public Node getExerciseStatementNode() { return exerciseStatement; }
+    @Override
+    public double getStatementHeight() { return 0.0; }
+    @Override
+    public void setStatementPrefHeight(double height) { }
     @Override
     public Label getExerciseContent() { return exerciseContent; }
     @Override
     public void setExerciseContent(Label exerciseContent) {}
     @Override
-    public DecoratedRTA getExerciseComment() { return exerciseComment; }
-    @Override
-    public void setExerciseComment(DecoratedRTA exerciseComment) {}
-    @Override
-    public Node getExerciseControl() { return exerciseControl; }
-    @Override
-    public void setExerciseControl(Node exerciseControl) {}
-    @Override
-    public Node getExerciseStatementNode() { return exerciseStatement; }
-    @Override
     public Node getExerciseContentNode() { return exerciseContent; }
     @Override
-    public DoubleProperty getContentHeightProperty() {
-        return exerciseContent.prefHeightProperty();
-    }
-    @Override
     public void setContentPrompt(String prompt) {}
-
     @Override
-    public void setStatementPrefHeight(double height) { }
+    public DoubleProperty getContentHeightProperty() { return exerciseContent.prefHeightProperty(); }
+    @Override
+    public Node getExerciseControl() { return exerciseControl; }
+
 }

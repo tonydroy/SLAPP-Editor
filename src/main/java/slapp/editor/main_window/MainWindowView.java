@@ -318,8 +318,10 @@ public class MainWindowView {
     }
 
     private void closeWindow() {
-        KeyboardDiagram.getInstance().close();
-        stage.close();
+        if (mainWindow.checkCloseWindow()) {
+            KeyboardDiagram.getInstance().close();
+            stage.close();
+        }
     }
 
     public VBox getAssignmentHeader() {

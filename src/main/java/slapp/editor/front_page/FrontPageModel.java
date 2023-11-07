@@ -2,87 +2,30 @@ package slapp.editor.front_page;
 
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
-import slapp.editor.main_window.ExerciseType;
 
-import java.util.ArrayList;
-
+/**
+ * Dummy model to support FrontPageExercise
+ */
 public class FrontPageModel implements ExerciseModel<Document, Document> {
-    @Override
-    public ExerciseType getExerciseType() {
-        return null;
-    }
 
     @Override
-    public String getExerciseName() {
-        return "";
-    }
-
+    public String getExerciseName() { return ""; }
     @Override
-    public void setExerciseName(String name) {
-
-    }
-
+    public boolean isStarted() { return false; }
     @Override
-    public boolean isStarted() {
-        return false;
-    }
-
+    public void setStarted(boolean started) { }
     @Override
-    public void setStarted(boolean started) {
-
-    }
-
+    public Document getExerciseComment() { return null; }
     @Override
-    public String getContentPrompt() {
-        return null;
-    }
-
+    public Document getExerciseStatement() { return null; }
     @Override
-    public void setContentPrompt(String prompt) {
-
-    }
-
+    public double getStatementPrefHeight() { return 0; }
     @Override
-    public Document getExerciseStatement() {
-        return null;
-    }
-
+    public void setStatementPrefHeight(double height) { }
     @Override
-    public void setExerciseStatement(Document exerciseStatement) {
-
-    }
-
+    public Document getExerciseContent() { return null; }
     @Override
-    public Document getExerciseContent() {
-        return null;
-    }
-
+    public String getContentPrompt() { return null; }
     @Override
-    public void setExerciseContent(Document exerciseContent) {    }
-
-
-    @Override
-    public Document getExerciseComment() {
-        return null;
-    }
-
-    @Override
-    public void setExerciseComment(Document exerciseComment) {
-
-    }
-
-    @Override
-    public double getStatementPrefHeight() {
-        return 0;
-    }
-
-    @Override
-    public void setStatementPrefHeight(double height) {
-
-    }
-
-    @Override
-    public String toString() {
-        return "";
-    }
+    public String toString() { return ""; }
 }

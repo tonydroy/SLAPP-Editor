@@ -46,8 +46,8 @@ public class MainWindow {
 
         focusListener = (ob, ov, nv) ->  {
             if (nv.focusedProperty().get() == true) {
-                lastFocusOwner = ov;
-                updateNodeContainerHeight(nv, false);
+                if (ov != null) lastFocusOwner = ov;
+                if (nv != null) updateNodeContainerHeight(nv, false);
             }
         };
         setUpExercise(new FrontPageExercise(this));
@@ -194,7 +194,7 @@ public class MainWindow {
         }
     }
 
-    private void exportExerciseToPDF() { currentExercise.exportToPDF(); }
+    private void exportExerciseToPDF() { currentExercise.exportExerciseToPDF(); }
 
     private void printExercise() {
         if (isExerciseOpen && currentExercise != null) {
@@ -466,8 +466,15 @@ public class MainWindow {
         }
     }
 
-
-
+    public boolean checkCloseWindow() {
+        boolean continueClose = false;
+        if (checkContinueAssignment("Confirm Close", "The current assignment appears to have been changed.\n\nContinue to close?")) {
+            if (checkContinueExercise("Confirm Close", "The current exercise appears to have been changed.\n\nContinue to close assignment?")) {
+                continueClose = true;
+            }
+        }
+        return continueClose;
+    }
 
     public MainWindowView getMainView() { return mainView; }
     public Assignment getCurrentAssignment() { return currentAssignment; }

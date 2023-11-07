@@ -4,9 +4,11 @@ import javafx.scene.Node;
 import slapp.editor.main_window.Exercise;
 import slapp.editor.main_window.ExerciseModel;
 import slapp.editor.main_window.MainWindow;
-
 import java.util.List;
 
+/**
+ * Dummy exercise to fill the empty opening screen.
+ */
 public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView> {
     private FrontPageView view;
     private FrontPageModel model;
@@ -19,76 +21,33 @@ public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView
     }
 
     @Override
-    public MainWindow getMainWindowController() { return null; }
-
-
+    public FrontPageModel getExerciseModel() {return model; }
     @Override
-    public FrontPageModel getExerciseModel() {
-        return model;
-    }
-
+    public FrontPageView getExerciseView() { return view; }
     @Override
-    public void setExerciseModel(FrontPageModel model) {
-
-    }
-
+    public void saveExercise(boolean saveAs) { }
     @Override
-    public FrontPageView getExerciseView() {
-        return view;
-    }
-
+    public void printExercise() { }
     @Override
-    public void setExerciseView(FrontPageView view) {
-
-    }
-
+    public void exportExerciseToPDF(){}
     @Override
-    public void saveExercise(boolean saveAs) {
-
-    }
-
+    public List<Node> getPrintNodes() { return null; }
     @Override
-    public void printExercise() {
-    }
-
+    public Exercise<FrontPageModel, FrontPageView> getContentClearExercise() { return new FrontPageExercise(mainWindow); }
     @Override
-    public void exportToPDF(){}
-
+    public Exercise<FrontPageModel, FrontPageView> getEmptyExercise() { return new FrontPageExercise(mainWindow); }
     @Override
-    public Exercise<FrontPageModel, FrontPageView> getContentClearExercise() {
-        return new FrontPageExercise(mainWindow);
-    }
-
+    public boolean isExerciseModified() { return false; }
     @Override
-    public Exercise<FrontPageModel, FrontPageView> getEmptyExercise() {
-        return new FrontPageExercise(mainWindow);
-    }
-
+    public void setExerciseModified(boolean modified) { }
     @Override
-    public boolean isExerciseModified() {
-        return false;
-    }
+    public void updateContentHeight(boolean isRequired) { }
     @Override
-    public void setExerciseModified(boolean modified){}
-
-    @Override
-    public void updateContentHeight(boolean isRequired) {
-
-    }
-
-    @Override
-    public void updateCommentHeight(boolean isRequired) {
-
-    }
-
+    public void updateCommentHeight(boolean isRequired) { }
     @Override
     public void updateStatementHeight(boolean isRequired) {    }
-
     @Override
     public ExerciseModel<FrontPageModel, FrontPageView> getExerciseModelFromView() { return (ExerciseModel) new FrontPageModel(); }
 
-    @Override
-    public List<Node> getPrintNodes() {
-        return null;
-    }
+
 }

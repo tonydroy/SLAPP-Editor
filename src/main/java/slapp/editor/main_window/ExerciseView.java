@@ -1,30 +1,26 @@
 package slapp.editor.main_window;
 
-import com.gluonhq.richtextarea.RichTextArea;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
 import slapp.editor.decorated_rta.DecoratedRTA;
 
 public interface ExerciseView<T,U> {
-    double getStatementHeight();
-    double getCommentHeight();
-    DoubleProperty getContentHeightProperty();
 
     String getExerciseName();
     void setExerciseName(String name);
-    T getExerciseStatement();
-    void setExerciseStatement(T exerciseStatement);
-    U getExerciseContent();
-    void setExerciseContent(U exerciseContent);
     DecoratedRTA getExerciseComment();
     void setExerciseComment(DecoratedRTA exerciseComment);
-    Node getExerciseControl();
-    void setExerciseControl(Node exerciseControl);
+    double getCommentHeight();
+    T getExerciseStatement();
+    void setExerciseStatement(T exerciseStatement);
     Node getExerciseStatementNode();
+    double getStatementHeight();
+    void setStatementPrefHeight(double height);
+    U getExerciseContent();
+    void setExerciseContent(U exerciseContent);
     Node getExerciseContentNode();
     void setContentPrompt(String prompt);
-    void setStatementPrefHeight(double height);
-
-
+    DoubleProperty getContentHeightProperty();
+    Node getExerciseControl();
 
 }
