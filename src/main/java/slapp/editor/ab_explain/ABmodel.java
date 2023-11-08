@@ -3,7 +3,6 @@ package slapp.editor.ab_explain;
 
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
-import slapp.editor.simple_editor.ABModelFields;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 public class ABmodel implements ExerciseModel<Document, ArrayList<Document>>, Serializable {
 
     private String exerciseName = new String("");
-    private ABModelFields modelFields = new ABModelFields();
+    private ABmodelExtra modelFields = new ABmodelExtra();
     private boolean started = false;
     private String prompt = "";
     private double statementPrefHeight = 80;
@@ -19,7 +18,7 @@ public class ABmodel implements ExerciseModel<Document, ArrayList<Document>>, Se
     private Document exerciseComment = new Document();
     private ArrayList<Document> exerciseContent = new ArrayList<>();
 
-    public ABmodel(String name, ABModelFields modelFields, boolean started, String prompt, double statementPrefHeight, Document exerciseStatement, Document exerciseComment, ArrayList<Document> exerciseContent) {
+    public ABmodel(String name, ABmodelExtra modelFields, boolean started, String prompt, double statementPrefHeight, Document exerciseStatement, Document exerciseComment, ArrayList<Document> exerciseContent) {
         this.exerciseName = name;
         this.modelFields = modelFields;
         this.started = started;
@@ -39,8 +38,8 @@ public class ABmodel implements ExerciseModel<Document, ArrayList<Document>>, Se
         ArrayList<Document> clearList = new ArrayList<>();
         clearList.add(new Document());
         exerciseContent = clearList;
-        modelFields.setAvalue(false);
-        modelFields.setBvalue(false);
+        modelFields.setValueA(false);
+        modelFields.setValueB(false);
         return this;
     }
 
@@ -81,11 +80,7 @@ public class ABmodel implements ExerciseModel<Document, ArrayList<Document>>, Se
     public String getContentPrompt() {
         return prompt;
     }
-
-    ABModelFields getModelFields() {   return modelFields; }
-
-   void setModelFields(ABModelFields modelFields) { this.modelFields = modelFields; }
-
+    ABmodelExtra getModelFields() {   return modelFields; }
     @Override
     public String toString() {
         String name = getExerciseName();

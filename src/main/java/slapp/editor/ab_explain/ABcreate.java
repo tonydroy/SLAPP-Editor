@@ -28,7 +28,6 @@ import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.MainWindow;
-import slapp.editor.simple_editor.ABModelFields;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -41,9 +40,9 @@ public class ABcreate {
     private DecoratedRTA statementDRTA;
     private TextField nameField;
     private TextField leaderField;
-    private TextField aPromptField;
-    private TextField bPromptField;
-    private TextField promptField;
+    private TextField promptFieldA;
+    private TextField promptFieldB;
+    private TextField explainPromptField;
 
     private boolean nameModified = false;
     private ChangeListener nameListener;
@@ -71,11 +70,11 @@ public class ABcreate {
         nameField.setText(originalModel.getExerciseName());
         nameModified = false;
         nameField.textProperty().addListener(nameListener);
-        promptField.setText(originalModel.getContentPrompt());
-        ABModelFields fields = originalModel.getModelFields();
+        explainPromptField.setText(originalModel.getContentPrompt());
+        ABmodelExtra fields = originalModel.getModelFields();
         leaderField.setText(fields.getLeader());
-        aPromptField.setText(fields.getAprompt());
-        bPromptField.setText(fields.getBprompt());
+        promptFieldA.setText(fields.getPromptA());
+        promptFieldB.setText(fields.getPromptB());
     }
 
     private void setupWindow() {
@@ -112,20 +111,20 @@ public class ABcreate {
 
         Label aPromptLabel = new Label("A Prompt: ");
         aPromptLabel.setPrefWidth(100);
-        aPromptField = new TextField();
-        aPromptField.setPromptText("(plain text)");
+        promptFieldA = new TextField();
+        promptFieldA.setPromptText("(plain text)");
         Label bPromptLabel = new Label("B Prompt: ");
         bPromptLabel.setPrefWidth(100);
-        bPromptField = new TextField();
-        bPromptField.setPromptText("(plain text)");
+        promptFieldB = new TextField();
+        promptFieldB.setPromptText("(plain text)");
 
 
 
 
         Label promptLabel = new Label("Content prompt: ");
         promptLabel.setPrefWidth(100);
-        promptField = new TextField();
-        promptField.setPromptText("(plain text)");
+        explainPromptField = new TextField();
+        explainPromptField.setPromptText("(plain text)");
 
 
 
@@ -133,13 +132,13 @@ public class ABcreate {
 
         HBox nameBox = new HBox(nameLabel, nameField);
         nameBox.setAlignment(Pos.BASELINE_LEFT);
-        HBox promptBox = new HBox(promptLabel, promptField);
+        HBox promptBox = new HBox(promptLabel, explainPromptField);
         promptBox.setAlignment(Pos.BASELINE_LEFT);
         HBox leaderBox = new HBox(leaderLabel, leaderField);
         leaderBox.setAlignment(Pos.BASELINE_LEFT);
-        HBox aBbox = new HBox(aPromptLabel, aPromptField);
+        HBox aBbox = new HBox(aPromptLabel, promptFieldA);
         promptBox.setAlignment(Pos.BASELINE_LEFT);
-        HBox bBox = new HBox(bPromptLabel, bPromptField);
+        HBox bBox = new HBox(bPromptLabel, promptFieldB);
         bBox.setAlignment(Pos.BASELINE_LEFT);
         VBox textFieldsPromptBox = new VBox(10,nameBox, promptBox, leaderBox, aBbox, bBox);
         textFieldsPromptBox.setPadding(new Insets(20,0,20,70));
@@ -253,6 +252,10 @@ public class ABcreate {
             nameField.clear();
             nameModified = false;
             nameField.textProperty().addListener(nameListener);
+            explainPromptField.clear();
+            leaderField.clear();
+            promptFieldA.clear();
+            promptFieldB.clear();
             statementEditor.getActionFactory().newDocument().execute(new ActionEvent());
             statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
@@ -296,10 +299,10 @@ public class ABcreate {
     private ABmodel extractModelFromWindow() {
         String name = nameField.getText();
         String leader = leaderField.getText();
-        String Aprompt = aPromptField.getText();
-        String Bprompt = bPromptField.getText();
-        ABModelFields fields = new ABModelFields(leader, Aprompt, false, Bprompt, false);
-        String prompt = promptField.getText();
+        String Aprompt = promptFieldA.getText();
+        String Bprompt = promptFieldB.getText();
+        ABmodelExtra fields = new ABmodelExtra(leader, Aprompt, false, Bprompt, false);
+        String prompt = explainPromptField.getText();
         statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
         Document statementDocument = statementEditor.getDocument();
         ABmodel model = new ABmodel(name, fields,  false, prompt, 70.0, statementDocument, new Document(), new ArrayList<Document>());

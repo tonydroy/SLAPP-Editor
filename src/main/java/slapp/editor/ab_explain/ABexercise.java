@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import slapp.editor.DiskUtilities;
-import slapp.editor.simple_editor.ABModelFields;
+
 import static javafx.scene.control.ButtonType.OK;
 
 public class ABexercise implements Exercise<ABmodel, ABview> {
@@ -45,12 +45,12 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
     private void setEditView() {
 
         abView.setExerciseName(abModel.getExerciseName());
-        ABModelFields modelFields = abModel.getModelFields();
+        ABmodelExtra modelFields = abModel.getModelFields();
         abView.getLeaderLabel().setText(modelFields.getLeader());
-        CheckBox aCheckBox = abView.getAcheckBox();
-        CheckBox bCheckBox = abView.getBcheckBox();
-        aCheckBox.setText(modelFields.getAprompt());
-        aCheckBox.setSelected(modelFields.getAvalue());
+        CheckBox aCheckBox = abView.getCheckBoxA();
+        CheckBox bCheckBox = abView.getCheckBoxB();
+        aCheckBox.setText(modelFields.getPromptA());
+        aCheckBox.setSelected(modelFields.getValueA());
         aCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ob, Boolean ov, Boolean nv) {
@@ -58,8 +58,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
                 exerciseModified = true;
             }
         });
-        bCheckBox.setText(modelFields.getBprompt());
-        bCheckBox.setSelected(modelFields.getBvalue());
+        bCheckBox.setText(modelFields.getPromptB());
+        bCheckBox.setSelected(modelFields.getValueB());
         bCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ob, Boolean ov, Boolean nv) {
@@ -162,10 +162,13 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
     }
     @Override
     public void printExercise() {
-        PrintUtilities.printExercise(getPrintNodes(), abModel.getExerciseName());
+        List<Node> printNodes = getPrintNodes();
+        PrintUtilities.printExercise(printNodes, abModel.getExerciseName());
     }
     @Override
-    public void exportExerciseToPDF() { PrintUtilities.exportExerciseToPDF(getPrintNodes(), abModel.getExerciseName()); }
+    public void exportExerciseToPDF() {
+        List<Node> printNodes = getPrintNodes();
+        PrintUtilities.exportExerciseToPDF(printNodes, abModel.getExerciseName()); }
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
@@ -211,15 +214,15 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         nodeList.add(new Separator(Orientation.HORIZONTAL));
 
         //content nodes
-        ABModelFields fields = abModel.getModelFields();
+        ABmodelExtra fields = abModel.getModelFields();
         Label leaderLabel = new Label(fields.getLeader());
-        CheckBox aBox = new CheckBox(fields.getAprompt());
-        aBox.setSelected(fields.getAvalue());
-        CheckBox bBox = new CheckBox(fields.getBprompt());
-        bBox.setSelected(fields.getBvalue());
+        CheckBox boxA = new CheckBox(fields.getPromptA());
+        boxA.setSelected(fields.getValueA());
+        CheckBox boxB = new CheckBox(fields.getPromptB());
+        boxB.setSelected(fields.getValueB());
         HBox abBox = new HBox(20);
         abBox.setPadding(new Insets(10,10,10,0));
-        abBox.getChildren().addAll(leaderLabel, aBox, bBox);
+        abBox.getChildren().addAll(leaderLabel, boxA, boxB);
         nodeList.add(abBox);
 
 
@@ -327,17 +330,17 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         String prompt = abModel.getContentPrompt();
 
         String leader = abModel.getModelFields().getLeader();
-        String Aprompt = abModel.getModelFields().getAprompt();
-        boolean Avalue = abView.getAcheckBox().isSelected();
-        String Bprompt = abModel.getModelFields().getBprompt();
-        boolean Bvalue = abView.getBcheckBox().isSelected();
-        ABModelFields fields = new ABModelFields(leader, Aprompt, Avalue, Bprompt, Bvalue);
+        String promptA = abModel.getModelFields().getPromptA();
+        boolean valueA = abView.getCheckBoxA().isSelected();
+        String promptB = abModel.getModelFields().getPromptB();
+        boolean valueB = abView.getCheckBoxB().isSelected();
+        ABmodelExtra extra = new ABmodelExtra(leader, promptA, valueA, promptB, valueB);
 
         boolean started = (abModel.isStarted() || exerciseModified);
         abModel.setStarted(started);
         double statementHeight = abView.getExerciseStatement().getEditor().getPrefHeight();
         Document statementDocument = abModel.getExerciseStatement();
-        ABmodel newModel = new ABmodel(name, fields, started, prompt, statementHeight, statementDocument, commentDocument, contentList);
+        ABmodel newModel = new ABmodel(name, extra, started, prompt, statementHeight, statementDocument, commentDocument, contentList);
 
         return newModel;
     }

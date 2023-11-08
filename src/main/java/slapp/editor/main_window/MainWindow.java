@@ -326,11 +326,16 @@ public class MainWindow {
         }
     }
     public void printAssignment() {
-        List<Node> printNodes = new ArrayList<>();
+
         if (currentAssignment == null) {
             EditorAlerts.showSimpleAlert("Cannot Print", "There is no open assignment to print.");
         } else {
+            List<Node> printNodes = new ArrayList<>();
             printNodes.add(mainView.getAssignmentHeader());
+
+            if (currentExercise.isExerciseModified()) isAssignmentContentModified = true;
+            ExerciseModel currentModel = currentExercise.getExerciseModelFromView();
+            currentAssignment.replaceExerciseModel(assignmentIndex, currentModel);
 
             List<ExerciseModel> exerciseModelList = currentAssignment.getExerciseModels();
             for (int i = 0; i < exerciseModelList.size(); i++) {
@@ -355,6 +360,10 @@ public class MainWindow {
         } else {
             List<Node> printNodes = new ArrayList<>();
             printNodes.add(mainView.getAssignmentHeader());
+
+            if (currentExercise.isExerciseModified()) isAssignmentContentModified = true;
+            ExerciseModel currentModel = currentExercise.getExerciseModelFromView();
+            currentAssignment.replaceExerciseModel(assignmentIndex, currentModel);
 
             List<ExerciseModel> exerciseModelList = currentAssignment.getExerciseModels();
             for (int i = 0; i < exerciseModelList.size(); i++) {

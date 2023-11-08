@@ -1,9 +1,6 @@
 package slapp.editor.ab_explain;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -19,8 +16,8 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
     private MainWindowView mainView;
     private String exerciseName = new String();
     private Label leaderLabel = new Label("");
-    private CheckBox AcheckBox = new CheckBox("");
-    private CheckBox BcheckBox = new CheckBox("");
+    private CheckBox checkBoxA = new CheckBox("");
+    private CheckBox checkBoxB = new CheckBox("");
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
@@ -30,14 +27,14 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
     private Button addPageButton;
     private Button removePageButton;
     private Node exerciseControlNode = new VBox();
-    private HBox ABbox = new HBox();
+    private HBox abBbox = new HBox();
 
     public ABview(MainWindowView mainView) {
         this.mainView = mainView;
-        ABbox.getChildren().addAll(leaderLabel, AcheckBox, BcheckBox );
-        ABbox.setSpacing(20);
-        ABbox.setPadding(new Insets(10,10,10,10));
-        ABbox.setStyle("-fx-border-color: gainsboro; -fx-border-width: 2.2; -fx-background-color: white");
+        abBbox.getChildren().addAll(leaderLabel, checkBoxA, checkBoxB);
+        abBbox.setSpacing(20);
+        abBbox.setPadding(new Insets(10,10,10,10));
+        abBbox.setStyle("-fx-border-color: gainsboro; -fx-border-width: 2.2; -fx-background-color: white");
 
 
 
@@ -49,8 +46,8 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
             if (index == 0) {
                 DecoratedRTA drtaPage0 = exerciseContent.get(index);
                 mainView.setContentHeightProperty(drtaPage0.getEditor().prefHeightProperty());
-                VBox topContentPage = new VBox(3, ABbox, drtaPage0.getEditor());
-                topContentPage.setMargin(ABbox, new Insets(5,0,0,0));
+                VBox topContentPage = new VBox(3, abBbox, drtaPage0.getEditor());
+                topContentPage.setMargin(abBbox, new Insets(5,0,0,0));
                 page = topContentPage;
             } else {
                 DecoratedRTA DRTApage = exerciseContent.get(index);
@@ -165,25 +162,14 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
         return leaderLabel;
     }
 
-    public void setLeaderLabel(Label leaderLabel) {
-        this.leaderLabel = leaderLabel;
+    public CheckBox getCheckBoxA() {
+        return checkBoxA;
     }
 
-    public CheckBox getAcheckBox() {
-        return AcheckBox;
+    public CheckBox getCheckBoxB() {
+        return checkBoxB;
     }
 
-    public void setAcheckBox(CheckBox acheckBox) {
-        AcheckBox = acheckBox;
-    }
-
-    public CheckBox getBcheckBox() {
-        return BcheckBox;
-    }
-
-    public void setBcheckBox(CheckBox bcheckBox) {
-        BcheckBox = bcheckBox;
-    }
 }
 
 
