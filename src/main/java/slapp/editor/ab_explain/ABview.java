@@ -1,21 +1,26 @@
-package slapp.editor.simple_editor;
+package slapp.editor.ab_explain;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Pagination;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import slapp.editor.EditorAlerts;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
 import java.util.ArrayList;
 
-public class SimpleEditView implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA>> {
+public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA>> {
 
     private MainWindowView mainView;
     private String exerciseName = new String();
+    private Label leaderLabel = new Label("");
+    private CheckBox AcheckBox = new CheckBox("");
+    private CheckBox BcheckBox = new CheckBox("");
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
@@ -25,16 +30,35 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, ArrayList<Deco
     private Button addPageButton;
     private Button removePageButton;
     private Node exerciseControlNode = new VBox();
+    private HBox ABbox = new HBox();
 
-    public SimpleEditView(MainWindowView mainView) {
+    public ABview(MainWindowView mainView) {
         this.mainView = mainView;
+        ABbox.getChildren().addAll(leaderLabel, AcheckBox, BcheckBox );
+        ABbox.setSpacing(20);
+        ABbox.setPadding(new Insets(10,10,10,10));
+        ABbox.setStyle("-fx-border-color: gainsboro; -fx-border-width: 2.2; -fx-background-color: white");
+
+
+
+
         this.pagination = new Pagination();
         pagination.setMaxPageIndicatorCount(5);
         pagination.setPageFactory((index) -> {
-            DecoratedRTA DRTApage = exerciseContent.get(index);
-            mainView.setContentHeightProperty(DRTApage.getEditor().prefHeightProperty());
-            mainView.setCenterVgrow();
-            return DRTApage.getEditor();
+            Node page;
+            if (index == 0) {
+                DecoratedRTA drtaPage0 = exerciseContent.get(index);
+                mainView.setContentHeightProperty(drtaPage0.getEditor().prefHeightProperty());
+                VBox topContentPage = new VBox(3, ABbox, drtaPage0.getEditor());
+                topContentPage.setMargin(ABbox, new Insets(5,0,0,0));
+                page = topContentPage;
+            } else {
+                DecoratedRTA DRTApage = exerciseContent.get(index);
+                mainView.setContentHeightProperty(DRTApage.getEditor().prefHeightProperty());
+                mainView.setCenterVgrow();
+                page = DRTApage.getEditor();
+            }
+            return page;
         });
 
         this.addPageButton = new Button("Insert Page");
@@ -68,14 +92,17 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, ArrayList<Deco
         pagination.setCurrentPageIndex(index);
     }
     void removeContentPage(int index) {
-        exerciseContent.remove(index);
-        int newSize = exerciseContent.size();
-        pagination.setPageCount(newSize);
-        if (newSize >= index) {
-            pagination.setCurrentPageIndex(index);
-        }
-        else {
-            pagination.setCurrentPageIndex(Math.max(0, index - 1));
+        if (index == 0) {
+            EditorAlerts.showSimpleAlert("Cannot Remove", "Cannot remove top page with selection boxes.");
+        } else {
+            exerciseContent.remove(index);
+            int newSize = exerciseContent.size();
+            pagination.setPageCount(newSize);
+            if (newSize >= index) {
+                pagination.setCurrentPageIndex(index);
+            } else {
+                pagination.setCurrentPageIndex(Math.max(0, index - 1));
+            }
         }
     }
 
@@ -130,9 +157,33 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, ArrayList<Deco
     @Override
     public DoubleProperty getContentHeightProperty() { return exerciseContent.get(pagination.getCurrentPageIndex()).getEditor().prefHeightProperty(); }
     @Override
-    public double getContentFixedHeight() { return 0.0; }
+    public double getContentFixedHeight() { return 50; }
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
 
+    public Label getLeaderLabel() {
+        return leaderLabel;
+    }
+
+    public void setLeaderLabel(Label leaderLabel) {
+        this.leaderLabel = leaderLabel;
+    }
+
+    public CheckBox getAcheckBox() {
+        return AcheckBox;
+    }
+
+    public void setAcheckBox(CheckBox acheckBox) {
+        AcheckBox = acheckBox;
+    }
+
+    public CheckBox getBcheckBox() {
+        return BcheckBox;
+    }
+
+    public void setBcheckBox(CheckBox bcheckBox) {
+        BcheckBox = bcheckBox;
+    }
 }
+
 

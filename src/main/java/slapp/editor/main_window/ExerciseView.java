@@ -21,6 +21,7 @@ public interface ExerciseView<T,U> {
     Node getExerciseContentNode();
     void setContentPrompt(String prompt);
     DoubleProperty getContentHeightProperty();
+    double getContentFixedHeight();
     Node getExerciseControl();
 
 }

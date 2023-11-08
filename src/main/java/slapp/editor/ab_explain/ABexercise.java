@@ -1,18 +1,17 @@
-package slapp.editor.simple_editor;
+package slapp.editor.ab_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
@@ -22,54 +21,79 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import slapp.editor.DiskUtilities;
+import slapp.editor.simple_editor.ABModelFields;
 import static javafx.scene.control.ButtonType.OK;
 
-public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditView> {
+public class ABexercise implements Exercise<ABmodel, ABview> {
     private MainWindow mainWindow;
-    private SimpleEditModel editModel;
-    private SimpleEditView editView;
+    private ABmodel abModel;
+    private ABview abView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
     private Node lastFocusedNode;
     private int lastPageNum = -1;
 
-    public SimpleEditExercise(SimpleEditModel model, MainWindow mainWindow) {
+    public ABexercise(ABmodel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
-        this.editModel = model;
+        this.abModel = model;
         this.mainView = mainWindow.getMainView();
-        this.editView = new SimpleEditView(mainView);
+        this.abView = new ABview(mainView);
 
         setEditView();
     }
 
     private void setEditView() {
 
-        editView.setExerciseName(editModel.getExerciseName());
-        editView.setContentPrompt(editModel.getContentPrompt());
+        abView.setExerciseName(abModel.getExerciseName());
+        ABModelFields modelFields = abModel.getModelFields();
+        abView.getLeaderLabel().setText(modelFields.getLeader());
+        CheckBox aCheckBox = abView.getAcheckBox();
+        CheckBox bCheckBox = abView.getBcheckBox();
+        aCheckBox.setText(modelFields.getAprompt());
+        aCheckBox.setSelected(modelFields.getAvalue());
+        aCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ob, Boolean ov, Boolean nv) {
+                if (nv == true) bCheckBox.setSelected(false);
+                exerciseModified = true;
+            }
+        });
+        bCheckBox.setText(modelFields.getBprompt());
+        bCheckBox.setSelected(modelFields.getBvalue());
+        bCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ob, Boolean ov, Boolean nv) {
+                if (nv == true) aCheckBox.setSelected(false);
+                exerciseModified = true;
+            }
+        });
+
+
+        abView.setContentPrompt(abModel.getContentPrompt());
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
-        statementEditor.setDocument(editModel.getExerciseStatement());
-        editView.setStatementPrefHeight(editModel.getStatementPrefHeight());
+        statementEditor.setDocument(abModel.getExerciseStatement());
+        abView.setStatementPrefHeight(abModel.getStatementPrefHeight());
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(statementDRTA);
             }
         });
-        editView.setExerciseStatement(statementDRTA);
+        abView.setExerciseStatement(statementDRTA);
 
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
-        commentEditor.setDocument(editModel.getExerciseComment());
+        commentEditor.setDocument(abModel.getExerciseComment());
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA);
             }
         });
-        editView.setExerciseComment(commentDRTA);
+        abView.setExerciseComment(commentDRTA);
 
         ArrayList<DecoratedRTA> contentList = new ArrayList<>();
-        for (Document doc : editModel.getExerciseContent()) {
+        for (Document doc : abModel.getExerciseContent()) {
             DecoratedRTA drta = new DecoratedRTA();
             RichTextArea editor = drta.getEditor();
             editor.setDocument(doc);
@@ -81,16 +105,16 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
             });
             contentList.add(drta);
         }
-        editView.setExerciseContent(contentList);
+        abView.setExerciseContent(contentList);
 
-        editView.initializeViewDetails();
-        editView.getAddPageButton().setOnAction(e -> addPageAction());
-        editView.getRemovePageButton().setOnAction(e -> removePageAction());
+        abView.initializeViewDetails();
+        abView.getAddPageButton().setOnAction(e -> addPageAction());
+        abView.getRemovePageButton().setOnAction(e -> removePageAction());
     }
 
     private void addPageAction() {
-        int newPageIndex = editView.getContentPageIndex() + 1;
-        editModel.addBlankContentPage(newPageIndex);
+        int newPageIndex = abView.getContentPageIndex() + 1;
+        abModel.addBlankContentPage(newPageIndex);
 
         DecoratedRTA drta = new DecoratedRTA();
         RichTextArea editor = drta.getEditor();
@@ -100,58 +124,57 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
                 mainView.editorInFocus(drta);
             }
         });
-        editView.addBlankContentPage(newPageIndex, drta);
+        abView.addBlankContentPage(newPageIndex, drta);
     }
 
     private void removePageAction() {
-        if (editModel.getExerciseContent().size() <= 1) {
+        if (abModel.getExerciseContent().size() <= 1) {
             EditorAlerts.showSimpleAlert("Cannot Remove", "Your response must include at least one page.");
         }
         else {
-            int currentPageIndex = editView.getContentPageIndex();
+            int currentPageIndex = abView.getContentPageIndex();
             boolean okContinue = true;
-            if (editView.getExerciseContent().get(currentPageIndex).getEditor().isModified()) {
+            if (abView.getExerciseContent().get(currentPageIndex).getEditor().isModified()) {
                 Alert confirm = EditorAlerts.confirmationAlert("Confirm Remove", "This page appears to have been changed.  Continue to remove?");
                 Optional<ButtonType> result = confirm.showAndWait();
                 if (result.get() != OK) okContinue = false;
             }
             if (okContinue) {
-                editModel.getExerciseContent().remove(currentPageIndex);
-                editView.removeContentPage(currentPageIndex);
+                abModel.getExerciseContent().remove(currentPageIndex);
+                abView.removeContentPage(currentPageIndex);
                 exerciseModified = true;
             }
         }
     }
 
-
     @Override
-    public SimpleEditModel getExerciseModel() {
-        return editModel;
+    public ABmodel getExerciseModel() {
+        return abModel;
     }
     @Override
-    public SimpleEditView getExerciseView() {
-        return editView;
+    public ABview getExerciseView() {
+        return abView;
     }
     @Override
     public void saveExercise(boolean saveAs) {
-        DiskUtilities.saveExercise(saveAs, getSimpleEditModelFromView());
+        DiskUtilities.saveExercise(saveAs, getABmodelFromView());
         exerciseModified = false;
     }
     @Override
     public void printExercise() {
-        PrintUtilities.printExercise(getPrintNodes(), editModel.getExerciseName());
+        PrintUtilities.printExercise(getPrintNodes(), abModel.getExerciseName());
     }
     @Override
-    public void exportExerciseToPDF() { PrintUtilities.exportExerciseToPDF(getPrintNodes(), editModel.getExerciseName()); }
+    public void exportExerciseToPDF() { PrintUtilities.exportExerciseToPDF(getPrintNodes(), abModel.getExerciseName()); }
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        editModel = getSimpleEditModelFromView();
-        SimpleEditExercise exercise = new SimpleEditExercise(editModel, mainWindow);
+        abModel = getABmodelFromView();
+        ABexercise exercise = new ABexercise(abModel, mainWindow);
         double nodeWidth = PrintUtilities.getPageWidth();
 
         //header node
-        Label exerciseName = new Label(editModel.getExerciseName());
+        Label exerciseName = new Label(abModel.getExerciseName());
         exerciseName.setStyle("-fx-font-weight: bold;");
         HBox hbox = new HBox(exerciseName);
         hbox.setPadding(new Insets(0,0,10,0));
@@ -188,6 +211,18 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         nodeList.add(new Separator(Orientation.HORIZONTAL));
 
         //content nodes
+        ABModelFields fields = abModel.getModelFields();
+        Label leaderLabel = new Label(fields.getLeader());
+        CheckBox aBox = new CheckBox(fields.getAprompt());
+        aBox.setSelected(fields.getAvalue());
+        CheckBox bBox = new CheckBox(fields.getBprompt());
+        bBox.setSelected(fields.getBvalue());
+        HBox abBox = new HBox(20);
+        abBox.setPadding(new Insets(10,10,10,0));
+        abBox.getChildren().addAll(leaderLabel, aBox, bBox);
+        nodeList.add(abBox);
+
+
         ArrayList<DecoratedRTA> pageList = exercise.getExerciseView().getExerciseContent();
         for (DecoratedRTA drta : pageList) {
             RichTextArea pageRTA = drta.getEditor();
@@ -201,18 +236,18 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         return nodeList;
     }
     @Override
-    public SimpleEditExercise getContentClearExercise() {
-        SimpleEditModel currentModel = getSimpleEditModelFromView();
-        SimpleEditExercise clearExercise = new SimpleEditExercise(currentModel.getContentClearedModel(), mainWindow);
+    public ABexercise getContentClearExercise() {
+        ABmodel currentModel = getABmodelFromView();
+        ABexercise clearExercise = new ABexercise(currentModel.getContentClearedModel(), mainWindow);
         return clearExercise;
     }
 
     @Override
     public boolean isExerciseModified() {
-        RichTextArea commentEditor = editView.getExerciseComment().getEditor();
+        RichTextArea commentEditor = abView.getExerciseComment().getEditor();
         if (commentEditor.isModified()) exerciseModified = true;
 
-        ArrayList<DecoratedRTA> exerciseContent = editView.getExerciseContent();
+        ArrayList<DecoratedRTA> exerciseContent = abView.getExerciseContent();
         for (DecoratedRTA drta : exerciseContent) {
             RichTextArea editor = drta.getEditor();
             if (editor.isModified()) {
@@ -227,13 +262,13 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     }
     @Override
     public void updateContentHeight(boolean isRequired){
-        int contentPageNum = editView.getContentPageIndex();
-        if (isRequired || lastFocusedNode != editView.getExerciseContentNode() || lastPageNum != contentPageNum) {
-            lastFocusedNode = editView.getExerciseContentNode();
+        int contentPageNum = abView.getContentPageIndex();
+        if (isRequired || lastFocusedNode != abView.getExerciseContentNode() || lastPageNum != contentPageNum) {
+            lastFocusedNode = abView.getExerciseContentNode();
             lastPageNum = contentPageNum;
 
-            SimpleEditModel model = getSimpleEditModelFromView();
-            SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
+            ABmodel model = getABmodelFromView();
+            ABexercise exercise = new ABexercise(model, mainWindow);
             ArrayList<DecoratedRTA> pageList = exercise.getExerciseView().getExerciseContent();
             RichTextArea pageRTA = pageList.get(contentPageNum).getEditor();
             RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
@@ -243,12 +278,12 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     }
     @Override
     public void updateCommentHeight(boolean isRequired){
-        if (isRequired || lastFocusedNode != editView.getExerciseComment().getEditor()) {
-            lastFocusedNode = editView.getExerciseComment().getEditor();
+        if (isRequired || lastFocusedNode != abView.getExerciseComment().getEditor()) {
+            lastFocusedNode = abView.getExerciseComment().getEditor();
             lastPageNum = -1;
 
-            SimpleEditModel model = getSimpleEditModelFromView();
-            SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
+            ABmodel model = getABmodelFromView();
+            ABexercise exercise = new ABexercise(model, mainWindow);
             RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
             RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
             double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
@@ -257,12 +292,12 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     }
     @Override
     public void updateStatementHeight(boolean isRequired){
-        if (isRequired || lastFocusedNode != editView.getExerciseStatementNode()) {
-            lastFocusedNode = editView.getExerciseStatementNode();
+        if (isRequired || lastFocusedNode != abView.getExerciseStatementNode()) {
+            lastFocusedNode = abView.getExerciseStatementNode();
             lastPageNum = -1;
 
-            editModel = getSimpleEditModelFromView();
-            SimpleEditExercise exercise = new SimpleEditExercise(editModel, mainWindow);
+            abModel = getABmodelFromView();
+            ABexercise exercise = new ABexercise(abModel, mainWindow);
             RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
             statementRTA.setEditable(true);
             RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
@@ -272,15 +307,15 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     }
     @Override
     public ExerciseModel getExerciseModelFromView() {
-        return (ExerciseModel) getSimpleEditModelFromView();
+        return (ExerciseModel) getABmodelFromView();
     }
 
-    private SimpleEditModel getSimpleEditModelFromView() {
-        RichTextArea commentRTA = editView.getExerciseComment().getEditor();
+    private ABmodel getABmodelFromView() {
+        RichTextArea commentRTA = abView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
 
-        ArrayList<DecoratedRTA> exerciseContent = editView.getExerciseContent();
+        ArrayList<DecoratedRTA> exerciseContent = abView.getExerciseContent();
         ArrayList<Document> contentList = new ArrayList<>();
         for (DecoratedRTA drta : exerciseContent) {
             RichTextArea editor = drta.getEditor();
@@ -288,14 +323,24 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
             editor.getActionFactory().saveNow().execute(new ActionEvent());
             contentList.add(editor.getDocument());
         }
-        String name = editModel.getExerciseName();
-        String prompt = editModel.getContentPrompt();
-        boolean started = (editModel.isStarted() || exerciseModified);
-        editModel.setStarted(started);
-        double statementHeight = editView.getExerciseStatement().getEditor().getPrefHeight();
-        Document statementDocument = editModel.getExerciseStatement();
-        SimpleEditModel newModel = new SimpleEditModel(name, started, prompt, statementHeight, statementDocument, commentDocument, contentList);
+        String name = abModel.getExerciseName();
+        String prompt = abModel.getContentPrompt();
+
+        String leader = abModel.getModelFields().getLeader();
+        String Aprompt = abModel.getModelFields().getAprompt();
+        boolean Avalue = abView.getAcheckBox().isSelected();
+        String Bprompt = abModel.getModelFields().getBprompt();
+        boolean Bvalue = abView.getBcheckBox().isSelected();
+        ABModelFields fields = new ABModelFields(leader, Aprompt, Avalue, Bprompt, Bvalue);
+
+        boolean started = (abModel.isStarted() || exerciseModified);
+        abModel.setStarted(started);
+        double statementHeight = abView.getExerciseStatement().getEditor().getPrefHeight();
+        Document statementDocument = abModel.getExerciseStatement();
+        ABmodel newModel = new ABmodel(name, fields, started, prompt, statementHeight, statementDocument, commentDocument, contentList);
+
         return newModel;
     }
 
 }
+

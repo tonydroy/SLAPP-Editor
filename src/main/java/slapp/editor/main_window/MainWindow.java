@@ -1,5 +1,6 @@
 package slapp.editor.main_window;
 
+import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -17,6 +18,8 @@ import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.front_page.FrontPageExercise;
 import slapp.editor.main_window.assignment.*;
+import slapp.editor.simple_editor.SimpleEditExercise;
+import slapp.editor.simple_editor.SimpleEditModel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -45,9 +48,11 @@ public class MainWindow {
         setupMainWindow();
 
         focusListener = (ob, ov, nv) ->  {
-            if (nv.focusedProperty().get() == true) {
-                if (ov != null) lastFocusOwner = ov;
-                if (nv != null) updateNodeContainerHeight(nv, false);
+            if (nv != null) {
+                if (nv.focusedProperty().get() == true) {
+                    lastFocusOwner = ov;
+                    updateNodeContainerHeight(nv, false);
+                }
             }
         };
         setUpExercise(new FrontPageExercise(this));
@@ -165,11 +170,18 @@ public class MainWindow {
         setUpExercise(clearExercise);
     }
 
+    private Exercise getEmptyExercise() {
+        //revert to empty simple edit exercise
+        SimpleEditModel emptyModel = new SimpleEditModel("",false,"",80,new Document(), new Document(), new ArrayList<>());
+        SimpleEditExercise emptyExercise = new SimpleEditExercise(emptyModel, mainWindow);
+        return emptyExercise;
+    }
+
     public void closeExercise() {
         if (currentAssignment == null) {
             if (checkContinueExercise("Confirm Close", "This exercise appears to have been changed.\n\nContinue to close exercise?")) {
-                Exercise emptyExercise = currentExercise.getEmptyExercise();
-                setUpExercise(emptyExercise);
+
+                setUpExercise(getEmptyExercise());
                 isExerciseOpen = false;
             }
         } else {
@@ -305,8 +317,8 @@ public class MainWindow {
             EditorAlerts.showSimpleAlert("Cannot Close", "There is no open assignment to close.");
         } else {
             if (checkContinueAssignment("Confirm Close", "This assignment appears to have been changed.\n\nContinue to close assignment?")) {
-                Exercise emptyExercise = currentExercise.getEmptyExercise();
-                setUpExercise(emptyExercise);
+
+                setUpExercise(getEmptyExercise());
                 isExerciseOpen = false;
                 currentAssignment = null;
                 isAssignmentContentModified = false;
@@ -338,10 +350,10 @@ public class MainWindow {
 
 
     public void exportAssignment() {
-        List<Node> printNodes = new ArrayList<>();
         if (currentAssignment == null) {
             EditorAlerts.showSimpleAlert("Cannot Print", "There is no open assignment to print.");
         } else {
+            List<Node> printNodes = new ArrayList<>();
             printNodes.add(mainView.getAssignmentHeader());
 
             List<ExerciseModel> exerciseModelList = currentAssignment.getExerciseModels();

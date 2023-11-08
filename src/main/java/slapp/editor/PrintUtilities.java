@@ -188,14 +188,14 @@ public class PrintUtilities {
     }
 
     public static void exportAssignmentToPDF(List<Node> nodeList, String footerInfo) {
+        boolean success = false;
         if (pdfPrinter !=null || runExportSetup()) {
             PrinterJob job  = PrinterJob.createPrinterJob(pdfPrinter);
             if (job != null) {
-                boolean proceed = job.showPrintDialog(EditorMain.mainStage);
-                if (proceed) printNodes(nodeList, footerInfo, job);
+                printNodes(nodeList, footerInfo, job);
                 job.endJob();
             }
-            else  EditorAlerts.showSimpleAlert("Print Problem", "Failed to create printer job");
+            else  EditorAlerts.showSimpleAlert("Print Problem", "Failed to create export job");
         }
     }
 

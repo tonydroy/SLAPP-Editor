@@ -35,8 +35,6 @@ public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView
     @Override
     public Exercise<FrontPageModel, FrontPageView> getContentClearExercise() { return new FrontPageExercise(mainWindow); }
     @Override
-    public Exercise<FrontPageModel, FrontPageView> getEmptyExercise() { return new FrontPageExercise(mainWindow); }
-    @Override
     public boolean isExerciseModified() { return false; }
     @Override
     public void setExerciseModified(boolean modified) { }

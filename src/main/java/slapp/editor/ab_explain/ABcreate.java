@@ -1,4 +1,5 @@
-package slapp.editor.simple_editor;
+package slapp.editor.ab_explain;
+
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
@@ -27,17 +28,23 @@ import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.MainWindow;
+import slapp.editor.simple_editor.ABModelFields;
+
 import java.util.ArrayList;
 import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
-public class SimpleEditCreate {
+public class ABcreate {
     private MainWindow mainWindow;
     private RichTextArea statementEditor;
     private DecoratedRTA statementDRTA;
     private TextField nameField;
+    private TextField leaderField;
+    private TextField aPromptField;
+    private TextField bPromptField;
     private TextField promptField;
+
     private boolean nameModified = false;
     private ChangeListener nameListener;
     private double scale =1.0;
@@ -48,20 +55,27 @@ public class SimpleEditCreate {
     private VBox centerBox;
 
 
-    public SimpleEditCreate(MainWindow mainWindow) {
+
+    public ABcreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
-    public SimpleEditCreate(MainWindow mainWindow, SimpleEditExercise originalExercise) {
+    public ABcreate(MainWindow mainWindow, ABexercise originalExercise) {
         this(mainWindow);
         RichTextArea originalRTA = originalExercise.getExerciseView().getExerciseStatement().getEditor();
         statementEditor.setDocument(originalRTA.getDocument());
         statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
-        nameField.setText(originalExercise.getExerciseModel().getExerciseName());
+        ABmodel originalModel = originalExercise.getExerciseModel();
+
+        nameField.setText(originalModel.getExerciseName());
         nameModified = false;
         nameField.textProperty().addListener(nameListener);
-        promptField.setText(originalExercise.getExerciseModel().getContentPrompt());
+        promptField.setText(originalModel.getContentPrompt());
+        ABModelFields fields = originalModel.getModelFields();
+        leaderField.setText(fields.getLeader());
+        aPromptField.setText(fields.getAprompt());
+        bPromptField.setText(fields.getBprompt());
     }
 
     private void setupWindow() {
@@ -79,7 +93,7 @@ public class SimpleEditCreate {
         statementEditor.setPrefHeight(200);
 
         Label nameLabel = new Label("Exercise Name: ");
-        nameLabel.setPrefWidth(95);
+        nameLabel.setPrefWidth(100);
         nameField  = new TextField();
         nameField.setPromptText("(plain text)");
         nameListener = new ChangeListener() {
@@ -91,23 +105,52 @@ public class SimpleEditCreate {
         };
         nameField.textProperty().addListener(nameListener);
 
+        Label leaderLabel = new Label("Checkbox Lead: ");
+        leaderLabel.setPrefWidth(100);
+        leaderField = new TextField();
+        leaderField.setPromptText("(plain text)");
+
+        Label aPromptLabel = new Label("A Prompt: ");
+        aPromptLabel.setPrefWidth(100);
+        aPromptField = new TextField();
+        aPromptField.setPromptText("(plain text)");
+        Label bPromptLabel = new Label("B Prompt: ");
+        bPromptLabel.setPrefWidth(100);
+        bPromptField = new TextField();
+        bPromptField.setPromptText("(plain text)");
+
+
+
+
         Label promptLabel = new Label("Content prompt: ");
-        promptLabel.setPrefWidth(95);
+        promptLabel.setPrefWidth(100);
         promptField = new TextField();
         promptField.setPromptText("(plain text)");
+
+
+
+
 
         HBox nameBox = new HBox(nameLabel, nameField);
         nameBox.setAlignment(Pos.BASELINE_LEFT);
         HBox promptBox = new HBox(promptLabel, promptField);
         promptBox.setAlignment(Pos.BASELINE_LEFT);
-        VBox nameNpromptBox = new VBox(10,nameBox,promptBox);
-        nameNpromptBox.setPadding(new Insets(20,0,20,70));
+        HBox leaderBox = new HBox(leaderLabel, leaderField);
+        leaderBox.setAlignment(Pos.BASELINE_LEFT);
+        HBox aBbox = new HBox(aPromptLabel, aPromptField);
+        promptBox.setAlignment(Pos.BASELINE_LEFT);
+        HBox bBox = new HBox(bPromptLabel, bPromptField);
+        bBox.setAlignment(Pos.BASELINE_LEFT);
+        VBox textFieldsPromptBox = new VBox(10,nameBox, promptBox, leaderBox, aBbox, bBox);
+        textFieldsPromptBox.setPadding(new Insets(20,0,20,70));
 
-        String helpText = "Simple Edit Exercise is appropriate for any exercise that calls for a text response (which may include special symbols).  The response may range from short answer to multiple pages. All the usual edit commands apply.\n\n" +
-                "For the Simple Edit Exercise, you need only provide the exercise name, exercise statement and, if desired, a prompt that will appear in an empty content area (you may not see the prompt until the content area gains focus).";
+        String helpText = "AB Explain is appropriate for any exercise that requires a choice between mutually exclusive options (as true/false, consistent/inconsistent) together with an explanation or justification.\n\n" +
+                "For the AB Explain Exercise, you supply the exercise name and, if desired, a prompt to appear in the explanation field.  Then the Checkbox Lead appears prior to the check boxes, the A Prompt with the first box, and the B Prompt with the second.";
+
+
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(130);
+        helpArea.setPrefHeight(120);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
@@ -159,12 +202,12 @@ public class SimpleEditCreate {
         ToolBar fontsToolBar = statementDRTA.getFontsToolbar();
         fontsToolBar.getItems().addAll(zoomLabel, zoomSpinner);
 
-        VBox topBox = new VBox(menuBar, statementDRTA.getEditToolbar(), fontsToolBar, statementDRTA.getParagraphToolbar(), nameNpromptBox );
+        VBox topBox = new VBox(menuBar, statementDRTA.getEditToolbar(), fontsToolBar, statementDRTA.getParagraphToolbar(), textFieldsPromptBox );
         borderPane.setTop(topBox);
 
         stage = new Stage();
         stage.setScene(scene);
-        stage.setTitle("Create Simple Edit Exercise:");
+        stage.setTitle("Create AB Explain Exercise:");
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
@@ -189,7 +232,7 @@ public class SimpleEditCreate {
     }
 
     private void setCenterVgrow() {
-        double fixedHeight = helpArea.getHeight() * scale + 400;
+        double fixedHeight = helpArea.getHeight() * scale + 500;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
         DoubleProperty maximumHeightProperty = new SimpleDoubleProperty(PrintUtilities.getPageHeight() );
         DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
@@ -227,7 +270,7 @@ public class SimpleEditCreate {
     }
 
     private void viewExercise() {
-        SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
+        ABexercise exercise = new ABexercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
@@ -240,7 +283,7 @@ public class SimpleEditCreate {
     private void saveExercise(boolean saveAs) {
         nameModified = false;
         nameField.textProperty().addListener(nameListener);
-        SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
+        ABexercise exercise = new ABexercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
@@ -250,13 +293,18 @@ public class SimpleEditCreate {
         exercise.getExerciseModel().setStatementPrefHeight(height + 35.0);
         exercise.saveExercise(saveAs);
     }
-    private SimpleEditModel extractModelFromWindow() {
+    private ABmodel extractModelFromWindow() {
         String name = nameField.getText();
+        String leader = leaderField.getText();
+        String Aprompt = aPromptField.getText();
+        String Bprompt = bPromptField.getText();
+        ABModelFields fields = new ABModelFields(leader, Aprompt, false, Bprompt, false);
         String prompt = promptField.getText();
         statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
         Document statementDocument = statementEditor.getDocument();
-        SimpleEditModel model = new SimpleEditModel(name, false, prompt, 70.0, statementDocument, new Document(), new ArrayList<Document>());
+        ABmodel model = new ABmodel(name, fields,  false, prompt, 70.0, statementDocument, new Document(), new ArrayList<Document>());
         return model;
     }
 
 }
+
