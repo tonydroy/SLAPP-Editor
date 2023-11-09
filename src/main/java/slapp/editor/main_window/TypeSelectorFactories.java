@@ -4,6 +4,9 @@ import slapp.editor.EditorAlerts;
 import slapp.editor.ab_explain.ABcreate;
 import slapp.editor.ab_explain.ABexercise;
 import slapp.editor.ab_explain.ABmodel;
+import slapp.editor.abefg_explain.ABEFGcreate;
+import slapp.editor.abefg_explain.ABEFGexercise;
+import slapp.editor.abefg_explain.ABEFGmodel;
 import slapp.editor.simple_editor.SimpleEditCreate;
 import slapp.editor.simple_editor.SimpleEditExercise;
 import slapp.editor.simple_editor.SimpleEditModel;
@@ -24,12 +27,14 @@ public class TypeSelectorFactories {
                 SimpleEditModel editModel = (SimpleEditModel) objectModel;
                 return new SimpleEditExercise(editModel, mainWindow);
             }
-
             case "ABmodel": {
                 ABmodel abModel = (ABmodel) objectModel;
                 return new ABexercise(abModel, mainWindow);
             }
-
+            case "ABEFGmodel": {
+                ABEFGmodel abefgModel = (ABEFGmodel) objectModel;
+                return new ABEFGexercise(abefgModel, mainWindow);
+            }
 
             default: {
                 EditorAlerts.showSimpleAlert("Cannot Open", "I do not recognize this as a SLAPP exercise file");
@@ -52,10 +57,9 @@ public class TypeSelectorFactories {
                 SimpleEditCreate simpleEditCreate = new SimpleEditCreate(mainWindow, editExercise);
                 break;
             }
-
             case "ABmodel": {
-                ABmodel editModel = (ABmodel) objectModel;
-                ABexercise abExercise = new ABexercise(editModel, mainWindow);
+                ABmodel abModel = (ABmodel) objectModel;
+                ABexercise abExercise = new ABexercise(abModel, mainWindow);
                 if (abExercise.getExerciseModel().isStarted()) {
                     EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
                     break;
@@ -63,12 +67,20 @@ public class TypeSelectorFactories {
                 ABcreate abCreate = new ABcreate(mainWindow, abExercise);
                 break;
             }
-
+            case "ABEFGmodel": {
+                ABEFGmodel abefgModel = (ABEFGmodel) objectModel;
+                ABEFGexercise abefgExercise = new ABEFGexercise(abefgModel, mainWindow);
+                if (abefgExercise.getExerciseModel().isStarted()) {
+                    EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
+                    break;
+                }
+                ABEFGcreate abefgCreate = new ABEFGcreate(mainWindow, abefgExercise);
+                break;
+            }
 
             default: {
                 EditorAlerts.showSimpleAlert("Cannot Open", "I do not recognize this as a SLAPP exercise file.");
             }
-
         }
     }
 
@@ -84,6 +96,9 @@ public class TypeSelectorFactories {
             case AB_EXPLAIN: {
                 ABcreate abCreate = new ABcreate(mainWindow);
                 break;
+            }
+            case ABEFG_EXPLAIN: {
+                ABEFGcreate abefgCreate = new ABEFGcreate(mainWindow);
             }
 
         }

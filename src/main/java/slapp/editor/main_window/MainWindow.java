@@ -158,7 +158,7 @@ public class MainWindow {
         else EditorAlerts.showSimpleAlert("Cannot Save", "No named assignment or exercise to save.");
     }
     public void saveExercise(boolean saveAs) {
-        if (isExerciseOpen && currentExercise != null) {
+        if (currentExercise != null) {
             if (!((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
                 currentExercise.saveExercise(saveAs);
             }
@@ -190,6 +190,7 @@ public class MainWindow {
     }
 
     private void openExercise(){
+
         if (checkContinueAssignment("Confirm Open", "This assignment appears to have been changed, and will be overwritten by the new exercise.  Continue to open exercise?")) {
             if (checkContinueExercise("Confirm Open", "This exercise appears to have been changed, and will be overwritten by the new one.  Continue to open exercise?")) {
                 Object exerciseModelObject = DiskUtilities.openExerciseModelObject();
@@ -206,15 +207,22 @@ public class MainWindow {
         }
     }
 
-    private void exportExerciseToPDF() { currentExercise.exportExerciseToPDF(); }
+    private void exportExerciseToPDF() {
+        if (currentExercise != null) {
+            if (!((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
+                currentExercise.exportExerciseToPDF();
+            }
+        }
+        else EditorAlerts.showSimpleAlert("Cannot Print", "Cannot find exercise to export.");
+    }
 
     private void printExercise() {
-        if (isExerciseOpen && currentExercise != null) {
+        if (currentExercise != null) {
             if (!((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
                 currentExercise.printExercise();
             }
         }
-        else EditorAlerts.showSimpleAlert("Cannot Print", "No named exercise to print.");
+        else EditorAlerts.showSimpleAlert("Cannot Print", "Cannot find exercise to print.");
     }
 
     private boolean checkContinueExercise(String title, String content) {

@@ -13,10 +13,10 @@ public class ABmodelExtra implements Serializable {
 
 
    public ABmodelExtra() {}
-    public ABmodelExtra(String leader, String Aprompt, boolean valueA, String promptB, boolean valueB) {
+    public ABmodelExtra(String leader, String promptA, boolean valueA, String promptB, boolean valueB) {
         this();
         this.leader = leader;
-        this.promptA = Aprompt;
+        this.promptA = promptA;
         this.valueA = valueA;
         this.promptB = promptB;
         this.valueB = valueB;

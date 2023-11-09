@@ -44,8 +44,11 @@ public class ABcreate {
     private TextField promptFieldB;
     private TextField explainPromptField;
 
-    private boolean nameModified = false;
+    private boolean fieldsModified = false;
     private ChangeListener nameListener;
+    private ChangeListener leaderListener;
+    private ChangeListener fieldListenerA;
+    private ChangeListener fieldListenerB;
     private double scale =1.0;
     private Scene scene;
     private Stage stage;
@@ -68,13 +71,17 @@ public class ABcreate {
         ABmodel originalModel = originalExercise.getExerciseModel();
 
         nameField.setText(originalModel.getExerciseName());
-        nameModified = false;
-        nameField.textProperty().addListener(nameListener);
         explainPromptField.setText(originalModel.getContentPrompt());
         ABmodelExtra fields = originalModel.getModelFields();
         leaderField.setText(fields.getLeader());
         promptFieldA.setText(fields.getPromptA());
         promptFieldB.setText(fields.getPromptB());
+
+        fieldsModified = false;
+        nameField.textProperty().addListener(nameListener);
+        leaderField.textProperty().addListener(leaderListener);
+        promptFieldA.textProperty().addListener(fieldListenerA);
+
     }
 
     private void setupWindow() {
@@ -98,7 +105,7 @@ public class ABcreate {
         nameListener = new ChangeListener() {
             @Override
             public void changed(ObservableValue ob, Object ov, Object nv) {
-                nameModified = true;
+                fieldsModified = true;
                 nameField.textProperty().removeListener(nameListener);
             }
         };
@@ -108,16 +115,42 @@ public class ABcreate {
         leaderLabel.setPrefWidth(100);
         leaderField = new TextField();
         leaderField.setPromptText("(plain text)");
+        leaderListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldsModified = true;
+                leaderField.textProperty().removeListener(leaderListener);
+            }
+        };
+        leaderField.textProperty().addListener(leaderListener);
+
 
         Label aPromptLabel = new Label("A Prompt: ");
         aPromptLabel.setPrefWidth(100);
         promptFieldA = new TextField();
         promptFieldA.setPromptText("(plain text)");
+        fieldListenerA = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldsModified = true;
+                promptFieldA.textProperty().removeListener(fieldListenerA);
+            }
+        };
+        promptFieldA.textProperty().addListener(fieldListenerA);
+
+
         Label bPromptLabel = new Label("B Prompt: ");
         bPromptLabel.setPrefWidth(100);
         promptFieldB = new TextField();
         promptFieldB.setPromptText("(plain text)");
-
+        fieldListenerB = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldsModified = true;
+                promptFieldB.textProperty().removeListener(fieldListenerB);
+            }
+        };
+        promptFieldB.textProperty().addListener(fieldListenerB);
 
 
 
@@ -249,22 +282,24 @@ public class ABcreate {
 
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
+
             nameField.clear();
-            nameModified = false;
             nameField.textProperty().addListener(nameListener);
             explainPromptField.clear();
             leaderField.clear();
             promptFieldA.clear();
             promptFieldB.clear();
             statementEditor.getActionFactory().newDocument().execute(new ActionEvent());
+            statementEditor.setDocument(new Document());
             statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
+            fieldsModified = false;
             viewExercise();
         }
     }
 
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
-        if (nameModified || statementEditor.isModified()) {
+        if (fieldsModified || statementEditor.isModified()) {
             Alert confirm = EditorAlerts.confirmationAlert(title, content);
             Optional<ButtonType> result = confirm.showAndWait();
             if (result.get() != OK) okcontinue = false;
@@ -284,7 +319,7 @@ public class ABcreate {
     }
 
     private void saveExercise(boolean saveAs) {
-        nameModified = false;
+        fieldsModified = false;
         nameField.textProperty().addListener(nameListener);
         ABexercise exercise = new ABexercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();

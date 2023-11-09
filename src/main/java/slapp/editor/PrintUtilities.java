@@ -77,7 +77,7 @@ public class PrintUtilities {
                 String current = "None";
                 if (pdfPrinter != null) current = pdfPrinter.toString();
                 EditorAlerts.showSimpleAlert("Select Printer", "Please select a PDF printer from the following window.\n\n" +
-                        "There are a variety of such printers, each with slightly different characteristics.  On PC, 'Microsoft Print to PDF' works fine.\n\n" +
+                        "There are a variety of such printers, each with slightly different characteristics.  On PC, 'Microsoft Print to PDF' works fine.\nYou will only have to do this once per session.\n\n" +
                         "Current: " + current);
                 boolean proceed = job.showPrintDialog(EditorMain.mainStage);
                 if (proceed) {

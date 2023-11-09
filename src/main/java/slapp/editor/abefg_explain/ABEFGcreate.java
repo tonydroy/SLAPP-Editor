@@ -1,4 +1,5 @@
-package slapp.editor.simple_editor;
+package slapp.editor.abefg_explain;
+
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
@@ -18,6 +19,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -27,20 +29,36 @@ import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.MainWindow;
+
 import java.util.ArrayList;
 import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
-public class SimpleEditCreate {
+public class ABEFGcreate {
     private MainWindow mainWindow;
     private RichTextArea statementEditor;
     private DecoratedRTA statementDRTA;
     private TextField nameField;
-    private TextField promptField;
-    private boolean fieldModified = false;
+    private TextField leaderABfield;
+    private TextField promptFieldA;
+    private TextField promptFieldB;
+    private TextField leaderEFGfield;
+    private TextField promptFieldE;
+    private TextField promptFieldF;
+    private TextField promptFieldG;
+
+    private TextField explainPromptField;
+
+    private boolean fieldsModified = false;
     private ChangeListener nameListener;
-    private ChangeListener promptListener;
+    private ChangeListener leaderListenerAB;
+    private ChangeListener leaderListenerEFG;
+    private ChangeListener fieldListenerA;
+    private ChangeListener fieldListenerB;
+    private ChangeListener fieldListenerE;
+    private ChangeListener fieldListenerF;
+    private ChangeListener fieldListenerG;
     private double scale =1.0;
     private Scene scene;
     private Stage stage;
@@ -49,21 +67,38 @@ public class SimpleEditCreate {
     private VBox centerBox;
 
 
-    public SimpleEditCreate(MainWindow mainWindow) {
+
+    public ABEFGcreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
-    public SimpleEditCreate(MainWindow mainWindow, SimpleEditExercise originalExercise) {
+    public ABEFGcreate(MainWindow mainWindow, ABEFGexercise originalExercise) {
         this(mainWindow);
         RichTextArea originalRTA = originalExercise.getExerciseView().getExerciseStatement().getEditor();
         statementEditor.setDocument(originalRTA.getDocument());
         statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
-        nameField.setText(originalExercise.getExerciseModel().getExerciseName());
-        promptField.setText(originalExercise.getExerciseModel().getContentPrompt());
+        ABEFGmodel originalModel = originalExercise.getExerciseModel();
+
+        nameField.setText(originalModel.getExerciseName());
+        explainPromptField.setText(originalModel.getContentPrompt());
+        ABEFGmodelExtra fields = originalModel.getModelFields();
+        leaderABfield.setText(fields.getLeaderAB());
+        promptFieldA.setText(fields.getPromptA());
+        promptFieldB.setText(fields.getPromptB());
+        leaderEFGfield.setText(fields.getLeaderEFG());
+        promptFieldE.setText(fields.getPromptE());
+        promptFieldF.setText(fields.getPromptF());
+        promptFieldG.setText(fields.getPromptG());
+        fieldsModified = false;
         nameField.textProperty().addListener(nameListener);
-        promptField.textProperty().addListener(promptListener);
-        fieldModified = false;
+        leaderABfield.textProperty().addListener(leaderListenerAB);
+        promptFieldA.textProperty().addListener(fieldListenerA);
+        promptFieldB.textProperty().addListener(fieldListenerB);
+        leaderEFGfield.textProperty().addListener(leaderListenerEFG);
+        promptFieldE.textProperty().addListener(fieldListenerE);
+        promptFieldF.textProperty().addListener(fieldListenerF);
+        promptFieldG.textProperty().addListener(fieldListenerG);
     }
 
     private void setupWindow() {
@@ -81,44 +116,130 @@ public class SimpleEditCreate {
         statementEditor.setPrefHeight(200);
 
         Label nameLabel = new Label("Exercise Name: ");
-        nameLabel.setPrefWidth(95);
         nameField  = new TextField();
         nameField.setPromptText("(plain text)");
         nameListener = new ChangeListener() {
             @Override
             public void changed(ObservableValue ob, Object ov, Object nv) {
-                fieldModified = true;
+                fieldsModified = true;
                 nameField.textProperty().removeListener(nameListener);
             }
         };
         nameField.textProperty().addListener(nameListener);
 
-        Label promptLabel = new Label("Content prompt: ");
-        promptLabel.setPrefWidth(95);
-        promptField = new TextField();
-        promptField.setPromptText("(plain text)");
-        promptListener = new ChangeListener() {
+        Label leaderLabelAB = new Label("AB Checkbox Lead: ");
+        leaderABfield = new TextField();
+        leaderABfield.setPromptText("(plain text)");
+        leaderListenerAB = new ChangeListener() {
             @Override
             public void changed(ObservableValue ob, Object ov, Object nv) {
-                fieldModified = true;
-                promptField.textProperty().removeListener(nameListener);
+                fieldsModified = true;
+                leaderABfield.textProperty().removeListener(leaderListenerAB);
             }
         };
-        promptField.textProperty().addListener(nameListener);
+        leaderABfield.textProperty().addListener(leaderListenerAB);
+
+        Label promptLabelA = new Label("A Prompt: ");
+        promptFieldA = new TextField();
+        promptFieldA.setPromptText("(plain text)");
+        fieldListenerA = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldsModified = true;
+                promptFieldA.textProperty().removeListener(fieldListenerA);
+            }
+        };
+        promptFieldA.textProperty().addListener(fieldListenerA);
+
+        Label promptLabelB = new Label("B Prompt: ");
+        promptFieldB = new TextField();
+        promptFieldB.setPromptText("(plain text)");
+        fieldListenerB = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldsModified = true;
+                promptFieldB.textProperty().removeListener(fieldListenerB);
+            }
+        };
+        promptFieldB.textProperty().addListener(fieldListenerB);
+
+        Label leaderLabelEFG = new Label("EFG Checkbox Lead: ");
+        leaderEFGfield = new TextField();
+        leaderEFGfield.setPromptText("(plain text)");
+        leaderListenerEFG = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldsModified = true;
+                leaderEFGfield.textProperty().removeListener(leaderListenerEFG);
+            }
+        };
+        leaderEFGfield.textProperty().addListener(leaderListenerEFG);
+
+        Label promptLabelE = new Label("E Prompt: ");
+        promptFieldE = new TextField();
+        promptFieldE.setPromptText("(plain text)");
+        fieldListenerE = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldsModified = true;
+                promptFieldE.textProperty().removeListener(fieldListenerE);
+            }
+        };
+        promptFieldE.textProperty().addListener(fieldListenerE);
+
+        Label promptLabelF = new Label("F Prompt: ");
+        promptFieldF = new TextField();
+        promptFieldF.setPromptText("(plain text)");
+        fieldListenerF = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldsModified = true;
+                promptFieldF.textProperty().removeListener(fieldListenerF);
+            }
+        };
+        promptFieldF.textProperty().addListener(fieldListenerF);
+
+        Label promptLabelG = new Label("G Prompt: ");
+        promptFieldG = new TextField();
+        promptFieldG.setPromptText("(plain text)");
+        fieldListenerG = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldsModified = true;
+                promptFieldG.textProperty().removeListener(fieldListenerG);
+            }
+        };
+        promptFieldG.textProperty().addListener(fieldListenerG);
 
 
-        HBox nameBox = new HBox(nameLabel, nameField);
-        nameBox.setAlignment(Pos.BASELINE_LEFT);
-        HBox promptBox = new HBox(promptLabel, promptField);
-        promptBox.setAlignment(Pos.BASELINE_LEFT);
-        VBox nameNpromptBox = new VBox(10,nameBox,promptBox);
-        nameNpromptBox.setPadding(new Insets(20,0,20,70));
+        Label explainPromptLabel = new Label("Content prompt: ");
+        explainPromptLabel.setPrefWidth(100);
+        explainPromptField = new TextField();
+        explainPromptField.setPromptText("(plain text)");
 
-        String helpText = "Simple Edit Exercise is appropriate for any exercise that calls for a text response (which may include special symbols).  The response may range from short answer to multiple pages. All the usual edit commands apply.\n\n" +
-                "For the Simple Edit Exercise, you need only provide the exercise name, exercise statement and, if desired, a prompt that will appear in an empty content area (you may not see the prompt until the content area gains focus).";
+        GridPane checkboxPane = new GridPane();
+        checkboxPane.addColumn(0, nameLabel, leaderLabelAB, promptLabelA, promptLabelB);
+        checkboxPane.addColumn(1, nameField, leaderABfield, promptFieldA, promptFieldB);
+        checkboxPane.addColumn(5, explainPromptLabel, leaderLabelEFG, promptLabelE, promptLabelF, promptLabelG);
+        checkboxPane.addColumn(6, explainPromptField, leaderEFGfield, promptFieldE, promptFieldF, promptFieldG);
+        checkboxPane.setPadding(new Insets(20));
+        checkboxPane.setHgap(10);
+        checkboxPane.setVgap(10);
+
+        HBox gridBox = new HBox(checkboxPane);
+        gridBox.setAlignment(Pos.CENTER);
+
+
+
+
+
+        String helpText = "AB Explain is appropriate for any exercise that requires a choice between mutually exclusive options (as true/false, consistent/inconsistent) together with an explanation or justification.\n\n" +
+                "For the AB Explain Exercise, you supply the exercise name and, if desired, a prompt to appear in the explanation field.  Then the Checkbox Lead appears prior to the check boxes, the A Prompt with the first box, and the B Prompt with the second.";
+
+
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(130);
+        helpArea.setPrefHeight(120);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
@@ -170,12 +291,12 @@ public class SimpleEditCreate {
         ToolBar fontsToolBar = statementDRTA.getFontsToolbar();
         fontsToolBar.getItems().addAll(zoomLabel, zoomSpinner);
 
-        VBox topBox = new VBox(menuBar, statementDRTA.getEditToolbar(), fontsToolBar, statementDRTA.getParagraphToolbar(), nameNpromptBox );
+        VBox topBox = new VBox(menuBar, statementDRTA.getEditToolbar(), fontsToolBar, statementDRTA.getParagraphToolbar(), gridBox );
         borderPane.setTop(topBox);
 
         stage = new Stage();
         stage.setScene(scene);
-        stage.setTitle("Create Simple Edit Exercise:");
+        stage.setTitle("Create AB/EFG Explain Exercise:");
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
@@ -200,7 +321,7 @@ public class SimpleEditCreate {
     }
 
     private void setCenterVgrow() {
-        double fixedHeight = helpArea.getHeight() * scale + 400;
+        double fixedHeight = helpArea.getHeight() * scale + 500;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
         DoubleProperty maximumHeightProperty = new SimpleDoubleProperty(PrintUtilities.getPageHeight() );
         DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
@@ -218,21 +339,28 @@ public class SimpleEditCreate {
 
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
-            nameField.clear();
-            nameField.textProperty().addListener(nameListener);
-            promptField.clear();
-            promptField.textProperty().addListener(promptListener);
-            statementEditor.setDocument(new Document());
             statementEditor.getActionFactory().newDocument().execute(new ActionEvent());
+            statementEditor.setDocument(new Document());
             statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
-            fieldModified = false;
+            nameField.clear();
+            fieldsModified = false;
+            nameField.textProperty().addListener(nameListener);
+            explainPromptField.clear();
+            leaderABfield.clear();
+            promptFieldA.clear();
+            promptFieldB.clear();
+            leaderEFGfield.clear();
+            promptFieldE.clear();
+            promptFieldF.clear();
+            promptFieldG.clear();
+            fieldsModified = false;
             viewExercise();
         }
     }
 
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
-        if (fieldModified || statementEditor.isModified()) {
+        if (fieldsModified || statementEditor.isModified()) {
             Alert confirm = EditorAlerts.confirmationAlert(title, content);
             Optional<ButtonType> result = confirm.showAndWait();
             if (result.get() != OK) okcontinue = false;
@@ -241,7 +369,7 @@ public class SimpleEditCreate {
     }
 
     private void viewExercise() {
-        SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
+        ABEFGexercise exercise = new ABEFGexercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
@@ -252,9 +380,9 @@ public class SimpleEditCreate {
     }
 
     private void saveExercise(boolean saveAs) {
-        fieldModified = false;
+        fieldsModified = false;
         nameField.textProperty().addListener(nameListener);
-        SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
+        ABEFGexercise exercise = new ABEFGexercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
@@ -264,13 +392,23 @@ public class SimpleEditCreate {
         exercise.getExerciseModel().setStatementPrefHeight(height + 35.0);
         exercise.saveExercise(saveAs);
     }
-    private SimpleEditModel extractModelFromWindow() {
+    private ABEFGmodel extractModelFromWindow() {
         String name = nameField.getText();
-        String prompt = promptField.getText();
+        String leaderAB = leaderABfield.getText();
+        String promptA = promptFieldA.getText();
+        String promptB = promptFieldB.getText();
+        String leaderEFG = leaderEFGfield.getText();
+        String promptE = promptFieldE.getText();
+        String promptF = promptFieldF.getText();
+        String promptG = promptFieldG.getText();
+
+        ABEFGmodelExtra fields = new ABEFGmodelExtra(leaderAB, promptA, false, promptB, false, leaderEFG, promptE, false, promptF, false, promptG, false);
+        String prompt = explainPromptField.getText();
         statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
         Document statementDocument = statementEditor.getDocument();
-        SimpleEditModel model = new SimpleEditModel(name, false, prompt, 70.0, statementDocument, new Document(), new ArrayList<Document>());
+        ABEFGmodel model = new ABEFGmodel(name, fields,  false, prompt, 70.0, statementDocument, new Document(), new ArrayList<Document>());
         return model;
     }
 
 }
+

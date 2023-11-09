@@ -1,23 +1,29 @@
-package slapp.editor.ab_explain;
+package slapp.editor.abefg_explain;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import slapp.editor.EditorAlerts;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
+
 import java.util.ArrayList;
 
-public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA>> {
+public class ABEFGview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA>> {
 
     private MainWindowView mainView;
     private String exerciseName = new String();
-    private Label leaderLabel = new Label("");
+    private Label leaderLabelAB = new Label("");
+    private Label leaderLabelEFG = new Label("");
     private CheckBox checkBoxA = new CheckBox("");
     private CheckBox checkBoxB = new CheckBox("");
+    private CheckBox checkBoxE = new CheckBox("");
+    private CheckBox checkBoxF = new CheckBox("");
+    private CheckBox checkBoxG = new CheckBox("");
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
@@ -27,16 +33,26 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
     private Button addPageButton;
     private Button removePageButton;
     private Node exerciseControlNode = new VBox();
-    private HBox abBbox = new HBox();
+    private HBox abBox = new HBox();
+    private HBox efgBox = new HBox();
+    private VBox checksBox = new VBox();
 
-    public ABview(MainWindowView mainView) {
+    public ABEFGview(MainWindowView mainView) {
         this.mainView = mainView;
-        abBbox.getChildren().addAll(leaderLabel, checkBoxA, checkBoxB);
-        abBbox.setSpacing(20);
-        abBbox.setPadding(new Insets(10,10,10,10));
-        abBbox.setStyle("-fx-border-color: gainsboro; -fx-border-width: 2.2; -fx-background-color: white");
+        abBox.getChildren().addAll(leaderLabelAB, checkBoxA, checkBoxB);
+        abBox.setSpacing(20);
+ //       abBox.setPadding(new Insets(10,10,10,10));
+//        abBox.setStyle("-fx-border-color: gainsboro; -fx-border-width: 2.2; -fx-background-color: white");
+
+        efgBox.getChildren().addAll(leaderLabelEFG, checkBoxE, checkBoxF, checkBoxG);
+        efgBox.setSpacing(20);
+ //       efgBox.setPadding(new Insets(10));
 
 
+        checksBox.getChildren().addAll(abBox, efgBox);
+        checksBox.setStyle("-fx-border-color: gainsboro; -fx-border-width: 2.2; -fx-background-color: white");
+        checksBox.setSpacing(10);
+        checksBox.setPadding(new Insets(10));
 
 
         this.pagination = new Pagination();
@@ -46,8 +62,8 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
             if (index == 0) {
                 DecoratedRTA drtaPage0 = exerciseContent.get(index);
                 mainView.setContentHeightProperty(drtaPage0.getEditor().prefHeightProperty());
-                VBox topContentPage = new VBox(3, abBbox, drtaPage0.getEditor());
-                topContentPage.setMargin(abBbox, new Insets(5,0,0,0));
+                VBox topContentPage = new VBox(3, checksBox, drtaPage0.getEditor());
+                topContentPage.setMargin(checksBox, new Insets(5,0,0,0));
                 page = topContentPage;
             } else {
                 DecoratedRTA DRTApage = exerciseContent.get(index);
@@ -158,9 +174,10 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
 
-    public Label getLeaderLabel() {
-        return leaderLabel;
+    public Label getLeaderLabelAB() {
+        return leaderLabelAB;
     }
+    public Label getLeaderLabelEFG() { return leaderLabelEFG; }
 
     public CheckBox getCheckBoxA() {
         return checkBoxA;
@@ -170,6 +187,11 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
         return checkBoxB;
     }
 
+    public CheckBox getCheckBoxE() { return checkBoxE; }
+
+    public CheckBox getCheckBoxF() { return checkBoxF; }
+
+    public CheckBox getCheckBoxG() { return checkBoxG; }
 }
 
 
