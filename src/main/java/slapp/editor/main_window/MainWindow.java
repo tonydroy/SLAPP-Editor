@@ -279,6 +279,7 @@ public class MainWindow {
         } else {
             AssignmentCommentWindow commentWindow = new AssignmentCommentWindow(currentAssignment.getHeader());
             AssignmentHeader header = commentWindow.getHeaderComment();
+            if (!(header.getComment().equals(currentAssignment.getComment()))) isAssignmentContentModified = true;
             currentAssignment.setHeader(header);
         }
     }

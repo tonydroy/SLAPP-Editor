@@ -60,11 +60,11 @@ public class AssignmentCommentWindow {
         commentEditor.setContentAreaWidth(PrintUtilities.getPageWidth());
         commentEditor.setPrefHeight(200);
 
-        String helpText = "You may comment on the assignment as a whole.  Comment will appear at top of your printed assignment.";
+        String helpText = "You may comment on the assignment as a whole.  Comment will not show on main screen, but does appear at top of your printed assignment.";
 
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(40);
+        helpArea.setPrefHeight(45);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);

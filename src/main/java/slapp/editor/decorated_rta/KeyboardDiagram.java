@@ -89,7 +89,7 @@ public class KeyboardDiagram {
     public void initialize(DecoratedRTA decoratedRTA, double scale) {
         this.decoratedRTA = decoratedRTA;
         this.mapFontSize = decoratedRTA.getPrimaryFontSize() * scale;
-        textFont = Font.font("Noto Sans", FontWeight.NORMAL, FontPosture.REGULAR, mapFontSize);
+        textFont = Font.font("Noto Serif", FontWeight.NORMAL, FontPosture.REGULAR, mapFontSize);
         symbolFont = Font.font("Noto Sans Math", FontWeight.NORMAL, FontPosture.REGULAR, mapFontSize);
         stage.setOnCloseRequest(e -> {
             e.consume();

@@ -42,13 +42,14 @@ public class ABcreate {
     private TextField leaderField;
     private TextField promptFieldA;
     private TextField promptFieldB;
-    private TextField explainPromptField;
+    private TextField contentPromptField;
 
     private boolean fieldsModified = false;
     private ChangeListener nameListener;
     private ChangeListener leaderListener;
     private ChangeListener fieldListenerA;
     private ChangeListener fieldListenerB;
+    private ChangeListener contentPromptListener;
     private double scale =1.0;
     private Scene scene;
     private Stage stage;
@@ -71,7 +72,7 @@ public class ABcreate {
         ABmodel originalModel = originalExercise.getExerciseModel();
 
         nameField.setText(originalModel.getExerciseName());
-        explainPromptField.setText(originalModel.getContentPrompt());
+        contentPromptField.setText(originalModel.getContentPrompt());
         ABmodelExtra fields = originalModel.getModelFields();
         leaderField.setText(fields.getLeader());
         promptFieldA.setText(fields.getPromptA());
@@ -79,8 +80,11 @@ public class ABcreate {
 
         fieldsModified = false;
         nameField.textProperty().addListener(nameListener);
+        contentPromptField.textProperty().addListener(contentPromptListener);
         leaderField.textProperty().addListener(leaderListener);
         promptFieldA.textProperty().addListener(fieldListenerA);
+        promptFieldB.textProperty().addListener(fieldListenerB);
+
 
     }
 
@@ -125,8 +129,8 @@ public class ABcreate {
         leaderField.textProperty().addListener(leaderListener);
 
 
-        Label aPromptLabel = new Label("A Prompt: ");
-        aPromptLabel.setPrefWidth(100);
+        Label promptLabelA = new Label("A Prompt: ");
+        promptLabelA.setPrefWidth(100);
         promptFieldA = new TextField();
         promptFieldA.setPromptText("(plain text)");
         fieldListenerA = new ChangeListener() {
@@ -139,8 +143,8 @@ public class ABcreate {
         promptFieldA.textProperty().addListener(fieldListenerA);
 
 
-        Label bPromptLabel = new Label("B Prompt: ");
-        bPromptLabel.setPrefWidth(100);
+        Label promptLabelB = new Label("B Prompt: ");
+        promptLabelB.setPrefWidth(100);
         promptFieldB = new TextField();
         promptFieldB.setPromptText("(plain text)");
         fieldListenerB = new ChangeListener() {
@@ -154,30 +158,37 @@ public class ABcreate {
 
 
 
-        Label promptLabel = new Label("Content prompt: ");
-        promptLabel.setPrefWidth(100);
-        explainPromptField = new TextField();
-        explainPromptField.setPromptText("(plain text)");
-
+        Label contentPromptLabel = new Label("Content prompt: ");
+        contentPromptLabel.setPrefWidth(100);
+        contentPromptField = new TextField();
+        contentPromptField.setPromptText("(plain text)");
+        contentPromptListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldsModified = true;
+                contentPromptField.textProperty().removeListener(contentPromptListener);
+            }
+        };
+        contentPromptField.textProperty().addListener(contentPromptListener);
 
 
 
 
         HBox nameBox = new HBox(nameLabel, nameField);
         nameBox.setAlignment(Pos.BASELINE_LEFT);
-        HBox promptBox = new HBox(promptLabel, explainPromptField);
+        HBox promptBox = new HBox(contentPromptLabel, contentPromptField);
         promptBox.setAlignment(Pos.BASELINE_LEFT);
         HBox leaderBox = new HBox(leaderLabel, leaderField);
         leaderBox.setAlignment(Pos.BASELINE_LEFT);
-        HBox aBbox = new HBox(aPromptLabel, promptFieldA);
+        HBox aBbox = new HBox(promptLabelA, promptFieldA);
         promptBox.setAlignment(Pos.BASELINE_LEFT);
-        HBox bBox = new HBox(bPromptLabel, promptFieldB);
+        HBox bBox = new HBox(promptLabelB, promptFieldB);
         bBox.setAlignment(Pos.BASELINE_LEFT);
         VBox textFieldsPromptBox = new VBox(10,nameBox, promptBox, leaderBox, aBbox, bBox);
         textFieldsPromptBox.setPadding(new Insets(20,0,20,70));
 
         String helpText = "AB Explain is appropriate for any exercise that requires a choice between mutually exclusive options (as true/false, consistent/inconsistent) together with an explanation or justification.\n\n" +
-                "For the AB Explain Exercise, you supply the exercise name and, if desired, a prompt to appear in the explanation field.  Then the Checkbox Lead appears prior to the check boxes, the A Prompt with the first box, and the B Prompt with the second.";
+                "For the AB Explain exercise, you supply the exercise name and, if desired, a prompt to appear in the explanation field.  Then the Checkbox Lead appears prior to the check boxes, the A Prompt with the first box, and the B Prompt with the second.";
 
 
         helpArea = new TextArea(helpText);
@@ -285,10 +296,6 @@ public class ABcreate {
 
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-            explainPromptField.clear();
-            leaderField.clear();
-            promptFieldA.clear();
-            promptFieldB.clear();
             statementEditor.getActionFactory().newDocument().execute(new ActionEvent());
             statementEditor.setDocument(new Document());
             statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
@@ -337,7 +344,7 @@ public class ABcreate {
         String Aprompt = promptFieldA.getText();
         String Bprompt = promptFieldB.getText();
         ABmodelExtra fields = new ABmodelExtra(leader, Aprompt, false, Bprompt, false);
-        String prompt = explainPromptField.getText();
+        String prompt = contentPromptField.getText();
         statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
         Document statementDocument = statementEditor.getDocument();
         ABmodel model = new ABmodel(name, fields,  false, prompt, 70.0, statementDocument, new Document(), new ArrayList<Document>());

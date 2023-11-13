@@ -110,8 +110,8 @@ public class DecoratedRTA {
         fontFamilies.getItems().setAll(Font.getFamilies());
         fontFamilies.setPrefWidth(130);
         fontFamilies.setTooltip(new Tooltip("Select Font"));
+        fontFamilies.setValue("Noto Serif Combo");
         new TextDecorateAction<>(editor, fontFamilies.valueProperty(), TextDecoration::getFontFamily, (builder, a) -> builder.fontFamily(a).build());
-        fontFamilies.setValue("Noto Sans");
 
         //font size box
         final ComboBox<Double> fontSize = new ComboBox<>();
@@ -158,7 +158,7 @@ public class DecoratedRTA {
         //overline button
         overlineButton = new ToggleButton();
         overlineButton.setTooltip(new Tooltip("Overline (best on symbol fonts)"));
-        Font overlineButtonFont = Font.font("Noto Sans Math", FontWeight.LIGHT, FontPosture.REGULAR, 18);
+        Font overlineButtonFont = Font.font("Noto Serif Combo", FontWeight.LIGHT, FontPosture.REGULAR, 18);
         Text overlineButtonText = new Text("\u035e\ud835\uddae");
         overlineButtonText.setFont(overlineButtonFont);
         TextFlow overlineButtonTextFlow = new TextFlow(overlineButtonText);

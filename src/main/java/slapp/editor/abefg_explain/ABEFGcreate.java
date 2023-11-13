@@ -47,9 +47,7 @@ public class ABEFGcreate {
     private TextField promptFieldE;
     private TextField promptFieldF;
     private TextField promptFieldG;
-
     private TextField explainPromptField;
-
     private boolean fieldsModified = false;
     private ChangeListener nameListener;
     private ChangeListener leaderListenerAB;
@@ -59,13 +57,13 @@ public class ABEFGcreate {
     private ChangeListener fieldListenerE;
     private ChangeListener fieldListenerF;
     private ChangeListener fieldListenerG;
+    private ChangeListener explainPromptListener;
     private double scale =1.0;
     private Scene scene;
     private Stage stage;
     private SimpleDoubleProperty centerHeightProperty;
     private TextArea helpArea;
     private VBox centerBox;
-
 
 
     public ABEFGcreate(MainWindow mainWindow) {
@@ -90,8 +88,8 @@ public class ABEFGcreate {
         promptFieldE.setText(fields.getPromptE());
         promptFieldF.setText(fields.getPromptF());
         promptFieldG.setText(fields.getPromptG());
-        fieldsModified = false;
         nameField.textProperty().addListener(nameListener);
+        explainPromptField.textProperty().addListener(explainPromptListener);
         leaderABfield.textProperty().addListener(leaderListenerAB);
         promptFieldA.textProperty().addListener(fieldListenerA);
         promptFieldB.textProperty().addListener(fieldListenerB);
@@ -99,6 +97,7 @@ public class ABEFGcreate {
         promptFieldE.textProperty().addListener(fieldListenerE);
         promptFieldF.textProperty().addListener(fieldListenerF);
         promptFieldG.textProperty().addListener(fieldListenerG);
+        fieldsModified = false;
     }
 
     private void setupWindow() {
@@ -216,6 +215,17 @@ public class ABEFGcreate {
         explainPromptLabel.setPrefWidth(100);
         explainPromptField = new TextField();
         explainPromptField.setPromptText("(plain text)");
+        explainPromptListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldsModified = true;
+                explainPromptField.textProperty().removeListener(explainPromptListener);
+            }
+        };
+        explainPromptField.textProperty().addListener(explainPromptListener);
+
+
+
 
         GridPane checkboxPane = new GridPane();
         checkboxPane.addColumn(0, nameLabel, leaderLabelAB, promptLabelA, promptLabelB);
@@ -233,13 +243,13 @@ public class ABEFGcreate {
 
 
 
-        String helpText = "AB Explain is appropriate for any exercise that requires a choice between mutually exclusive options (as true/false, consistent/inconsistent) together with an explanation or justification.\n\n" +
-                "For the AB Explain Exercise, you supply the exercise name and, if desired, a prompt to appear in the explanation field.  Then the Checkbox Lead appears prior to the check boxes, the A Prompt with the first box, and the B Prompt with the second.";
+        String helpText = "AB/EFG Explain is appropriate for exercises that require choices from among two groups of mutually exclusive items: first, between some A and B, then between E, F and G, together with an explanation or justification.\n\n" +
+                "For the AB/EFG Explain exercise you supply the exercise name and, if desired, a prompt to appear in the explanation field.  Then each set of options has a Lead that appears prior to the check boxes, and labels to appear with the check boxes.";
 
 
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(120);
+        helpArea.setPrefHeight(130);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
@@ -343,16 +353,7 @@ public class ABEFGcreate {
             statementEditor.setDocument(new Document());
             statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
             nameField.clear();
-            fieldsModified = false;
             nameField.textProperty().addListener(nameListener);
-            explainPromptField.clear();
-            leaderABfield.clear();
-            promptFieldA.clear();
-            promptFieldB.clear();
-            leaderEFGfield.clear();
-            promptFieldE.clear();
-            promptFieldF.clear();
-            promptFieldG.clear();
             fieldsModified = false;
             viewExercise();
         }
