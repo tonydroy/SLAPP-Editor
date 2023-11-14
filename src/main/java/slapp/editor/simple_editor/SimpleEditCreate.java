@@ -26,6 +26,7 @@ import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
+import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.MainWindow;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -79,6 +80,7 @@ public class SimpleEditCreate {
         statementEditor.setPrefWidth(PrintUtilities.getPageWidth() + 20);
         statementEditor.setContentAreaWidth(PrintUtilities.getPageWidth());
         statementEditor.setPrefHeight(200);
+
 
         Label nameLabel = new Label("Exercise Name: ");
         nameLabel.setPrefWidth(95);
@@ -174,12 +176,13 @@ public class SimpleEditCreate {
         borderPane.setTop(topBox);
 
         stage = new Stage();
+        stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
         stage.setTitle("Create Simple Edit Exercise:");
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
-        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initModality(Modality.WINDOW_MODAL);
         stage.setOnCloseRequest(e-> {
             e.consume();
             closeWindow();
@@ -197,6 +200,11 @@ public class SimpleEditCreate {
         centerBox.setScaleY(scale);
         scene.getWindow().setWidth(Math.max(860, PrintUtilities.getPageWidth() * scale + 55));
         setCenterVgrow();
+
+        KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
+        keyboardDiagram.updateFontSize(scale);
+        keyboardDiagram.initialize(statementDRTA);
+        keyboardDiagram.update();
     }
 
     private void setCenterVgrow() {

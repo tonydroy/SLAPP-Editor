@@ -15,7 +15,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -31,7 +30,6 @@ import slapp.editor.main_window.assignment.AssignmentHeaderItem;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 public class MainWindowView {
     private Stage stage = EditorMain.mainStage;
@@ -52,6 +50,7 @@ public class MainWindowView {
     private Node statementNode;
     private Node contentNode;
     private DecoratedRTA commentDecoratedRTA;
+    private DecoratedRTA lastFocussedDRTA;
     private Node commentNode;
     private Node controlNode;
     private VBox statusBar;
@@ -287,6 +286,12 @@ public class MainWindowView {
 
     public void updateZoom(int zoom) {
         scale = (double)zoom/100.0;
+        KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
+        keyboardDiagram.updateFontSize(scale);
+        keyboardDiagram.initialize(lastFocussedDRTA);
+        keyboardDiagram.update();
+
+
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
         mainScene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth() + PrintUtilities.getPageWidth() * scale + 85));
@@ -294,12 +299,13 @@ public class MainWindowView {
     }
 
     public void editorInFocus(DecoratedRTA decoratedRTA){
+        lastFocussedDRTA = decoratedRTA;
         editToolbar = decoratedRTA.getEditToolbar();
         fontsToolbar = decoratedRTA.getFontsToolbar();
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
-        keyboardDiagram.initialize(decoratedRTA, scale);
+        keyboardDiagram.initialize(decoratedRTA);
         if (keyboardDiagram.isShowing()) {
             keyboardDiagram.updateAndShow();
         }

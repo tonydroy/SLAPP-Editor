@@ -26,7 +26,7 @@ public class KeyboardDiagram {
     private DecoratedRTA decoratedRTA;
     private Map<Character, Text> keyTypedTextMap = new HashMap<>();
     private Map<KeyCombination, Text> keyPressedTextMap = new HashMap<>();
-    private double mapFontSize = 14.0;
+    private double mapFontSize = 11;
     private Font textFont;
     private Font symbolFont;
     private Text title1;
@@ -69,6 +69,8 @@ public class KeyboardDiagram {
         stage.initModality(Modality.NONE);
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
 
+
+
         keyboardWindowX = new SimpleDoubleProperty();
         keyboardWindowY = new SimpleDoubleProperty();
         keyboardWindowHeight = new SimpleDoubleProperty();
@@ -86,15 +88,23 @@ public class KeyboardDiagram {
         return uniqueKeyboardDiagram;
     }
 
-    public void initialize(DecoratedRTA decoratedRTA, double scale) {
-        this.decoratedRTA = decoratedRTA;
+
+    public void updateFontSize(Double scale) {
         this.mapFontSize = decoratedRTA.getPrimaryFontSize() * scale;
-        textFont = Font.font("Noto Serif", FontWeight.NORMAL, FontPosture.REGULAR, mapFontSize);
-        symbolFont = Font.font("Noto Sans Math", FontWeight.NORMAL, FontPosture.REGULAR, mapFontSize);
+    }
+    public void initialize(DecoratedRTA decoratedRTA) {
+        this.decoratedRTA = decoratedRTA;
+ //       this.mapFontSize = decoratedRTA.getPrimaryFontSize() * scale;
+        textFont = Font.font("Noto Serif Combo", FontWeight.NORMAL, FontPosture.REGULAR, mapFontSize);
+        symbolFont = Font.font("Noto Serif Combo", FontWeight.NORMAL, FontPosture.REGULAR, mapFontSize);
         stage.setOnCloseRequest(e -> {
             e.consume();
             hide();
         });
+
+
+
+
 
         //initialize blank text maps
         Map<Character, String> keyTypedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyTypedCharMap();
@@ -445,9 +455,9 @@ public class KeyboardDiagram {
         ctrlShiftAltBoard.add(getControlKey("alternate/\n option",8),43,4,8,1);
         ctrlShiftAltBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 
-        ctrlChars = new Text("\ud83e\udc46 Ctrl:5, :6, :7, :8, :9 select keyboards (like keyboard dropdown).\n" +
-        "    Ctrl:B bold, :I italic, :U underline, :0 (zero) overline\n" +
-        "    Ctrl:= subscript, :=(+shift) superscript, :- back subscript, :-(+shift) back superscript\n" +
+        ctrlChars = new Text("\ud83e\udc46 F1, F2, F3, F4, F5 select keyboards (like keyboard dropdown).\n" +
+        "    F7 toggles superscript (+shift, shift back), F8 toggles subscript (+shift, shift back)\n" +
+        "    Ctrl:B bold, :I talic, :U underline, :0 (zero) overline\n" +
         "    Ctrl-A select all, :C copy, :X cut, :V paste, :Z undo, :Z(+shift) redo\n\n");
 
         ctrlChars.setFont(textFont);
@@ -525,7 +535,7 @@ public class KeyboardDiagram {
         return pane;
     }
 
-    public void updateAndShow() {
+    public void update() {
         Map<Character, String> keyTypedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyTypedCharMap();
         Map<KeyCodeCombination, String> keyPressedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyPressedCharMap();
 
@@ -537,11 +547,15 @@ public class KeyboardDiagram {
         }
         boardsBox.getChildren().clear();
         boardsBox.getChildren().addAll(title1, normalBoard, title2, shiftBoard, title3, altBoard, title4, shiftAltBoard, title5, ctrlShiftAltBoard, ctrlChars);
+    }
+
+    public void updateAndShow() {
+        update();
         if (!shown) {
-            stage.setX(EditorMain.mainStage.getX() + 860);
-            stage.setY(EditorMain.mainStage.getY() + 25);
+            stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
+            stage.setY(EditorMain.mainStage.getY() + 100);
             stage.setWidth(650);
-            stage.setHeight(940);
+            stage.setHeight(970);
             shown = true;
         }
         stage.show();

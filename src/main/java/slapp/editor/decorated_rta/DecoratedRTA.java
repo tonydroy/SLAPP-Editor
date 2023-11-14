@@ -84,7 +84,7 @@ public class DecoratedRTA {
         presets.setTooltip(new Tooltip("Heading Level"));
         presets.getItems().setAll(Presets.values());
         presets.setValue(Presets.DEFAULT);
-        presets.setPrefWidth(100);
+        presets.setPrefWidth(120);
         presets.setConverter(new StringConverter<>() {
             @Override
             public String toString(Presets presets) {
@@ -104,14 +104,6 @@ public class DecoratedRTA {
                             ParagraphDecoration.builder().presets().alignment(nv.getTextAlignment()).build()).execute(new ActionEvent());
             editor.requestFocus();
         });
-
-        //font families combo box
-        ComboBox<String> fontFamilies = new ComboBox<>();
-        fontFamilies.getItems().setAll(Font.getFamilies());
-        fontFamilies.setPrefWidth(130);
-        fontFamilies.setTooltip(new Tooltip("Select Font"));
-        fontFamilies.setValue("Noto Serif Combo");
-        new TextDecorateAction<>(editor, fontFamilies.valueProperty(), TextDecoration::getFontFamily, (builder, a) -> builder.fontFamily(a).build());
 
         //font size box
         final ComboBox<Double> fontSize = new ComboBox<>();
@@ -163,7 +155,6 @@ public class DecoratedRTA {
         overlineButtonText.setFont(overlineButtonFont);
         TextFlow overlineButtonTextFlow = new TextFlow(overlineButtonText);
         overlineButtonTextFlow.setMaxHeight(0.0);
-//        overlineButtonTextFlow.setPadding(new Insets(-6,3,-6,3));
         overlineButton.setGraphic(overlineButtonTextFlow);
         overlineButton.setAlignment(Pos.CENTER);
         overlineButton.setPadding(new Insets(-10,0,-10,11));
@@ -176,34 +167,38 @@ public class DecoratedRTA {
         FontIcon icon = new FontIcon(LineAwesomeSolid.KEYBOARD);
         icon.setIconSize(20);
         keyboardDiagramButton.setGraphic(icon);
+        KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
         keyboardDiagramButton.setOnAction(e -> {
             if (keyboardDiagramButton.isSelected()) {
-                KeyboardDiagram.getInstance().updateAndShow();
+                keyboardDiagram.initialize(this);
+                keyboardDiagram.updateAndShow();
             }
-            else KeyboardDiagram.getInstance().hide();
+            else keyboardDiagram.hide();
         });
 
         //unicode field
         final TextField unicodeField = new TextField();
         unicodeField.setTooltip(new Tooltip("Unicode (x/hex, #/decimal)"));
-        unicodeField.setPrefColumnCount(6);
-        unicodeField.setPromptText("unicode val");
+        unicodeField.setPrefWidth(90);
+        unicodeField.setPromptText("unicode value");
         unicodeField.setOnAction(e -> {
             String text = unicodeField.getText();
             editor.getActionFactory().insertUnicode(text).execute(e);
         });
-        //  unicodeField.setOnAction(editor.getActionFactory().insertUnicode(unicodeField.getText())::execute);  for reasons I do not understand, this does not respond to text typed in the box (but does with setText()).
 
         //keyboard selector
         keyboardSelector = new ChoiceBox<>();
         keyboardSelector.getItems().setAll(RichTextAreaSkin.KeyMapValue.values());
         keyboardSelector.setValue(RichTextAreaSkin.KeyMapValue.BASE);
         keyboardSelector.setTooltip(new Tooltip("Select Keyboard"));
+        keyboardSelector.setPrefWidth(120);
 
         //toolbars
         editToolbar = new ToolBar();
+        editToolbar.setStyle("-fx-spacing: 6.5");
         editToolbar.getItems().setAll(
-//                actionButton(LineAwesomeSolid.SAVE, "Save",  editor.getActionFactory().save()),
+
+                //save button comes here
                 wideSeparator(5),
 
                 actionButton(LineAwesomeSolid.CUT, "Cut",   editor.getActionFactory().cut()),
@@ -211,42 +206,42 @@ public class DecoratedRTA {
                 actionButton(LineAwesomeSolid.PASTE, "Paste", editor.getActionFactory().paste()),
                 actionButton(LineAwesomeSolid.UNDO, "Undo",  editor.getActionFactory().undo()),
                 actionButton(LineAwesomeSolid.REDO, "Redo",  editor.getActionFactory().redo()),
-                wideSeparator(8),
+                wideSeparator(7),
 
                 actionImage(LineAwesomeSolid.IMAGE, "Insert Image"),
                 actionEmoji("Insert Emoji"),
                 actionHyperlink(LineAwesomeSolid.LINK, "Insert Hyperlink"),
                 actionTable(LineAwesomeSolid.TABLE, "Insert Table", td -> editor.getActionFactory().insertTable(td)),
-                wideSeparator(8),
+                wideSeparator(7),
 
-                fontFamilies,
-                fontSize,
                 presets,
+                keyboardSelector,
+                wideSeparator(8),
                 keyboardDiagramButton
             );
-//       editToolbar.setPadding(new Insets(3,0,3,20));
 
         fontsToolbar = new ToolBar();
         fontsToolbar.getItems().setAll(
-                keyboardSelector,
-                unicodeField,
-                wideSeparator(0.9),
 
                 createToggleButton(LineAwesomeSolid.BOLD, "Bold (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
                 createToggleButton(LineAwesomeSolid.ITALIC, "Italic (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build())),
                 createToggleButton(LineAwesomeSolid.STRIKETHROUGH, "Strikethrough", property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
                 createToggleButton(LineAwesomeSolid.UNDERLINE, "Underline", property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
                 overlineButton,
- //               wideSeparator(0),
+                wideSeparator(8),
 
                 createToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).transSuperscript(false).transSubscript(false).build())),
                 createColoredToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
                 createToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).transSuperscript(false).transSubscript(false).build())),
                 createColoredToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build())),
-                wideSeparator(0.9),
+
 
                 textForeground,
-                textBackground
+                textBackground,
+                wideSeparator(8),
+                unicodeField,
+                new Label("Size"),
+                fontSize
             );
 
         paragraphToolbar = new ToolBar();
@@ -279,7 +274,11 @@ public class DecoratedRTA {
         keyboardSelector.valueProperty().bindBidirectional(((RichTextAreaSkin) editor.getSkin()).keyMapStateProperty());
         keyboardSelector.getSelectionModel().selectedItemProperty().addListener((v, ov, nv) -> {
             ((RichTextAreaSkin) editor.getSkin()).setMaps(nv);
-            if (KeyboardDiagram.getInstance().isShowing()) KeyboardDiagram.getInstance().updateAndShow();
+            KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
+            if (keyboardDiagram.isShowing()) {
+                keyboardDiagram.initialize(this);
+                keyboardDiagram.update();
+            }
             editor.requestFocus();   //have not been able to find way to stop keyboard window from stealing focus see https://stackoverflow.com/questions/33151460/javafx-stop-new-window-stealing-focus
         });
     }

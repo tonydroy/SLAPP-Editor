@@ -28,6 +28,7 @@ import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
+import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.MainWindow;
 
 import java.util.ArrayList;
@@ -305,12 +306,13 @@ public class ABEFGcreate {
         borderPane.setTop(topBox);
 
         stage = new Stage();
+        stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
         stage.setTitle("Create AB/EFG Explain Exercise:");
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
-        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initModality(Modality.WINDOW_MODAL);
         stage.setOnCloseRequest(e-> {
             e.consume();
             closeWindow();
@@ -328,6 +330,11 @@ public class ABEFGcreate {
         centerBox.setScaleY(scale);
         scene.getWindow().setWidth(Math.max(860, PrintUtilities.getPageWidth() * scale + 55));
         setCenterVgrow();
+
+        KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
+        keyboardDiagram.updateFontSize(scale);
+        keyboardDiagram.initialize(statementDRTA);
+        keyboardDiagram.update();
     }
 
     private void setCenterVgrow() {
