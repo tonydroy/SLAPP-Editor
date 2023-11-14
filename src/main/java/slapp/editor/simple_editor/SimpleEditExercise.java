@@ -6,6 +6,7 @@ import com.gluonhq.richtextarea.model.Document;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -166,16 +167,6 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         nodeList.add(hbox);
         nodeList.add(new Separator(Orientation.HORIZONTAL));
 
-        //comment node
-        RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
-        RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
-        double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-        commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
-        commentRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
-        commentRTA.setPrefWidth(nodeWidth);
-        nodeList.add(commentRTA);
-        nodeList.add(new Separator(Orientation.HORIZONTAL));
-
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.setEditable(true);
@@ -185,7 +176,13 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         statementRTA.setPrefWidth(nodeWidth);
         nodeList.add(statementRTA);
-        nodeList.add(new Separator(Orientation.HORIZONTAL));
+
+        Separator statementSeparator = new Separator(Orientation.HORIZONTAL);
+        statementSeparator.setPrefWidth(100);
+        HBox statementSepBox = new HBox(statementSeparator);
+        statementSepBox.setAlignment(Pos.CENTER);
+        nodeList.add(statementSepBox);
+
 
         //content nodes
         ArrayList<DecoratedRTA> pageList = exercise.getExerciseView().getExerciseContent();
@@ -198,6 +195,24 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
             pageRTA.setPrefWidth(nodeWidth);
             nodeList.add(pageRTA);
         }
+
+        Separator contentSeparator = new Separator(Orientation.HORIZONTAL);
+        contentSeparator.setStyle("-fx-stroke-dash-array:0.1 5.0");
+        contentSeparator.setPrefWidth(100);
+        HBox contentSepBox = new HBox(contentSeparator);
+        contentSepBox.setAlignment(Pos.CENTER);
+        nodeList.add(contentSepBox);
+
+        //comment node
+        RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
+        double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+        commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
+        commentRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
+        commentRTA.setPrefWidth(nodeWidth);
+        nodeList.add(commentRTA);
+
+
         return nodeList;
     }
     @Override

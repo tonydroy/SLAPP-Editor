@@ -15,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -30,6 +31,7 @@ import slapp.editor.main_window.assignment.AssignmentHeaderItem;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class MainWindowView {
     private Stage stage = EditorMain.mainStage;
@@ -286,11 +288,11 @@ public class MainWindowView {
 
     public void updateZoom(int zoom) {
         scale = (double)zoom/100.0;
+
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
         keyboardDiagram.updateFontSize(scale);
         keyboardDiagram.initialize(lastFocussedDRTA);
         keyboardDiagram.update();
-
 
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
@@ -309,7 +311,7 @@ public class MainWindowView {
         if (keyboardDiagram.isShowing()) {
             keyboardDiagram.updateAndShow();
         }
-        decoratedRTA.getKeyboardDiagramButton().selectedProperty().setValue(KeyboardDiagram.getInstance().isShowing());
+ //       decoratedRTA.getKeyboardDiagramButton().selectedProperty().setValue(KeyboardDiagram.getInstance().isShowing());
 
         if (!editToolbar.getItems().contains(saveButton)) {
             editToolbar.getItems().add(0, saveButton);

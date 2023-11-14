@@ -70,7 +70,7 @@ public class DecoratedRTA {
     private ToolBar paragraphToolbar;
     private ToggleButton overlineButton;
 
-    private ToggleButton keyboardDiagramButton;
+    private Button keyboardDiagramButton;
     ChoiceBox<RichTextAreaSkin.KeyMapValue> keyboardSelector;
     public DecoratedRTA() {
         decoratedRTA = this;
@@ -162,18 +162,17 @@ public class DecoratedRTA {
         overlineButton.setPrefSize(34,28);
 
         //keyboardDiagramButton
-        keyboardDiagramButton = new ToggleButton();
+        keyboardDiagramButton = new Button();
         keyboardDiagramButton.setTooltip(new Tooltip("Show Keyboard Diagram"));
         FontIcon icon = new FontIcon(LineAwesomeSolid.KEYBOARD);
         icon.setIconSize(20);
         keyboardDiagramButton.setGraphic(icon);
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
         keyboardDiagramButton.setOnAction(e -> {
-            if (keyboardDiagramButton.isSelected()) {
+            if (!keyboardDiagram.isShowing()) {
                 keyboardDiagram.initialize(this);
                 keyboardDiagram.updateAndShow();
             }
-            else keyboardDiagram.hide();
         });
 
         //unicode field
@@ -609,7 +608,7 @@ public class DecoratedRTA {
         return paragraphToolbar;
     }
 
-    public ToggleButton getKeyboardDiagramButton () {
+    public Button getKeyboardDiagramButton () {
         return keyboardDiagramButton;
     }
 

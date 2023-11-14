@@ -166,8 +166,16 @@ public class MainWindow {
         else EditorAlerts.showSimpleAlert("Cannot Save", "No named exercise to save.");
     }
     private void clearExercise() {
-        Exercise clearExercise = currentExercise.getContentClearExercise();
-        setUpExercise(clearExercise);
+        boolean okContinue = true;
+        if (currentExercise.isExerciseModified()) {
+            Alert confirm = EditorAlerts.confirmationAlert("Confirm Clear", "This exercise appears to have been modified.  Continue to clear content?");
+            Optional<ButtonType> result = confirm.showAndWait();
+            if (result.get() != OK) okContinue = false;
+        }
+        if (okContinue) {
+            Exercise clearExercise = currentExercise.getContentClearExercise();
+            setUpExercise(clearExercise);
+        }
     }
 
     private Exercise getEmptyExercise() {
