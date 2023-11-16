@@ -1,0 +1,31 @@
+
+/*
+.rich-text-area:focused .paragraph-tile {
+    -fx-background-color: aliceblue;
+}
+
+ */
+
+.rich-text-area .paragraph-tile {
+    -fx-background-color: aliceblue;
+}
+
+/*
+.rich-text-area {
+    -fx-border-color: lightblue;
+    -fx-border-width: 2;
+}
+
+
+
+
+/*
+.rich-text-area:focused {
+    -fx-border-width: 2;
+    -fx-border-color: lightblue;
+}
+
+
+
+
+

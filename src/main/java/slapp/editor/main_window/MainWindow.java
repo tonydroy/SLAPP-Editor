@@ -507,7 +507,7 @@ public class MainWindow {
     public boolean checkCloseWindow() {
         boolean continueClose = false;
         if (checkContinueAssignment("Confirm Close", "The current assignment appears to have been changed.\n\nContinue to close?")) {
-            if (checkContinueExercise("Confirm Close", "The current exercise appears to have been changed.\n\nContinue to close assignment?")) {
+            if (checkContinueExercise("Confirm Close", "The current exercise appears to have been changed.\n\nContinue to close exercise?")) {
                 continueClose = true;
             }
         }

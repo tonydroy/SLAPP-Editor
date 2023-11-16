@@ -328,7 +328,7 @@ public class ABcreate {
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
         double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(height + 35.0);
+        exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
         mainWindow.setUpExercise(exercise);
     }
 
@@ -341,8 +341,8 @@ public class ABcreate {
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
         double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(height + 35.0);
-        exercise.getExerciseModel().setStatementPrefHeight(height + 35.0);
+        exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
+        exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
         exercise.saveExercise(saveAs);
     }
     private ABmodel extractModelFromWindow() {
