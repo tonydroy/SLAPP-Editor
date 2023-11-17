@@ -23,31 +23,44 @@ public class SimpleTest {
     void testGrid(Stage primaryStage) {
         ColumnConstraints fixedCol = new ColumnConstraints();
         fixedCol.setMinWidth(10);
+        ColumnConstraints numCol = new ColumnConstraints();
+        numCol.setMinWidth(15);
         ColumnConstraints growCol = new ColumnConstraints();
         growCol.setHgrow(Priority.ALWAYS);
-        grid.getColumnConstraints().addAll(fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, growCol);
+        grid.getColumnConstraints().addAll(numCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, growCol, fixedCol);
         grid.setPadding(new Insets(20));
+        grid.setStyle("-fx-background-color: white;");
+
+//        grid.setGridLinesVisible(true);
+
+//        RichTextArea testContent = new RichTextArea(EditorMain.mainStage);
+//        testContent.setPrefHeight(19);
+//        testContent.setPrefWidth(100);
+//        testContent.getStylesheets().add("test.css");
 
 
 
-        setContentRow(0, 1, 1, new RichTextArea(EditorMain.mainStage), new Label("P"));
+
+        setContentRow(0, 1, 1, new Document("testing"), new Label("P"));
         setThinShelfRow(1, 1);
-        setContentRow(2, 2, 2, new Label("B"), new Label("A (g, \u2192I)"));
+        setContentRow(2, 2, 2, new Document(), new Label("A (g, \u2192I)"));
         setThinShelfRow(3, 2);
-        setContentRow(4,3, 3, new Label("C"), new Label("A (g, \u2192I)"));
+        setContentRow(4,3, 3, new Document(), new Label("A (g, \u2192I)"));
         setThinShelfRow(5, 3);
-        setContentRow(6, 3, 4, new Label("A"), new Label("1 R"));
-        setContentRow(7, 2, 5, new Label("C \u2192 A"), new Label("3-4 \u2192I"));
-        setContentRow(8, 1, 6, new Label("B \u2192 (C \u2192 A)"), new Label("2-5 \u2192I"));
+        setContentRow(6, 3, 4, new Document(), new Label("1 R"));
+        setContentRow(7, 2, 5, new Document(), new Label("44,44-44,44-44 \u2192I"));
+        setContentRow(8, 1, 6, new Document(), new Label("2-5 \u2192I"));
+
+
 
 
         Scene scene = new Scene(grid);
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(100);
+        primaryStage.setMinWidth(355);
         primaryStage.show();
     }
 
-    private void setContentRow(int rowIndex, int depth, int lineNum, Node contentNode, Node justificationNode) {
+    private void setContentRow(int rowIndex, int depth, int lineNum, Document content, Node justificationNode) {
         ObservableList<RowConstraints> rowConstraints = grid.getRowConstraints();
         if (rowIndex >= rowConstraints.size()) rowConstraints.add(rowIndex, baseR);
         else rowConstraints.set(rowIndex, baseR);
@@ -62,15 +75,17 @@ public class SimpleTest {
             grid.add(spacer, i, rowIndex, 1, 1);
         }
 
-        Pane contentPane = new Pane(contentNode);
-//        ((Label) contentNode).setPadding(new Insets(0,0,0,3));    ////
-        contentPane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1;");
-        grid.add(contentPane, depth, rowIndex, 20 - depth, 1);
+        RichTextArea rta = new RichTextArea(EditorMain.mainStage);
+        rta.setPrefHeight(19);
+        rta.setPrefWidth(100);
+        rta.getStylesheets().add("test.css");
+        rta.setDocument(content);
 
-
+        HBox box = new HBox(rta);
+        box.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1;");
+        box.setHgrow(rta, Priority.ALWAYS);
+        grid.add(box, depth, rowIndex, 21 - depth, 1);
         Pane justificationPane = new Pane(justificationNode);
-
- //       ((Label) contentNode).setPadding(new Insets(0,0,0,3));
         grid.add(justificationPane, 22, rowIndex);
     }
 

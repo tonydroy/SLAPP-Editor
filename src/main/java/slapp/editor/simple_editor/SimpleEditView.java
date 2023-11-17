@@ -78,7 +78,6 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, ArrayList<Deco
             pagination.setCurrentPageIndex(Math.max(0, index - 1));
         }
     }
-
     int getContentPageIndex() {
         return pagination.getCurrentPageIndex();
     }
