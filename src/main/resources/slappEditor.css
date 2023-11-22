@@ -26,6 +26,7 @@
 /*    -fx-padding: 20;*/
 }
 
+
 .rich-text-area {
     -fx-padding: 5;
     -fx-background-color: WHITE;
@@ -37,6 +38,14 @@
     -fx-border-width: 2;
     -fx-border-color: LIGHTBLUE;
 }
+
+
+
+
+
+
+
+
 
 
 .rich-text-area > .paragraph-list-view {

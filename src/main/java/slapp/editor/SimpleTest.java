@@ -1,16 +1,19 @@
 package slapp.editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToolBar;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import slapp.editor.decorated_rta.DecoratedRTA;
+import slapp.editor.decorated_rta.KeyboardDiagram;
 
 public class SimpleTest {
     GridPane grid = new GridPane();
@@ -31,14 +34,7 @@ public class SimpleTest {
         grid.setPadding(new Insets(20));
         grid.setStyle("-fx-background-color: white;");
 
-//        grid.setGridLinesVisible(true);
-
-//        RichTextArea testContent = new RichTextArea(EditorMain.mainStage);
-//        testContent.setPrefHeight(19);
-//        testContent.setPrefWidth(100);
-//        testContent.getStylesheets().add("test.css");
-
-
+        grid.setGridLinesVisible(true);
 
 
         setContentRow(0, 1, 1, new Document("testing"), new Label("P"));
@@ -55,9 +51,12 @@ public class SimpleTest {
 
 
         Scene scene = new Scene(grid);
+
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(355);
+
         primaryStage.show();
+
     }
 
     private void setContentRow(int rowIndex, int depth, int lineNum, Document content, Node justificationNode) {
@@ -75,10 +74,20 @@ public class SimpleTest {
             grid.add(spacer, i, rowIndex, 1, 1);
         }
 
-        RichTextArea rta = new RichTextArea(EditorMain.mainStage);
-        rta.setPrefHeight(19);
+
+        DecoratedRTA drta = new DecoratedRTA();
+        RichTextArea rta = drta.getEditor();
+        RichTextAreaSkin skin = (RichTextAreaSkin) rta.getSkin();
+        ToolBar editToolbar = drta.getEditToolbar();
+
+
+
+
+     //   RichTextArea rta = new RichTextArea(EditorMain.mainStage);
+        rta.setPrefHeight(20);
         rta.setPrefWidth(100);
-        rta.getStylesheets().add("test.css");
+        rta.getStylesheets().add("slappDerivation.css");
+
         rta.setDocument(content);
 
         HBox box = new HBox(rta);

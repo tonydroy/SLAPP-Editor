@@ -18,10 +18,10 @@ public class EditorMain extends Application {
         this.mainStage = stage;
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon32x32.png")));
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
-//        MainWindow mainWindowController = new MainWindow();
+        //        ExtendedDemo demo = new ExtendedDemo(stage); demo.start();
 
-//        ExtendedDemo demo = new ExtendedDemo(stage); demo.start();
-        SimpleTest test = new SimpleTest(); test.testGrid(stage);
+        MainWindow mainWindowController = new MainWindow();
+     //  SimpleTest test = new SimpleTest(); test.testGrid(stage);
     }
 
 

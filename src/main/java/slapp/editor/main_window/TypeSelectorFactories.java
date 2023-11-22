@@ -7,6 +7,8 @@ import slapp.editor.ab_explain.ABmodel;
 import slapp.editor.abefg_explain.ABEFGcreate;
 import slapp.editor.abefg_explain.ABEFGexercise;
 import slapp.editor.abefg_explain.ABEFGmodel;
+import slapp.editor.derivation.DerivationExercise;
+import slapp.editor.derivation.DerivationModel;
 import slapp.editor.simple_editor.SimpleEditCreate;
 import slapp.editor.simple_editor.SimpleEditExercise;
 import slapp.editor.simple_editor.SimpleEditModel;
@@ -89,17 +91,24 @@ public class TypeSelectorFactories {
 
         switch(type) {
 
-            case SIMPLE_EDITOR: {
-                SimpleEditCreate simpleEditCreate = new SimpleEditCreate(mainWindow);
-                break;
-            }
             case AB_EXPLAIN: {
                 ABcreate abCreate = new ABcreate(mainWindow);
+                break;
+            }
+            case DERIVATION: {
+                mainWindow.currentExercise = new DerivationExercise(new DerivationModel(), mainWindow);   //hijack for testing
+                mainWindow.getMainView().setupExercise();
+                mainWindow.getMainView().setCenterVgrow();
                 break;
             }
             case ABEFG_EXPLAIN: {
                 ABEFGcreate abefgCreate = new ABEFGcreate(mainWindow);
             }
+            case SIMPLE_EDITOR: {
+                SimpleEditCreate simpleEditCreate = new SimpleEditCreate(mainWindow);
+                break;
+            }
+
 
         }
     }

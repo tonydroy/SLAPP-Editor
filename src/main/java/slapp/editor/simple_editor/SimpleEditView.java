@@ -11,15 +11,16 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
 import java.util.ArrayList;
+import java.util.List;
 
-public class SimpleEditView implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA>> {
+public class SimpleEditView implements ExerciseView<DecoratedRTA, List<DecoratedRTA>> {
 
     private MainWindowView mainView;
     private String exerciseName = new String();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
-    private ArrayList<DecoratedRTA> exerciseContent = new ArrayList<>();
+    private List<DecoratedRTA> exerciseContent = new ArrayList<>();
     private String contentPrompt = new String();
     private Pagination pagination;
     private Button addPageButton;
@@ -113,11 +114,9 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, ArrayList<Deco
         exerciseStatement.getEditor().setPrefHeight(height);
     }
     @Override
-    public ArrayList<DecoratedRTA> getExerciseContent() {
-        return exerciseContent;
-    }
+    public List<DecoratedRTA> getExerciseContent() { return exerciseContent; }
     @Override
-    public void setExerciseContent(ArrayList<DecoratedRTA> exerciseContent) { this.exerciseContent = exerciseContent; }
+    public void setExerciseContent(List<DecoratedRTA> exerciseContent) { this.exerciseContent = exerciseContent; }
     @Override
     public Node getExerciseContentNode() {
         return pagination;

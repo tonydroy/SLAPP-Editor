@@ -4,21 +4,22 @@ import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
-public class SimpleEditModel implements ExerciseModel<Document, ArrayList<Document>>, Serializable {
+public class SimpleEditModel implements ExerciseModel<Document, List<Document>>, Serializable {
 
     private String exerciseName = new String("");
     private boolean started = false;
-    private String prompt = "";
+    private String contentPrompt = "";
     private double statementPrefHeight = 80;
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
-    private ArrayList<Document> exerciseContent = new ArrayList<>();
+    private List<Document> exerciseContent = new ArrayList<>();
 
-    public SimpleEditModel(String name, boolean started, String prompt, double statementPrefHeight, Document exerciseStatement, Document exerciseComment, ArrayList<Document> exerciseContent) {
+    public SimpleEditModel(String name, boolean started, String prompt, double statementPrefHeight, Document exerciseStatement, Document exerciseComment, List<Document> exerciseContent) {
         this.exerciseName = name;
         this.started = started;
-        this.prompt = prompt;
+        this.contentPrompt = prompt;
         this.statementPrefHeight = statementPrefHeight;
         this.exerciseStatement = exerciseStatement;
         this.exerciseComment = exerciseComment;
@@ -67,17 +68,14 @@ public class SimpleEditModel implements ExerciseModel<Document, ArrayList<Docume
         this.statementPrefHeight = statementPrefHeight;
     }
     @Override
-    public ArrayList<Document> getExerciseContent() {
+    public List<Document> getExerciseContent() {
         return exerciseContent;
     }
     @Override
     public String getContentPrompt() {
-        return prompt;
+        return contentPrompt;
     }
     @Override
-    public String toString() {
-        String name = getExerciseName();
-        return name;
-    }
+    public String toString() { return exerciseName; }
 
 }
