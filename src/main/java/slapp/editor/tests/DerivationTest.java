@@ -1,4 +1,4 @@
-package slapp.editor;
+package slapp.editor.tests;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
@@ -13,9 +13,8 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import slapp.editor.decorated_rta.DecoratedRTA;
-import slapp.editor.decorated_rta.KeyboardDiagram;
 
-public class SimpleTest {
+public class DerivationTest {
     GridPane grid = new GridPane();
     RowConstraints baseR = new RowConstraints(20);
     RowConstraints thinR = new RowConstraints(5);
@@ -23,7 +22,7 @@ public class SimpleTest {
     RowConstraints gapR = new RowConstraints(7);
 
 
-    void testGrid(Stage primaryStage) {
+    public void testGrid(Stage primaryStage) {
         ColumnConstraints fixedCol = new ColumnConstraints();
         fixedCol.setMinWidth(10);
         ColumnConstraints numCol = new ColumnConstraints();
@@ -78,6 +77,7 @@ public class SimpleTest {
         DecoratedRTA drta = new DecoratedRTA();
         RichTextArea rta = drta.getEditor();
         RichTextAreaSkin skin = (RichTextAreaSkin) rta.getSkin();
+    //    System.out.println(skin.toString());
         ToolBar editToolbar = drta.getEditToolbar();
 
 

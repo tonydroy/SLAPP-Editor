@@ -4,8 +4,13 @@ import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -26,9 +31,13 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     private MainWindowView mainView;
     private boolean exerciseModified = false;
 
-
     Node lastFocusedNode;
     Font labelFont = new Font("Noto Serif Combo", 11);
+
+    Boolean editJustification;
+    EventHandler justificationClickFilter;
+
+
 
     public DerivationExercise(DerivationModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -38,13 +47,13 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
         mainView.getMainScene().focusOwnerProperty().addListener((ob, ov, nv) -> {
             lastFocusedNode = ov;
-//            System.out.println(nv.toString());
         });
+
+
+
 
         setDerivationView();
     }
-
-
 
     private void setDerivationView() {
 
@@ -73,25 +82,14 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         });
         derivationView.setExerciseComment(commentDRTA);
 
-
         //
         derivationView.getInsertButton().setOnAction(e -> insertLineAction());
-
         derivationView.getDeleteButton().setOnAction(e -> deleteLineAction());
         //
 
         derivationView.initializeViewDetails();
         setViewLinesFromModel();
         derivationView.setGridFromViewLines();
-    }
-
-    private void setEmptyViewContentRow(int row, int depth) {
-        Label numLabel = new Label();
-        numLabel.setFont(labelFont);
-        TextFlow flow = new TextFlow();
-        TextFlow justificationFlow = getStyledJustificationFlow(flow);
-        ViewLine viewLine = new ViewLine(numLabel, depth, LineType.CONTENT_LINE, false, new DecoratedRTA(), justificationFlow, new ArrayList<>());
-        derivationView.getViewLines().add(row, viewLine);
     }
 
     private void setViewLinesFromModel() {
@@ -117,17 +115,20 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                 DecoratedRTA drta = new DecoratedRTA();
                 RichTextArea rta = drta.getEditor();
                 rta.setDocument(modelLine.getLineContentDoc());
-
-                rta.setStyle("-fx-border-color: green; -fx-border-width: 1 1 1 1");
-
                 rta.focusedProperty().addListener((o, ov, nv) -> {
                     if (nv) {
                         mainView.editorInFocus(drta);
                     }
                 });
+
+
+
+
+
+
                 viewLine.setLineContentDRTA(drta);
 
-                TextFlow justificationFlow = getJustificationFlow(modelLine.getJustification(), viewLines, i);
+                TextFlow justificationFlow = getJustificationFlow(modelLine.getJustification(), viewLines);
                 viewLine.setJustificationFlow(justificationFlow);
 
             } else {
@@ -140,38 +141,55 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         derivationView.setViewLines(viewLines);
     }
 
-    private TextFlow getJustificationFlow(String justification, List<ViewLine> viewLines, int gridRow) {
-        justification = justification.trim();
+    private void focusNext(DecoratedRTA drta) {
+        System.out.println("next");
+
+
+    }
+
+
+    private void focusPrior(DecoratedRTA drta) {
+        System.out.println("prior");
+    }
+    private void focusAbove(DecoratedRTA drta) {
+        System.out.println("above");
+    }
+    private void focusBelow(DecoratedRTA drta) {
+        System.out.println("below");
+    }
+
+    private TextFlow getJustificationFlow(String justificationString, List<ViewLine> viewLines) {
+        justificationString = justificationString.trim();
         TextFlow flow = getStyledJustificationFlow(new TextFlow());
 
-        if (!justification.isEmpty()) {
+        if (!justificationString.isEmpty()) {
 
             //get List of alternating digit and non-digit sequences
-            List<String> split = new ArrayList();
+            List<String> splitList = new ArrayList();
             boolean startsDigit = false;
-            if (charIsDigit(justification.charAt(0))) startsDigit = true;
+            if (charIsDigit(justificationString.charAt(0))) startsDigit = true;
             StringBuilder builder = new StringBuilder();
             boolean buildingDigit = startsDigit;
-            int j = 0;
-            while (j < justification.length()) {
 
-                if (charIsDigit(justification.charAt(j)) == buildingDigit) {
-                    builder.append(justification.charAt(j));
+            int j = 0;
+            while (j < justificationString.length()) {
+                if (charIsDigit(justificationString.charAt(j)) == buildingDigit) {
+                    builder.append(justificationString.charAt(j));
                     j++;
                 }
                 else {
-                    split.add(builder.toString());
+                    splitList.add(builder.toString());
                     builder.delete(0, builder.length());
-                    buildingDigit = charIsDigit(justification.charAt(j));
+                    buildingDigit = charIsDigit(justificationString.charAt(j));
                 }
             }
-            split.add(builder.toString());
+            splitList.add(builder.toString());
 
             //get flow of labels and texts with labels bound to line numbers
             boolean buildingNum = startsDigit;
-            for (int i = 0; i < split.size(); i++) {
+            for (int i = 0; i < splitList.size(); i++) {
                 if (buildingNum) {
-                    Label label = new Label(split.get(i));
+                    Label label = new Label(splitList.get(i));
                     label.setFont(labelFont);
 
                     for (int k = 0; k < viewLines.size(); k++) {
@@ -188,7 +206,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                     flow.getChildren().add(label);
 
                 } else {
-                    Text text = new Text(split.get(i));
+                    Text text = new Text(splitList.get(i));
                     text.setFont(Font.font("Noto Serif Combo", 11));
                     flow.getChildren().add(text);
                 }
@@ -201,12 +219,13 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     TextFlow getStyledJustificationFlow(TextFlow flow) {
         flow.setFocusTraversable(true);
         flow.setMouseTransparent(false);
-        flow.setPrefWidth(100);
-        flow.setMaxHeight(20);
-        flow.setPrefHeight(20);
-        flow.setStyle("-fx-border-color: red; -fx-border-width: 1 1 1 1; ");
 
-        flow.setFocusTraversable(true);
+        flow.setMinWidth(100);
+        flow.setMaxWidth(100);
+        flow.setMaxHeight(20);
+  //      flow.setPrefHeight(20);
+        flow.setPadding(new Insets(0,0,0,3));
+ //       flow.setStyle("-fx-border-color: red; -fx-border-width: 1 1 1 1; ");
         flow.setOnMouseClicked(e -> flow.requestFocus());
         flow.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
@@ -217,32 +236,69 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
 
     private void editJustificationField(TextFlow flow) {
-        int r = derivationView.getGrid().getRowIndex(flow);
+        int rowIndex = derivationView.getGrid().getRowIndex(flow);
         DecoratedRTA drta = new DecoratedRTA();
         RichTextArea rta = drta.getEditor();
-        rta.setContentAreaWidth(300);
-        rta.setPrefHeight(19);
+        rta.setContentAreaWidth(110);
+        rta.setPrefHeight(20);
         rta.setPrefWidth(100);
+        rta.setMaxWidth(100);
+        rta.setMinWidth(100);
         rta.getStylesheets().add("slappDerivation.css");
-
-        rta.setStyle("-fx-border-color: green; -fx-border-width: 1 1 1 1");
 
         rta.setDocument(new Document(getStringFromJustificationFlow(flow)));
 
-
-
         rta.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(drta);
-            } else {
-                rta.getActionFactory().saveNow().execute(new ActionEvent());
-                String justificationString = rta.getDocument().getText();
-                TextFlow justificationFlow = getJustificationFlow(justificationString, derivationView.getViewLines(), r);
-                derivationView.getViewLines().get(r).setJustificationFlow(justificationFlow);
-                derivationView.setGridFromViewLines();
+
+                mainView.editorInFocus(drta);                         //commenting this out stops the "jump" when rta gets focu; with in, fixes keyboard dropdown  why such a jump anyway??
+
+                editJustification = true;
+                justificationClickFilter = new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        if (!inHierarchy(event.getPickResult().getIntersectedNode(), rta)) {
+
+                            if (editJustification) {
+                                editJustification = false;
+                                saveJustificationRTA(rta, rowIndex);
+                            }
+                        }
+                    }
+                };
+                mainView.getMainScene().addEventFilter(MouseEvent.MOUSE_PRESSED, justificationClickFilter);
+            }
+            else {
+                if (editJustification) {
+                    editJustification = false;
+                    saveJustificationRTA(rta, rowIndex);
+                }
             }
         });
-        derivationView.getGrid().add(rta, 22, r);
+
+        derivationView.getGrid().add(rta, 22, rowIndex);
+    }
+
+    public static boolean inHierarchy(Node node, Node potentialHierarchyElement) {
+        if (potentialHierarchyElement == null) {
+            return true;
+        }
+        while (node != null) {
+            if (node == potentialHierarchyElement) {
+                return true;
+            }
+            node = node.getParent();
+        }
+        return false;
+    }
+
+    private void saveJustificationRTA(RichTextArea rta, int rowIndex) {
+        mainView.getMainScene().removeEventFilter(MouseEvent.MOUSE_PRESSED, justificationClickFilter);
+        rta.getActionFactory().saveNow().execute(new ActionEvent());
+        String justificationString = rta.getDocument().getText();
+        TextFlow justificationFlow = getJustificationFlow(justificationString, derivationView.getViewLines());
+        derivationView.getViewLines().get(rowIndex).setJustificationFlow(justificationFlow);
+        derivationView.setGridFromViewLines();
     }
 
     private String getStringFromJustificationFlow(TextFlow flow) {
@@ -259,6 +315,15 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         boolean result = false;
         if ('0' <= character && character <= '9') result = true;
         return result;
+    }
+
+    private void setEmptyViewContentRow(int row, int depth) {
+        Label numLabel = new Label();
+        numLabel.setFont(labelFont);
+        TextFlow flow = new TextFlow();
+        TextFlow justificationFlow = getStyledJustificationFlow(flow);
+        ViewLine viewLine = new ViewLine(numLabel, depth, LineType.CONTENT_LINE, false, new DecoratedRTA(), justificationFlow, new ArrayList<>());
+        derivationView.getViewLines().add(row, viewLine);
     }
 
     private void insertLineAction() {

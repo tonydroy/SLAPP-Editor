@@ -1,3 +1,5 @@
+
+
 .color-picker.foreground {
     -fx-color-label-visible: false;
     -fx-color-rect-width: 6;
@@ -26,28 +28,7 @@
 /*    -fx-padding: 20;*/
 }
 
-
-.rich-text-area {
-    -fx-padding: 5;
-    -fx-background-color: WHITE;
-    -fx-border-width: 2;
-    -fx-border-color: LIGHTGREY;
-}
-
-.rich-text-area:focused {
-    -fx-border-width: 2;
-    -fx-border-color: LIGHTBLUE;
-}
-
-
-
-
-
-
-
-
-
-
+/*
 .rich-text-area > .paragraph-list-view {
     -fx-padding: 5;
     -fx-background-color: white;
@@ -62,6 +43,7 @@
 .rich-text-area .paragraph-list-view > .content-area > .layers > .text-flow {
     /*-fx-padding: 10;*/
 }
+
 
 .emoji-button {
     -fx-padding: 5.5;

@@ -1,5 +1,6 @@
 package slapp.editor.front_page;
 
+import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
@@ -34,11 +35,15 @@ public class FrontPageView implements ExerciseView<Label, Label> {
         exerciseContent.setVisible(false);
         exerciseContent.setManaged(false);
 
-        exerciseComment.getEditor().setDocument(new Document("Logo Here"));
-        exerciseComment.getEditor().setEditable(false);
-        exerciseComment.getEditor().setFocusTraversable(false);
-        exerciseComment.getEditor().setMouseTransparent(true);
-        exerciseComment.getEditor().setPrefHeight(500);
+        RichTextArea commentRTA = exerciseComment.getEditor();
+        commentRTA.setDocument(new Document("Logo Here"));
+        commentRTA.setEditable(false);
+        commentRTA.setFocusTraversable(false);
+        commentRTA.setMouseTransparent(true);
+        commentRTA.setPrefHeight(500);
+
+        commentRTA.setStyle("-fx-padding: 5; -fx-background-color: WHITE; -fx-border-width: 2; -fx-border-color: LIGHTGREY; ");
+  //      commentRTA.setStyle(".rich-text-area:focused {-fx-padding: 5; -fx-border-width: 2; -fx-border-color: LIGHTBLUE; }");
 
         exerciseComment.getFontsToolbar().setFocusTraversable(false);
         exerciseComment.getFontsToolbar().setMouseTransparent(true);

@@ -3,7 +3,8 @@ package slapp.editor;
 import javafx.scene.image.Image;
 import javafx.stage.*;
 import javafx.application.*;
-import slapp.editor.main_window.MainWindow;
+import slapp.editor.tests.*;
+import slapp.editor.main_window.*;
 
 public class EditorMain extends Application {
 
@@ -21,8 +22,10 @@ public class EditorMain extends Application {
         //        ExtendedDemo demo = new ExtendedDemo(stage); demo.start();
 
         MainWindow mainWindowController = new MainWindow();
-     //  SimpleTest test = new SimpleTest(); test.testGrid(stage);
+    //   DerivationTest test = new DerivationTest(); test.testGrid(stage);
+    //    RtaInsertTest test = new RtaInsertTest(); test.rtaInsertTest(stage);
     }
 
 
 }
+

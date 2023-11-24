@@ -42,9 +42,7 @@ public class ViewLine {
         this.lineContentDRTA = lineContentDRTA;
     }
 
-    public void setJustificationFlow(TextFlow justificationFlow) {
-        this.justificationFlow = justificationFlow;
-    }
+    public void setJustificationFlow(TextFlow justificationFlow) {this.justificationFlow = justificationFlow; }
 
     public Label getLineNumberLabel() {
         return lineNumberLabel;

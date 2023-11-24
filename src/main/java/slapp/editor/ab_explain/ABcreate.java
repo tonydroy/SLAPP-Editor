@@ -98,6 +98,7 @@ public class ABcreate {
 
         statementDRTA = new DecoratedRTA();
         statementEditor = statementDRTA.getEditor();
+        statementEditor.getStylesheets().add("slappTextArea.css");
         statementEditor.setPromptText("Exercise Statement:");
         statementEditor.setPrefWidth(PrintUtilities.getPageWidth() + 20);
         statementEditor.setContentAreaWidth(PrintUtilities.getPageWidth());

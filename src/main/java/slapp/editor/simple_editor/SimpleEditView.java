@@ -1,5 +1,6 @@
 package slapp.editor.simple_editor;
 
+import com.gluonhq.richtextarea.RichTextArea;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -32,10 +33,12 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, List<Decorated
         this.pagination = new Pagination();
         pagination.setMaxPageIndicatorCount(5);
         pagination.setPageFactory((index) -> {
-            DecoratedRTA DRTApage = exerciseContent.get(index);
-            mainView.setContentHeightProperty(DRTApage.getEditor().prefHeightProperty());
+            DecoratedRTA drtaPage = exerciseContent.get(index);
+            RichTextArea rtaPage = drtaPage.getEditor();
+            rtaPage.getStylesheets().add("slappTextArea.css");
+            mainView.setContentHeightProperty(rtaPage.prefHeightProperty());
             mainView.setCenterVgrow();
-            return DRTApage.getEditor();
+            return rtaPage;
         });
 
         this.addPageButton = new Button("Insert Page");
@@ -53,10 +56,15 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, List<Decorated
     }
 
     void initializeViewDetails() {
-        exerciseStatement.getEditor().setPrefHeight(statementPrefHeight);
-        exerciseStatement.getEditor().setEditable(false);
-        exerciseComment.getEditor().setPrefHeight(70.0);
-        exerciseComment.getEditor().setPromptText("Comment:");
+        RichTextArea statementRTA = exerciseStatement.getEditor();
+        statementRTA.setPrefHeight(statementPrefHeight);
+        statementRTA.getStylesheets().add("slappTextArea.css");
+        statementRTA.setEditable(false);
+        RichTextArea commentRTA = exerciseComment.getEditor();
+        exerciseComment.getEditor().getStylesheets().add("slappTextArea.css");
+        commentRTA.setPrefHeight(70.0);
+        commentRTA.setPromptText("Comment:");
+
         if (!exerciseContent.isEmpty()) {
             exerciseContent.get(0).getEditor().setPromptText(contentPrompt);
         }

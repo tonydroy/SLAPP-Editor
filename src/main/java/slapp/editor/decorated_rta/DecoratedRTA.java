@@ -612,5 +612,7 @@ public class DecoratedRTA {
         return keyboardDiagramButton;
     }
 
-
+    public ChoiceBox<RichTextAreaSkin.KeyMapValue> getKeyboardSelector() {
+        return keyboardSelector;
+    }
 }

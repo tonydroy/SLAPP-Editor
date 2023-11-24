@@ -1,5 +1,6 @@
 package slapp.editor.ab_explain;
 
+import com.gluonhq.richtextarea.RichTextArea;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -45,13 +46,17 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
             Node page;
             if (index == 0) {
                 DecoratedRTA drtaPage0 = exerciseContent.get(index);
-                mainView.setContentHeightProperty(drtaPage0.getEditor().prefHeightProperty());
+                RichTextArea rtaPage0 = drtaPage0.getEditor();
+                rtaPage0.getStylesheets().add("slappTextArea.css");
+                mainView.setContentHeightProperty(rtaPage0.prefHeightProperty());
                 VBox topContentPage = new VBox(3, abBbox, drtaPage0.getEditor());
                 topContentPage.setMargin(abBbox, new Insets(5,0,0,0));
                 page = topContentPage;
             } else {
                 DecoratedRTA DRTApage = exerciseContent.get(index);
-                mainView.setContentHeightProperty(DRTApage.getEditor().prefHeightProperty());
+                RichTextArea RTApage = DRTApage.getEditor();
+                RTApage.getStylesheets().add("slappTextArea.css");
+                mainView.setContentHeightProperty(RTApage.prefHeightProperty());
                 mainView.setCenterVgrow();
                 page = DRTApage.getEditor();
             }
@@ -75,8 +80,11 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
     void initializeViewDetails() {
         exerciseStatement.getEditor().setPrefHeight(statementPrefHeight);
         exerciseStatement.getEditor().setEditable(false);
+        exerciseStatement.getEditor().getStylesheets().add("slappTextArea.css");
+
         exerciseComment.getEditor().setPrefHeight(70.0);
         exerciseComment.getEditor().setPromptText("Comment:");
+        exerciseComment.getEditor().getStylesheets().add("slappTextArea.css");
         if (!exerciseContent.isEmpty()) {
             exerciseContent.get(0).getEditor().setPromptText(contentPrompt);
         }

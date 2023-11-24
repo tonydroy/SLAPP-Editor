@@ -1,6 +1,7 @@
 package slapp.editor.derivation;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.beans.property.DoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -58,9 +59,11 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
         fixedCol.setMinWidth(10);
         ColumnConstraints numCol = new ColumnConstraints();
         numCol.setMinWidth(20);
+        ColumnConstraints justCol = new ColumnConstraints();
+        justCol.setMinWidth(100);
         ColumnConstraints growCol = new ColumnConstraints();
         growCol.setHgrow(Priority.ALWAYS);
-        grid.getColumnConstraints().addAll(numCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, growCol, fixedCol);
+        grid.getColumnConstraints().addAll(numCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, fixedCol, growCol, fixedCol, justCol);
         grid.setPadding(new Insets(20));
         grid.setStyle("-fx-background-color: white;");
         grid.setMinWidth(350);
@@ -68,7 +71,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
 
 
 
-        grid.setGridLinesVisible(true);
+ //       grid.setGridLinesVisible(true);
 
         //temp
         insertButton = new Button("Insert");
@@ -89,10 +92,15 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
     //
 
     public void initializeViewDetails() {
-        exerciseStatement.getEditor().setPrefHeight(statementPrefHeight);
-        exerciseStatement.getEditor().setEditable(false);
-        exerciseComment.getEditor().setPrefHeight(70.0);
-        exerciseComment.getEditor().setPromptText("Comment:");
+        RichTextArea statementRTA = exerciseStatement.getEditor();
+        statementRTA.setPrefHeight(statementPrefHeight);
+        statementRTA.getStylesheets().add("slappTextArea.css");
+        statementRTA.setEditable(false);
+
+        RichTextArea commentRTA = exerciseComment.getEditor();
+        commentRTA.getStylesheets().add("slappTextArea.css");
+        commentRTA.setPrefHeight(70.0);
+        commentRTA.setPromptText("Comment:");
     }
 
     public void setGridFromViewLines() {
@@ -104,7 +112,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
             LineType lineType = viewLine.getLineType();
 
             RowConstraints constraint = new RowConstraints();
-            if (lineType == LineType.CONTENT_LINE) constraint.setPrefHeight(35);
+            if (lineType == LineType.CONTENT_LINE) constraint.setPrefHeight(21);
             if (lineType == LineType.GAP_LINE) constraint.setPrefHeight(7);
             if (lineType == LineType.SHELF_LINE) constraint.setPrefHeight(5);
 
@@ -122,11 +130,15 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
             int depth = viewLine.getDepth();
             HBox contentBox = new HBox();
             if (viewLine.getLineContentDRTA() != null) {
-                RichTextArea rta = viewLine.getLineContentDRTA().getEditor();
+                DecoratedRTA drta = viewLine.getLineContentDRTA();
+                drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
+                RichTextArea rta = drta.getEditor();
   //              rta.setMaxHeight(25);
-                rta.setPrefHeight(40);
+                rta.setPrefHeight(20);
                 rta.setPrefWidth(100);
                 rta.getStylesheets().add("slappDerivation.css");
+
+ //               rta.setStyle("-fx-border-color: green; -fx-border-width: 1 1 1 1");
 
                 contentBox.getChildren().add(rta);
 

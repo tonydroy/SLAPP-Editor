@@ -103,6 +103,7 @@ public class TypeSelectorFactories {
             }
             case ABEFG_EXPLAIN: {
                 ABEFGcreate abefgCreate = new ABEFGcreate(mainWindow);
+                break;
             }
             case SIMPLE_EDITOR: {
                 SimpleEditCreate simpleEditCreate = new SimpleEditCreate(mainWindow);

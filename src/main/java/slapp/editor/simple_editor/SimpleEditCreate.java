@@ -77,6 +77,7 @@ public class SimpleEditCreate {
         statementDRTA = new DecoratedRTA();
         statementEditor = statementDRTA.getEditor();
         statementEditor.setPromptText("Exercise Statement:");
+        statementEditor.getStylesheets().add("slappTextArea.css");
         statementEditor.setPrefWidth(PrintUtilities.getPageWidth() + 20);
         statementEditor.setContentAreaWidth(PrintUtilities.getPageWidth());
         statementEditor.setPrefHeight(200);

@@ -1,5 +1,6 @@
 package slapp.editor.abefg_explain;
 
+import com.gluonhq.richtextarea.RichTextArea;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -61,15 +62,19 @@ public class ABEFGview implements ExerciseView<DecoratedRTA, ArrayList<Decorated
             Node page;
             if (index == 0) {
                 DecoratedRTA drtaPage0 = exerciseContent.get(index);
-                mainView.setContentHeightProperty(drtaPage0.getEditor().prefHeightProperty());
-                VBox topContentPage = new VBox(3, checksBox, drtaPage0.getEditor());
+                RichTextArea rtaPage0 = drtaPage0.getEditor();
+                rtaPage0.getStylesheets().add("slappTextArea.css");
+                mainView.setContentHeightProperty(rtaPage0.prefHeightProperty());
+                VBox topContentPage = new VBox(3, checksBox, rtaPage0);
                 topContentPage.setMargin(checksBox, new Insets(5,0,0,0));
                 page = topContentPage;
             } else {
-                DecoratedRTA DRTApage = exerciseContent.get(index);
-                mainView.setContentHeightProperty(DRTApage.getEditor().prefHeightProperty());
+                DecoratedRTA drtaPage = exerciseContent.get(index);
+                RichTextArea rtaPage = drtaPage.getEditor();
+                rtaPage.getStylesheets().add("slappTextArea.css");
+                mainView.setContentHeightProperty(rtaPage.prefHeightProperty());
                 mainView.setCenterVgrow();
-                page = DRTApage.getEditor();
+                page = rtaPage;
             }
             return page;
         });
@@ -89,10 +94,16 @@ public class ABEFGview implements ExerciseView<DecoratedRTA, ArrayList<Decorated
     }
 
     void initializeViewDetails() {
-        exerciseStatement.getEditor().setPrefHeight(statementPrefHeight);
-        exerciseStatement.getEditor().setEditable(false);
-        exerciseComment.getEditor().setPrefHeight(70.0);
-        exerciseComment.getEditor().setPromptText("Comment:");
+        RichTextArea statementRTA = exerciseStatement.getEditor();
+        statementRTA.setPrefHeight(statementPrefHeight);
+        statementRTA.getStylesheets().add("slappTextArea.css");
+        statementRTA.setEditable(false);
+
+        RichTextArea commentRTA = exerciseComment.getEditor();
+        commentRTA.getStylesheets().add("slappTextArea.css");
+        commentRTA.setPrefHeight(70.0);
+        commentRTA.setPromptText("Comment:");
+
         if (!exerciseContent.isEmpty()) {
             exerciseContent.get(0).getEditor().setPromptText(contentPrompt);
         }

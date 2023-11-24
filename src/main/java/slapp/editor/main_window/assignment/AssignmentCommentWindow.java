@@ -56,6 +56,7 @@ public class AssignmentCommentWindow {
         commentEditor = commentDRTA.getEditor();
         commentEditor.setDocument(header.getComment());
         commentEditor.setPromptText("Assignment Comment:");
+        commentEditor.getStylesheets().add("slappTextArea.css");
         commentEditor.setPrefWidth(PrintUtilities.getPageWidth() + 20);
         commentEditor.setContentAreaWidth(PrintUtilities.getPageWidth());
         commentEditor.setPrefHeight(200);
