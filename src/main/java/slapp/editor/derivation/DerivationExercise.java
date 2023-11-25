@@ -31,11 +31,13 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     private MainWindowView mainView;
     private boolean exerciseModified = false;
 
-    Node lastFocusedNode;
-    Font labelFont = new Font("Noto Serif Combo", 11);
+    private Node lastFocusedNode;
+    private Node focusedNode;
+    private Font labelFont = new Font("Noto Serif Combo", 11);
 
-    Boolean editJustification;
-    EventHandler justificationClickFilter;
+    private Boolean editJustification;
+    private EventHandler justificationClickFilter;
+
 
 
 
@@ -46,8 +48,11 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         this.derivationView = new DerivationView(mainView);
 
         mainView.getMainScene().focusOwnerProperty().addListener((ob, ov, nv) -> {
+            focusedNode = nv;
             lastFocusedNode = ov;
         });
+
+
 
 
 
@@ -83,8 +88,15 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         derivationView.setExerciseComment(commentDRTA);
 
         //
-        derivationView.getInsertButton().setOnAction(e -> insertLineAction());
-        derivationView.getDeleteButton().setOnAction(e -> deleteLineAction());
+        derivationView.getInsertLineButton().setOnAction(e -> insertLineAction());
+        derivationView.getDeleteLineButton().setOnAction(e -> deleteLineAction());
+        derivationView.getIndentButton().setOnAction(e -> indentLineAction());
+        derivationView.getOutdentButton().setOnAction(e -> outdentLineAction());
+        derivationView.getAddShelfButton().setOnAction(e -> addShelfLineAction());
+        derivationView.getAddGapButton().setOnAction(e -> addGapLineAction());
+        derivationView.getInsertSubButton().setOnAction(e -> insertSubAction());
+        derivationView.getInsertSubsButton().setOnAction(e -> insertSubsAction());
+
         //
 
         derivationView.initializeViewDetails();
@@ -97,8 +109,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         List<ModelLine> modelLines = derivationModel.getExerciseContent();
         List<ViewLine> viewLines = new ArrayList<>();
         int lineNumber = 1;
-        for (int i = 0; i < modelLines.size(); i++) {
-            ModelLine modelLine = modelLines.get(i);
+        for (int rowIndex = 0; rowIndex < modelLines.size(); rowIndex++) {
+            ModelLine modelLine = modelLines.get(rowIndex);
             ViewLine viewLine = new ViewLine();
 
             viewLine.setDepth(modelLine.getDepth());
@@ -121,10 +133,25 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                     }
                 });
 
+                rta.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+                    KeyCode code = e.getCode();
+                    int row = derivationView.getGrid().getRowIndex(rta.getParent());
 
+                    if (code == KeyCode.ENTER || (code == KeyCode.RIGHT && e.isShiftDown())) {
+                        viewLine.getJustificationFlow().requestFocus();
+                        e.consume();
+                    } else if (code == KeyCode.LEFT && e.isShiftDown()) {
+                        if (getContentLineAbove(row) != null) getContentLineAbove(row).getJustificationFlow().requestFocus();
+                        e.consume();
+                    } else if (code == KeyCode.UP ) {
+                        if (getContentLineAbove(row) != null) getContentLineAbove(row).getLineContentDRTA().getEditor().requestFocus();
+                        e.consume();
+                    } else if (code == KeyCode.DOWN) {
+                        if (getContentLineBelow(row) != null) getContentLineBelow(row).getLineContentDRTA().getEditor().requestFocus();
+                        e.consume();
+                    }
 
-
-
+                });
 
                 viewLine.setLineContentDRTA(drta);
 
@@ -141,22 +168,32 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         derivationView.setViewLines(viewLines);
     }
 
-    private void focusNext(DecoratedRTA drta) {
-        System.out.println("next");
-
-
+    private ViewLine getContentLineBelow(int row) {
+        ViewLine line = null;
+        row++;
+        for (int i = row; i < derivationView.getViewLines().size(); i++) {
+            ViewLine temp = derivationView.getViewLines().get(i);
+            if (temp.getLineType() == LineType.CONTENT_LINE) {
+                line = temp;
+                break;
+            }
+        }
+        return line;
     }
 
+    private ViewLine getContentLineAbove(int row) {
+        ViewLine line = null;
+        row--;
+        for (int i = row; i >= 0; i--) {
+            ViewLine temp = derivationView.getViewLines().get(i);
+            if (temp.getLineType() == LineType.CONTENT_LINE) {
+                line = temp;
+                break;
+            }
+        }
+        return line;
+    }
 
-    private void focusPrior(DecoratedRTA drta) {
-        System.out.println("prior");
-    }
-    private void focusAbove(DecoratedRTA drta) {
-        System.out.println("above");
-    }
-    private void focusBelow(DecoratedRTA drta) {
-        System.out.println("below");
-    }
 
     private TextFlow getJustificationFlow(String justificationString, List<ViewLine> viewLines) {
         justificationString = justificationString.trim();
@@ -251,7 +288,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         rta.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
 
-                mainView.editorInFocus(drta);                         //commenting this out stops the "jump" when rta gets focu; with in, fixes keyboard dropdown  why such a jump anyway??
+  //              mainView.editorInFocus(drta);                         //commenting this stops the "jump" when rta gets focus; left in, the keyboard dropdown starts in right place // but why the jump at all in this case??
 
                 editJustification = true;
                 justificationClickFilter = new EventHandler<MouseEvent>() {
@@ -274,6 +311,27 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                     saveJustificationRTA(rta, rowIndex);
                 }
             }
+        });
+
+        rta.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            KeyCode code = e.getCode();
+            int row = derivationView.getGrid().getRowIndex(rta);
+
+
+            if (code == KeyCode.ENTER || (code == KeyCode.RIGHT && e.isShiftDown())) {
+                if (getContentLineBelow(row) != null) getContentLineBelow(row).getLineContentDRTA().getEditor().requestFocus();
+                e.consume();
+            } else if (code == KeyCode.LEFT && e.isShiftDown()) {
+                derivationView.getViewLines().get(row).getLineContentDRTA().getEditor().requestFocus();
+                e.consume();
+            } else if (code == KeyCode.UP ) {
+                if (getContentLineAbove(row) != null) getContentLineAbove(row).getJustificationFlow().requestFocus();
+                e.consume();
+            } else if (code == KeyCode.DOWN ) {
+                if (getContentLineBelow(row) != null) getContentLineBelow(row).getJustificationFlow().requestFocus();
+                e.consume();
+            }
+
         });
 
         derivationView.getGrid().add(rta, 22, rowIndex);
@@ -299,6 +357,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         TextFlow justificationFlow = getJustificationFlow(justificationString, derivationView.getViewLines());
         derivationView.getViewLines().get(rowIndex).setJustificationFlow(justificationFlow);
         derivationView.setGridFromViewLines();
+   //     justificationFlow.requestFocus();
     }
 
     private String getStringFromJustificationFlow(TextFlow flow) {
@@ -317,18 +376,47 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         return result;
     }
 
-    private void setEmptyViewContentRow(int row, int depth) {
+    private void setEmptyViewContentRow(int newRow, int depth) {
         Label numLabel = new Label();
         numLabel.setFont(labelFont);
+
+        DecoratedRTA drta = new DecoratedRTA();
+        RichTextArea rta = drta.getEditor();
+        rta.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            KeyCode code = e.getCode();
+            int row = derivationView.getGrid().getRowIndex(rta.getParent());
+
+            if (code == KeyCode.ENTER || (code == KeyCode.RIGHT && e.isShiftDown())) {
+                derivationView.getViewLines().get(row).getJustificationFlow().requestFocus();
+                e.consume();
+            } else if (code == KeyCode.LEFT && e.isShiftDown()) {
+                if (getContentLineAbove(row) != null) getContentLineAbove(row).getJustificationFlow().requestFocus();
+                e.consume();
+            } else if (code == KeyCode.UP ) {
+                if (getContentLineAbove(row) != null) getContentLineAbove(row).getLineContentDRTA().getEditor().requestFocus();
+                e.consume();
+            } else if (code == KeyCode.DOWN) {
+                if (getContentLineBelow(row) != null) getContentLineBelow(row).getLineContentDRTA().getEditor().requestFocus();
+                e.consume();
+            }
+        });
+
+
         TextFlow flow = new TextFlow();
         TextFlow justificationFlow = getStyledJustificationFlow(flow);
-        ViewLine viewLine = new ViewLine(numLabel, depth, LineType.CONTENT_LINE, false, new DecoratedRTA(), justificationFlow, new ArrayList<>());
-        derivationView.getViewLines().add(row, viewLine);
+        ViewLine viewLine = new ViewLine(numLabel, depth, LineType.CONTENT_LINE, false, drta, justificationFlow, new ArrayList<>());
+        derivationView.getViewLines().add(newRow, viewLine);
     }
 
     private void insertLineAction() {
-        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) {
-            int row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        int row = -1;
+        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        else if (derivationView.getGrid().getChildren().contains(focusedNode)) {
+            row = derivationView.getGrid().getRowIndex(focusedNode);
+            derivationView.getViewLines().get(row).getLineContentDRTA().getEditor().requestFocus();
+        }
+        if (row >= 0) {
+
             int depth = derivationView.getViewLines().get(row).getDepth();
             if (!derivationView.getViewLines().get(row).isSetupLine() || row + 1 == derivationView.getViewLines().size()) {
                 setEmptyViewContentRow(row, depth);
@@ -343,8 +431,13 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
 
     private void deleteLineAction() {
-        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) {
-            int row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        int row = -1;
+        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        else if (derivationView.getGrid().getChildren().contains(focusedNode)) {
+            row = derivationView.getGrid().getRowIndex(focusedNode);
+            derivationView.getViewLines().get(row).getLineContentDRTA().getEditor().requestFocus();
+        }
+        if (row >= 0) {
             List<ViewLine> viewLines = derivationView.getViewLines();
             if (!viewLines.get(row).isSetupLine()) {
                 List<Label> clients = viewLines.get(row).getClientLabels();
@@ -372,6 +465,13 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             EditorAlerts.fleetingPopup("Select derivation row to delete.");
         }
     }
+
+    private void indentLineAction() {}
+    private void outdentLineAction() {}
+    private void addShelfLineAction() {}
+    private void addGapLineAction() {    }
+    private void insertSubAction() {}
+    private void insertSubsAction() {}
 
 
 

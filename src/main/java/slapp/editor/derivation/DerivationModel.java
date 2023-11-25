@@ -28,7 +28,7 @@ public class DerivationModel implements ExerciseModel<Document, List<ModelLine>>
         exerciseContent.add(new ModelLine(2, null, "", LineType.SHELF_LINE, false));
         exerciseContent.add(new ModelLine(2, new Document(), "", LineType.CONTENT_LINE, false));
         exerciseContent.add(new ModelLine(2, new Document(), "", LineType.CONTENT_LINE, false));
-        exerciseContent.add(new ModelLine(1, new Document("result"), "44,44-44,44-44 XE", LineType.CONTENT_LINE, true));
+        exerciseContent.add(new ModelLine(1, new Document("result"), "2,3-4 xx", LineType.CONTENT_LINE, true));
 
 
     }

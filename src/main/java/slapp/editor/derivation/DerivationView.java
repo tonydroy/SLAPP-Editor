@@ -40,8 +40,14 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
     private GridPane grid = new GridPane();
     private List<ViewLine> viewLines = new ArrayList<>();
 
-    private Button insertButton;
-    private Button deleteButton;
+    private Button insertLineButton;
+    private Button deleteLineButton;
+    private Button indentButton;
+    private Button outdentButton;
+    private Button addShelfButton;
+    private Button addGapButton;
+    private Button insertSubButton;
+    private Button insertSubsButton;
 
 
 
@@ -74,11 +80,27 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
  //       grid.setGridLinesVisible(true);
 
         //temp
-        insertButton = new Button("Insert");
-        deleteButton = new Button("Delete");
+        insertLineButton = new Button("Insert Line");
+        deleteLineButton = new Button("Delete Line");
+        indentButton = new Button("Indent Line");
+        outdentButton = new Button("Outdent Line");
+        addShelfButton = new Button("Add Shelf");
+        addGapButton = new Button("Add Gap");
+        insertSubButton = new Button("Insert Subder");
+        insertSubsButton = new Button("Insert Subders");
 
-        VBox controlBox = new VBox(40, insertButton, deleteButton);
-        controlBox.setAlignment(Pos.CENTER);
+        insertLineButton.setPrefWidth(95);
+        deleteLineButton.setPrefWidth(95);
+        indentButton.setPrefWidth(95);
+        outdentButton.setPrefWidth(95);
+        addShelfButton.setPrefWidth(95);
+        addGapButton.setPrefWidth(95);
+        insertSubButton.setPrefWidth(95);
+        insertSubsButton.setPrefWidth(95);
+
+        VBox controlBox = new VBox(20, insertLineButton, deleteLineButton, indentButton, outdentButton, addShelfButton, addGapButton, insertSubButton, insertSubsButton);
+        controlBox.setAlignment(Pos.BOTTOM_RIGHT);
+        controlBox.setPadding(new Insets(20,20,40,100));
         exerciseControlNode = controlBox;
         //
 
@@ -87,8 +109,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
     }
 
     //temp
-    public Button getInsertButton() {return insertButton;}
-    public Button getDeleteButton() {return deleteButton;}
+
     //
 
     public void initializeViewDetails() {
@@ -175,28 +196,52 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
 
             if (viewLine.getJustificationFlow() != null) grid.add(viewLine.getJustificationFlow(), 22, index);
         }
-        /*
-        Scene tempScene = new Scene(grid);
-        Stage tempStage = new Stage();
-        tempStage.setScene(tempScene);
-        tempStage.initModality(Modality.NONE);
-        tempStage.show();
-
-         */
     }
 
     public GridPane getGrid() { return grid; }
-
     public boolean isLeftmostScopeLine() {
         return isLeftmostScopeLine;
     }
-
     public void setLeftmostScopeLine(boolean leftmostScopeLine) {
         isLeftmostScopeLine = leftmostScopeLine;
     }
-
     public List<ViewLine> getViewLines() { return viewLines; }
     public void setViewLines(List<ViewLine> viewLines) {this.viewLines = viewLines; }
+
+
+
+    public Button getInsertLineButton() {
+        return insertLineButton;
+    }
+
+    public Button getDeleteLineButton() {
+        return deleteLineButton;
+    }
+
+    public Button getIndentButton() {
+        return indentButton;
+    }
+
+    public Button getOutdentButton() {
+        return outdentButton;
+    }
+
+    public Button getAddShelfButton() {
+        return addShelfButton;
+    }
+
+    public Button getAddGapButton() {
+        return addGapButton;
+    }
+
+    public Button getInsertSubButton() {
+        return insertSubButton;
+    }
+
+    public Button getInsertSubsButton() {
+        return insertSubsButton;
+    }
+
     @Override
     public String getExerciseName() { return exerciseName; }
     @Override
@@ -240,5 +285,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
     public double getContentFixedHeight() { return 0.0; }
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
+
+
 
 }
