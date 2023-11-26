@@ -300,6 +300,7 @@ public class MainWindowView {
         setCenterVgrow();
     }
 
+    /*
     public void editorInFocus(DecoratedRTA decoratedRTA){
         lastFocussedDRTA = decoratedRTA;
         editToolbar = decoratedRTA.getEditToolbar();
@@ -311,7 +312,6 @@ public class MainWindowView {
         if (keyboardDiagram.isShowing()) {
             keyboardDiagram.updateAndShow();
         }
- //       decoratedRTA.getKeyboardDiagramButton().selectedProperty().setValue(KeyboardDiagram.getInstance().isShowing());
 
         if (!editToolbar.getItems().contains(saveButton)) {
             editToolbar.getItems().add(0, saveButton);
@@ -321,7 +321,32 @@ public class MainWindowView {
             fontsToolbar.getItems().addAll(zoomLabel, zoomSpinner);
         }
         VBox topBox = new VBox(menuBox, editToolbar, fontsToolbar, paragraphToolbar);
-        topBox.layout();
+        borderPane.topProperty().setValue(topBox);
+    }
+     */
+
+    public void editorInFocus(DecoratedRTA decoratedRTA) {
+        lastFocussedDRTA = decoratedRTA;
+        KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
+        keyboardDiagram.initialize(decoratedRTA);
+        if (keyboardDiagram.isShowing()) {
+            keyboardDiagram.updateAndShow();
+        }
+
+
+
+
+        ToolBar areaEditToolbar = decoratedRTA.getEditToolbar();
+        ToolBar areaFontsToolbar = decoratedRTA.getFontsToolbar();
+        ToolBar areaParagraphToolbar = decoratedRTA.getParagraphToolbar();
+
+        System.out.println("edit bar: " + areaEditToolbar.getItems().toString());
+        System.out.println("button: " + saveButton.toString());
+
+        areaEditToolbar.getItems().add(0, saveButton);
+        areaFontsToolbar.getItems().addAll(zoomLabel, zoomSpinner);
+
+        VBox topBox = new VBox(menuBox, areaEditToolbar, areaFontsToolbar, areaParagraphToolbar);
         borderPane.topProperty().setValue(topBox);
     }
 

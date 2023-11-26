@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -90,22 +91,26 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
         insertSubsButton = new Button("Insert Subders");
 
         insertLineButton.setPrefWidth(95);
+        insertLineButton.setTooltip(new Tooltip("Insert blank line above current one"));
         deleteLineButton.setPrefWidth(95);
+        deleteLineButton.setTooltip(new Tooltip("Delete current line"));
         indentButton.setPrefWidth(95);
+        indentButton.setTooltip(new Tooltip("Increase depth of current line"));
         outdentButton.setPrefWidth(95);
+        outdentButton.setTooltip(new Tooltip("Decrease depth of current line"));
         addShelfButton.setPrefWidth(95);
+        addShelfButton.setTooltip(new Tooltip("Add shelf beneath current line"));
         addGapButton.setPrefWidth(95);
+        addGapButton.setTooltip(new Tooltip("Add gap beneath current line"));
         insertSubButton.setPrefWidth(95);
+        insertSubButton.setTooltip(new Tooltip("Insert subderivation above current line"));
         insertSubsButton.setPrefWidth(95);
+        insertSubsButton.setTooltip(new Tooltip("Insert subderivation pair above current line"));
 
         VBox controlBox = new VBox(20, insertLineButton, deleteLineButton, indentButton, outdentButton, addShelfButton, addGapButton, insertSubButton, insertSubsButton);
-        controlBox.setAlignment(Pos.BOTTOM_RIGHT);
-        controlBox.setPadding(new Insets(20,20,40,100));
+        controlBox.setAlignment(Pos.BASELINE_RIGHT);
+        controlBox.setPadding(new Insets(180,0,30,80));
         exerciseControlNode = controlBox;
-        //
-
-
-        //create other members of view
     }
 
     //temp
@@ -133,9 +138,9 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
             LineType lineType = viewLine.getLineType();
 
             RowConstraints constraint = new RowConstraints();
-            if (lineType == LineType.CONTENT_LINE) constraint.setPrefHeight(21);
-            if (lineType == LineType.GAP_LINE) constraint.setPrefHeight(7);
-            if (lineType == LineType.SHELF_LINE) constraint.setPrefHeight(5);
+            if (lineType == LineType.CONTENT_LINE) { constraint.setMinHeight(19); constraint.setMaxHeight(19); }
+            if (lineType == LineType.GAP_LINE) {constraint.setMinHeight(7); constraint.setMaxHeight(7); }
+            if (lineType == LineType.SHELF_LINE) {constraint.setMinHeight(5); constraint.setMaxHeight(5); }
 
             if (index >= gridRowConstraints.size()) gridRowConstraints.add(index, constraint);
             else gridRowConstraints.set(index, constraint);
@@ -154,8 +159,9 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
                 DecoratedRTA drta = viewLine.getLineContentDRTA();
                 drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
                 RichTextArea rta = drta.getEditor();
-  //              rta.setMaxHeight(25);
-                rta.setPrefHeight(20);
+                rta.setMaxHeight(19);
+                rta.setMinHeight(19);
+       //         rta.setPrefHeight(22);
                 rta.setPrefWidth(100);
                 rta.getStylesheets().add("slappDerivation.css");
 

@@ -32,11 +32,12 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     private boolean exerciseModified = false;
 
     private Node lastFocusedNode;
-    private Node focusedNode;
     private Font labelFont = new Font("Noto Serif Combo", 11);
 
     private Boolean editJustification;
     private EventHandler justificationClickFilter;
+    private RichTextArea lastJustificationRTA;
+    private int lastJustificationRow;
 
 
 
@@ -48,15 +49,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         this.derivationView = new DerivationView(mainView);
 
         mainView.getMainScene().focusOwnerProperty().addListener((ob, ov, nv) -> {
-            focusedNode = nv;
             lastFocusedNode = ov;
         });
-
-
-
-
-
-
         setDerivationView();
     }
 
@@ -282,13 +276,14 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         rta.setMaxWidth(100);
         rta.setMinWidth(100);
         rta.getStylesheets().add("slappDerivation.css");
-
         rta.setDocument(new Document(getStringFromJustificationFlow(flow)));
+        lastJustificationRTA = rta;
+        lastJustificationRow = rowIndex;
 
         rta.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
 
-  //              mainView.editorInFocus(drta);                         //commenting this stops the "jump" when rta gets focus; left in, the keyboard dropdown starts in right place // but why the jump at all in this case??
+                mainView.editorInFocus(drta);                         //commenting this stops the "jump" when rta gets focus; left in, the keyboard dropdown starts in right place // but why the jump at all in this case??
 
                 editJustification = true;
                 justificationClickFilter = new EventHandler<MouseEvent>() {
@@ -357,7 +352,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         TextFlow justificationFlow = getJustificationFlow(justificationString, derivationView.getViewLines());
         derivationView.getViewLines().get(rowIndex).setJustificationFlow(justificationFlow);
         derivationView.setGridFromViewLines();
-   //     justificationFlow.requestFocus();
     }
 
     private String getStringFromJustificationFlow(TextFlow flow) {
@@ -376,7 +370,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         return result;
     }
 
-    private void setEmptyViewContentRow(int newRow, int depth) {
+    private void addEmptyViewContentRow(int newRow, int depth) {
         Label numLabel = new Label();
         numLabel.setFont(labelFont);
 
@@ -401,25 +395,22 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             }
         });
 
-
         TextFlow flow = new TextFlow();
         TextFlow justificationFlow = getStyledJustificationFlow(flow);
         ViewLine viewLine = new ViewLine(numLabel, depth, LineType.CONTENT_LINE, false, drta, justificationFlow, new ArrayList<>());
         derivationView.getViewLines().add(newRow, viewLine);
     }
 
+
+
     private void insertLineAction() {
         int row = -1;
         if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
-        else if (derivationView.getGrid().getChildren().contains(focusedNode)) {
-            row = derivationView.getGrid().getRowIndex(focusedNode);
-            derivationView.getViewLines().get(row).getLineContentDRTA().getEditor().requestFocus();
-        }
+        else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
-
             int depth = derivationView.getViewLines().get(row).getDepth();
             if (!derivationView.getViewLines().get(row).isSetupLine() || row + 1 == derivationView.getViewLines().size()) {
-                setEmptyViewContentRow(row, depth);
+                addEmptyViewContentRow(row, depth);
                 derivationView.setGridFromViewLines();
             } else {
                 EditorAlerts.fleetingPopup("Cannot modify setup lines.");
@@ -433,10 +424,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     private void deleteLineAction() {
         int row = -1;
         if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
-        else if (derivationView.getGrid().getChildren().contains(focusedNode)) {
-            row = derivationView.getGrid().getRowIndex(focusedNode);
-            derivationView.getViewLines().get(row).getLineContentDRTA().getEditor().requestFocus();
-        }
+        else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
             List<ViewLine> viewLines = derivationView.getViewLines();
             if (!viewLines.get(row).isSetupLine()) {
@@ -466,12 +454,190 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         }
     }
 
-    private void indentLineAction() {}
-    private void outdentLineAction() {}
-    private void addShelfLineAction() {}
-    private void addGapLineAction() {    }
-    private void insertSubAction() {}
-    private void insertSubsAction() {}
+    private void indentLineAction() {
+        int row = -1;
+        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
+        if (row >= 0) {
+            List<ViewLine> viewLines = derivationView.getViewLines();
+            ViewLine viewLine = viewLines.get(row);
+            if (!viewLine.isSetupLine()) {
+
+                int depth = viewLine.getDepth();
+                if (depth < 19) {
+                    viewLine.setDepth(++depth);
+                    viewLines.set(row, viewLine);
+                    if (++row < viewLines.size()) {
+                        ViewLine nextLine = viewLines.get(row);
+                        if (nextLine.getLineType() == LineType.SHELF_LINE || nextLine.getLineType() == LineType.GAP_LINE) {
+                            nextLine.setDepth(depth);
+                            viewLines.set(row, nextLine);
+                        }
+                    }
+                    derivationView.setGridFromViewLines();
+                } else {
+                    EditorAlerts.fleetingPopup("19 is the maximum scope depth.");
+                }
+            } else {
+                EditorAlerts.fleetingPopup("Cannot modify setup line.");
+            }
+        } else {
+            EditorAlerts.fleetingPopup("Select derivation row to indent.");
+        }
+    }
+    private void outdentLineAction() {
+        int row = -1;
+        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
+        if (row >= 0) {
+            List<ViewLine> viewLines = derivationView.getViewLines();
+            ViewLine viewLine = viewLines.get(row);
+            if (!viewLine.isSetupLine()) {
+                int depth = viewLine.getDepth();
+                if (depth > 1) {
+                    viewLine.setDepth(--depth);
+                    viewLines.set(row, viewLine);
+                    if (++row < viewLines.size()) {
+                        ViewLine nextLine = viewLines.get(row);
+                        if (nextLine.getLineType() == LineType.SHELF_LINE || nextLine.getLineType() == LineType.GAP_LINE) {
+                            if (depth > 1) {
+                                nextLine.setDepth(depth);
+                                viewLines.set(row, nextLine);
+                            } else {
+                                viewLines.remove(row);
+                            }
+                        }
+                    }
+                    derivationView.setGridFromViewLines();
+                } else {
+                    EditorAlerts.fleetingPopup("1 is the mininum scope depth.");
+                }
+            } else {
+                EditorAlerts.fleetingPopup("Cannot modify setup line.");
+            }
+        } else {
+            EditorAlerts.fleetingPopup("Select derivation row to outdent.");
+        }
+    }
+    private void addShelfLineAction() {
+        int row = -1;
+        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
+        if (row >= 0) {
+            List<ViewLine> viewLines = derivationView.getViewLines();
+            ViewLine viewLine = viewLines.get(row);
+            int depth = viewLine.getDepth();
+            if (!viewLine.isSetupLine()) {
+                if (depth > 1) {
+                    if (++row < viewLines.size()) {
+                        if (!(viewLines.get(row).getLineType() == LineType.SHELF_LINE || viewLines.get(row).getLineType() == LineType.GAP_LINE)) {
+                            ViewLine shelfLine = new ViewLine(null, depth, LineType.SHELF_LINE, false, null, null, null);
+                            viewLines.add(row, shelfLine);
+                            derivationView.setGridFromViewLines();
+                        } else {
+                            EditorAlerts.fleetingPopup("No shelf on top of shelf or gap.");
+                        }
+                    } else {
+                        EditorAlerts.fleetingPopup("No shelf under last line.");
+                    }
+                } else {
+                    EditorAlerts.fleetingPopup("Cannot modify at leftmost scope depth.");
+                }
+            } else {
+                EditorAlerts.fleetingPopup("Cannot modify setup line.");
+            }
+        } else {
+            EditorAlerts.fleetingPopup("Select row to have shelf.");
+        }
+    }
+    private void addGapLineAction() {
+        int row = -1;
+        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
+        if (row >= 0) {
+            List<ViewLine> viewLines = derivationView.getViewLines();
+            ViewLine viewLine = viewLines.get(row);
+            int depth = viewLine.getDepth();
+            if (!viewLine.isSetupLine()) {
+                if (depth > 1) {
+                    if (++row < viewLines.size()) {
+                        if (!(viewLines.get(row).getLineType() == LineType.SHELF_LINE || viewLines.get(row).getLineType() == LineType.GAP_LINE)) {
+                            ViewLine gapLine = new ViewLine(null, depth, LineType.GAP_LINE, false, null, null, null);
+                            viewLines.add(row, gapLine);
+                            derivationView.setGridFromViewLines();
+                        } else {
+                            EditorAlerts.fleetingPopup("No gap on top of shelf or gap.");
+                        }
+                    } else {
+                        EditorAlerts.fleetingPopup("No gap under last line.");
+                    }
+                } else {
+                    EditorAlerts.fleetingPopup("Cannot modify at leftmost scope depth.");
+                }
+            } else {
+                EditorAlerts.fleetingPopup("Cannot modify setup line.");
+            }
+        } else {
+            EditorAlerts.fleetingPopup("Select row to have gap.");
+        }
+    }
+    private void insertSubAction() {
+        int row = -1;
+        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
+        if (row >= 0) {
+            int depth = derivationView.getViewLines().get(row).getDepth();
+            depth++;
+            if (!derivationView.getViewLines().get(row).isSetupLine() || row + 1 == derivationView.getViewLines().size()) {
+                addEmptyViewContentRow(row, depth);
+                addEmptyViewContentRow(row, depth);
+                addEmptyViewContentRow(row, depth);
+                ViewLine shelfLine = new ViewLine(null, depth, LineType.SHELF_LINE, false, null, null, null);
+                derivationView.getViewLines().add(row, shelfLine);
+                addEmptyViewContentRow(row, depth);
+                derivationView.setGridFromViewLines();
+            } else {
+                EditorAlerts.fleetingPopup("Cannot modify setup lines.");
+            }
+        }
+        else {
+            EditorAlerts.fleetingPopup("Select derivation row for insert above.");
+        }
+    }
+    private void insertSubsAction() {
+        int row = -1;
+        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
+        if (row >= 0) {
+            int depth = derivationView.getViewLines().get(row).getDepth();
+            depth++;
+            if (!derivationView.getViewLines().get(row).isSetupLine() || row + 1 == derivationView.getViewLines().size()) {
+                addEmptyViewContentRow(row, depth);
+                addEmptyViewContentRow(row, depth);
+                addEmptyViewContentRow(row, depth);
+                ViewLine shelfLine1 = new ViewLine(null, depth, LineType.SHELF_LINE, false, null, null, null);
+                derivationView.getViewLines().add(row, shelfLine1);
+                addEmptyViewContentRow(row, depth);
+
+                ViewLine gapLine = new ViewLine(null, depth, LineType.GAP_LINE, false, null, null, null);
+                derivationView.getViewLines().add(row, gapLine);
+
+                addEmptyViewContentRow(row, depth);
+                addEmptyViewContentRow(row, depth);
+                addEmptyViewContentRow(row, depth);
+                ViewLine shelfLine2 = new ViewLine(null, depth, LineType.SHELF_LINE, false, null, null, null);
+                derivationView.getViewLines().add(row, shelfLine2);
+                addEmptyViewContentRow(row, depth);
+
+                derivationView.setGridFromViewLines();
+            } else {
+                EditorAlerts.fleetingPopup("Cannot modify setup lines.");
+            }
+        }
+        else {
+            EditorAlerts.fleetingPopup("Select derivation row for insert above.");
+        }
+    }
 
 
 
