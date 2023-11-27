@@ -20,12 +20,4 @@ public interface Exercise<T,U> {
     void updateStatementHeight(boolean isRequired);
     ExerciseModel<T, U> getExerciseModelFromView();
 
-
-
-
-
-
-
-
-
 }

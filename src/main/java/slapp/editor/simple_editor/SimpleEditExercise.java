@@ -54,7 +54,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         editView.setStatementPrefHeight(editModel.getStatementPrefHeight());
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(statementDRTA);
+                mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
             }
         });
         editView.setExerciseStatement(statementDRTA);
@@ -64,7 +64,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         commentEditor.setDocument(editModel.getExerciseComment());
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(commentDRTA);
+                mainView.editorInFocus(commentDRTA, ControlType.AREA);
             }
         });
         editView.setExerciseComment(commentDRTA);
@@ -77,7 +77,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
             editor.getActionFactory().saveNow().execute(new ActionEvent());
             editor.focusedProperty().addListener((o, ov, nv) -> {
                 if (nv) {
-                    mainView.editorInFocus(drta);
+                    mainView.editorInFocus(drta, ControlType.AREA);
                 }
             });
             contentList.add(drta);
@@ -98,7 +98,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         editor.getActionFactory().saveNow().execute(new ActionEvent());
         editor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(drta);
+                mainView.editorInFocus(drta, ControlType.AREA);
             }
         });
         editView.addBlankContentPage(newPageIndex, drta);

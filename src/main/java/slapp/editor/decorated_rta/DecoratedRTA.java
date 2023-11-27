@@ -68,6 +68,8 @@ public class DecoratedRTA {
     private ToolBar editToolbar;
     private ToolBar fontsToolbar;
     private ToolBar paragraphToolbar;
+    private ToolBar insertToolbar;
+    private ToolBar kbdDiaToolbar;
     private ToggleButton overlineButton;
 
     private Button keyboardDiagramButton;
@@ -194,113 +196,57 @@ public class DecoratedRTA {
 
         //toolbars
 
-        /*
         editToolbar = new ToolBar();
-        editToolbar.setStyle("-fx-spacing: 6.5");
+        editToolbar.setStyle("-fx-spacing: 12");
         editToolbar.getItems().setAll(
-
-                //save button comes here
-                wideSeparator(5),
-
-                actionButton(LineAwesomeSolid.CUT, "Cut",   editor.getActionFactory().cut()),
-                actionButton(LineAwesomeSolid.COPY, "Copy",  editor.getActionFactory().copy()),
-                actionButton(LineAwesomeSolid.PASTE, "Paste", editor.getActionFactory().paste()),
-                actionButton(LineAwesomeSolid.UNDO, "Undo",  editor.getActionFactory().undo()),
-                actionButton(LineAwesomeSolid.REDO, "Redo",  editor.getActionFactory().redo()),
-                wideSeparator(7),
-
-                actionImage(LineAwesomeSolid.IMAGE, "Insert Image"),
-                actionEmoji("Insert Emoji"),
-                actionHyperlink(LineAwesomeSolid.LINK, "Insert Hyperlink"),
-                actionTable(LineAwesomeSolid.TABLE, "Insert Table", td -> editor.getActionFactory().insertTable(td)),
-                wideSeparator(7),
-
-                presets,
-                keyboardSelector,
-                wideSeparator(8),
-                keyboardDiagramButton
-            );
-
-        fontsToolbar = new ToolBar();
-        fontsToolbar.getItems().setAll(
-
-                createToggleButton(LineAwesomeSolid.BOLD, "Bold (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
-                createToggleButton(LineAwesomeSolid.ITALIC, "Italic (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build())),
-                createToggleButton(LineAwesomeSolid.STRIKETHROUGH, "Strikethrough", property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
-                createToggleButton(LineAwesomeSolid.UNDERLINE, "Underline", property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
-                overlineButton,
-                wideSeparator(8),
-
-                createToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).transSuperscript(false).transSubscript(false).build())),
-                createColoredToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
-                createToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).transSuperscript(false).transSubscript(false).build())),
-                createColoredToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build())),
-
-
-                textForeground,
-                textBackground,
-                wideSeparator(8),
-                unicodeField,
-                new Label("Size"),
-                fontSize
-            );
-
-         */
-
-        editToolbar = new ToolBar();
-        editToolbar.setStyle("-fx-spacing: 11.4");
-        editToolbar.getItems().setAll(
-
-                //save button comes here
-                wideSeparator(6.4),
-
                 actionButton(LineAwesomeSolid.CUT, "Cut",   editor.getActionFactory().cut()),
                 actionButton(LineAwesomeSolid.COPY, "Copy",  editor.getActionFactory().copy()),
                 actionButton(LineAwesomeSolid.PASTE, "Paste", editor.getActionFactory().paste()),
                 actionButton(LineAwesomeSolid.UNDO, "Undo",  editor.getActionFactory().undo()),
                 actionButton(LineAwesomeSolid.REDO, "Redo",  editor.getActionFactory().redo()),
 
-                wideSeparator(6.5),
+                wideSeparator(7.5),
                 keyboardSelector,
                 unicodeField,
                 new Label("Size"),
                 fontSize,
+                wideSeparator(8)
+        );
 
-                wideSeparator(6.5),
-
-
+        kbdDiaToolbar = new ToolBar();
+        kbdDiaToolbar.setStyle("-fx-spacing: 15");
+        kbdDiaToolbar.getItems().setAll(
                 keyboardDiagramButton
         );
 
         fontsToolbar = new ToolBar();
         fontsToolbar.setStyle("-fx-spacing: 12");
         fontsToolbar.getItems().setAll(
-
-                actionImage(LineAwesomeSolid.IMAGE, "Insert Image"),
-                actionEmoji("Insert Emoji"),
-                actionHyperlink(LineAwesomeSolid.LINK, "Insert Hyperlink"),
-                actionTable(LineAwesomeSolid.TABLE, "Insert Table", td -> editor.getActionFactory().insertTable(td)),
-                wideSeparator(4.2),
-
-                presets,
-
-                createToggleButton(LineAwesomeSolid.BOLD, "Bold (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
-                createToggleButton(LineAwesomeSolid.ITALIC, "Italic (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build())),
                 createToggleButton(LineAwesomeSolid.STRIKETHROUGH, "Strikethrough", property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
                 createToggleButton(LineAwesomeSolid.UNDERLINE, "Underline", property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
                 overlineButton,
-                wideSeparator(4.2),
 
+                wideSeparator(4.2),
                 createToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).transSuperscript(false).transSubscript(false).build())),
                 createColoredToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
                 createToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).transSuperscript(false).transSubscript(false).build())),
                 createColoredToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build())),
-
-
                 textForeground,
                 textBackground
+        );
 
+        insertToolbar = new ToolBar();
+        insertToolbar.setStyle("-fx-spacing: 12");
+        insertToolbar.getItems().setAll(
+                actionImage(LineAwesomeSolid.IMAGE, "Insert Image"),
+                actionEmoji("Insert Emoji"),
+                actionHyperlink(LineAwesomeSolid.LINK, "Insert Hyperlink"),
+                actionTable(LineAwesomeSolid.TABLE, "Insert Table", td -> editor.getActionFactory().insertTable(td)),
 
+                wideSeparator(4.2),
+                presets,
+                createToggleButton(LineAwesomeSolid.BOLD, "Bold (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
+                createToggleButton(LineAwesomeSolid.ITALIC, "Italic (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build()))
         );
 
         paragraphToolbar = new ToolBar();
@@ -677,5 +623,13 @@ public class DecoratedRTA {
 
     public ChoiceBox<RichTextAreaSkin.KeyMapValue> getKeyboardSelector() {
         return keyboardSelector;
+    }
+
+    public ToolBar getInsertToolbar() {
+        return insertToolbar;
+    }
+
+    public ToolBar getKbdDiaToolbar() {
+        return kbdDiaToolbar;
     }
 }

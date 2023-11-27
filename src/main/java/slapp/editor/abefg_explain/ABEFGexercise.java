@@ -19,10 +19,7 @@ import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
-import slapp.editor.main_window.Exercise;
-import slapp.editor.main_window.ExerciseModel;
-import slapp.editor.main_window.MainWindow;
-import slapp.editor.main_window.MainWindowView;
+import slapp.editor.main_window.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,7 +125,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         abefgView.setStatementPrefHeight(abefgModel.getStatementPrefHeight());
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(statementDRTA);
+                mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
             }
         });
         abefgView.setExerciseStatement(statementDRTA);
@@ -138,7 +135,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         commentEditor.setDocument(abefgModel.getExerciseComment());
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(commentDRTA);
+                mainView.editorInFocus(commentDRTA, ControlType.AREA);
             }
         });
         abefgView.setExerciseComment(commentDRTA);
@@ -151,7 +148,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
             editor.getActionFactory().saveNow().execute(new ActionEvent());
             editor.focusedProperty().addListener((o, ov, nv) -> {
                 if (nv) {
-                    mainView.editorInFocus(drta);
+                    mainView.editorInFocus(drta, ControlType.AREA);
                 }
             });
             contentList.add(drta);
@@ -172,7 +169,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         editor.getActionFactory().saveNow().execute(new ActionEvent());
         editor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(drta);
+                mainView.editorInFocus(drta, ControlType.AREA);
             }
         });
         abefgView.addBlankContentPage(newPageIndex, drta);

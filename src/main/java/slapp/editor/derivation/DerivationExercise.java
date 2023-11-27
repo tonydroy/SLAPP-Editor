@@ -16,10 +16,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import slapp.editor.EditorAlerts;
 import slapp.editor.decorated_rta.DecoratedRTA;
-import slapp.editor.main_window.Exercise;
-import slapp.editor.main_window.ExerciseModel;
-import slapp.editor.main_window.MainWindow;
-import slapp.editor.main_window.MainWindowView;
+import slapp.editor.main_window.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,24 +27,18 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     private DerivationView derivationView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
-
     private Node lastFocusedNode;
     private Font labelFont = new Font("Noto Serif Combo", 11);
-
     private Boolean editJustification;
     private EventHandler justificationClickFilter;
     private RichTextArea lastJustificationRTA;
     private int lastJustificationRow;
-
-
-
 
     public DerivationExercise(DerivationModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.derivationModel = model;
         this.mainView = mainWindow.getMainView();
         this.derivationView = new DerivationView(mainView);
-
         mainView.getMainScene().focusOwnerProperty().addListener((ob, ov, nv) -> {
             lastFocusedNode = ov;
         });
@@ -66,7 +57,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         derivationView.setStatementPrefHeight(derivationModel.getStatementPrefHeight());
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(statementDRTA);
+                mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
             }
         });
         derivationView.setExerciseStatement(statementDRTA);
@@ -76,12 +67,11 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         commentEditor.setDocument(derivationModel.getExerciseComment());
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(commentDRTA);
+                mainView.editorInFocus(commentDRTA, ControlType.AREA);
             }
         });
         derivationView.setExerciseComment(commentDRTA);
 
-        //
         derivationView.getInsertLineButton().setOnAction(e -> insertLineAction());
         derivationView.getDeleteLineButton().setOnAction(e -> deleteLineAction());
         derivationView.getIndentButton().setOnAction(e -> indentLineAction());
@@ -90,8 +80,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         derivationView.getAddGapButton().setOnAction(e -> addGapLineAction());
         derivationView.getInsertSubButton().setOnAction(e -> insertSubAction());
         derivationView.getInsertSubsButton().setOnAction(e -> insertSubsAction());
-
-        //
 
         derivationView.initializeViewDetails();
         setViewLinesFromModel();
@@ -123,10 +111,9 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                 rta.setDocument(modelLine.getLineContentDoc());
                 rta.focusedProperty().addListener((o, ov, nv) -> {
                     if (nv) {
-                        mainView.editorInFocus(drta);
+                        mainView.editorInFocus(drta, ControlType.FIELD);
                     }
                 });
-
                 rta.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
                     KeyCode code = e.getCode();
                     int row = derivationView.getGrid().getRowIndex(rta.getParent());
@@ -144,9 +131,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                         if (getContentLineBelow(row) != null) getContentLineBelow(row).getLineContentDRTA().getEditor().requestFocus();
                         e.consume();
                     }
-
                 });
-
                 viewLine.setLineContentDRTA(drta);
 
                 TextFlow justificationFlow = getJustificationFlow(modelLine.getJustification(), viewLines);
@@ -187,7 +172,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         }
         return line;
     }
-
 
     private TextFlow getJustificationFlow(String justificationString, List<ViewLine> viewLines) {
         justificationString = justificationString.trim();
@@ -254,9 +238,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         flow.setMinWidth(100);
         flow.setMaxWidth(100);
         flow.setMaxHeight(20);
-  //      flow.setPrefHeight(20);
         flow.setPadding(new Insets(0,0,0,3));
- //       flow.setStyle("-fx-border-color: red; -fx-border-width: 1 1 1 1; ");
         flow.setOnMouseClicked(e -> flow.requestFocus());
         flow.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
@@ -272,7 +254,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         RichTextArea rta = drta.getEditor();
         rta.setContentAreaWidth(110);
         rta.setPrefHeight(20);
-        rta.setPrefWidth(100);
         rta.setMaxWidth(100);
         rta.setMinWidth(100);
         rta.getStylesheets().add("slappDerivation.css");
@@ -290,7 +271,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                     @Override
                     public void handle(MouseEvent event) {
                         if (!inHierarchy(event.getPickResult().getIntersectedNode(), rta)) {
-
                             if (editJustification) {
                                 editJustification = false;
                                 saveJustificationRTA(rta, rowIndex);
@@ -326,11 +306,10 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                 if (getContentLineBelow(row) != null) getContentLineBelow(row).getJustificationFlow().requestFocus();
                 e.consume();
             }
-
         });
 
         derivationView.getGrid().add(rta, 22, rowIndex);
-        mainView.editorInFocus(drta);
+        mainView.editorInFocus(drta, ControlType.STATEMENT);
     }
 
     public static boolean inHierarchy(Node node, Node potentialHierarchyElement) {
@@ -402,8 +381,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         derivationView.getViewLines().add(newRow, viewLine);
     }
 
-
-
     private void insertLineAction() {
         int row = -1;
         if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
@@ -463,7 +440,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             List<ViewLine> viewLines = derivationView.getViewLines();
             ViewLine viewLine = viewLines.get(row);
             if (!viewLine.isSetupLine()) {
-
                 int depth = viewLine.getDepth();
                 if (depth < 19) {
                     viewLine.setDepth(++depth);
@@ -639,10 +615,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             EditorAlerts.fleetingPopup("Select derivation row for insert above.");
         }
     }
-
-
-
-
 
     @Override
     public DerivationModel getExerciseModel() { return derivationModel; }

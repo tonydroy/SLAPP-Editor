@@ -40,6 +40,8 @@ public class MainWindowView {
     private ToolBar editToolbar = new ToolBar();
     private ToolBar fontsToolbar = new ToolBar();
     private ToolBar paragraphToolbar = new ToolBar();
+    private ToolBar insertToolbar = new ToolBar();
+    private ToolBar kbdDiaToolBar = new ToolBar();
     private double scale = 1.0;
     MenuBar menuBar;
     private VBox topBox = new VBox();
@@ -97,6 +99,12 @@ public class MainWindowView {
     Menu goToExerciseMenu = new Menu("Jump");
     Menu assignmentCommentMenu = new Menu("Comment");
     HBox menuBox;
+
+
+
+
+
+
 
 
 
@@ -170,6 +178,10 @@ public class MainWindowView {
         saveIcon.setIconSize(20);
         saveButton.setGraphic(saveIcon);
         saveButton.setTooltip(new Tooltip("Save assignment if open and otherwise exercise"));
+
+
+
+
 
         centerBox = new VBox();
         centerBox.setSpacing(3);
@@ -311,11 +323,8 @@ public class MainWindowView {
     }
 
 
-    public void editorInFocus(DecoratedRTA decoratedRTA){
+    public void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
         lastFocussedDRTA = decoratedRTA;
-
-
-
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
         keyboardDiagram.initialize(decoratedRTA);
         if (keyboardDiagram.isShowing()) {
@@ -324,20 +333,35 @@ public class MainWindowView {
 
         editToolbar = decoratedRTA.getEditToolbar();
         fontsToolbar = decoratedRTA.getFontsToolbar();
+        insertToolbar = decoratedRTA.getInsertToolbar();
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
+        kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
 
-        if (!editToolbar.getItems().contains(saveButton)) {
-            editToolbar.getItems().add(0, saveButton);
-            editToolbar.getItems().addAll(updateHeightButton, zoomLabel, zoomSpinner);
+        if (!kbdDiaToolBar.getItems().contains(saveButton)) {
+            kbdDiaToolBar.getItems().add(0, updateHeightButton);
+            kbdDiaToolBar.getItems().add(0, zoomSpinner);
+            kbdDiaToolBar.getItems().add(0, zoomLabel);
+            kbdDiaToolBar.getItems().add(saveButton);
 
-
+            switch(control) {
+                case NONE: {
+                    kbdDiaToolBar.setDisable(true);
+                }
+                case STATEMENT: {
+                    editToolbar.setDisable(true);
+                    fontsToolbar.setDisable(true);
+                      }
+                case FIELD: {
+                    paragraphToolbar.setDisable(true);
+                    insertToolbar.setDisable(true);
+                      }
+                case AREA: {}
+            }
         }
+        HBox insertAndFontsBox = new HBox(insertToolbar, fontsToolbar);
+        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
 
-
-
-
-
-        VBox topBox = new VBox(menuBox, paragraphToolbar, fontsToolbar, editToolbar);
+        VBox topBox = new VBox(menuBox, paragraphToolbar, insertAndFontsBox, editAndKbdBox);
         topBox.layout();
         borderPane.topProperty().setValue(topBox);
     }

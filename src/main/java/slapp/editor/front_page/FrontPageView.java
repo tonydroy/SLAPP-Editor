@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import slapp.editor.decorated_rta.DecoratedRTA;
+import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
 
@@ -53,7 +54,7 @@ public class FrontPageView implements ExerciseView<Label, Label> {
         exerciseComment.getEditToolbar().setMouseTransparent(true);
         exerciseComment.getEditor().focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(exerciseComment);
+                mainView.editorInFocus(exerciseComment, ControlType.NONE);
             }
         });
     }

@@ -37,7 +37,7 @@ public class EditorAlerts {
         label.setAlignment(Pos.CENTER);
         label.setStyle("-fx-background-color: aliceblue; -fx-border-color: blue;");
 
-        label.setMinWidth(250);
+        label.setMinWidth(270);
         label.setMaxWidth(1000);
         label.setMinHeight(100);
         popup.getContent().add(label);

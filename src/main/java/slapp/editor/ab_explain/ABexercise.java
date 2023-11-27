@@ -78,7 +78,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         abView.setStatementPrefHeight(abModel.getStatementPrefHeight());
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(statementDRTA);
+                mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
             }
         });
         abView.setExerciseStatement(statementDRTA);
@@ -88,7 +88,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         commentEditor.setDocument(abModel.getExerciseComment());
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(commentDRTA);
+                mainView.editorInFocus(commentDRTA, ControlType.AREA);
             }
         });
         abView.setExerciseComment(commentDRTA);
@@ -101,7 +101,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
             editor.getActionFactory().saveNow().execute(new ActionEvent());
             editor.focusedProperty().addListener((o, ov, nv) -> {
                 if (nv) {
-                    mainView.editorInFocus(drta);
+                    mainView.editorInFocus(drta, ControlType.AREA);
                 }
             });
             contentList.add(drta);
@@ -122,7 +122,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         editor.getActionFactory().saveNow().execute(new ActionEvent());
         editor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(drta);
+                mainView.editorInFocus(drta, ControlType.AREA);
             }
         });
         abView.addBlankContentPage(newPageIndex, drta);
