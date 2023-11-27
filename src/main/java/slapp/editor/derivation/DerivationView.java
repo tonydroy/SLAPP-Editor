@@ -109,7 +109,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
 
         VBox controlBox = new VBox(20, insertLineButton, deleteLineButton, indentButton, outdentButton, addShelfButton, addGapButton, insertSubButton, insertSubsButton);
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
-        controlBox.setPadding(new Insets(180,0,30,80));
+        controlBox.setPadding(new Insets(180,10,30,80));
         exerciseControlNode = controlBox;
     }
 

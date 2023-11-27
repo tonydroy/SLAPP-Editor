@@ -232,7 +232,7 @@ public class CreateAssignment {
                             "Please select an empty exercise.");
                 }
             } else {
-                EditorAlerts.showSimpleAlert("Select Exercise", "No exercise selected.  Please make selection.");
+                EditorAlerts.fleetingPopup("No exercise selected.  Please make selection.");
             }
         });
 
@@ -257,7 +257,7 @@ public class CreateAssignment {
                             "Please select an empty exercise.");
                 }
             } else {
-                EditorAlerts.showSimpleAlert("Select Exercise", "No exercise selected.  Please make selection.");
+                EditorAlerts.fleetingPopup("No exercise selected.  Please make selection.");
             }
         });
 

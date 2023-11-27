@@ -280,11 +280,11 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         lastJustificationRTA = rta;
         lastJustificationRow = rowIndex;
 
+        rta.applyCss();
+        rta.layout();
+
         rta.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
-
-                mainView.editorInFocus(drta);                         //commenting this stops the "jump" when rta gets focus; left in, the keyboard dropdown starts in right place // but why the jump at all in this case??
-
                 editJustification = true;
                 justificationClickFilter = new EventHandler<MouseEvent>() {
                     @Override
@@ -330,6 +330,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         });
 
         derivationView.getGrid().add(rta, 22, rowIndex);
+        mainView.editorInFocus(drta);
     }
 
     public static boolean inHierarchy(Node node, Node potentialHierarchyElement) {

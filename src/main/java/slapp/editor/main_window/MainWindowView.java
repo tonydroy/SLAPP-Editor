@@ -32,6 +32,7 @@ import slapp.editor.main_window.assignment.AssignmentHeaderItem;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 
 public class MainWindowView {
     private Stage stage = EditorMain.mainStage;
@@ -45,7 +46,7 @@ public class MainWindowView {
     private VBox centerBox;
     private Spinner<Integer> zoomSpinner;
     private Label zoomLabel;
-    int minStageWidth = 860;
+    int minStageWidth = 950;
     private BorderPane borderPane = new BorderPane();
     private Scene mainScene;
     private ExerciseView currentExerciseView;
@@ -61,7 +62,7 @@ public class MainWindowView {
     private DoubleProperty centerHeightProperty;
     private DoubleProperty contentHeightProperty;
     private Button saveButton;
-    private Button updateHeightButton = new Button("+");
+    private Button updateHeightButton = new Button();
     private Label nodeHeightLabel = new Label("0");
     private Label pageHeightLabel = new Label("100");
     private Label nodePercentageLabel = new Label("0");
@@ -129,19 +130,28 @@ public class MainWindowView {
         Label slashLabel = new Label("/");
         Label percentSignLabel = new Label("%");
         Label heightLabel = new Label("Block Height: ");
-        menuBox = new HBox(menuBar, spacer, heightLabel, nodeHeightLabel, slashLabel, pageHeightLabel, nodePercentageLabel, percentSignLabel, updateHeightButton);
+        menuBox = new HBox(menuBar, spacer, heightLabel, nodeHeightLabel, slashLabel, pageHeightLabel, nodePercentageLabel, percentSignLabel);
         menuBox.setStyle("-fx-background-color: aliceblue; fx-border-color: white;");
         menuBox.setPadding(new Insets(0,15,0,0));
-        menuBox.setMaxWidth(minStageWidth - 20);
+        menuBox.setMaxWidth(minStageWidth - 10);
         menuBox.setMargin(heightLabel, new Insets(8,2,0,0));
         menuBox.setMargin(nodeHeightLabel, new Insets(8,0,0,0));
         menuBox.setMargin(slashLabel, new Insets(8,0,0,0));
         menuBox.setMargin(pageHeightLabel, new Insets(8,0,0,0));
         menuBox.setMargin(nodePercentageLabel, new Insets(8,0,0,5));
         menuBox.setMargin(percentSignLabel, new Insets(8,0,0,0));
-        menuBox.setMargin(updateHeightButton, new Insets(6,0,0,10));
+
+//        menuBox.setMargin(updateHeightButton, new Insets(6,0,0,10));
         menuBox.setHgrow(spacer, Priority.ALWAYS);
-        updateHeightButton.setPadding(new Insets(1,4,1,4));
+//        updateHeightButton.setPadding(new Insets(1,4,1,4));
+
+        FontIcon heightIcon = new FontIcon(LineAwesomeSolid.TEXT_HEIGHT);
+        heightIcon.setIconSize(20);
+        updateHeightButton.setGraphic(heightIcon);
+        updateHeightButton.setTooltip(new Tooltip("Update text height"));
+
+
+
         updatePageHeightLabel(PrintUtilities.getPageHeight());
 
         zoomLabel = new Label(" Zoom ");
@@ -156,9 +166,9 @@ public class MainWindowView {
         });
 
         saveButton = new Button();
-        FontIcon icon = new FontIcon(LineAwesomeSolid.SAVE);
-        icon.setIconSize(20);
-        saveButton.setGraphic(icon);
+        FontIcon saveIcon = new FontIcon(LineAwesomeSolid.SAVE);
+        saveIcon.setIconSize(20);
+        saveButton.setGraphic(saveIcon);
         saveButton.setTooltip(new Tooltip("Save assignment if open and otherwise exercise"));
 
         centerBox = new VBox();
@@ -300,55 +310,40 @@ public class MainWindowView {
         setCenterVgrow();
     }
 
-    /*
+
     public void editorInFocus(DecoratedRTA decoratedRTA){
         lastFocussedDRTA = decoratedRTA;
+
+
+
+        KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
+        keyboardDiagram.initialize(decoratedRTA);
+        if (keyboardDiagram.isShowing()) {
+            keyboardDiagram.updateAndShow();
+        }
+
         editToolbar = decoratedRTA.getEditToolbar();
         fontsToolbar = decoratedRTA.getFontsToolbar();
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
 
-        KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
-        keyboardDiagram.initialize(decoratedRTA);
-        if (keyboardDiagram.isShowing()) {
-            keyboardDiagram.updateAndShow();
-        }
-
         if (!editToolbar.getItems().contains(saveButton)) {
             editToolbar.getItems().add(0, saveButton);
+            editToolbar.getItems().addAll(updateHeightButton, zoomLabel, zoomSpinner);
+
+
         }
 
-        if (!fontsToolbar.getItems().contains(zoomSpinner)) {
-            fontsToolbar.getItems().addAll(zoomLabel, zoomSpinner);
-        }
-        VBox topBox = new VBox(menuBox, editToolbar, fontsToolbar, paragraphToolbar);
+
+
+
+
+        VBox topBox = new VBox(menuBox, paragraphToolbar, fontsToolbar, editToolbar);
+        topBox.layout();
         borderPane.topProperty().setValue(topBox);
     }
-     */
-
-    public void editorInFocus(DecoratedRTA decoratedRTA) {
-        lastFocussedDRTA = decoratedRTA;
-        KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
-        keyboardDiagram.initialize(decoratedRTA);
-        if (keyboardDiagram.isShowing()) {
-            keyboardDiagram.updateAndShow();
-        }
 
 
 
-
-        ToolBar areaEditToolbar = decoratedRTA.getEditToolbar();
-        ToolBar areaFontsToolbar = decoratedRTA.getFontsToolbar();
-        ToolBar areaParagraphToolbar = decoratedRTA.getParagraphToolbar();
-
-        System.out.println("edit bar: " + areaEditToolbar.getItems().toString());
-        System.out.println("button: " + saveButton.toString());
-
-        areaEditToolbar.getItems().add(0, saveButton);
-        areaFontsToolbar.getItems().addAll(zoomLabel, zoomSpinner);
-
-        VBox topBox = new VBox(menuBox, areaEditToolbar, areaFontsToolbar, areaParagraphToolbar);
-        borderPane.topProperty().setValue(topBox);
-    }
 
     private void closeWindow() {
         if (mainWindow.checkCloseWindow()) {

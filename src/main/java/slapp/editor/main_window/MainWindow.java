@@ -155,7 +155,7 @@ public class MainWindow {
                 currentExercise.saveExercise(false);
             }
         }
-        else EditorAlerts.showSimpleAlert("Cannot Save", "No named assignment or exercise to save.");
+        else EditorAlerts.fleetingPopup("No named assignment or exercise to save.");
     }
     public void saveExercise(boolean saveAs) {
         if (currentExercise != null) {
@@ -163,7 +163,7 @@ public class MainWindow {
                 currentExercise.saveExercise(saveAs);
             }
         }
-        else EditorAlerts.showSimpleAlert("Cannot Save", "No named exercise to save.");
+        else EditorAlerts.fleetingPopup("No named exercise to save.");
     }
     private void clearExercise() {
         boolean okContinue = true;
@@ -221,7 +221,7 @@ public class MainWindow {
                 currentExercise.exportExerciseToPDF();
             }
         }
-        else EditorAlerts.showSimpleAlert("Cannot Print", "Cannot find exercise to export.");
+        else EditorAlerts.fleetingPopup("Cannot find exercise to export.");
     }
 
     private void printExercise() {
@@ -230,7 +230,7 @@ public class MainWindow {
                 currentExercise.printExercise();
             }
         }
-        else EditorAlerts.showSimpleAlert("Cannot Print", "Cannot find exercise to print.");
+        else EditorAlerts.fleetingPopup("Cannot find exercise to print.");
     }
 
     private boolean checkContinueExercise(String title, String content) {
@@ -283,7 +283,7 @@ public class MainWindow {
 
     public void assignmentComment() {
         if (currentAssignment == null) {
-            EditorAlerts.showSimpleAlert("Cannot Update Comment", "There is no open assignment on which to comment.");
+            EditorAlerts.fleetingPopup("There is no open assignment on which to comment.");
         } else {
             AssignmentCommentWindow commentWindow = new AssignmentCommentWindow(currentAssignment.getHeader());
             AssignmentHeader header = commentWindow.getHeaderComment();
@@ -293,7 +293,7 @@ public class MainWindow {
     }
     public void saveAssignment(boolean saveAs){
         if (currentAssignment == null) {
-            EditorAlerts.showSimpleAlert("Cannot Save", "There is no open assignment to save.");
+            EditorAlerts.fleetingPopup("There is no open assignment to save.");
         } else {
             if (currentExercise.isExerciseModified()) {
                 ExerciseModel model = currentExercise.getExerciseModelFromView();
@@ -331,7 +331,7 @@ public class MainWindow {
     }
     public void closeAssignment() {
         if (currentAssignment == null) {
-            EditorAlerts.showSimpleAlert("Cannot Close", "There is no open assignment to close.");
+            EditorAlerts.fleetingPopup("There is no open assignment to close.");
         } else {
             if (checkContinueAssignment("Confirm Close", "This assignment appears to have been changed.\n\nContinue to close assignment?")) {
 
@@ -345,7 +345,7 @@ public class MainWindow {
     public void printAssignment() {
 
         if (currentAssignment == null) {
-            EditorAlerts.showSimpleAlert("Cannot Print", "There is no open assignment to print.");
+            EditorAlerts.fleetingPopup("There is no open assignment to print.");
         } else {
             List<Node> printNodes = new ArrayList<>();
             printNodes.add(mainView.getAssignmentHeader());
@@ -373,7 +373,7 @@ public class MainWindow {
 
     public void exportAssignment() {
         if (currentAssignment == null) {
-            EditorAlerts.showSimpleAlert("Cannot Print", "There is no open assignment to print.");
+            EditorAlerts.fleetingPopup("There is no open assignment to print.");
         } else {
             List<Node> printNodes = new ArrayList<>();
             printNodes.add(mainView.getAssignmentHeader());
@@ -426,7 +426,7 @@ public class MainWindow {
 
     public void previousExercise() {
         if (currentAssignment == null) {
-            EditorAlerts.showSimpleAlert("Cannot Advance", "There is no open assignment.");
+            EditorAlerts.fleetingPopup("Cannot Advance.  There is no open assignment.");
         } else {
             if (currentExercise.isExerciseModified()) isAssignmentContentModified = true;
             int prevIndex = assignmentIndex - 1;
@@ -444,7 +444,7 @@ public class MainWindow {
     }
     public void nextExercise() {
         if (currentAssignment == null) {
-            EditorAlerts.showSimpleAlert("Cannot Advance", "There is no open assignment.");
+            EditorAlerts.fleetingPopup("Cannot Advance.  There is no open assignment.");
         } else {
             if (currentExercise.isExerciseModified()) isAssignmentContentModified = true;
             int nextIndex = assignmentIndex + 1;
@@ -462,7 +462,7 @@ public class MainWindow {
      }
     public void goToExercise() {
         if (currentAssignment == null) {
-            EditorAlerts.showSimpleAlert("Cannot Jump", "There is no open assignment.");
+            EditorAlerts.fleetingPopup("Cannot Jump.  There is no open assignment.");
         } else {
             if (currentExercise.isExerciseModified()) isAssignmentContentModified = true;
 
