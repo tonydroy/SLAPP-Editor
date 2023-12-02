@@ -14,15 +14,13 @@ public class ViewLine {
     private LineType lineType = null;
     private DecoratedRTA lineContentDRTA = null;
     private TextFlow justificationFlow = null;
-    private boolean setupLine = false;
     private List<Label> clientLabels = new ArrayList<Label>();
 
     public ViewLine(){}
-    public ViewLine(Label lineNumberLabel, int depth, LineType lineType, boolean setupLine, DecoratedRTA drta, TextFlow justificationFlow, List<Label> clientLabels) {
+    public ViewLine(Label lineNumberLabel, int depth, LineType lineType, DecoratedRTA drta, TextFlow justificationFlow, List<Label> clientLabels) {
         this.lineNumberLabel = lineNumberLabel;
         this.depth = depth;
         this.lineType = lineType;
-        this.setupLine = setupLine;
         this.lineContentDRTA = drta;
         this.justificationFlow = justificationFlow;
         this.clientLabels = clientLabels;
@@ -64,13 +62,7 @@ public class ViewLine {
         return justificationFlow;
     }
 
-    public boolean isSetupLine() {
-        return setupLine;
-    }
 
-    public void setSetupLine(boolean setupLine) {
-        this.setupLine = setupLine;
-    }
 
     public List<Label> getClientLabels() {
         return clientLabels;

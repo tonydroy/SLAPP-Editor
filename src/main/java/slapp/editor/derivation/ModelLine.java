@@ -2,22 +2,24 @@ package slapp.editor.derivation;
 
 import com.gluonhq.richtextarea.model.Document;
 
-public class ModelLine {
+import java.io.Serializable;
+
+public class ModelLine implements Serializable {
 
     private int gridLineIndex;
     private int depth;
     private Document lineContentDoc;
     private String justification = "";
-    private LineType lineType = LineType.CONTENT_LINE;
+    private LineType lineType = LineType.MAIN_CONTENT_LINE;
 
-    private boolean setupLine;
 
-    public ModelLine(int depth, Document lineContent, String justification, LineType type, boolean setupLine) {
+
+    public ModelLine(int depth, Document lineContent, String justification, LineType type) {
         this.depth = depth;
         this.lineContentDoc = lineContent;
         this.justification = justification;
         this.lineType = type;
-        this.setupLine = setupLine;
+
     }
 
 
@@ -61,11 +63,5 @@ public class ModelLine {
         this.lineType = lineType;
     }
 
-    public boolean isSetupLine() {
-        return setupLine;
-    }
 
-    public void setSetupLine(boolean setupLine) {
-        this.setupLine = setupLine;
-    }
 }

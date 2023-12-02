@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
@@ -22,21 +23,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import slapp.editor.DiskUtilities;
+import slapp.editor.simple_editor.SimpleEditExercise;
 
 import static javafx.scene.control.ButtonType.OK;
 
 public class ABexercise implements Exercise<ABmodel, ABview> {
     private MainWindow mainWindow;
     private ABmodel abModel;
+    private ABmodel originalModel;
     private ABview abView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
     private Node lastFocusedNode;
     private int lastPageNum = -1;
+    private Font labelFont = new Font("Noto Serif Combo", 11);
 
     public ABexercise(ABmodel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.abModel = model;
+        this.originalModel = model;
         this.mainView = mainWindow.getMainView();
         this.abView = new ABview(mainView);
 
@@ -203,6 +208,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         statementRTA.setPrefWidth(nodeWidth);
+        statementRTA.getStylesheets().clear(); statementRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(statementRTA);
 
         Separator statementSeparator = new Separator(Orientation.HORIZONTAL);
@@ -219,6 +225,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         boxA.setSelected(fields.getValueA());
         CheckBox boxB = new CheckBox(fields.getPromptB());
         boxB.setSelected(fields.getValueB());
+        leaderLabel.setFont(labelFont); boxA.setFont(labelFont); boxB.setFont(labelFont);
+
         HBox abBox = new HBox(20);
         abBox.setPadding(new Insets(10,10,10,0));
         abBox.getChildren().addAll(leaderLabel, boxA, boxB);
@@ -250,15 +258,18 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
         commentRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         commentRTA.setPrefWidth(nodeWidth);
+        commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(commentRTA);
-
 
         return nodeList;
     }
     @Override
     public ABexercise getContentClearExercise() {
-        ABmodel currentModel = getABmodelFromView();
-        ABexercise clearExercise = new ABexercise(currentModel.getContentClearedModel(), mainWindow);
+        RichTextArea commentRTA = abView.getExerciseComment().getEditor();
+        commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        Document commentDocument = commentRTA.getDocument();
+        originalModel.setExerciseComment(commentDocument);
+        ABexercise clearExercise = new ABexercise(originalModel, mainWindow);
         return clearExercise;
     }
 

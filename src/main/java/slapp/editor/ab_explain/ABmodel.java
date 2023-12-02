@@ -34,16 +34,6 @@ public class ABmodel implements ExerciseModel<Document, ArrayList<Document>>, Se
         exerciseContent.add(position, new Document());
     }
 
-    ABmodel getContentClearedModel() {
-        ArrayList<Document> clearList = new ArrayList<>();
-        clearList.add(new Document());
-        exerciseContent = clearList;
-        modelFields.setValueA(false);
-        modelFields.setValueB(false);
-        return this;
-    }
-
-
     @Override
     public String getExerciseName() {
         return exerciseName;
@@ -60,6 +50,8 @@ public class ABmodel implements ExerciseModel<Document, ArrayList<Document>>, Se
     public Document getExerciseComment() {
         return exerciseComment;
     }
+    @Override
+    public void setExerciseComment(Document document) {this.exerciseComment = document; }
     @Override
     public Document getExerciseStatement() {
         return exerciseStatement;

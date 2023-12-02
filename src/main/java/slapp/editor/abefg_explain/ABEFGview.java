@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import slapp.editor.EditorAlerts;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
@@ -37,18 +38,17 @@ public class ABEFGview implements ExerciseView<DecoratedRTA, ArrayList<Decorated
     private HBox abBox = new HBox();
     private HBox efgBox = new HBox();
     private VBox checksBox = new VBox();
+    private Font labelFont = new Font("Noto Serif Combo", 11);
 
     public ABEFGview(MainWindowView mainView) {
         this.mainView = mainView;
+        leaderLabelAB.setFont(labelFont); checkBoxA.setFont(labelFont); checkBoxB.setFont(labelFont);
         abBox.getChildren().addAll(leaderLabelAB, checkBoxA, checkBoxB);
         abBox.setSpacing(20);
- //       abBox.setPadding(new Insets(10,10,10,10));
-//        abBox.setStyle("-fx-border-color: gainsboro; -fx-border-width: 2.2; -fx-background-color: white");
 
+        leaderLabelEFG.setFont(labelFont); checkBoxE.setFont(labelFont); checkBoxF.setFont(labelFont); checkBoxG.setFont(labelFont);
         efgBox.getChildren().addAll(leaderLabelEFG, checkBoxE, checkBoxF, checkBoxG);
         efgBox.setSpacing(20);
- //       efgBox.setPadding(new Insets(10));
-
 
         checksBox.getChildren().addAll(abBox, efgBox);
         checksBox.setStyle("-fx-border-color: gainsboro; -fx-border-width: 2.2; -fx-background-color: white");

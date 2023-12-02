@@ -18,6 +18,7 @@ import javafx.scene.layout.*;
 import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
+import slapp.editor.derivation.DerivationExercise;
 import slapp.editor.main_window.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import static javafx.scene.control.ButtonType.OK;
 public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditView> {
     private MainWindow mainWindow;
     private SimpleEditModel editModel;
+    private SimpleEditModel originalModel;
     private SimpleEditView editView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
@@ -37,6 +39,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     public SimpleEditExercise(SimpleEditModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.editModel = model;
+        this.originalModel = model;
         this.mainView = mainWindow.getMainView();
         this.editView = new SimpleEditView(mainView);
 
@@ -173,8 +176,9 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
         double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         statementRTA.setPrefHeight(statementHeight + 35.0);
-        statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
+        statementRTA.setContentAreaWidth(nodeWidth);
         statementRTA.setPrefWidth(nodeWidth);
+        statementRTA.getStylesheets().clear(); statementRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(statementRTA);
 
         Separator statementSeparator = new Separator(Orientation.HORIZONTAL);
@@ -210,15 +214,18 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
         commentRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         commentRTA.setPrefWidth(nodeWidth);
+        commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(commentRTA);
-
 
         return nodeList;
     }
     @Override
     public SimpleEditExercise getContentClearExercise() {
-        SimpleEditModel currentModel = getSimpleEditModelFromView();
-        SimpleEditExercise clearExercise = new SimpleEditExercise(currentModel.getContentClearedModel(), mainWindow);
+        RichTextArea commentRTA = editView.getExerciseComment().getEditor();
+        commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        Document commentDocument = commentRTA.getDocument();
+        originalModel.setExerciseComment(commentDocument);
+        SimpleEditExercise clearExercise = new SimpleEditExercise(originalModel, mainWindow);
         return clearExercise;
     }
 

@@ -168,7 +168,7 @@ public class MainWindow {
     private void clearExercise() {
         boolean okContinue = true;
         if (currentExercise.isExerciseModified()) {
-            Alert confirm = EditorAlerts.confirmationAlert("Confirm Clear", "This exercise appears to have been modified.  Continue to clear content?");
+            Alert confirm = EditorAlerts.confirmationAlert("Confirm Reset", "This exercise appears to have been modified.  Continue to reset content?");
             Optional<ButtonType> result = confirm.showAndWait();
             if (result.get() != OK) okContinue = false;
         }

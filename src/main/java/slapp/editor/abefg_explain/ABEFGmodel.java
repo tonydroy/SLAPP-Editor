@@ -34,19 +34,6 @@ public class ABEFGmodel implements ExerciseModel<Document, ArrayList<Document>>,
         exerciseContent.add(position, new Document());
     }
 
-    ABEFGmodel getContentClearedModel() {
-        ArrayList<Document> clearList = new ArrayList<>();
-        clearList.add(new Document());
-        exerciseContent = clearList;
-        modelFields.setValueA(false);
-        modelFields.setValueB(false);
-        modelFields.setValueE(false);
-        modelFields.setValueF(false);
-        modelFields.setValueF(false);
-        return this;
-    }
-
-
     @Override
     public String getExerciseName() {
         return exerciseName;
@@ -63,6 +50,8 @@ public class ABEFGmodel implements ExerciseModel<Document, ArrayList<Document>>,
     public Document getExerciseComment() {
         return exerciseComment;
     }
+    @Override
+    public void setExerciseComment(Document document) {this.exerciseComment = document; }
     @Override
     public Document getExerciseStatement() {
         return exerciseStatement;

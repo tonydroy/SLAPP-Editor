@@ -17,6 +17,8 @@ public class FrontPageModel implements ExerciseModel<Document, Document> {
     @Override
     public Document getExerciseComment() { return null; }
     @Override
+    public void setExerciseComment(Document document) {}
+    @Override
     public Document getExerciseStatement() { return null; }
     @Override
     public double getStatementPrefHeight() { return 0; }

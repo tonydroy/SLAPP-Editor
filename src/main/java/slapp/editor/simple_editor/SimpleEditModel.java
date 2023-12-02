@@ -31,13 +31,6 @@ public class SimpleEditModel implements ExerciseModel<Document, List<Document>>,
         exerciseContent.add(position, new Document());
     }
 
-    SimpleEditModel getContentClearedModel() {
-        ArrayList<Document> clearList = new ArrayList<>();
-        clearList.add(new Document());
-        exerciseContent = clearList;
-        return this;
-    }
-
 
     @Override
     public String getExerciseName() {
@@ -55,6 +48,8 @@ public class SimpleEditModel implements ExerciseModel<Document, List<Document>>,
     public Document getExerciseComment() {
         return exerciseComment;
     }
+    @Override
+    public void setExerciseComment(Document document) {this.exerciseComment = document; }
     @Override
     public Document getExerciseStatement() {
         return exerciseStatement;

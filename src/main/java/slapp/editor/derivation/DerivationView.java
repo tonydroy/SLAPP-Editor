@@ -49,6 +49,8 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
     private Button addGapButton;
     private Button insertSubButton;
     private Button insertSubsButton;
+    private Button undoButton;
+    private Button redoButton;
 
 
 
@@ -89,6 +91,8 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
         addGapButton = new Button("Add Gap");
         insertSubButton = new Button("Insert Subder");
         insertSubsButton = new Button("Insert Subders");
+        undoButton = new Button("Undo");
+        redoButton = new Button("Redo");
 
         insertLineButton.setPrefWidth(95);
         insertLineButton.setTooltip(new Tooltip("Insert blank line above current one"));
@@ -106,10 +110,18 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
         insertSubButton.setTooltip(new Tooltip("Insert subderivation above current line"));
         insertSubsButton.setPrefWidth(95);
         insertSubsButton.setTooltip(new Tooltip("Insert subderivation pair above current line"));
+        undoButton.setPrefWidth(95);
+        undoButton.setTooltip(new Tooltip("Undo last button action"));
 
-        VBox controlBox = new VBox(20, insertLineButton, deleteLineButton, indentButton, outdentButton, addShelfButton, addGapButton, insertSubButton, insertSubsButton);
+        redoButton.setPrefWidth(95);
+        redoButton.setTooltip(new Tooltip("Redo button action"));
+
+
+
+        VBox controlBox = new VBox(20, undoButton, redoButton, insertLineButton, deleteLineButton, indentButton, outdentButton, addShelfButton, addGapButton, insertSubButton, insertSubsButton);
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
-        controlBox.setPadding(new Insets(180,10,30,80));
+        controlBox.setMargin(insertLineButton, new Insets(0,0,20, 0));
+        controlBox.setPadding(new Insets(40,10,30,80));
         exerciseControlNode = controlBox;
     }
 
@@ -138,9 +150,9 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
             LineType lineType = viewLine.getLineType();
 
             RowConstraints constraint = new RowConstraints();
-            if (lineType == LineType.CONTENT_LINE) { constraint.setMinHeight(19); constraint.setMaxHeight(19); }
-            if (lineType == LineType.GAP_LINE) {constraint.setMinHeight(7); constraint.setMaxHeight(7); }
-            if (lineType == LineType.SHELF_LINE) {constraint.setMinHeight(5); constraint.setMaxHeight(5); }
+            if (LineType.isContentLine(lineType)) { constraint.setMinHeight(19); constraint.setMaxHeight(19); }
+            if (LineType.isGapLine(lineType)) {constraint.setMinHeight(7); constraint.setMaxHeight(7); }
+            if (LineType.isShelfLine(lineType)) {constraint.setMinHeight(5); constraint.setMaxHeight(5); }
 
             if (index >= gridRowConstraints.size()) gridRowConstraints.add(index, constraint);
             else gridRowConstraints.set(index, constraint);
@@ -184,7 +196,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
                     grid.add(spacer, i, index, 1, 1);
                 }
             }
-            if (lineType == LineType.CONTENT_LINE) {
+            if (LineType.isContentLine(lineType)) {
                 if (isLeftmostScopeLine || depth > 1)
                     contentBox.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1;");
                 else contentBox.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 0;");
@@ -195,8 +207,8 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
 
             } else {
                 Pane endSpacer = new Pane();
-                if (lineType == LineType.GAP_LINE) endSpacer.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 0;");
-                if (lineType == LineType.SHELF_LINE && (depth > 1 || isLeftmostScopeLine))  endSpacer.setStyle("-fx-border-color: black; -fx-border-width: 1 0 0 1;");
+                if (LineType.isGapLine(lineType)) endSpacer.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 0;");
+                if (LineType.isShelfLine(lineType) && (depth > 1 || isLeftmostScopeLine))  endSpacer.setStyle("-fx-border-color: black; -fx-border-width: 1 0 0 1;");
                 grid.add(endSpacer, depth, index, 1, 1);
             }
 
@@ -247,6 +259,10 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
     public Button getInsertSubsButton() {
         return insertSubsButton;
     }
+
+    public Button getUndoButton() { return undoButton;  }
+
+    public Button getRedoButton() {  return redoButton; }
 
     @Override
     public String getExerciseName() { return exerciseName; }

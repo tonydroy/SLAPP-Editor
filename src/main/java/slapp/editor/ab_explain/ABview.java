@@ -6,6 +6,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import slapp.editor.EditorAlerts;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
@@ -29,9 +30,11 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
     private Button removePageButton;
     private Node exerciseControlNode = new VBox();
     private HBox abBbox = new HBox();
+    private Font labelFont = new Font("Noto Serif Combo", 11);
 
     public ABview(MainWindowView mainView) {
         this.mainView = mainView;
+        leaderLabel.setFont(labelFont); checkBoxA.setFont(labelFont); checkBoxB.setFont(labelFont);
         abBbox.getChildren().addAll(leaderLabel, checkBoxA, checkBoxB);
         abBbox.setSpacing(20);
         abBbox.setPadding(new Insets(10,10,10,10));

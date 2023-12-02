@@ -15,11 +15,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
+import slapp.editor.simple_editor.SimpleEditExercise;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,15 +32,18 @@ import static javafx.scene.control.ButtonType.OK;
 public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
     private MainWindow mainWindow;
     private ABEFGmodel abefgModel;
+    private ABEFGmodel originalModel;
     private ABEFGview abefgView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
     private Node lastFocusedNode;
     private int lastPageNum = -1;
+    private Font labelFont = new Font("Noto Serif Combo", 11);
 
     public ABEFGexercise(ABEFGmodel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.abefgModel = model;
+        this.originalModel = model;
         this.mainView = mainWindow.getMainView();
         this.abefgView = new ABEFGview(mainView);
 
@@ -250,6 +255,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         statementRTA.setPrefWidth(nodeWidth);
+        statementRTA.getStylesheets().clear(); statementRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(statementRTA);
 
         Separator statementSeparator = new Separator(Orientation.HORIZONTAL);
@@ -266,6 +272,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         boxA.setSelected(fields.getValueA());
         CheckBox boxB = new CheckBox(fields.getPromptB());
         boxB.setSelected(fields.getValueB());
+        leaderLabelAB.setFont(labelFont); boxA.setFont(labelFont); boxB.setFont(labelFont);
         HBox abBox = new HBox(20);
         abBox.getChildren().addAll(leaderLabelAB, boxA, boxB);
 
@@ -276,6 +283,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         boxF.setSelected(fields.getValueF());
         CheckBox boxG = new CheckBox(fields.getPromptG());
         boxG.setSelected(fields.getValueG());
+        leaderLabelEFG.setFont(labelFont); boxE.setFont(labelFont); boxF.setFont(labelFont); boxG.setFont(labelFont);
         HBox efgBox = new HBox(20);
         efgBox.getChildren().addAll(leaderLabelEFG, boxE, boxF, boxG);
 
@@ -309,16 +317,20 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
         commentRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         commentRTA.setPrefWidth(nodeWidth);
+        commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(commentRTA);
-
 
         return nodeList;
     }
     @Override
     public ABEFGexercise getContentClearExercise() {
-        ABEFGmodel currentModel = getABEFGmodelFromView();
-        ABEFGexercise clearExercise = new ABEFGexercise(currentModel.getContentClearedModel(), mainWindow);
+        RichTextArea commentRTA = abefgView.getExerciseComment().getEditor();
+        commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        Document commentDocument = commentRTA.getDocument();
+        originalModel.setExerciseComment(commentDocument);
+        ABEFGexercise clearExercise = new ABEFGexercise(originalModel, mainWindow);
         return clearExercise;
+
     }
 
     @Override

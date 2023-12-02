@@ -76,7 +76,7 @@ public class MainWindowView {
     private MenuItem openExerciseItem = new MenuItem("Open");
     private MenuItem printExerciseItem = new MenuItem("Print");
     private MenuItem exportToPDFExerciseItem = new MenuItem("Export to PDF");
-    private MenuItem clearExerciseItem = new MenuItem("Clear");
+    private MenuItem clearExerciseItem = new MenuItem("Reset");
     private MenuItem closeExerciseItem = new MenuItem("Close");
 
     private MenuItem saveAssignmentItem = new MenuItem("Save");
