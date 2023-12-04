@@ -28,13 +28,13 @@ public class DerivationModel implements ExerciseModel<Document, List<ModelLine>>
 
         exerciseStatement = new Document("this is a statement");
 
-//        exerciseContent.add(new ModelLine(1, new Document("A"), "P", LineType.PREMISE_LINE));
-//        exerciseContent.add(new ModelLine(1, null, "", LineType.SETUP_SHELF_LINE));
-//        exerciseContent.add(new ModelLine(1, new Document(), "", LineType.MAIN_CONTENT_LINE));
-//        exerciseContent.add(new ModelLine(2, new Document("B"), "", LineType.MAIN_CONTENT_LINE));
-//        exerciseContent.add(new ModelLine(2, null, "", LineType.SHELF_LINE));
-//        exerciseContent.add(new ModelLine(2, new Document(), "", LineType.MAIN_CONTENT_LINE));
-//        exerciseContent.add(new ModelLine(2, new Document(), "", LineType.MAIN_CONTENT_LINE));
+        exerciseContent.add(new ModelLine(1, new Document("A"), "P", LineType.PREMISE_LINE));
+        exerciseContent.add(new ModelLine(1, null, "", LineType.SETUP_SHELF_LINE));
+        exerciseContent.add(new ModelLine(1, new Document(), "", LineType.MAIN_CONTENT_LINE));
+        exerciseContent.add(new ModelLine(2, new Document("B"), "", LineType.MAIN_CONTENT_LINE));
+        exerciseContent.add(new ModelLine(2, null, "", LineType.SHELF_LINE));
+        exerciseContent.add(new ModelLine(2, new Document(), "", LineType.MAIN_CONTENT_LINE));
+        exerciseContent.add(new ModelLine(2, new Document(), "", LineType.MAIN_CONTENT_LINE));
         exerciseContent.add(new ModelLine(1, new Document("result"), "2,3-4 xx", LineType.CONCLUSION_LINE));
 
 
@@ -82,7 +82,7 @@ public class DerivationModel implements ExerciseModel<Document, List<ModelLine>>
     public List<ModelLine> getExerciseContent() { return exerciseContent; }
     @Override
     public String getContentPrompt() { return contentPrompt; }
-    @Override
-    public String toString() { return exerciseName; }
+ //   @Override
+ //   public String toString() { return exerciseName; }
 
 }

@@ -13,6 +13,7 @@ module slapp.editor {
 
 
 
+
     opens slapp.editor to javafx.fxml;
     exports slapp.editor;
     exports slapp.editor.decorated_rta;

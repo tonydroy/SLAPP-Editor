@@ -16,6 +16,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import slapp.editor.EditorMain;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
@@ -142,6 +143,9 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
     }
 
     public void setGridFromViewLines() {
+
+ //       RichTextArea lastRTA = new RichTextArea(EditorMain.mainStage);
+
         grid.getChildren().clear();
         ObservableList<RowConstraints> gridRowConstraints = grid.getRowConstraints();
         int lineNumber = 1;
@@ -177,9 +181,14 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
                 rta.setPrefWidth(100);
                 rta.getStylesheets().add("slappDerivation.css");
 
+ //               rta.setFocusTraversable(false);
+
  //               rta.setStyle("-fx-border-color: green; -fx-border-width: 1 1 1 1");
 
                 contentBox.getChildren().add(rta);
+
+  //              lastRTA = rta;
+
 
 
                 contentBox.setHgrow(rta, Priority.ALWAYS);
@@ -200,6 +209,9 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
                 if (isLeftmostScopeLine || depth > 1)
                     contentBox.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1;");
                 else contentBox.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 0;");
+
+
+  //              contentBox.setFocusTraversable(false);
                 grid.add(contentBox, depth, index, 21 - depth, 1);
 
 
@@ -214,6 +226,8 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
 
             if (viewLine.getJustificationFlow() != null) grid.add(viewLine.getJustificationFlow(), 22, index);
         }
+
+ //       lastRTA.requestFocus();
     }
 
     public GridPane getGrid() { return grid; }
