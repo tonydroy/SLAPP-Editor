@@ -25,7 +25,6 @@ public class UndoRedoList<T> extends LinkedList<T> {
 
         currentIndex = 0;
         this.addFirst(element);
-        System.out.println("index: " + currentIndex + " size: " + this.size() + " list: " + this.toString());
 
     }
 
@@ -35,7 +34,7 @@ public class UndoRedoList<T> extends LinkedList<T> {
             currentIndex++;
             element = this.get(currentIndex);
         }
-        System.out.println("index: " + currentIndex + " undo element: " + element);
+
         return element;
     }
 
@@ -45,7 +44,7 @@ public class UndoRedoList<T> extends LinkedList<T> {
             currentIndex--;
             element = this.get(currentIndex);
         }
-        System.out.println("index: " + currentIndex + " redo element: " + element);
+
         return element;
     }
 

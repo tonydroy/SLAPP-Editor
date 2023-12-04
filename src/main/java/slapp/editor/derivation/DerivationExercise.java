@@ -29,7 +29,6 @@ import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,16 +42,13 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     private MainWindowView mainView;
     private boolean exerciseModified = false;
     private Node lastFocusedNode;
-
     private Font labelFont = new Font("Noto Serif Combo", 11);
     private boolean editJustification;
-
-
     private EventHandler justificationClickFilter;
     private RichTextArea lastJustificationRTA;
     private int lastJustificationRow;
     private UndoRedoList<DerivationModel> undoRedoList = new UndoRedoList<>(20);
-    private ChangeListener sceneFocusListener;
+
 
     public DerivationExercise(DerivationModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -62,8 +58,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         this.derivationView = new DerivationView(mainView);
         mainView.getMainScene().focusOwnerProperty().addListener((ob, ov, nv) -> {
             lastFocusedNode = ov;
-
-            System.out.println(nv.toString());
         });
         setDerivationView();
         pushUndoRedo();
@@ -108,10 +102,10 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         derivationView.getRedoButton().setOnAction(e -> redoAction());
 
         derivationView.initializeViewDetails();
+
         setViewLinesFromModel();
         derivationView.setGridFromViewLines();
         setContentFocusListeners();
-
     }
 
     private void setViewLinesFromModel() {
@@ -127,7 +121,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             LineType lineType = modelLine.getLineType();
             viewLine.setLineType(lineType);
 
-
             if (LineType.isContentLine(lineType)) {
                 Label numLabel = new Label();
                 numLabel.setText(Integer.toString(lineNumber++));
@@ -137,16 +130,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                 DecoratedRTA drta = new DecoratedRTA();
                 RichTextArea rta = drta.getEditor();
                 rta.setDocument(modelLine.getLineContentDoc());
-/*
-                rta.focusedProperty().addListener((o, ov, nv) -> {
-                    if (nv) {
-                        mainView.editorInFocus(drta, ControlType.FIELD);
-                    } else {
-                        if (rta.isModified()) pushUndoRedo();
-                    }
-                });
-
- */
+                rta.getActionFactory().saveNow().execute(new ActionEvent());
 
 
                 if (LineType.isSetupLine(lineType)) {
@@ -158,21 +142,17 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                     int row = derivationView.getGrid().getRowIndex(rta.getParent());
 
                     if (code == KeyCode.ENTER || (code == KeyCode.RIGHT && e.isShiftDown())) {
- //                       pushUndoRedo();
                         viewLine.getJustificationFlow().requestFocus();
                         e.consume();
                     } else if (code == KeyCode.LEFT && e.isShiftDown()) {
- //                       pushUndoRedo();
                         ViewLine contentLineAbove = getContentLineAbove(row);
                         if (contentLineAbove != null) contentLineAbove.getJustificationFlow().requestFocus();
                         e.consume();
                     } else if (code == KeyCode.UP) {
-  //                      pushUndoRedo();
                         ViewLine contentLineAbove = getContentLineAbove(row);
                         if (contentLineAbove != null) contentLineAbove.getLineContentDRTA().getEditor().requestFocus();
                         e.consume();
                     } else if (code == KeyCode.DOWN) {
- //                       pushUndoRedo();
                         ViewLine contentLineBelow = getContentLineBelow(row);
                         if (contentLineBelow != null) contentLineBelow.getLineContentDRTA().getEditor().requestFocus();
                         e.consume();
@@ -191,7 +171,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             viewLines.add(viewLine);
         }
         derivationView.setViewLines(viewLines);
-        setContentFocusListeners();
     }
 
     private void setContentFocusListeners() {
@@ -200,18 +179,17 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             if (LineType.isContentLine(viewLine.getLineType())) {
                 DecoratedRTA drta = viewLine.getLineContentDRTA();
                 RichTextArea rta = drta.getEditor();
+                mainView.editorInFocus(drta, ControlType.FIELD);
                 rta.focusedProperty().addListener((o, ov, nv) -> {
                     if (nv) {
                         mainView.editorInFocus(drta, ControlType.FIELD);
                     } else {
-                        if (rta.isModified()) pushUndoRedo();
+                        if (rta.isModified()) { pushUndoRedo();   }
                     }
                 });
             }
         }
     }
-
-
 
     private ViewLine getContentLineBelow(int row) {
         ViewLine line = null;
@@ -300,7 +278,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     TextFlow getStyledJustificationFlow(TextFlow flow) {
         flow.setFocusTraversable(true);
         flow.setMouseTransparent(false);
-
         flow.setMinWidth(100);
         flow.setMaxWidth(100);
         flow.setMaxHeight(20);
@@ -312,7 +289,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                 editJustificationField(flow);
             }
         });
-
         return flow;
     }
 
@@ -320,46 +296,30 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         int rowIndex = derivationView.getGrid().getRowIndex(flow);
         DecoratedRTA drta = new DecoratedRTA();
         RichTextArea rta = drta.getEditor();
-
-
         rta.setContentAreaWidth(110);
         rta.setPrefHeight(20);
         rta.setMaxWidth(100);
         rta.setMinWidth(100);
         rta.getStylesheets().add("slappDerivation.css");
-
-
-
         rta.setDocument(new Document(getStringFromJustificationFlow(flow)));
         rta.getActionFactory().saveNow().execute(new ActionEvent());
 
-
-        System.out.println("at formation modified: " + rta.isModified());
-
         if (derivationView.getViewLines().get(rowIndex).getLineType() == LineType.PREMISE_LINE) rta.setEditable(false);
-
         lastJustificationRTA = rta;
         lastJustificationRow = rowIndex;
-
         rta.applyCss();
         rta.layout();
 
         rta.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 editJustification = true;
-    //            justificationModified = false;
                 justificationClickFilter = new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
                         if (!inHierarchy(event.getPickResult().getIntersectedNode(), rta)) {
                             if (editJustification) {
                                 editJustification = false;
-
-      //                          justificationModified = rta.isModified();
                                 saveJustificationRTA(rta, rowIndex);
-     //                           if (justificationModified) pushUndoRedo();
-     //                           justificationModified = false;
-    //                            if (rta.isModified()) pushUndoRedo();
                             }
                         }
                     }
@@ -369,12 +329,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             else {
                 if (editJustification) {
                     editJustification = false;
-
-      //              if (rta.isModified()) pushUndoRedo();
                     saveJustificationRTA(rta, rowIndex);
-   //                 if (justificationModified) pushUndoRedo();
-   //                 justificationModified = false;
-  //                  justificationModified = rta.isModified();
                 }
             }
         });
@@ -382,7 +337,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         rta.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
             KeyCode code = e.getCode();
             int row = derivationView.getGrid().getRowIndex(rta);
-
 
             if (code == KeyCode.ENTER || (code == KeyCode.RIGHT && e.isShiftDown())) {
                 ViewLine contentLineBelow = getContentLineBelow(row);
@@ -401,7 +355,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                 e.consume();
             }
         });
-
         derivationView.getGrid().add(rta, 22, rowIndex);
         mainView.editorInFocus(drta, ControlType.STATEMENT);
     }
@@ -427,11 +380,11 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         rta.getActionFactory().saveNow().execute(new ActionEvent());
         String justificationString = rta.getDocument().getText();
         TextFlow justificationFlow = getJustificationFlow(justificationString, derivationView.getViewLines());
-
         derivationView.getViewLines().get(rowIndex).setJustificationFlow(justificationFlow);
- //       derivationView.setGridFromViewLines();
-        if (modified) pushUndoRedo();
 
+        derivationView.getGrid().add(justificationFlow, 22, rowIndex);
+//        derivationView.setGridFromViewLines();
+        if (modified) pushUndoRedo();
     }
 
     private String getStringFromJustificationFlow(TextFlow flow) {
@@ -463,19 +416,15 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             int row = derivationView.getGrid().getRowIndex(rta.getParent());
 
             if (code == KeyCode.ENTER || (code == KeyCode.RIGHT && e.isShiftDown())) {
-  //              pushUndoRedo();
                 derivationView.getViewLines().get(row).getJustificationFlow().requestFocus();
                 e.consume();
             } else if (code == KeyCode.LEFT && e.isShiftDown()) {
-  //              pushUndoRedo();
                 if (getContentLineAbove(row) != null) getContentLineAbove(row).getJustificationFlow().requestFocus();
                 e.consume();
             } else if (code == KeyCode.UP ) {
-  //              pushUndoRedo();
                 if (getContentLineAbove(row) != null) getContentLineAbove(row).getLineContentDRTA().getEditor().requestFocus();
                 e.consume();
             } else if (code == KeyCode.DOWN) {
- //               pushUndoRedo();
                 if (getContentLineBelow(row) != null) getContentLineBelow(row).getLineContentDRTA().getEditor().requestFocus();
                 e.consume();
             }
@@ -485,8 +434,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         TextFlow justificationFlow = getStyledJustificationFlow(flow);
         ViewLine viewLine = new ViewLine(numLabel, depth, LineType.MAIN_CONTENT_LINE, drta, justificationFlow, new ArrayList<Label>());
 
-
-
         derivationView.getViewLines().add(newRow, viewLine);
     }
 
@@ -494,14 +441,14 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         DerivationModel undoElement = undoRedoList.getUndoElement();
         if (undoElement != null) {
             derivationModel = (DerivationModel) SerializationUtils.clone(undoElement);
- //           setDerivationView();
             setViewLinesFromModel();
             derivationView.setGridFromViewLines();
-
-
             updateUndoRedoButtons();
+            setContentFocusListeners();
 
-            derivationView.getViewLines().get(0).getLineContentDRTA().getEditor().requestFocus();
+
+            //
+ //           derivationView.getViewLines().get(0).getLineContentDRTA().getEditor().requestFocus();
 
         }
     }
@@ -510,11 +457,14 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         DerivationModel redoElement = undoRedoList.getRedoElement();
         if (redoElement != null) {
             derivationModel = (DerivationModel) SerializationUtils.clone(redoElement);
-    //        setDerivationView();
             setViewLinesFromModel();
             derivationView.setGridFromViewLines();
             updateUndoRedoButtons();
-            derivationView.getViewLines().get(0).getLineContentDRTA().getEditor().requestFocus();
+            setContentFocusListeners();
+
+
+            //
+ //           derivationView.getViewLines().get(0).getLineContentDRTA().getEditor().requestFocus();
         }
     }
 
@@ -530,85 +480,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         DerivationModel deepCopy = (DerivationModel) SerializationUtils.clone(model);
         undoRedoList.push(deepCopy);
         updateUndoRedoButtons();
-
     }
-
-   /*
-    private List<ViewLine> cloneViewLines(List<ViewLine> origLines) {
-        List<ViewLine> newLines = new ArrayList<>();
-        for (int i = 0; i < origLines.size(); i++) {
-            ViewLine origLine = origLines.get(i);
-            ViewLine newLine = new ViewLine();
-
-
-            newLine.setDepth(origLine.getDepth());
-            newLine.setLineType(origLine.getLineType());
-
-            if (LineType.isContentLine(origLine.getLineType())) {
-
-                newLine.setLineNumberLabel(origLine.getLineNumberLabel());
-
-                DecoratedRTA newDRTA = new DecoratedRTA();
-                RichTextArea newRTA = newDRTA.getEditor();
-
-                DecoratedRTA origDRTA = origLine.getLineContentDRTA();
-                RichTextArea origRTA = origDRTA.getEditor();
-                boolean editable = origRTA.isEditable();
-                origRTA.setEditable(true);
-                origRTA.getActionFactory().saveNow().execute(new ActionEvent());
-                Document origDoc = origRTA.getDocument();
-                origRTA.setEditable(editable);
-
-                newRTA.setDocument(origDoc);
-                newRTA.focusedProperty().addListener((o, ov, nv) -> {
-                    if (nv) {
-                        mainView.editorInFocus(newDRTA, ControlType.FIELD);
-                    }
-                });
-                if (LineType.isSetupLine(origLine.getLineType())) {
-                    newRTA.setEditable(false);
-                }
-
-                newRTA.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
-                    KeyCode code = e.getCode();
-                    int row = derivationView.getGrid().getRowIndex(newRTA.getParent());
-
-                    if (code == KeyCode.ENTER || (code == KeyCode.RIGHT && e.isShiftDown())) {
-                        newLine.getJustificationFlow().requestFocus();
-                        e.consume();
-                    } else if (code == KeyCode.LEFT && e.isShiftDown()) {
-                        ViewLine contentLineAbove = getContentLineAbove(row);
-                        if (contentLineAbove != null) contentLineAbove.getJustificationFlow().requestFocus();
-                        e.consume();
-                    } else if (code == KeyCode.UP) {
-                        ViewLine contentLineAbove = getContentLineAbove(row);
-                        if (contentLineAbove != null) contentLineAbove.getLineContentDRTA().getEditor().requestFocus();
-                        e.consume();
-                    } else if (code == KeyCode.DOWN) {
-                        ViewLine contentLineBelow = getContentLineBelow(row);
-                        if (contentLineBelow != null) contentLineBelow.getLineContentDRTA().getEditor().requestFocus();
-                        e.consume();
-                    }
-                });
-                newLine.setLineContentDRTA(newDRTA);
-
-                String origJustString = getStringFromJustificationFlow(origLine.getJustificationFlow());
-                TextFlow newJustFlow = getJustificationFlow(origJustString, newLines);
-                newLine.setJustificationFlow(newJustFlow);
-            } else {
-                newLine.setLineNumberLabel(null);
-                newLine.setLineContentDRTA(null);
-                newLine.setJustificationFlow(null);
-            }
-
-            newLines.add(newLine);
-        }
-        return newLines;
-    }
-
-    */
-
-
 
     private void insertLineAction() {
         int row = -1;
@@ -618,24 +490,16 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             ViewLine viewLine = derivationView.getViewLines().get(row);
             int depth = viewLine.getDepth();
             if (!LineType.isSetupLine(viewLine.getLineType()) || viewLine.getLineType() == LineType.CONCLUSION_LINE) {
-
-
                 addEmptyViewContentRow(row, depth);
-
-
                 pushUndoRedo();
-
                 derivationView.setGridFromViewLines();
-
 
                 DecoratedRTA drta = derivationView.getViewLines().get(row).getLineContentDRTA();
                 RichTextArea rta = drta.getEditor();
                 rta.applyCss();
                 rta.layout();
 
-
                 mainView.editorInFocus(drta, ControlType.FIELD);
-
                 rta.focusedProperty().addListener((o, ov, nv) -> {
                     if (nv) {
                         mainView.editorInFocus(drta, ControlType.FIELD);
@@ -643,7 +507,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                         if (rta.isModified()) pushUndoRedo();
                     }
                 });
-
             } else {
                 EditorAlerts.fleetingPopup("Cannot modify setup lines.");
             }

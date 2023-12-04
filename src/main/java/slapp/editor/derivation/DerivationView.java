@@ -144,7 +144,8 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
 
     public void setGridFromViewLines() {
 
- //       RichTextArea lastRTA = new RichTextArea(EditorMain.mainStage);
+
+
 
         grid.getChildren().clear();
         ObservableList<RowConstraints> gridRowConstraints = grid.getRowConstraints();
@@ -187,7 +188,8 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
 
                 contentBox.getChildren().add(rta);
 
-  //              lastRTA = rta;
+
+
 
 
 
@@ -227,7 +229,9 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
             if (viewLine.getJustificationFlow() != null) grid.add(viewLine.getJustificationFlow(), 22, index);
         }
 
- //       lastRTA.requestFocus();
+
+
+   //     lastRTA.requestFocus();
     }
 
     public GridPane getGrid() { return grid; }
