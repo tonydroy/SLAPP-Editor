@@ -52,6 +52,7 @@ public class FrontPageView implements ExerciseView<Label, Label> {
         exerciseComment.getParagraphToolbar().setMouseTransparent(true);
         exerciseComment.getEditToolbar().setFocusTraversable(false);
         exerciseComment.getEditToolbar().setMouseTransparent(true);
+        mainView.editorInFocus(exerciseComment, ControlType.NONE);
         exerciseComment.getEditor().focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(exerciseComment, ControlType.NONE);

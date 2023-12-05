@@ -191,6 +191,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         }
     }
 
+
+
     private ViewLine getContentLineBelow(int row) {
         ViewLine line = null;
         row++;
@@ -444,7 +446,11 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             setViewLinesFromModel();
             derivationView.setGridFromViewLines();
             updateUndoRedoButtons();
+
+
             setContentFocusListeners();
+
+
 
 
             //
@@ -486,7 +492,12 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         int row = -1;
         if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
+
+  //      System.out.println(row);
+
         if (row >= 0) {
+
+
             ViewLine viewLine = derivationView.getViewLines().get(row);
             int depth = viewLine.getDepth();
             if (!LineType.isSetupLine(viewLine.getLineType()) || viewLine.getLineType() == LineType.CONCLUSION_LINE) {
@@ -505,6 +516,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                         mainView.editorInFocus(drta, ControlType.FIELD);
                     } else {
                         if (rta.isModified()) pushUndoRedo();
+
+
                     }
                 });
             } else {

@@ -128,6 +128,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         RichTextArea statementEditor = statementDRTA.getEditor();
         statementEditor.setDocument(abefgModel.getExerciseStatement());
         abefgView.setStatementPrefHeight(abefgModel.getStatementPrefHeight());
+        mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
@@ -138,6 +139,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.setDocument(abefgModel.getExerciseComment());
+        mainView.editorInFocus(commentDRTA, ControlType.AREA);
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
@@ -151,6 +153,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
             RichTextArea editor = drta.getEditor();
             editor.setDocument(doc);
             editor.getActionFactory().saveNow().execute(new ActionEvent());
+            mainView.editorInFocus(drta, ControlType.AREA);
             editor.focusedProperty().addListener((o, ov, nv) -> {
                 if (nv) {
                     mainView.editorInFocus(drta, ControlType.AREA);
@@ -172,6 +175,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         DecoratedRTA drta = new DecoratedRTA();
         RichTextArea editor = drta.getEditor();
         editor.getActionFactory().saveNow().execute(new ActionEvent());
+        mainView.editorInFocus(drta, ControlType.AREA);
         editor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(drta, ControlType.AREA);
