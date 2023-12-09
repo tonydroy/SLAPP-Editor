@@ -15,7 +15,7 @@ public interface ExerciseModel<T, U> extends Serializable {
     void setStatementPrefHeight(double height);
     U getExerciseContent();
     String getContentPrompt();
-  //  String toString();
+    String toString();
 
 }
 

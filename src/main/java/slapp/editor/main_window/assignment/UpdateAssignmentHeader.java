@@ -118,13 +118,13 @@ public class UpdateAssignmentHeader {
         borderPane.setCenter(centerBox);
 
 
-        String helpText = "Fill in the name field.  Additional information may be included by optional fields.\n\n" +
+        String helpText = "Fill in the name field.  Additional information (as student number, course section) may be included by optional fields.\n\n" +
                 "NOTE: Once you click 'Update', you will not be able to return to this window in order to update the header again - without starting the entire assignment over.  Be sure that header fields are filled out completely and correctly!";
 
 
         TextArea helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(110);
+        helpArea.setPrefHeight(130);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);

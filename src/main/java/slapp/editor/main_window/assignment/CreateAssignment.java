@@ -293,7 +293,7 @@ public class CreateAssignment {
 
         borderPane.setRight(buttonBox);
 
-        String helpText = "Name the assignment.  Optional identifying fields may be included as appropriate.\n\n" +
+        String helpText = "Name the assignment.  Optional identifying fields (as course, instructor) may be included as appropriate.\n\n" +
                 "Build an assignment by opening a folder with SlAPP exercise files (*.sle).  A selected exercise is added to the assignment above or below a selected assignment item by the add buttons.  " +
                 "And similarly a selected assignment item is removed by the 'remove' button.";
 

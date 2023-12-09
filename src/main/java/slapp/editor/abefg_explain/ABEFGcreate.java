@@ -24,6 +24,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
@@ -38,7 +40,7 @@ import static javafx.scene.control.ButtonType.OK;
 
 public class ABEFGcreate {
     private MainWindow mainWindow;
-    private RichTextArea statementEditor;
+    private RichTextArea statementRTA;
     private DecoratedRTA statementDRTA;
     private TextField nameField;
     private TextField leaderABfield;
@@ -72,12 +74,11 @@ public class ABEFGcreate {
         setupWindow();
     }
 
-    public ABEFGcreate(MainWindow mainWindow, ABEFGexercise originalExercise) {
+    public ABEFGcreate(MainWindow mainWindow, ABEFGmodel originalModel) {
         this(mainWindow);
-        RichTextArea originalRTA = originalExercise.getExerciseView().getExerciseStatement().getEditor();
-        statementEditor.setDocument(originalRTA.getDocument());
-        statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
-        ABEFGmodel originalModel = originalExercise.getExerciseModel();
+
+        statementRTA.setDocument(originalModel.getExerciseStatement());
+        statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
         nameField.setText(originalModel.getExerciseName());
         explainPromptField.setText(originalModel.getContentPrompt());
@@ -109,12 +110,12 @@ public class ABEFGcreate {
         MenuBar menuBar = new MenuBar(helpMenu);
 
         statementDRTA = new DecoratedRTA();
-        statementEditor = statementDRTA.getEditor();
-        statementEditor.getStylesheets().add("slappTextArea.css");
-        statementEditor.setPromptText("Exercise Statement:");
-        statementEditor.setPrefWidth(PrintUtilities.getPageWidth() + 20);
-        statementEditor.setContentAreaWidth(PrintUtilities.getPageWidth());
-        statementEditor.setPrefHeight(200);
+        statementRTA = statementDRTA.getEditor();
+        statementRTA.getStylesheets().add("slappTextArea.css");
+        statementRTA.setPromptText("Exercise Statement:");
+        statementRTA.setPrefWidth(PrintUtilities.getPageWidth() + 20);
+        statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
+        statementRTA.setPrefHeight(200);
 
         Label nameLabel = new Label("Exercise Name: ");
         nameField  = new TextField();
@@ -257,7 +258,7 @@ public class ABEFGcreate {
         helpArea.setMouseTransparent(true);
         helpArea.setStyle("-fx-text-fill: mediumslateblue");
 
-        centerBox = new VBox(10, statementEditor, helpArea);
+        centerBox = new VBox(10, statementRTA, helpArea);
 
         Group centerGroup = new Group(centerBox);
         borderPane.setCenter(centerGroup);
@@ -300,10 +301,43 @@ public class ABEFGcreate {
             scene.getWindow().setWidth(Math.max(860, PrintUtilities.getPageWidth() * scale + 55));
             setCenterVgrow();
         });
-        ToolBar fontsToolBar = statementDRTA.getFontsToolbar();
-        fontsToolBar.getItems().addAll(zoomLabel, zoomSpinner);
+        FontIcon heightIcon = new FontIcon(LineAwesomeSolid.TEXT_HEIGHT);
+        heightIcon.setIconSize(20);
+        Button updateHeightButton = new Button();
+        updateHeightButton.setGraphic(heightIcon);
+        updateHeightButton.setDisable(true);
 
-        VBox topBox = new VBox(menuBar, statementDRTA.getEditToolbar(), fontsToolBar, statementDRTA.getParagraphToolbar(), gridBox );
+        saveButton = new Button();
+        FontIcon saveIcon = new FontIcon(LineAwesomeSolid.SAVE);
+        saveIcon.setIconSize(20);
+        saveButton.setGraphic(saveIcon);
+        saveButton.setDisable(true);
+
+
+        ToolBar editToolbar = statementDRTA.getEditToolbar();
+        ToolBar fontsToolbar = statementDRTA.getFontsToolbar();
+        ToolBar insertToolbar = statementDRTA.getInsertToolbar();
+        ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
+        ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
+
+
+        if (!kbdDiaToolBar.getItems().contains(zoomSpinner)) {
+            kbdDiaToolBar.getItems().add(0, updateHeightButton);
+            kbdDiaToolBar.getItems().add(0, zoomSpinner);
+            kbdDiaToolBar.getItems().add(0, zoomLabel);
+            kbdDiaToolBar.getItems().add(saveButton);
+        }
+
+        HBox insertAndFontsBox = new HBox(insertToolbar, fontsToolbar);
+        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
+
+
+
+        VBox topBox = new VBox(menuBar, paragraphToolbar, insertAndFontsBox, editAndKbdBox, gridBox );
+
+
+
+
         borderPane.setTop(topBox);
 
         stage = new Stage();
@@ -320,7 +354,7 @@ public class ABEFGcreate {
         });
 
         stage.show();
-        statementEditor.getActionFactory().save().execute(new ActionEvent());
+        statementRTA.getActionFactory().save().execute(new ActionEvent());
         centerBox.layout();
         setCenterVgrow();
         Platform.runLater(() -> nameField.requestFocus());
@@ -345,7 +379,7 @@ public class ABEFGcreate {
         DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
         centerHeightProperty = new SimpleDoubleProperty();
         centerHeightProperty.bind(Bindings.min(maximumHeightProperty, (stage.heightProperty().subtract(fixedValueProperty)).divide(scaleProperty)));
-        statementEditor.prefHeightProperty().bind(centerHeightProperty);
+        statementRTA.prefHeightProperty().bind(centerHeightProperty);
     }
 
     private void closeWindow() {
@@ -357,9 +391,9 @@ public class ABEFGcreate {
 
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
-            statementEditor.getActionFactory().newDocument().execute(new ActionEvent());
-            statementEditor.setDocument(new Document());
-            statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
+            statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
+            statementRTA.setDocument(new Document());
+            statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
             fieldsModified = false;
@@ -369,7 +403,7 @@ public class ABEFGcreate {
 
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
-        if (fieldsModified || statementEditor.isModified()) {
+        if (fieldsModified || statementRTA.isModified()) {
             Alert confirm = EditorAlerts.confirmationAlert(title, content);
             Optional<ButtonType> result = confirm.showAndWait();
             if (result.get() != OK) okcontinue = false;
@@ -413,8 +447,9 @@ public class ABEFGcreate {
 
         ABEFGmodelExtra fields = new ABEFGmodelExtra(leaderAB, promptA, false, promptB, false, leaderEFG, promptE, false, promptF, false, promptG, false);
         String prompt = explainPromptField.getText();
-        statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
-        Document statementDocument = statementEditor.getDocument();
+        if (statementRTA.isModified()) fieldsModified = true;
+        statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        Document statementDocument = statementRTA.getDocument();
         ABEFGmodel model = new ABEFGmodel(name, fields,  false, prompt, 70.0, statementDocument, new Document(), new ArrayList<Document>());
         return model;
     }

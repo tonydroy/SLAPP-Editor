@@ -94,19 +94,13 @@ public class MainWindowView {
     private MenuItem exportAssignmentToPDFItemPM = new MenuItem("Export Assignment");
     private MenuItem pageSetupItem = new MenuItem("Page Setup");
     private MenuItem exportSetupItem = new MenuItem("Export Setup");
-    Menu previousExerciseMenu = new Menu("Previous");
-    Menu nextExerciseMenu = new Menu("Next");
-    Menu goToExerciseMenu = new Menu("Jump");
-    Menu assignmentCommentMenu = new Menu("Comment");
+
+    Menu previousExerciseMenu = new Menu();
+    Menu nextExerciseMenu = new Menu();
+    Menu goToExerciseMenu = new Menu();
+    Menu assignmentCommentMenu = new Menu();
+
     HBox menuBox;
-
-
-
-
-
-
-
-
 
     public MainWindowView(MainWindow controller) {
         this.mainWindow = controller;
@@ -114,14 +108,6 @@ public class MainWindowView {
     }
 
     private void setupWindow() {
-
-        //dummy items
-        previousExerciseMenu.getItems().add(new MenuItem());
-        nextExerciseMenu.getItems().add(new MenuItem());
-        goToExerciseMenu.getItems().add(new MenuItem());
-        assignmentCommentMenu.getItems().add(new MenuItem());
-
-
 
 
         Menu assignmentMenu = new Menu("Assignment");

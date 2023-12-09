@@ -10,9 +10,9 @@ import java.util.List;
 public class DerivationModel implements ExerciseModel<Document, List<ModelLine>>, Serializable {
     private String exerciseName = new String("");
     private boolean started = false;
-    private String contentPrompt = "";
     private double statementPrefHeight = 80;
     private double gridWidth = 0;
+
     private boolean isLeftmostScopeLine = true;
     private boolean defaultShelf = true;
     private Document exerciseStatement = new Document();
@@ -41,12 +41,10 @@ public class DerivationModel implements ExerciseModel<Document, List<ModelLine>>
     }
 
 
-    public DerivationModel(String name, boolean started, String prompt, double statementPrefHeight, double gridWidth, boolean isLeftmostScopeLine, boolean defaultShelf, Document exerciseStatement, Document exerciseComment, List<ModelLine> exerciseContent) {
+    public DerivationModel(String name, boolean started, double statementPrefHeight, double gridWidth, boolean isLeftmostScopeLine, boolean defaultShelf, Document exerciseStatement, Document exerciseComment, List<ModelLine> exerciseContent) {
         this.exerciseName = name;
         this.started = started;
-        this.contentPrompt = prompt;
         this.statementPrefHeight = statementPrefHeight;
-        this.gridWidth = gridWidth;
         this.isLeftmostScopeLine = isLeftmostScopeLine();
         this.defaultShelf = defaultShelf;
         this.exerciseStatement = exerciseStatement;
@@ -60,7 +58,7 @@ public class DerivationModel implements ExerciseModel<Document, List<ModelLine>>
     public boolean isDefaultShelf() { return defaultShelf; }
     public void setDefaultShelf(boolean defaultShelf) { this.defaultShelf = defaultShelf; }
 
-    public double getGridWidth() { return gridWidth; }
+    public double getGridWidth() {return gridWidth; }
 
     @Override
     public String getExerciseName() { return exerciseName; }
@@ -81,8 +79,8 @@ public class DerivationModel implements ExerciseModel<Document, List<ModelLine>>
     @Override
     public List<ModelLine> getExerciseContent() { return exerciseContent; }
     @Override
-    public String getContentPrompt() { return contentPrompt; }
- //   @Override
- //   public String toString() { return exerciseName; }
+    public String getContentPrompt() { return ""; }
+    @Override
+    public String toString() { return exerciseName; }
 
 }

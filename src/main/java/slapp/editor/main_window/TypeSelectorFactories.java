@@ -7,11 +7,13 @@ import slapp.editor.ab_explain.ABmodel;
 import slapp.editor.abefg_explain.ABEFGcreate;
 import slapp.editor.abefg_explain.ABEFGexercise;
 import slapp.editor.abefg_explain.ABEFGmodel;
+import slapp.editor.derivation.DerivationCreate;
 import slapp.editor.derivation.DerivationExercise;
 import slapp.editor.derivation.DerivationModel;
 import slapp.editor.simple_editor.SimpleEditCreate;
 import slapp.editor.simple_editor.SimpleEditExercise;
 import slapp.editor.simple_editor.SimpleEditModel;
+
 
 public class TypeSelectorFactories {
     private MainWindow mainWindow;
@@ -37,6 +39,10 @@ public class TypeSelectorFactories {
                 ABEFGmodel abefgModel = (ABEFGmodel) objectModel;
                 return new ABEFGexercise(abefgModel, mainWindow);
             }
+            case "DerivationModel": {
+                DerivationModel derivationModel = (DerivationModel) objectModel;
+                return new DerivationExercise(derivationModel, mainWindow);
+            }
 
             default: {
                 EditorAlerts.showSimpleAlert("Cannot Open", "I do not recognize this as a SLAPP exercise file");
@@ -51,34 +57,43 @@ public class TypeSelectorFactories {
 
             case "SimpleEditModel": {
                 SimpleEditModel editModel = (SimpleEditModel) objectModel;
-                SimpleEditExercise editExercise = new SimpleEditExercise(editModel, mainWindow);
-                if (editExercise.getExerciseModel().isStarted()) {
+                if (editModel.isStarted()) {
                     EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
                     break;
                 }
-                SimpleEditCreate simpleEditCreate = new SimpleEditCreate(mainWindow, editExercise);
+                SimpleEditCreate simpleEditCreate = new SimpleEditCreate(mainWindow, editModel);
                 break;
             }
             case "ABmodel": {
                 ABmodel abModel = (ABmodel) objectModel;
-                ABexercise abExercise = new ABexercise(abModel, mainWindow);
-                if (abExercise.getExerciseModel().isStarted()) {
+                if (abModel.isStarted()) {
                     EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
                     break;
                 }
-                ABcreate abCreate = new ABcreate(mainWindow, abExercise);
+                ABcreate abCreate = new ABcreate(mainWindow, abModel);
                 break;
             }
             case "ABEFGmodel": {
                 ABEFGmodel abefgModel = (ABEFGmodel) objectModel;
-                ABEFGexercise abefgExercise = new ABEFGexercise(abefgModel, mainWindow);
-                if (abefgExercise.getExerciseModel().isStarted()) {
+                if (abefgModel.isStarted()) {
                     EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
                     break;
                 }
-                ABEFGcreate abefgCreate = new ABEFGcreate(mainWindow, abefgExercise);
+                ABEFGcreate abefgCreate = new ABEFGcreate(mainWindow, abefgModel);
                 break;
             }
+
+            case "DerivationModel": {
+                DerivationModel derivationModel = (DerivationModel) objectModel;
+                if (derivationModel.isStarted()) {
+                    EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
+                    break;
+                }
+                DerivationCreate derivationCreate = new DerivationCreate(mainWindow, derivationModel);
+                break;
+            }
+
+
 
             default: {
                 EditorAlerts.showSimpleAlert("Cannot Open", "I do not recognize this as a SLAPP exercise file.");
@@ -96,9 +111,7 @@ public class TypeSelectorFactories {
                 break;
             }
             case DERIVATION: {
-                mainWindow.currentExercise = new DerivationExercise(new DerivationModel(), mainWindow);   //hijack for testing
-                mainWindow.getMainView().setupExercise();
-                mainWindow.getMainView().setCenterVgrow();
+                DerivationCreate derivationCreate = new DerivationCreate(mainWindow);
                 break;
             }
             case ABEFG_EXPLAIN: {

@@ -23,6 +23,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
@@ -37,7 +39,7 @@ import static javafx.scene.control.ButtonType.OK;
 
 public class ABcreate {
     private MainWindow mainWindow;
-    private RichTextArea statementEditor;
+    private RichTextArea statementRTA;
     private DecoratedRTA statementDRTA;
     private TextField nameField;
     private TextField leaderField;
@@ -65,12 +67,10 @@ public class ABcreate {
         setupWindow();
     }
 
-    public ABcreate(MainWindow mainWindow, ABexercise originalExercise) {
+    public ABcreate(MainWindow mainWindow, ABmodel originalModel) {
         this(mainWindow);
-        RichTextArea originalRTA = originalExercise.getExerciseView().getExerciseStatement().getEditor();
-        statementEditor.setDocument(originalRTA.getDocument());
-        statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
-        ABmodel originalModel = originalExercise.getExerciseModel();
+        statementRTA.setDocument(originalModel.getExerciseStatement());
+        statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
         nameField.setText(originalModel.getExerciseName());
         contentPromptField.setText(originalModel.getContentPrompt());
@@ -97,12 +97,12 @@ public class ABcreate {
         MenuBar menuBar = new MenuBar(helpMenu);
 
         statementDRTA = new DecoratedRTA();
-        statementEditor = statementDRTA.getEditor();
-        statementEditor.getStylesheets().add("slappTextArea.css");
-        statementEditor.setPromptText("Exercise Statement:");
-        statementEditor.setPrefWidth(PrintUtilities.getPageWidth() + 20);
-        statementEditor.setContentAreaWidth(PrintUtilities.getPageWidth());
-        statementEditor.setPrefHeight(200);
+        statementRTA = statementDRTA.getEditor();
+        statementRTA.getStylesheets().add("slappTextArea.css");
+        statementRTA.setPromptText("Exercise Statement:");
+        statementRTA.setPrefWidth(PrintUtilities.getPageWidth() + 20);
+        statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
+        statementRTA.setPrefHeight(200);
 
         Label nameLabel = new Label("Exercise Name: ");
         nameLabel.setPrefWidth(100);
@@ -201,7 +201,7 @@ public class ABcreate {
         helpArea.setMouseTransparent(true);
         helpArea.setStyle("-fx-text-fill: mediumslateblue");
 
-        centerBox = new VBox(10, statementEditor, helpArea);
+        centerBox = new VBox(10, statementRTA, helpArea);
 
         Group centerGroup = new Group(centerBox);
         borderPane.setCenter(centerGroup);
@@ -244,10 +244,44 @@ public class ABcreate {
             scene.getWindow().setWidth(Math.max(860, PrintUtilities.getPageWidth() * scale + 55));
             setCenterVgrow();
         });
-        ToolBar fontsToolBar = statementDRTA.getFontsToolbar();
-        fontsToolBar.getItems().addAll(zoomLabel, zoomSpinner);
 
-        VBox topBox = new VBox(menuBar, statementDRTA.getEditToolbar(), fontsToolBar, statementDRTA.getParagraphToolbar(), textFieldsPromptBox );
+        FontIcon heightIcon = new FontIcon(LineAwesomeSolid.TEXT_HEIGHT);
+        heightIcon.setIconSize(20);
+        Button updateHeightButton = new Button();
+        updateHeightButton.setGraphic(heightIcon);
+        updateHeightButton.setDisable(true);
+
+        saveButton = new Button();
+        FontIcon saveIcon = new FontIcon(LineAwesomeSolid.SAVE);
+        saveIcon.setIconSize(20);
+        saveButton.setGraphic(saveIcon);
+        saveButton.setDisable(true);
+
+
+        ToolBar editToolbar = statementDRTA.getEditToolbar();
+        ToolBar fontsToolbar = statementDRTA.getFontsToolbar();
+        ToolBar insertToolbar = statementDRTA.getInsertToolbar();
+        ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
+        ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
+
+
+        if (!kbdDiaToolBar.getItems().contains(zoomSpinner)) {
+            kbdDiaToolBar.getItems().add(0, updateHeightButton);
+            kbdDiaToolBar.getItems().add(0, zoomSpinner);
+            kbdDiaToolBar.getItems().add(0, zoomLabel);
+            kbdDiaToolBar.getItems().add(saveButton);
+        }
+
+        HBox insertAndFontsBox = new HBox(insertToolbar, fontsToolbar);
+        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
+
+
+
+        VBox topBox = new VBox(menuBar, paragraphToolbar, insertAndFontsBox, editAndKbdBox, textFieldsPromptBox );
+
+
+
+
         borderPane.setTop(topBox);
 
         stage = new Stage();
@@ -264,7 +298,7 @@ public class ABcreate {
         });
 
         stage.show();
-        statementEditor.getActionFactory().save().execute(new ActionEvent());
+        statementRTA.getActionFactory().save().execute(new ActionEvent());
         centerBox.layout();
         setCenterVgrow();
         Platform.runLater(() -> nameField.requestFocus());
@@ -289,7 +323,7 @@ public class ABcreate {
         DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
         centerHeightProperty = new SimpleDoubleProperty();
         centerHeightProperty.bind(Bindings.min(maximumHeightProperty, (stage.heightProperty().subtract(fixedValueProperty)).divide(scaleProperty)));
-        statementEditor.prefHeightProperty().bind(centerHeightProperty);
+        statementRTA.prefHeightProperty().bind(centerHeightProperty);
     }
 
     private void closeWindow() {
@@ -304,9 +338,9 @@ public class ABcreate {
 
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-            statementEditor.getActionFactory().newDocument().execute(new ActionEvent());
-            statementEditor.setDocument(new Document());
-            statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
+            statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
+            statementRTA.setDocument(new Document());
+            statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             fieldsModified = false;
             viewExercise();
         }
@@ -314,7 +348,7 @@ public class ABcreate {
 
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
-        if (fieldsModified || statementEditor.isModified()) {
+        if (fieldsModified || statementRTA.isModified()) {
             Alert confirm = EditorAlerts.confirmationAlert(title, content);
             Optional<ButtonType> result = confirm.showAndWait();
             if (result.get() != OK) okcontinue = false;
@@ -353,8 +387,9 @@ public class ABcreate {
         String Bprompt = promptFieldB.getText();
         ABmodelExtra fields = new ABmodelExtra(leader, Aprompt, false, Bprompt, false);
         String prompt = contentPromptField.getText();
-        statementEditor.getActionFactory().saveNow().execute(new ActionEvent());
-        Document statementDocument = statementEditor.getDocument();
+        if (statementRTA.isModified()) fieldsModified = true;
+        statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        Document statementDocument = statementRTA.getDocument();
         ABmodel model = new ABmodel(name, fields,  false, prompt, 70.0, statementDocument, new Document(), new ArrayList<Document>());
         return model;
     }

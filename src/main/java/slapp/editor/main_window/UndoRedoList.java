@@ -25,6 +25,7 @@ public class UndoRedoList<T> extends LinkedList<T> {
 
         currentIndex = 0;
         this.addFirst(element);
+  //      System.out.println("push: " + this.toString());
 
     }
 

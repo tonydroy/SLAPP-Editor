@@ -3,12 +3,13 @@ package slapp.editor.main_window;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.util.Callback;
@@ -21,7 +22,6 @@ import slapp.editor.main_window.assignment.*;
 import slapp.editor.simple_editor.SimpleEditExercise;
 import slapp.editor.simple_editor.SimpleEditModel;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -75,7 +75,7 @@ public class MainWindow {
         mainView.getSaveExerciseItem().setOnAction(e -> saveExercise(false));
         mainView.getSaveAsExerciseItem().setOnAction(e -> saveExercise(true));
         mainView.getOpenExerciseItem().setOnAction(e -> openExercise());
-        mainView.getClearExerciseItem().setOnAction(e -> clearExercise());
+        mainView.getClearExerciseItem().setOnAction(e -> resetExercise());
         mainView.getCloseExerciseItem().setOnAction(e -> closeExercise());
         mainView.getPrintExerciseItem().setOnAction(e -> printExercise());
         mainView.getExportToPDFExerciseItem().setOnAction(e -> exportExerciseToPDF());
@@ -99,10 +99,47 @@ public class MainWindow {
         mainView.getUpdateHeightButton().setOnAction(e -> {
             updateNodeContainerHeight(lastFocusOwner, true);
         });
-        mainView.getPreviousExerciseMenu().onShownProperty().setValue(e -> {mainView.getPreviousExerciseMenu().hide(); previousExercise();});
-        mainView.getNextExerciseMenu().onShownProperty().setValue(e -> {mainView.getNextExerciseMenu().hide(); nextExercise();});
-        mainView.getGoToExerciseMenu().onShownProperty().setValue(e -> {mainView.getGoToExerciseMenu().hide(); goToExercise();});
-        mainView.getAssignmentCommentMenu().onShownProperty().setValue(e -> {mainView.getAssignmentCommentMenu().hide(); assignmentComment();});
+
+        Label previousExerciseLabel = new Label("Previous");
+        previousExerciseLabel.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                previousExercise();
+            }
+        });
+        mainView.getPreviousExerciseMenu().setGraphic(previousExerciseLabel);
+
+
+        Label nextExerciseLabel = new Label("Next");
+        nextExerciseLabel.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                nextExercise();
+            }
+        });
+        mainView.getNextExerciseMenu().setGraphic(nextExerciseLabel);
+
+
+        Label goToExerciseLabel = new Label("Jump");
+        goToExerciseLabel.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                goToExercise();
+            }
+        });
+        mainView.getGoToExerciseMenu().setGraphic(goToExerciseLabel);
+
+
+        Label assignmentCommentLabel = new Label("Comment");
+        assignmentCommentLabel.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                assignmentComment();
+            }
+        });
+        mainView.getAssignmentCommentMenu().setGraphic(assignmentCommentLabel);
+
+
     }
 
 
@@ -165,7 +202,7 @@ public class MainWindow {
         }
         else EditorAlerts.fleetingPopup("No named exercise to save.");
     }
-    private void clearExercise() {
+    private void resetExercise() {
         boolean okContinue = true;
         if (currentExercise.isExerciseModified()) {
             Alert confirm = EditorAlerts.confirmationAlert("Confirm Reset", "This exercise appears to have been modified.  Continue to reset content?");
@@ -469,7 +506,12 @@ public class MainWindow {
             Popup exercisePopup = new Popup();
             ListView exerciseList = new ListView();
             exerciseList.setPadding(new Insets(5));
-            exerciseList.setStyle("-fx-background-color: gainsboro");
+            exerciseList.setStyle("-fx-border-color: white; -fx-background-color: white; -fx-border-width: 0");
+
+            exerciseList.getItems().addAll(currentAssignment.getExerciseModels());
+
+            exerciseList.getSelectionModel().select(assignmentIndex);
+
             exerciseList.setCellFactory(new Callback<ListView<ExerciseModel>, ListCell<ExerciseModel>>() {
                 public ListCell<ExerciseModel> call(ListView<ExerciseModel> param) {
                     return new ListCell<ExerciseModel>() {
@@ -498,8 +540,26 @@ public class MainWindow {
                 }
             });
 
-            exerciseList.getItems().addAll(currentAssignment.getExerciseModels());
-            exercisePopup.getContent().add(exerciseList);
+
+
+            Button closeButton = new Button("Close");
+            closeButton.setOnAction(e -> exercisePopup.hide());
+
+            HBox buttonBox = new HBox(closeButton);
+            buttonBox.setAlignment(Pos.CENTER);
+            buttonBox.setStyle("-fx-background-color: white; -fx-border-width: 1 0 0 0; -fx-border-color: lightblue;");
+
+
+            VBox jumpBox = new VBox(0, exerciseList, buttonBox);
+
+
+            exercisePopup.getContent().add(jumpBox);
+
+            jumpBox.setStyle("-fx-border-color: lightblue; -fx-border-width: 5; -fx-opacity: 1.0");
+
+
+
+//            exercisePopup.getContent().addAll(exerciseList, closeButton);
             exercisePopup.show(EditorMain.mainStage);
         }
     }
