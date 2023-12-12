@@ -169,7 +169,7 @@ public class ABEFGview implements ExerciseView<DecoratedRTA, ArrayList<Decorated
         return exerciseContent;
     }
     @Override
-    public void setExerciseContent(ArrayList<DecoratedRTA> exerciseContent) { this.exerciseContent = exerciseContent; }
+    public void setExerciseContent(ArrayList<DecoratedRTA> contentSplitPane) { this.exerciseContent = contentSplitPane; }
     @Override
     public Node getExerciseContentNode() {
         return pagination;

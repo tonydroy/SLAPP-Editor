@@ -153,7 +153,7 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
         return exerciseContent;
     }
     @Override
-    public void setExerciseContent(ArrayList<DecoratedRTA> exerciseContent) { this.exerciseContent = exerciseContent; }
+    public void setExerciseContent(ArrayList<DecoratedRTA> contentSplitPane) { this.exerciseContent = contentSplitPane; }
     @Override
     public Node getExerciseContentNode() {
         return pagination;

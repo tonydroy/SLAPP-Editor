@@ -20,31 +20,11 @@ public class DerivationModel implements ExerciseModel<Document, List<ModelLine>>
     private List<ModelLine> exerciseContent = new ArrayList<>();
 
 
-    //fake model for test
-    public DerivationModel() {
-        exerciseName = "test derivation";
-        isLeftmostScopeLine = true;
-        defaultShelf = true;
-
-        exerciseStatement = new Document("this is a statement");
-
-        exerciseContent.add(new ModelLine(1, new Document("A"), "P", LineType.PREMISE_LINE));
-        exerciseContent.add(new ModelLine(1, null, "", LineType.SETUP_SHELF_LINE));
-        exerciseContent.add(new ModelLine(1, new Document(), "", LineType.MAIN_CONTENT_LINE));
-        exerciseContent.add(new ModelLine(2, new Document("B"), "", LineType.MAIN_CONTENT_LINE));
-        exerciseContent.add(new ModelLine(2, null, "", LineType.SHELF_LINE));
-        exerciseContent.add(new ModelLine(2, new Document(), "", LineType.MAIN_CONTENT_LINE));
-        exerciseContent.add(new ModelLine(2, new Document(), "", LineType.MAIN_CONTENT_LINE));
-        exerciseContent.add(new ModelLine(1, new Document("result"), "2,3-4 xx", LineType.CONCLUSION_LINE));
-
-
-    }
-
-
     public DerivationModel(String name, boolean started, double statementPrefHeight, double gridWidth, boolean isLeftmostScopeLine, boolean defaultShelf, Document exerciseStatement, Document exerciseComment, List<ModelLine> exerciseContent) {
         this.exerciseName = name;
         this.started = started;
         this.statementPrefHeight = statementPrefHeight;
+        this.gridWidth = gridWidth;
         this.isLeftmostScopeLine = isLeftmostScopeLine();
         this.defaultShelf = defaultShelf;
         this.exerciseStatement = exerciseStatement;
@@ -52,12 +32,8 @@ public class DerivationModel implements ExerciseModel<Document, List<ModelLine>>
         this.exerciseContent = exerciseContent;
     }
 
-
     public boolean isLeftmostScopeLine() { return isLeftmostScopeLine; }
-    public void setLeftmostScopeLine(boolean leftmostScopeLine) { isLeftmostScopeLine = leftmostScopeLine; }
     public boolean isDefaultShelf() { return defaultShelf; }
-    public void setDefaultShelf(boolean defaultShelf) { this.defaultShelf = defaultShelf; }
-
     public double getGridWidth() {return gridWidth; }
 
     @Override

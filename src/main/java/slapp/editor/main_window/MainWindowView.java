@@ -304,7 +304,7 @@ public class MainWindowView {
 
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
-        mainScene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth() + PrintUtilities.getPageWidth() * scale + 85));
+        mainScene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth() + PrintUtilities.getPageWidth() * scale + 100));
         setCenterVgrow();
     }
 

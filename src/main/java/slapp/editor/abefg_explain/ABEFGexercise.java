@@ -21,7 +21,6 @@ import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
-import slapp.editor.simple_editor.SimpleEditExercise;
 
 import java.util.ArrayList;
 import java.util.List;

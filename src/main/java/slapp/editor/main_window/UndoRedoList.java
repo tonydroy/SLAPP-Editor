@@ -15,18 +15,13 @@ public class UndoRedoList<T> extends LinkedList<T> {
     @Override
     public void push(T element) {
         for (int i = 0; i < currentIndex; i++) {
-
             this.removeFirst();
-
         }
         while (this.size() >= maxSize) {
             this.removeLast();
         }
-
         currentIndex = 0;
         this.addFirst(element);
-  //      System.out.println("push: " + this.toString());
-
     }
 
     public T getUndoElement() {
@@ -35,7 +30,6 @@ public class UndoRedoList<T> extends LinkedList<T> {
             currentIndex++;
             element = this.get(currentIndex);
         }
-
         return element;
     }
 
@@ -45,10 +39,8 @@ public class UndoRedoList<T> extends LinkedList<T> {
             currentIndex--;
             element = this.get(currentIndex);
         }
-
         return element;
     }
-
 
     public boolean canRedo() {
         boolean canRedo = true;

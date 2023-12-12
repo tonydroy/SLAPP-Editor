@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import slapp.editor.DiskUtilities;
-import slapp.editor.simple_editor.SimpleEditExercise;
 
 import static javafx.scene.control.ButtonType.OK;
 

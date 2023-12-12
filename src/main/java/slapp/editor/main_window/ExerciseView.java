@@ -17,7 +17,7 @@ public interface ExerciseView<T,U> {
     double getStatementHeight();
     void setStatementPrefHeight(double height);
     U getExerciseContent();
-    void setExerciseContent(U exerciseContent);
+    void setExerciseContent(U contentSplitPane);
     Node getExerciseContentNode();
     void setContentPrompt(String prompt);
     DoubleProperty getContentHeightProperty();

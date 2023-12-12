@@ -46,7 +46,11 @@ public class DiskUtilities {
 
         try (FileOutputStream fs = new FileOutputStream(fileToSave, false); ObjectOutputStream os = new ObjectOutputStream(fs);) {
             os.writeObject(exerciseModel);
-            EditorAlerts.fleetingPopup(fileToSave.getName() + " saved.");
+
+            String locationString = ".";
+            if (fileToSave.getParent() != null) locationString = "\n\nin " + fileToSave.getParent() +".";
+
+            EditorAlerts.fleetingPopup(fileToSave.getName() + " saved" + locationString);
         }
         catch (IOException e) {
 //            e.printStackTrace();
@@ -83,7 +87,10 @@ public class DiskUtilities {
 
         try (FileOutputStream fs = new FileOutputStream(fileToSave, false); ObjectOutputStream os = new ObjectOutputStream(fs);) {
             os.writeObject(assignment);
-            EditorAlerts.fleetingPopup(fileToSave.getName() + " saved.");
+
+            String locationString = ".";
+            if (fileToSave.getParent() != null) locationString = "\n\nin " + fileToSave.getParent() +".";
+            EditorAlerts.fleetingPopup(fileToSave.getName() + " saved" + locationString);
             success = true;
         }
         catch (IOException e) {

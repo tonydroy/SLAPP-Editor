@@ -62,13 +62,8 @@ public class ViewLine {
         return justificationFlow;
     }
 
-
-
     public List<Label> getClientLabels() {
         return clientLabels;
     }
 
-    public void setClientLabels(List<Label> clientLabels) {
-        this.clientLabels = clientLabels;
-    }
 }

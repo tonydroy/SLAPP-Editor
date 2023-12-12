@@ -28,8 +28,8 @@ import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
+import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
-import slapp.editor.simple_editor.SimpleEditExercise;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,20 @@ public class DerivationCreate {
     private CheckBox defaultShelfCheck;
     private List<SetupLine> setupLines;
     private GridPane setupLinesPane;
-
+    private Spinner<Double> widthSpinner;
+    private ChangeListener defaultWidthListener;
+    private Label zoomLabel;
+    private Spinner<Integer> zoomSpinner;
+    private Button updateHeightButton;
+    private Button saveButton;
+    private MenuBar menuBar;
+    private BorderPane borderPane;
+    private VBox upperFieldsBox;
+    private ToolBar editToolbar;
+    private ToolBar fontsToolbar;
+    private ToolBar insertToolbar;
+    private ToolBar paragraphToolbar;;
+    private ToolBar kbdDiaToolBar;
 
     public DerivationCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -71,21 +84,19 @@ public class DerivationCreate {
         nameField.setText(originalModel.getExerciseName());
         scopeLineCheck.setSelected(originalModel.isLeftmostScopeLine());
         defaultShelfCheck.setSelected(originalModel.isDefaultShelf());
+        widthSpinner.getValueFactory().setValue(((double) Math.round(originalModel.getGridWidth() * 100/2)) * 2);
 
         updateSetupLinesFromModel(originalModel);
         updateGridFromSetupLines();
-
         fieldModified = false;
     }
 
-
-
     private void setupWindow() {
-        BorderPane borderPane = new BorderPane();
+        borderPane = new BorderPane();
 
         //empty bar for consistent look
         Menu helpMenu = new Menu("");
-        MenuBar menuBar = new MenuBar(helpMenu);
+        menuBar = new MenuBar(helpMenu);
 
         //statement editor
         statementDRTA = new DecoratedRTA();
@@ -94,9 +105,13 @@ public class DerivationCreate {
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setPrefWidth(PrintUtilities.getPageWidth() + 20);
         statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
-  //      statementRTA.setMinHeight(50);
-        statementRTA.setPrefHeight(200);
-
+        statementRTA.setPrefHeight(100);
+        statementRTA.setMinHeight(50);
+        statementRTA.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) {
+                editorInFocus(statementDRTA, ControlType.AREA);
+            }
+        });
 
         //top fields row
 
@@ -126,7 +141,6 @@ public class DerivationCreate {
         scopeLineCheck.setSelected(true);
         scopeLineCheck.selectedProperty().addListener(leftmostScopeListner);
 
-
         defaultShelfCheck = new CheckBox("Default shelf");
         defaultShelfListener = new ChangeListener() {
             @Override
@@ -138,6 +152,16 @@ public class DerivationCreate {
         defaultShelfCheck.setSelected(true);
         defaultShelfCheck.selectedProperty().addListener(defaultShelfListener);
 
+        widthSpinner = new Spinner<>(64.0, 100, 0, 2 );
+        defaultWidthListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldModified = true;
+                widthSpinner.valueProperty().removeListener(defaultWidthListener);
+            }
+        };
+        widthSpinner.valueProperty().addListener(defaultWidthListener);
+        widthSpinner.setPrefWidth(65);
 
         //setup lines control
         Label setupLinesLabel = new Label("Setup Lines: ");
@@ -150,7 +174,9 @@ public class DerivationCreate {
         removeSetupLineButton.setPadding(new Insets(1,8,1,8));
 
         addSetupLineButton.setOnAction(e -> {
-            setupLines.add(new SetupLine());
+            SetupLine newLine = new SetupLine(this);
+
+            setupLines.add(new SetupLine(this));
             fieldModified = true;
             updateGridFromSetupLines();
         });
@@ -167,36 +193,41 @@ public class DerivationCreate {
         });
 
         HBox nameBox = new HBox(10, nameLabel, nameField);
-        HBox topFields = new HBox(30, nameBox, scopeLineCheck, defaultShelfCheck, setupLinesLabel, addSetupLineButton, removeSetupLineButton);
+        Label widthLabel = new Label("Width: ");
+        HBox topFields = new HBox(30, nameBox, scopeLineCheck, defaultShelfCheck, widthLabel, widthSpinner, setupLinesLabel, addSetupLineButton, removeSetupLineButton);
         topFields.setAlignment(Pos.CENTER_LEFT);
+        topFields.setMargin(widthLabel, new Insets(0, -20, 0, 0));
         topFields.setMargin(setupLinesLabel, new Insets(0,-20, 0, 0));
 
         //setup lines pane
         setupLines = new ArrayList<>();
-        SetupLine firstLine = new SetupLine();
-        firstLine.getFormulaDRTA().getEditor().getActionFactory().saveNow().execute(new ActionEvent());
-        firstLine.getJustificationDRTA().getEditor().getActionFactory().saveNow().execute(new ActionEvent());
-        setupLines.add(firstLine);
 
+        SetupLine firstLine = new SetupLine(this);
+        RichTextArea firstLineFormulaRTA = firstLine.getFormulaDRTA().getEditor();
+        firstLineFormulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
+
+
+        RichTextArea firstLineJustificationRTA = firstLine.getJustificationDRTA().getEditor();
+        firstLineJustificationRTA.getActionFactory().saveNow().execute(new ActionEvent());
+
+        setupLines.add(firstLine);
         setupLinesPane = new GridPane();
         setupLinesPane.setPadding(new Insets(5,15,10,0));
         setupLinesPane.setHgap(15);
         setupLinesPane.setVgap(15);
-
         updateGridFromSetupLines();
 
-        VBox upperFieldsBox = new VBox(10, topFields, setupLinesPane);
+        upperFieldsBox = new VBox(10, topFields, setupLinesPane);
         upperFieldsBox.setPadding(new Insets(20,0,20,20));
-
 
         String helpText = "Derivation Exercise is appropriate for any exercise that calls for a derivation as response.\n\n" +
                 "For the derivation exercise, provide the exercise statement, exercise name, and select whether there is to be a leftmost scope line, and/or a \"shelf\" beneath the top line of automatically an generated subderivation. "  +
-                "A typical natural derivation system (as chapter 6 of Symbolic Logic) selects both.\n\n" +
+                "A typical natural derivation system (as chapter 6 of Symbolic Logic) selects both.  The width is the (default) percentage of the window's width allocated to this derivation.\n\n" +
                 "After that, insert setup derivation lines as appropriate.  In the ordinary case, there will be some premise lines with justification 'P' (the last sitting on a shelf), a couple of blank lines, and a conclusion line (without justification), all at scope depth 1. " +
                 "A line identified as a premise cannot have either its formula or justification modified; one identified as a conclusion cannot have its formula modified.  Different arrangements (as, e.g. \"fill in the justification\" exercises) are possible.";
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(235);
+        helpArea.setPrefHeight(250);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
@@ -216,13 +247,13 @@ public class DerivationCreate {
         Button viewButton = new Button("View");
         viewButton.setOnAction(e -> viewExercise());
 
-        Button saveButton = new Button ("Save");
-        saveButton.setOnAction(e -> saveExercise(false));
+        Button lowerSaveButton = new Button ("Save");
+        lowerSaveButton.setOnAction(e -> saveExercise(false));
 
         Button saveAsButton = new Button("Save As");
         saveAsButton.setOnAction(e -> saveExercise(true));
 
-        HBox buttonBox = new HBox(saveAsButton, saveButton, viewButton, clearButton, closeButton);
+        HBox buttonBox = new HBox(saveAsButton, lowerSaveButton, viewButton, clearButton, closeButton);
         buttonBox.setSpacing(30);
         buttonBox.setPadding(new Insets(20,50,20,50));
         buttonBox.setAlignment(Pos.BASELINE_CENTER);
@@ -231,8 +262,8 @@ public class DerivationCreate {
         scene = new Scene(borderPane);
         scene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
 
-        Label zoomLabel = new Label(" Zoom ");
-        Spinner<Integer> zoomSpinner = new Spinner(25, 500, 100, 5);
+        zoomLabel = new Label(" Zoom ");
+        zoomSpinner = new Spinner(25, 500, 100, 5);
         zoomSpinner.setPrefSize(60,25);
         zoomSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = zoomSpinner.lookup(".increment-arrow-button");
@@ -247,45 +278,24 @@ public class DerivationCreate {
 
         FontIcon heightIcon = new FontIcon(LineAwesomeSolid.TEXT_HEIGHT);
         heightIcon.setIconSize(20);
-        Button updateHeightButton = new Button();
+        updateHeightButton = new Button();
         updateHeightButton.setGraphic(heightIcon);
         updateHeightButton.setDisable(true);
 
-        saveButton = new Button();
         FontIcon saveIcon = new FontIcon(LineAwesomeSolid.SAVE);
         saveIcon.setIconSize(20);
+        saveButton = new Button();
         saveButton.setGraphic(saveIcon);
         saveButton.setDisable(true);
-
-
-        ToolBar editToolbar = statementDRTA.getEditToolbar();
-        ToolBar fontsToolbar = statementDRTA.getFontsToolbar();
-        ToolBar insertToolbar = statementDRTA.getInsertToolbar();
-        ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
-        ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
-
-
-        if (!kbdDiaToolBar.getItems().contains(zoomSpinner)) {
-            kbdDiaToolBar.getItems().add(0, updateHeightButton);
-            kbdDiaToolBar.getItems().add(0, zoomSpinner);
-            kbdDiaToolBar.getItems().add(0, zoomLabel);
-            kbdDiaToolBar.getItems().add(saveButton);
-        }
-
-        HBox insertAndFontsBox = new HBox(insertToolbar, fontsToolbar);
-        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
-
-
-
-        VBox topBox = new VBox(menuBar, paragraphToolbar, insertAndFontsBox, editAndKbdBox, upperFieldsBox );
-        borderPane.setTop(topBox);
 
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
+
         stage.setTitle("Create Derivation Exercise:");
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
         stage.setWidth(1030);
+        stage.setHeight(800);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.initModality(Modality.WINDOW_MODAL);
@@ -302,13 +312,14 @@ public class DerivationCreate {
     }
 
     private void updateSetupLinesFromModel(DerivationModel originalModel) {
+
         List<ModelLine> modelLines = originalModel.getExerciseContent();
         setupLines.clear();
         int i = 0;
         while (i < modelLines.size()) {
             ModelLine modelLine = modelLines.get(i);
             if (LineType.isContentLine(modelLine.getLineType())) {
-                SetupLine setupLine = new SetupLine();
+                SetupLine setupLine = new SetupLine(this);
 
                 DecoratedRTA formulaDRTA = setupLine.getFormulaDRTA();
                 RichTextArea formulaRTA = formulaDRTA.getEditor();
@@ -346,10 +357,7 @@ public class DerivationCreate {
         for (int i = 0; i < setupLines.size(); i++) {
             SetupLine setupLine = setupLines.get(i);
             RichTextArea formulaRTA = setupLine.getFormulaDRTA().getEditor();
-//            formulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
             RichTextArea justificationRTA = setupLine.getJustificationDRTA().getEditor();
-//            justificationRTA.getActionFactory().saveNow().execute(new ActionEvent());
-
             setupLinesPane.addRow(i,
                     formulaRTA,
                     justificationRTA,
@@ -357,7 +365,8 @@ public class DerivationCreate {
                     setupLine.getPremiseBox(),
                     setupLine.getConclusionBox(),
                     setupLine.getAddShelfBox(),
-                    setupLine.getAddGapBox());
+                    setupLine.getAddGapBox()
+            );
         }
     }
 
@@ -375,12 +384,9 @@ public class DerivationCreate {
 
     private void setCenterVgrow() {
         double fixedHeight = helpArea.getHeight() * scale + 400;
-
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
-
         DoubleProperty externalHeightProperty = new SimpleDoubleProperty();
         externalHeightProperty.bind(fixedValueProperty.add(setupLinesPane.heightProperty()));
-
         DoubleProperty maximumHeightProperty = new SimpleDoubleProperty(PrintUtilities.getPageHeight() );
         DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
         centerHeightProperty = new SimpleDoubleProperty();
@@ -402,10 +408,10 @@ public class DerivationCreate {
 
             scopeLineCheck.setSelected(true);
             defaultShelfCheck.setSelected(true);
-
+            widthSpinner.getValueFactory().setValue(0.0);
 
             setupLines.clear();
-            SetupLine firstLine = new SetupLine();
+            SetupLine firstLine = new SetupLine(this);
             firstLine.getFormulaDRTA().getEditor().getActionFactory().saveNow().execute(new ActionEvent());
             firstLine.getJustificationDRTA().getEditor().getActionFactory().saveNow().execute(new ActionEvent());
             setupLines.add(firstLine);
@@ -449,9 +455,7 @@ public class DerivationCreate {
         scopeLineCheck.selectedProperty().addListener(leftmostScopeListner);
         defaultShelfCheck.selectedProperty().addListener(defaultShelfListener);
 
-
         DerivationExercise exercise = new DerivationExercise(extractModelFromWindow(), mainWindow);
-
 
         for (SetupLine line : setupLines) { line.setModified(false); }
 
@@ -468,10 +472,11 @@ public class DerivationCreate {
     }
     private DerivationModel extractModelFromWindow() {
         String name = nameField.getText();
-        double width = PrintUtilities.getPageWidth();
 
         boolean leftmostScope = scopeLineCheck.isSelected();
         boolean defaultShelf = defaultShelfCheck.isSelected();
+        double gridWidth = widthSpinner.getValue()/100.0;
+
         if (statementRTA.isModified()) fieldModified = true;
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document statementDocument = statementRTA.getDocument();
@@ -507,8 +512,71 @@ public class DerivationCreate {
            }
         }
 
-        DerivationModel model = new DerivationModel(name, false, 70.0, width, leftmostScope, defaultShelf, statementDocument, new Document(), modelLines);
+
+        DerivationModel model = new DerivationModel(name, false, 70.0, gridWidth, leftmostScope, defaultShelf, statementDocument, new Document(), modelLines);
         return model;
+    }
+
+    void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
+
+        KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
+        keyboardDiagram.initialize(decoratedRTA);
+        if (keyboardDiagram.isShowing()) {
+            keyboardDiagram.updateAndShow();
+        }
+
+        editToolbar = decoratedRTA.getEditToolbar();
+        fontsToolbar = decoratedRTA.getFontsToolbar();
+        insertToolbar = decoratedRTA.getInsertToolbar();
+        paragraphToolbar = decoratedRTA.getParagraphToolbar();
+        kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
+
+
+        if (!kbdDiaToolBar.getItems().contains(saveButton)) {
+  //          kbdDiaToolBar.getItems().add(0, updateHeightButton);
+  //          kbdDiaToolBar.getItems().add(0, zoomSpinner);
+  //          kbdDiaToolBar.getItems().add(0, zoomLabel);
+  //          kbdDiaToolBar.getItems().add(saveButton);
+
+
+            switch (control) {
+                case NONE: {
+                    kbdDiaToolBar.setDisable(true);
+                }
+                case STATEMENT: {
+                    editToolbar.setDisable(true);
+                    fontsToolbar.setDisable(true);
+                }
+                case FIELD: {
+                    paragraphToolbar.setDisable(true);
+                    insertToolbar.setDisable(true);
+                }
+                case AREA: {
+                }
+            }
+        }
+
+        HBox insertAndFontsBox = new HBox(insertToolbar, fontsToolbar);
+
+        //this is a kludge.  When the kbdDiaToolBar is extended (as in other cases), new elements do not appear in the window.
+        //calling .layout() results in an error from the RTA skin.  All I need are the zoom spinner and extra disabled elements
+        // -- and this try does not seem to have either the layout problems or the RTA error.
+
+        HBox dudBox = new HBox(zoomLabel, zoomSpinner, updateHeightButton);
+
+        ToolBar dudBar = new ToolBar(zoomLabel, zoomSpinner, updateHeightButton);
+        dudBar.setStyle("-fx-spacing: 12");
+
+        Pane spacer1 = new Pane();
+        spacer1.setPrefWidth(2);
+        ToolBar dudSaveBar = new ToolBar(spacer1, saveButton);
+        //
+
+        HBox editAndKbdBox = new HBox(editToolbar, dudBar, kbdDiaToolBar, dudSaveBar);
+
+        VBox topBox = new VBox(menuBar, paragraphToolbar, insertAndFontsBox, editAndKbdBox, upperFieldsBox);
+//        topBox.layout();
+        borderPane.topProperty().setValue(topBox);
     }
 
 }

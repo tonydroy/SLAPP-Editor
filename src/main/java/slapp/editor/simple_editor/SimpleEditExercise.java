@@ -18,7 +18,6 @@ import javafx.scene.layout.*;
 import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
-import slapp.editor.derivation.DerivationExercise;
 import slapp.editor.main_window.*;
 import java.util.ArrayList;
 import java.util.List;

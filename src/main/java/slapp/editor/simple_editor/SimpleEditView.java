@@ -124,7 +124,7 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, List<Decorated
     @Override
     public List<DecoratedRTA> getExerciseContent() { return exerciseContent; }
     @Override
-    public void setExerciseContent(List<DecoratedRTA> exerciseContent) { this.exerciseContent = exerciseContent; }
+    public void setExerciseContent(List<DecoratedRTA> contentSplitPane) { this.exerciseContent = contentSplitPane; }
     @Override
     public Node getExerciseContentNode() {
         return pagination;

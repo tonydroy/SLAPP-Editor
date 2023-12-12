@@ -83,7 +83,7 @@ public class FrontPageView implements ExerciseView<Label, Label> {
     @Override
     public Label getExerciseContent() { return exerciseContent; }
     @Override
-    public void setExerciseContent(Label exerciseContent) {}
+    public void setExerciseContent(Label contentSplitPane) {}
     @Override
     public Node getExerciseContentNode() { return exerciseContent; }
     @Override

@@ -8,40 +8,30 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import slapp.editor.EditorMain;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
-
     MainWindowView mainView;
     private String exerciseName = new String("");
-
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private String contentPrompt = new String("");
     private boolean isLeftmostScopeLine = true;
-
-
-
     private Node exerciseControlNode = new VBox();
-    private SplitPane exerciseContent = new SplitPane();
+    private SplitPane contentSplitPane = new SplitPane();
     private GridPane grid = new GridPane();
+    private double gridWidth = 0.0;
     private List<ViewLine> viewLines = new ArrayList<>();
-
     private Button insertLineButton;
     private Button deleteLineButton;
     private Button indentButton;
@@ -52,8 +42,9 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
     private Button insertSubsButton;
     private Button undoButton;
     private Button redoButton;
-
-
+    private double contentRowHeight = 19.0;
+    private double shelfRowHeight = 5.0;
+    private double gapRowHeight = 7.0;
 
 
     public DerivationView(MainWindowView mainView) {
@@ -62,8 +53,8 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
         blankPane.setMinWidth(0);
         blankPane.setMaxWidth(1000);
         blankPane.setStyle("-fx-background-color: white;");
-        exerciseContent.getItems().addAll(grid, blankPane);
-        exerciseContent.setOrientation(Orientation.HORIZONTAL);
+        contentSplitPane.getItems().addAll(grid, blankPane);
+        contentSplitPane.setOrientation(Orientation.HORIZONTAL);
 
         ColumnConstraints fixedCol = new ColumnConstraints();
         fixedCol.setMinWidth(10);
@@ -78,12 +69,6 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
         grid.setStyle("-fx-background-color: white;");
         grid.setMinWidth(350);
 
-
-
-
- //       grid.setGridLinesVisible(true);
-
-        //temp
         insertLineButton = new Button("Insert Line");
         deleteLineButton = new Button("Delete Line");
         indentButton = new Button("Indent Line");
@@ -113,11 +98,8 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
         insertSubsButton.setTooltip(new Tooltip("Insert subderivation pair above current line"));
         undoButton.setPrefWidth(95);
         undoButton.setTooltip(new Tooltip("Undo last button action"));
-
         redoButton.setPrefWidth(95);
         redoButton.setTooltip(new Tooltip("Redo button action"));
-
-
 
         VBox controlBox = new VBox(20, undoButton, redoButton, insertLineButton, deleteLineButton, indentButton, outdentButton, addShelfButton, addGapButton, insertSubButton, insertSubsButton);
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
@@ -125,10 +107,6 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
         controlBox.setPadding(new Insets(40,10,30,80));
         exerciseControlNode = controlBox;
     }
-
-    //temp
-
-    //
 
     public void initializeViewDetails() {
         RichTextArea statementRTA = exerciseStatement.getEditor();
@@ -140,13 +118,10 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
         commentRTA.getStylesheets().add("slappTextArea.css");
         commentRTA.setPrefHeight(70.0);
         commentRTA.setPromptText("Comment:");
+        contentSplitPane.setDividerPosition(0, gridWidth);
     }
 
     public void setGridFromViewLines() {
-
-
-
-
         grid.getChildren().clear();
         ObservableList<RowConstraints> gridRowConstraints = grid.getRowConstraints();
         int lineNumber = 1;
@@ -155,9 +130,9 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
             LineType lineType = viewLine.getLineType();
 
             RowConstraints constraint = new RowConstraints();
-            if (LineType.isContentLine(lineType)) { constraint.setMinHeight(19); constraint.setMaxHeight(19); }
-            if (LineType.isGapLine(lineType)) {constraint.setMinHeight(7); constraint.setMaxHeight(7); }
-            if (LineType.isShelfLine(lineType)) {constraint.setMinHeight(5); constraint.setMaxHeight(5); }
+            if (LineType.isContentLine(lineType)) { constraint.setMinHeight(contentRowHeight); constraint.setMaxHeight(contentRowHeight); }
+            if (LineType.isGapLine(lineType)) {constraint.setMinHeight(gapRowHeight); constraint.setMaxHeight(gapRowHeight); }
+            if (LineType.isShelfLine(lineType)) {constraint.setMinHeight(shelfRowHeight); constraint.setMaxHeight(shelfRowHeight); }
 
             if (index >= gridRowConstraints.size()) gridRowConstraints.add(index, constraint);
             else gridRowConstraints.set(index, constraint);
@@ -176,23 +151,12 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
                 DecoratedRTA drta = viewLine.getLineContentDRTA();
                 drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
                 RichTextArea rta = drta.getEditor();
-                rta.setMaxHeight(19);
-                rta.setMinHeight(19);
-       //         rta.setPrefHeight(22);
+                rta.setMaxHeight(contentRowHeight);
+                rta.setMinHeight(contentRowHeight);
                 rta.setPrefWidth(100);
                 rta.getStylesheets().add("slappDerivation.css");
 
- //               rta.setFocusTraversable(false);
-
- //               rta.setStyle("-fx-border-color: green; -fx-border-width: 1 1 1 1");
-
                 contentBox.getChildren().add(rta);
-
-
-
-
-
-
                 contentBox.setHgrow(rta, Priority.ALWAYS);
             }
             if (depth > 1) {
@@ -212,12 +176,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
                     contentBox.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1;");
                 else contentBox.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 0;");
 
-
-  //              contentBox.setFocusTraversable(false);
                 grid.add(contentBox, depth, index, 21 - depth, 1);
-
-
-
 
             } else {
                 Pane endSpacer = new Pane();
@@ -228,59 +187,43 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
 
             if (viewLine.getJustificationFlow() != null) grid.add(viewLine.getJustificationFlow(), 22, index);
         }
+    }
 
-
-
-   //     lastRTA.requestFocus();
+    public double getGridHeight() {
+        double height = 0;
+        for (ViewLine line : viewLines) {
+            if (LineType.isContentLine(line.getLineType())) height = height + contentRowHeight;
+            else if (LineType.isGapLine(line.getLineType())) height = height + gapRowHeight;
+            else if (LineType.isShelfLine(line.getLineType())) height = height + shelfRowHeight;
+        }
+        return height;
     }
 
     public GridPane getGrid() { return grid; }
-    public boolean isLeftmostScopeLine() {
-        return isLeftmostScopeLine;
-    }
-    public void setLeftmostScopeLine(boolean leftmostScopeLine) {
-        isLeftmostScopeLine = leftmostScopeLine;
-    }
+    public void setLeftmostScopeLine(boolean leftmostScopeLine) { isLeftmostScopeLine = leftmostScopeLine;  }
     public List<ViewLine> getViewLines() { return viewLines; }
     public void setViewLines(List<ViewLine> viewLines) {this.viewLines = viewLines; }
+    public Button getInsertLineButton() { return insertLineButton;  }
 
+    public Button getDeleteLineButton() { return deleteLineButton; }
 
+    public Button getIndentButton() { return indentButton; }
 
-    public Button getInsertLineButton() {
-        return insertLineButton;
-    }
+    public Button getOutdentButton() { return outdentButton; }
 
-    public Button getDeleteLineButton() {
-        return deleteLineButton;
-    }
+    public Button getAddShelfButton() { return addShelfButton; }
 
-    public Button getIndentButton() {
-        return indentButton;
-    }
+    public Button getAddGapButton() { return addGapButton; }
 
-    public Button getOutdentButton() {
-        return outdentButton;
-    }
+    public Button getInsertSubButton() { return insertSubButton;  }
 
-    public Button getAddShelfButton() {
-        return addShelfButton;
-    }
-
-    public Button getAddGapButton() {
-        return addGapButton;
-    }
-
-    public Button getInsertSubButton() {
-        return insertSubButton;
-    }
-
-    public Button getInsertSubsButton() {
-        return insertSubsButton;
-    }
+    public Button getInsertSubsButton() { return insertSubsButton; }
 
     public Button getUndoButton() { return undoButton;  }
 
     public Button getRedoButton() {  return redoButton; }
+
+    public void setGridWidth(double gridWidth) { this.gridWidth = gridWidth; }
 
     @Override
     public String getExerciseName() { return exerciseName; }
@@ -291,10 +234,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment; }
     @Override
-    public double getCommentHeight() {
-        return 50;
-     //   return exerciseComment.getEditor().getHeight();
-    }
+    public double getCommentHeight() { return exerciseComment.getEditor().getHeight(); }
     @Override
     public DecoratedRTA getExerciseStatement() { return exerciseStatement; }
     @Override
@@ -302,21 +242,18 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
     @Override
     public Node getExerciseStatementNode() { return exerciseStatement.getEditor(); }
     @Override
-    public double getStatementHeight() {
-        return 80;
-        //return exerciseStatement.getEditor().getHeight();
-        }
+    public double getStatementHeight() { return exerciseStatement.getEditor().getHeight();    }
     @Override
     public void setStatementPrefHeight(double height) {
         statementPrefHeight = height;
         exerciseStatement.getEditor().setPrefHeight(height);
     }
     @Override
-    public SplitPane getExerciseContent() { return exerciseContent; }
+    public SplitPane getExerciseContent() { return contentSplitPane; }
     @Override
-    public void setExerciseContent(SplitPane exerciseContent) { this.exerciseContent = exerciseContent; }
+    public void setExerciseContent(SplitPane contentSplitPane) { this.contentSplitPane = contentSplitPane; }
     @Override
-    public Node getExerciseContentNode() { return exerciseContent; }
+    public Node getExerciseContentNode() { return contentSplitPane; }
     @Override
     public void setContentPrompt(String prompt) { contentPrompt = prompt; }
     @Override
@@ -325,7 +262,5 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
     public double getContentFixedHeight() { return 0.0; }
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
-
-
 
 }

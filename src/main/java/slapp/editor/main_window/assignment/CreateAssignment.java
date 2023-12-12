@@ -1,6 +1,9 @@
 package slapp.editor.main_window.assignment;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -17,6 +20,7 @@ import javafx.util.Callback;
 import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
+import slapp.editor.PrintUtilities;
 import slapp.editor.main_window.Exercise;
 import slapp.editor.main_window.ExerciseModel;
 import slapp.editor.main_window.MainWindow;
@@ -44,6 +48,11 @@ public class CreateAssignment {
     ListView<File> exerciseList;
     ListView<ExerciseModel> assignmentList;
     private boolean isModified = false;
+    TextArea helpArea;
+    GridPane optionalItemsPane;
+
+    DoubleProperty centerHeightProperty;
+    HBox workingBox;
 
 
     List<TextField> labelFields = new ArrayList<>();
@@ -105,7 +114,7 @@ public class CreateAssignment {
         optionalItemBox.setMargin(addOptionalItemsButton, new Insets(0,45,0,20));
 
 
-        GridPane optionalItemsPane = new GridPane();
+        optionalItemsPane = new GridPane();
         optionalItemsPane.setPadding(new Insets(5,20,10,20));
         optionalItemsPane.setHgap(10);
         optionalItemsPane.setVgap(10);
@@ -177,7 +186,7 @@ public class CreateAssignment {
         exerciseVBox.setVgrow(exerciseList, Priority.ALWAYS);
         VBox assignmentVBox = new VBox(10, assignmtLabel, assignmentList );
         assignmentVBox.setVgrow(assignmentList, Priority.ALWAYS);
-        HBox workingBox = new HBox(50, exerciseVBox, assignmentVBox);
+        workingBox = new HBox(50, exerciseVBox, assignmentVBox);
         workingBox.setPadding(new Insets(10,20,20,20));
 
         exerciseFolderButton.setOnAction(e -> {
@@ -298,7 +307,7 @@ public class CreateAssignment {
                 "And similarly a selected assignment item is removed by the 'remove' button.";
 
 
-        TextArea helpArea = new TextArea(helpText);
+        helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
         helpArea.setPrefHeight(110);
         helpArea.setEditable(false);
@@ -328,6 +337,7 @@ public class CreateAssignment {
             closeWindow();
         });
         stage.show();
+        setCenterVgrow();
     }
 
     private Assignment getAssignmentFromWindow() {
@@ -356,6 +366,21 @@ public class CreateAssignment {
             mainWindow.closeExercise();
             stage.close();
         }
+    }
+
+    private void setCenterVgrow() {
+        double fixedHeight = helpArea.getHeight() + 400;
+
+        DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
+
+        DoubleProperty externalHeightProperty = new SimpleDoubleProperty();
+        externalHeightProperty.bind(fixedValueProperty.add(optionalItemsPane.heightProperty()));
+
+        DoubleProperty maximumHeightProperty = new SimpleDoubleProperty(PrintUtilities.getPageHeight() );
+
+        centerHeightProperty = new SimpleDoubleProperty();
+        centerHeightProperty.bind(Bindings.min(maximumHeightProperty, (stage.heightProperty().subtract(externalHeightProperty))));
+        workingBox.prefHeightProperty().bind(centerHeightProperty);
     }
 
 
