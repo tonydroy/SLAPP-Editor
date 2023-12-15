@@ -32,7 +32,6 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     private SimpleEditView editView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
-    private Node lastFocusedNode;
     private int lastPageNum = -1;
 
     public SimpleEditExercise(SimpleEditModel model, MainWindow mainWindow) {
@@ -252,10 +251,10 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         this.exerciseModified = modified;
     }
     @Override
-    public void updateContentHeight(boolean isRequired){
+    public void updateContentHeight(Node focusedNode, boolean isRequired){
         int contentPageNum = editView.getContentPageIndex();
-        if (isRequired || lastFocusedNode != editView.getExerciseContentNode() || lastPageNum != contentPageNum) {
-            lastFocusedNode = editView.getExerciseContentNode();
+        if (isRequired || mainWindow.getLastFocusOwner() != editView.getExerciseContentNode() || lastPageNum != contentPageNum) {
+            mainWindow.setLastFocusOwner(editView.getExerciseContentNode());
             lastPageNum = contentPageNum;
 
             SimpleEditModel model = getSimpleEditModelFromView();
@@ -269,8 +268,8 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     }
     @Override
     public void updateCommentHeight(boolean isRequired){
-        if (isRequired || lastFocusedNode != editView.getExerciseComment().getEditor()) {
-            lastFocusedNode = editView.getExerciseComment().getEditor();
+        if (isRequired || mainWindow.getLastFocusOwner() != editView.getExerciseComment().getEditor()) {
+            mainWindow.setLastFocusOwner(editView.getExerciseComment().getEditor());
             lastPageNum = -1;
 
             SimpleEditModel model = getSimpleEditModelFromView();
@@ -283,8 +282,8 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     }
     @Override
     public void updateStatementHeight(boolean isRequired){
-        if (isRequired || lastFocusedNode != editView.getExerciseStatementNode()) {
-            lastFocusedNode = editView.getExerciseStatementNode();
+        if (isRequired || mainWindow.getLastFocusOwner() != editView.getExerciseStatementNode()) {
+            mainWindow.setLastFocusOwner(editView.getExerciseStatementNode());
             lastPageNum = -1;
 
             editModel = getSimpleEditModelFromView();

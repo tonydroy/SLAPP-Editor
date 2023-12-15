@@ -39,7 +39,7 @@ public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView
     @Override
     public void setExerciseModified(boolean modified) { }
     @Override
-    public void updateContentHeight(boolean isRequired) { }
+    public void updateContentHeight(Node focusedNode, boolean isRequired) { }
     @Override
     public void updateCommentHeight(boolean isRequired) { }
     @Override

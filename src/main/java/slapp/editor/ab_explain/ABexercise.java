@@ -33,7 +33,6 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
     private ABview abView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
-    private Node lastFocusedNode;
     private int lastPageNum = -1;
     private Font labelFont = new Font("Noto Serif Combo", 11);
 
@@ -295,10 +294,10 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         this.exerciseModified = modified;
     }
     @Override
-    public void updateContentHeight(boolean isRequired){
+    public void updateContentHeight(Node focusedNode, boolean isRequired){
         int contentPageNum = abView.getContentPageIndex();
-        if (isRequired || lastFocusedNode != abView.getExerciseContentNode() || lastPageNum != contentPageNum) {
-            lastFocusedNode = abView.getExerciseContentNode();
+        if (isRequired || mainWindow.getLastFocusOwner() != abView.getExerciseContentNode() || lastPageNum != contentPageNum) {
+            mainWindow.setLastFocusOwner(abView.getExerciseContentNode());
             lastPageNum = contentPageNum;
 
             ABmodel model = getABmodelFromView();
@@ -312,8 +311,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
     }
     @Override
     public void updateCommentHeight(boolean isRequired){
-        if (isRequired || lastFocusedNode != abView.getExerciseComment().getEditor()) {
-            lastFocusedNode = abView.getExerciseComment().getEditor();
+        if (isRequired || mainWindow.getLastFocusOwner() != abView.getExerciseComment().getEditor()) {
+            mainWindow.setLastFocusOwner(abView.getExerciseComment().getEditor());
             lastPageNum = -1;
 
             ABmodel model = getABmodelFromView();
@@ -326,8 +325,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
     }
     @Override
     public void updateStatementHeight(boolean isRequired){
-        if (isRequired || lastFocusedNode != abView.getExerciseStatementNode()) {
-            lastFocusedNode = abView.getExerciseStatementNode();
+        if (isRequired || mainWindow.getLastFocusOwner() != abView.getExerciseStatementNode()) {
+            mainWindow.setLastFocusOwner(abView.getExerciseStatementNode());
             lastPageNum = -1;
 
             abModel = getABmodelFromView();

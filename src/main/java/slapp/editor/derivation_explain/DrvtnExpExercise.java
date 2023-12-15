@@ -44,9 +44,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     private DrvtnExpView drvtnExpView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
-    private Node lastFocusedNode;
 
-    private Node focusedNode;
     private Font labelFont = new Font("Noto Serif Combo", 11);
     private boolean editJustification;
     private EventHandler justificationClickFilter;
@@ -61,14 +59,6 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         this.originalModel = model;
         this.mainView = mainWindow.getMainView();
         this.drvtnExpView = new DrvtnExpView(mainView);
-        mainView.getMainScene().focusOwnerProperty().addListener((ob, ov, nv) -> {
-            lastFocusedNode = ov;
-            focusedNode = nv;
-
-            System.out.println("derexp ov: " + ov.toString() + " derexp nv: " + nv.toString());
-
-
-        });
         setDrvtnExpView();
         pushUndoRedo();
     }
@@ -108,7 +98,6 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         explanationEditor.setDocument(drvtnExpModel.getExplanationDocument());
         explanationEditor.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
-                System.out.println("explanation editor in focus: " + explanationEditor.toString());
                 mainView.editorInFocus(explanationDRTA, ControlType.AREA);
             }
         });
@@ -523,6 +512,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
     private void insertLineAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
 
@@ -562,6 +552,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
     private void deleteLineAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         List<ViewLine> viewLines = drvtnExpView.getViewLines();
@@ -603,6 +594,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
     private void indentLineAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
@@ -637,6 +629,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     }
     private void outdentLineAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
@@ -674,6 +667,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     }
     private void addShelfLineAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
@@ -708,6 +702,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     }
     private void addGapLineAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
@@ -743,6 +738,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     }
     private void insertSubAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
@@ -773,6 +769,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     }
     private void insertSubsAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
@@ -946,32 +943,38 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     public void setExerciseModified(boolean modified) { this.exerciseModified = modified; }
 
     @Override
-    public void updateContentHeight(boolean isRequired) {
-        RichTextArea explanationEditor = drvtnExpView.getExplanationDRTA().getEditor();
-        System.out.println("requested node: " + focusedNode.toString());
+    public void updateContentHeight(Node focusedNode, boolean isRequired) {
 
-        if (explanationEditor.isFocused() && (isRequired || lastFocusedNode != explanationEditor)) {
-            lastFocusedNode = explanationEditor;
+        if (isContainer(drvtnExpView.getSplitPane(), focusedNode)) {
+            double gridHeight = drvtnExpView.getGridHeight();
+            mainWindow.getMainView().updateNodeHeightLabel(gridHeight + 20);
 
-
-
+        } else if (isContainer(drvtnExpView.getExplanationDRTA().getEditor(), focusedNode)) {
             DrvtnExpModel model = getDrvtnExpModelFromView();
             DrvtnExpExercise exercise = new DrvtnExpExercise(model, mainWindow);
             RichTextArea explanationRTA = exercise.getExerciseView().getExplanationDRTA().getEditor();
             RichTextAreaSkin explanationRTASkin = ((RichTextAreaSkin) explanationRTA.getSkin());
             double explanationHeight = explanationRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
             mainWindow.getMainView().updateNodeHeightLabel(explanationHeight + 20);
-        } else {
-
-            double gridHeight = drvtnExpView.getGridHeight();
-            mainWindow.getMainView().updateNodeHeightLabel(gridHeight + 20);
         }
+    }
+
+    private boolean isContainer(Node container, Node element) {
+        if (element == null)
+            return false;
+        Node current = element;
+        while (current != null) {
+            if (current == container)
+                return true;
+            current = current.getParent();
+        }
+        return false;
     }
 
     @Override
     public void updateCommentHeight(boolean isRequired) {
-        if (isRequired || lastFocusedNode != drvtnExpView.getExerciseComment().getEditor()) {
-            lastFocusedNode = drvtnExpView.getExerciseComment().getEditor();
+        if (isRequired || mainWindow.getLastFocusOwner() != drvtnExpView.getExerciseComment().getEditor()) {
+            mainWindow.setLastFocusOwner(drvtnExpView.getExerciseComment().getEditor());
 
             DrvtnExpModel model = getDrvtnExpModelFromView();
             DrvtnExpExercise exercise = new DrvtnExpExercise(model, mainWindow);
@@ -984,8 +987,8 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
     @Override
     public void updateStatementHeight(boolean isRequired) {
-        if (isRequired || lastFocusedNode != drvtnExpView.getExerciseStatementNode()) {
-            lastFocusedNode = drvtnExpView.getExerciseStatementNode();
+        if (isRequired || mainWindow.getLastFocusOwner() != drvtnExpView.getExerciseStatementNode()) {
+            mainWindow.setLastFocusOwner(drvtnExpView.getExerciseStatementNode());
 
             drvtnExpModel = getDrvtnExpModelFromView();
             DrvtnExpExercise exercise = new DrvtnExpExercise(drvtnExpModel, mainWindow);

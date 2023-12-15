@@ -51,8 +51,6 @@ public class MainWindow {
             if (nv != null) {
                 if (nv.focusedProperty().get() == true) {
                     lastFocusOwner = ov;
-                    if (ov != null) System.out.println("mainwin ov: " + ov.toString() + " mainwin nv: " + nv.toString());
-
                     updateNodeContainerHeight(nv, false);
                 }
             }
@@ -293,7 +291,7 @@ public class MainWindow {
     }
 
     private void updateNodeContainerHeight(Node element, boolean isRequired) {
-        if (isContainer(mainView.getContentNode(), element)) currentExercise.updateContentHeight(isRequired);
+        if (isContainer(mainView.getContentNode(), element)) currentExercise.updateContentHeight(element, isRequired);
         else if (isContainer(mainView.getCommentNode(), element)) currentExercise.updateCommentHeight(isRequired);
         else if (isContainer(mainView.getStatementNode(), element)) currentExercise.updateStatementHeight(isRequired);
     }
@@ -583,5 +581,13 @@ public class MainWindow {
 
     public int getAssignmentIndex() {
         return assignmentIndex;
+    }
+
+    public Node getLastFocusOwner() {
+        return lastFocusOwner;
+    }
+
+    public void setLastFocusOwner(Node lastFocusOwner) {
+        this.lastFocusOwner = lastFocusOwner;
     }
 }

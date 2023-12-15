@@ -35,7 +35,6 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
     private ABEFGview abefgView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
-    private Node lastFocusedNode;
     private int lastPageNum = -1;
     private Font labelFont = new Font("Noto Serif Combo", 11);
 
@@ -355,10 +354,10 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         this.exerciseModified = modified;
     }
     @Override
-    public void updateContentHeight(boolean isRequired){
+    public void updateContentHeight(Node focusedNode, boolean isRequired){
         int contentPageNum = abefgView.getContentPageIndex();
-        if (isRequired || lastFocusedNode != abefgView.getExerciseContentNode() || lastPageNum != contentPageNum) {
-            lastFocusedNode = abefgView.getExerciseContentNode();
+        if (isRequired || mainWindow.getLastFocusOwner() != abefgView.getExerciseContentNode() || lastPageNum != contentPageNum) {
+            mainWindow.setLastFocusOwner(abefgView.getExerciseContentNode());
             lastPageNum = contentPageNum;
 
             ABEFGmodel model = getABEFGmodelFromView();
@@ -372,8 +371,8 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
     }
     @Override
     public void updateCommentHeight(boolean isRequired){
-        if (isRequired || lastFocusedNode != abefgView.getExerciseComment().getEditor()) {
-            lastFocusedNode = abefgView.getExerciseComment().getEditor();
+        if (isRequired || mainWindow.getLastFocusOwner() != abefgView.getExerciseComment().getEditor()) {
+            mainWindow.setLastFocusOwner(abefgView.getExerciseComment().getEditor());
             lastPageNum = -1;
 
             ABEFGmodel model = getABEFGmodelFromView();
@@ -386,8 +385,8 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
     }
     @Override
     public void updateStatementHeight(boolean isRequired){
-        if (isRequired || lastFocusedNode != abefgView.getExerciseStatementNode()) {
-            lastFocusedNode = abefgView.getExerciseStatementNode();
+        if (isRequired || mainWindow.getLastFocusOwner() != abefgView.getExerciseStatementNode()) {
+            mainWindow.setLastFocusOwner(abefgView.getExerciseStatementNode());
             lastPageNum = -1;
 
             abefgModel = getABEFGmodelFromView();

@@ -39,7 +39,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     private DerivationView derivationView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
-    private Node lastFocusedNode;
     private Font labelFont = new Font("Noto Serif Combo", 11);
     private boolean editJustification;
     private EventHandler justificationClickFilter;
@@ -54,9 +53,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         this.originalModel = model;
         this.mainView = mainWindow.getMainView();
         this.derivationView = new DerivationView(mainView);
-        mainView.getMainScene().focusOwnerProperty().addListener((ob, ov, nv) -> {
-            lastFocusedNode = ov;
-        });
         setDerivationView();
         pushUndoRedo();
 
@@ -500,6 +496,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
     private void insertLineAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
 
@@ -539,6 +536,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
     private void deleteLineAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         List<ViewLine> viewLines = derivationView.getViewLines();
@@ -580,6 +578,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
     private void indentLineAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
@@ -614,6 +613,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
     private void outdentLineAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
@@ -651,6 +651,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
     private void addShelfLineAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
@@ -685,6 +686,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
     private void addGapLineAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
@@ -720,6 +722,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
     private void insertSubAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
@@ -750,6 +753,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
     private void insertSubsAction() {
         int row = -1;
+        Node lastFocusedNode = mainWindow.getLastFocusOwner();
         if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
@@ -912,15 +916,15 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     public void setExerciseModified(boolean modified) { this.exerciseModified = modified; }
 
     @Override
-    public void updateContentHeight(boolean isRequired) {
+    public void updateContentHeight(Node focusedNode, boolean isRequired) {
         double gridHeight = derivationView.getGridHeight();
         mainWindow.getMainView().updateNodeHeightLabel(gridHeight + 20);
     }
 
     @Override
     public void updateCommentHeight(boolean isRequired) {
-        if (isRequired || lastFocusedNode != derivationView.getExerciseComment().getEditor()) {
-            lastFocusedNode = derivationView.getExerciseComment().getEditor();
+        if (isRequired || mainWindow.getLastFocusOwner() != derivationView.getExerciseComment().getEditor()) {
+            mainWindow.setLastFocusOwner(derivationView.getExerciseComment().getEditor());
 
             DerivationModel model = getDerivationModelFromView();
             DerivationExercise exercise = new DerivationExercise(model, mainWindow);
@@ -933,8 +937,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
     @Override
     public void updateStatementHeight(boolean isRequired) {
-        if (isRequired || lastFocusedNode != derivationView.getExerciseStatementNode()) {
-            lastFocusedNode = derivationView.getExerciseStatementNode();
+        if (isRequired || mainWindow.getLastFocusOwner() != derivationView.getExerciseStatementNode()) {
+            mainWindow.setLastFocusOwner(derivationView.getExerciseStatementNode());
 
             derivationModel = getDerivationModelFromView();
             DerivationExercise exercise = new DerivationExercise(derivationModel, mainWindow);
