@@ -10,6 +10,9 @@ import slapp.editor.abefg_explain.ABEFGmodel;
 import slapp.editor.derivation.DerivationCreate;
 import slapp.editor.derivation.DerivationExercise;
 import slapp.editor.derivation.DerivationModel;
+import slapp.editor.derivation_explain.DrvtnExpCreate;
+import slapp.editor.derivation_explain.DrvtnExpExercise;
+import slapp.editor.derivation_explain.DrvtnExpModel;
 import slapp.editor.simple_editor.SimpleEditCreate;
 import slapp.editor.simple_editor.SimpleEditExercise;
 import slapp.editor.simple_editor.SimpleEditModel;
@@ -42,6 +45,10 @@ public class TypeSelectorFactories {
             case "DerivationModel": {
                 DerivationModel derivationModel = (DerivationModel) objectModel;
                 return new DerivationExercise(derivationModel, mainWindow);
+            }
+            case "DrvtnExpModel": {
+                DrvtnExpModel drvtnExpModel = (DrvtnExpModel) objectModel;
+                return new DrvtnExpExercise(drvtnExpModel, mainWindow);
             }
 
             default: {
@@ -82,7 +89,6 @@ public class TypeSelectorFactories {
                 ABEFGcreate abefgCreate = new ABEFGcreate(mainWindow, abefgModel);
                 break;
             }
-
             case "DerivationModel": {
                 DerivationModel derivationModel = (DerivationModel) objectModel;
                 if (derivationModel.isStarted()) {
@@ -92,8 +98,15 @@ public class TypeSelectorFactories {
                 DerivationCreate derivationCreate = new DerivationCreate(mainWindow, derivationModel);
                 break;
             }
-
-
+            case "DrvtnExpModel": {
+                DrvtnExpModel drvtnExpModel = (DrvtnExpModel) objectModel;
+                if (drvtnExpModel.isStarted()) {
+                    EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appers to have the content area modified.  Cannot open in create window.");
+                    break;
+                }
+                DrvtnExpCreate drvtnExpCreate = new DrvtnExpCreate(mainWindow, drvtnExpModel);
+                break;
+            }
 
             default: {
                 EditorAlerts.showSimpleAlert("Cannot Open", "I do not recognize this as a SLAPP exercise file.");
@@ -110,12 +123,16 @@ public class TypeSelectorFactories {
                 ABcreate abCreate = new ABcreate(mainWindow);
                 break;
             }
+            case ABEFG_EXPLAIN: {
+                ABEFGcreate abefgCreate = new ABEFGcreate(mainWindow);
+                break;
+            }
             case DERIVATION: {
                 DerivationCreate derivationCreate = new DerivationCreate(mainWindow);
                 break;
             }
-            case ABEFG_EXPLAIN: {
-                ABEFGcreate abefgCreate = new ABEFGcreate(mainWindow);
+            case DRVTN_EXP: {
+                DrvtnExpCreate drvtnExpCreate = new DrvtnExpCreate(mainWindow);
                 break;
             }
             case SIMPLE_EDITOR: {

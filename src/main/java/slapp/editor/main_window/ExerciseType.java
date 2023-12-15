@@ -5,7 +5,8 @@ public enum ExerciseType {
     AB_EXPLAIN("AB explain"),
     ABEFG_EXPLAIN("AB/EFG explain"),
     DERIVATION("Derivation"),
-    SIMPLE_EDITOR("simple editor");
+    DRVTN_EXP("Derivation explain"),
+    SIMPLE_EDITOR("Simple editor");
 
 
     public final String label;

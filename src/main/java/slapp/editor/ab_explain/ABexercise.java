@@ -166,8 +166,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
     }
     @Override
     public void saveExercise(boolean saveAs) {
-        DiskUtilities.saveExercise(saveAs, getABmodelFromView());
-        exerciseModified = false;
+        boolean success = DiskUtilities.saveExercise(saveAs, getABmodelFromView());
+        if (success) exerciseModified = false;
     }
     @Override
     public void printExercise() {

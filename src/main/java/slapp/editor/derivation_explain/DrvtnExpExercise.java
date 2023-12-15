@@ -1,4 +1,4 @@
-package slapp.editor.derivation;
+package slapp.editor.derivation_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
@@ -23,102 +23,125 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
+import slapp.editor.derivation.LineType;
+import slapp.editor.derivation.ModelLine;
+import slapp.editor.derivation.ViewLine;
 import slapp.editor.main_window.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class DerivationExercise implements Exercise<DerivationModel, DerivationView> {
+public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     private MainWindow mainWindow;
-    private DerivationModel derivationModel;
-    private DerivationModel originalModel;
-    private DerivationView derivationView;
+    private DrvtnExpModel drvtnExpModel;
+    private DrvtnExpModel originalModel;
+    private DrvtnExpView drvtnExpView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
     private Node lastFocusedNode;
+
+    private Node focusedNode;
     private Font labelFont = new Font("Noto Serif Combo", 11);
     private boolean editJustification;
     private EventHandler justificationClickFilter;
     private RichTextArea lastJustificationRTA;
     private int lastJustificationRow;
-    private UndoRedoList<DerivationModel> undoRedoList = new UndoRedoList<>(20);
+    private UndoRedoList<DrvtnExpModel> undoRedoList = new UndoRedoList<>(20);
 
 
-    public DerivationExercise(DerivationModel model, MainWindow mainWindow) {
+    public DrvtnExpExercise(DrvtnExpModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
-        this.derivationModel = model;
+        this.drvtnExpModel = model;
         this.originalModel = model;
         this.mainView = mainWindow.getMainView();
-        this.derivationView = new DerivationView(mainView);
+        this.drvtnExpView = new DrvtnExpView(mainView);
         mainView.getMainScene().focusOwnerProperty().addListener((ob, ov, nv) -> {
             lastFocusedNode = ov;
-        });
-        setDerivationView();
-        pushUndoRedo();
+            focusedNode = nv;
 
+            System.out.println("derexp ov: " + ov.toString() + " derexp nv: " + nv.toString());
+
+
+        });
+        setDrvtnExpView();
+        pushUndoRedo();
     }
 
-    private void setDerivationView() {
+    private void setDrvtnExpView() {
 
-        derivationView.setExerciseName(derivationModel.getExerciseName());
-        derivationView.setContentPrompt(derivationModel.getContentPrompt());
-        derivationView.setLeftmostScopeLine(derivationModel.isLeftmostScopeLine());
+        drvtnExpView.setExerciseName(drvtnExpModel.getExerciseName());
+        drvtnExpView.setContentPrompt(drvtnExpModel.getContentPrompt());
+        drvtnExpView.setLeftmostScopeLine(drvtnExpModel.isLeftmostScopeLine());
+
+
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
-        statementEditor.setDocument(derivationModel.getExerciseStatement());
-        derivationView.setStatementPrefHeight(derivationModel.getStatementPrefHeight());
+        statementEditor.setDocument(drvtnExpModel.getExerciseStatement());
+        drvtnExpView.setStatementPrefHeight(drvtnExpModel.getStatementPrefHeight());
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
             }
         });
-        derivationView.setExerciseStatement(statementDRTA);
+        drvtnExpView.setExerciseStatement(statementDRTA);
 
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
-        commentEditor.setDocument(derivationModel.getExerciseComment());
+        commentEditor.setDocument(drvtnExpModel.getExerciseComment());
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
             }
         });
-        derivationView.setExerciseComment(commentDRTA);
+        drvtnExpView.setExerciseComment(commentDRTA);
+
+        DecoratedRTA explanationDRTA = new DecoratedRTA();
+        RichTextArea explanationEditor = explanationDRTA.getEditor();
+
+        explanationEditor.setDocument(drvtnExpModel.getExplanationDocument());
+        explanationEditor.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) {
+                System.out.println("explanation editor in focus: " + explanationEditor.toString());
+                mainView.editorInFocus(explanationDRTA, ControlType.AREA);
+            }
+        });
+        drvtnExpView.setExplanationDRTA(explanationDRTA);
 
 
-        derivationView.getInsertLineButton().setOnAction(e -> insertLineAction());
-        derivationView.getDeleteLineButton().setOnAction(e -> deleteLineAction());
-        derivationView.getIndentButton().setOnAction(e -> indentLineAction());
-        derivationView.getOutdentButton().setOnAction(e -> outdentLineAction());
-        derivationView.getAddShelfButton().setOnAction(e -> addShelfLineAction());
-        derivationView.getAddGapButton().setOnAction(e -> addGapLineAction());
-        derivationView.getInsertSubButton().setOnAction(e -> insertSubAction());
-        derivationView.getInsertSubsButton().setOnAction(e -> insertSubsAction());
-        derivationView.getUndoButton().setOnAction(e -> undoAction());
-        derivationView.getRedoButton().setOnAction(e -> redoAction());
+        drvtnExpView.getInsertLineButton().setOnAction(e -> insertLineAction());
+        drvtnExpView.getDeleteLineButton().setOnAction(e -> deleteLineAction());
+        drvtnExpView.getIndentButton().setOnAction(e -> indentLineAction());
+        drvtnExpView.getOutdentButton().setOnAction(e -> outdentLineAction());
+        drvtnExpView.getAddShelfButton().setOnAction(e -> addShelfLineAction());
+        drvtnExpView.getAddGapButton().setOnAction(e -> addGapLineAction());
+        drvtnExpView.getInsertSubButton().setOnAction(e -> insertSubAction());
+        drvtnExpView.getInsertSubsButton().setOnAction(e -> insertSubsAction());
+        drvtnExpView.getUndoButton().setOnAction(e -> undoAction());
+        drvtnExpView.getRedoButton().setOnAction(e -> redoAction());
 
-        derivationView.initializeViewDetails();
-
-
-
-        derivationView.getExerciseContent().setDividerPosition(0, derivationModel.getGridWidth());
-        derivationView.getExerciseContent().getDividers().get(0).positionProperty().addListener((ob, ov, nv) -> {
+        drvtnExpView.initializeViewDetails();
+        drvtnExpView.getSplitPane().setDividerPosition(0, drvtnExpModel.getGridWidth());
+        drvtnExpView.getSplitPane().getDividers().get(0).positionProperty().addListener((ob, ov, nv) -> {
             double diff = (double) nv - (double) ov;
             if (Math.abs(diff) >= .02) exerciseModified = true;
         });
 
         setViewLinesFromModel();
-        derivationView.setGridFromViewLines();
+        drvtnExpView.setGridFromViewLines();
+
         setContentFocusListeners();
     }
 
     private void setViewLinesFromModel() {
 
-        List<ModelLine> modelLines = derivationModel.getExerciseContent();
+        List<ModelLine> modelLines = drvtnExpModel.getExerciseContent();
         List<ViewLine> viewLines = new ArrayList<>();
         int lineNumber = 1;
         for (int rowIndex = 0; rowIndex < modelLines.size(); rowIndex++) {
@@ -147,7 +170,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
                 rta.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
                     KeyCode code = e.getCode();
-                    int row = derivationView.getGrid().getRowIndex(rta.getParent());
+                    int row = drvtnExpView.getGrid().getRowIndex(rta.getParent());
 
                     if (code == KeyCode.ENTER || (code == KeyCode.RIGHT && e.isShortcutDown())) {
                         viewLine.getJustificationFlow().requestFocus();
@@ -178,11 +201,11 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             }
             viewLines.add(viewLine);
         }
-        derivationView.setViewLines(viewLines);
+        drvtnExpView.setViewLines(viewLines);
     }
 
     private void setContentFocusListeners() {
-        List<ViewLine> viewLines = derivationView.getViewLines();
+        List<ViewLine> viewLines = drvtnExpView.getViewLines();
         for (ViewLine viewLine : viewLines) {
             if (LineType.isContentLine(viewLine.getLineType())) {
                 DecoratedRTA drta = viewLine.getLineContentDRTA();
@@ -205,8 +228,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     private ViewLine getContentLineBelow(int row) {
         ViewLine line = null;
         row++;
-        for (int i = row; i < derivationView.getViewLines().size(); i++) {
-            ViewLine temp = derivationView.getViewLines().get(i);
+        for (int i = row; i < drvtnExpView.getViewLines().size(); i++) {
+            ViewLine temp = drvtnExpView.getViewLines().get(i);
             if (LineType.isContentLine(temp.getLineType())) {
                 line = temp;
                 break;
@@ -219,7 +242,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         ViewLine line = null;
         row--;
         for (int i = row; i >= 0; i--) {
-            ViewLine temp = derivationView.getViewLines().get(i);
+            ViewLine temp = drvtnExpView.getViewLines().get(i);
             if (LineType.isContentLine(temp.getLineType())) {
                 line = temp;
                 break;
@@ -304,7 +327,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
 
     private void editJustificationField(TextFlow flow) {
-        int rowIndex = derivationView.getGrid().getRowIndex(flow);
+        int rowIndex = drvtnExpView.getGrid().getRowIndex(flow);
         DecoratedRTA drta = new DecoratedRTA();
         RichTextArea rta = drta.getEditor();
         rta.setContentAreaWidth(110);
@@ -315,7 +338,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         rta.setDocument(new Document(getStringFromJustificationFlow(flow)));
         rta.getActionFactory().saveNow().execute(new ActionEvent());
 
-        if (derivationView.getViewLines().get(rowIndex).getLineType() == LineType.PREMISE_LINE) rta.setEditable(false);
+        if (drvtnExpView.getViewLines().get(rowIndex).getLineType() == LineType.PREMISE_LINE) rta.setEditable(false);
         lastJustificationRTA = rta;
         lastJustificationRow = rowIndex;
         rta.applyCss();
@@ -351,25 +374,25 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             KeyCode code = e.getCode();
 
 
-            int row = derivationView.getGrid().getRowIndex(rta);
+            int row = drvtnExpView.getGrid().getRowIndex(rta);
 
             if (code == KeyCode.ENTER || (code == KeyCode.RIGHT && e.isShortcutDown())) {
-                derivationView.setGridFromViewLines();
+                drvtnExpView.setGridFromViewLines();
                 ViewLine contentLineBelow = getContentLineBelow(row);
                 if (contentLineBelow != null) contentLineBelow.getLineContentDRTA().getEditor().requestFocus();
                 e.consume();
             } else if (code == KeyCode.LEFT && e.isShortcutDown()) {
-                derivationView.setGridFromViewLines();
-                ViewLine currentLine = derivationView.getViewLines().get(row);
+                drvtnExpView.setGridFromViewLines();
+                ViewLine currentLine = drvtnExpView.getViewLines().get(row);
                 currentLine.getLineContentDRTA().getEditor().requestFocus();
                 e.consume();
             } else if (code == KeyCode.UP ) {
-                derivationView.setGridFromViewLines();
+                drvtnExpView.setGridFromViewLines();
                 ViewLine contentLineAbove = getContentLineAbove(row);
                 if (contentLineAbove != null) contentLineAbove.getJustificationFlow().requestFocus();
                 e.consume();
             } else if (code == KeyCode.DOWN ) {
-                derivationView.setGridFromViewLines();
+                drvtnExpView.setGridFromViewLines();
                 ViewLine contentLineBelow = getContentLineBelow(row);
                 if (contentLineBelow != null)  contentLineBelow.getJustificationFlow().requestFocus();
                 e.consume();
@@ -377,7 +400,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
         });
 
-        derivationView.getGrid().add(rta, 22, rowIndex);
+        drvtnExpView.getGrid().add(rta, 22, rowIndex);
         mainView.editorInFocus(drta, ControlType.STATEMENT);
     }
 
@@ -403,10 +426,10 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         rta.getActionFactory().saveNow().execute(new ActionEvent());
         String justificationString = rta.getDocument().getText();
 
-        TextFlow justificationFlow = getJustificationFlow(justificationString, derivationView.getViewLines());
-        derivationView.getViewLines().get(rowIndex).setJustificationFlow(justificationFlow);
+        TextFlow justificationFlow = getJustificationFlow(justificationString, drvtnExpView.getViewLines());
+        drvtnExpView.getViewLines().get(rowIndex).setJustificationFlow(justificationFlow);
 
-        derivationView.setGridFromViewLines();
+        drvtnExpView.setGridFromViewLines();
 
         if (modified) {
             pushUndoRedo();
@@ -440,10 +463,10 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
         rta.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
             KeyCode code = e.getCode();
-            int row = derivationView.getGrid().getRowIndex(rta.getParent());
+            int row = drvtnExpView.getGrid().getRowIndex(rta.getParent());
 
             if (code == KeyCode.ENTER || (code == KeyCode.RIGHT && e.isShortcutDown())) {
-                derivationView.getViewLines().get(row).getJustificationFlow().requestFocus();
+                drvtnExpView.getViewLines().get(row).getJustificationFlow().requestFocus();
                 e.consume();
             } else if (code == KeyCode.LEFT && e.isShortcutDown()) {
                 if (getContentLineAbove(row) != null) getContentLineAbove(row).getJustificationFlow().requestFocus();
@@ -461,57 +484,57 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         TextFlow justificationFlow = getStyledJustificationFlow(flow);
         ViewLine viewLine = new ViewLine(numLabel, depth, LineType.MAIN_CONTENT_LINE, drta, justificationFlow, new ArrayList<Label>());
 
-        derivationView.getViewLines().add(newRow, viewLine);
+        drvtnExpView.getViewLines().add(newRow, viewLine);
     }
 
     private void undoAction() {
-        DerivationModel undoElement = undoRedoList.getUndoElement();
+        DrvtnExpModel undoElement = undoRedoList.getUndoElement();
         if (undoElement != null) {
-            derivationModel = (DerivationModel) SerializationUtils.clone(undoElement);
+            drvtnExpModel = (DrvtnExpModel) SerializationUtils.clone(undoElement);
             setViewLinesFromModel();
-            derivationView.setGridFromViewLines();
+            drvtnExpView.setGridFromViewLines();
             updateUndoRedoButtons();
             setContentFocusListeners();
         }
     }
 
     private void redoAction() {
-        DerivationModel redoElement = undoRedoList.getRedoElement();
+        DrvtnExpModel redoElement = undoRedoList.getRedoElement();
         if (redoElement != null) {
-            derivationModel = (DerivationModel) SerializationUtils.clone(redoElement);
+            drvtnExpModel = (DrvtnExpModel) SerializationUtils.clone(redoElement);
             setViewLinesFromModel();
-            derivationView.setGridFromViewLines();
+            drvtnExpView.setGridFromViewLines();
             updateUndoRedoButtons();
             setContentFocusListeners();
         }
     }
 
     private void updateUndoRedoButtons() {
-        derivationView.getUndoButton().setDisable(!undoRedoList.canUndo());
-        derivationView.getRedoButton().setDisable(!undoRedoList.canRedo());
+        drvtnExpView.getUndoButton().setDisable(!undoRedoList.canUndo());
+        drvtnExpView.getRedoButton().setDisable(!undoRedoList.canRedo());
     }
 
     private void pushUndoRedo() {
-        DerivationModel model = getDerivationModelFromView();
-        DerivationModel deepCopy = (DerivationModel) SerializationUtils.clone(model);
+        DrvtnExpModel model = getDrvtnExpModelFromView();
+        DrvtnExpModel deepCopy = (DrvtnExpModel) SerializationUtils.clone(model);
         undoRedoList.push(deepCopy);
         updateUndoRedoButtons();
     }
 
     private void insertLineAction() {
         int row = -1;
-        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
 
         if (row >= 0) {
-            ViewLine viewLine = derivationView.getViewLines().get(row);
+            ViewLine viewLine = drvtnExpView.getViewLines().get(row);
             int depth = viewLine.getDepth();
             if (!LineType.isSetupLine(viewLine.getLineType()) || viewLine.getLineType() == LineType.CONCLUSION_LINE) {
                 addEmptyViewContentRow(row, depth);
-                derivationView.setGridFromViewLines();
+                drvtnExpView.setGridFromViewLines();
                 pushUndoRedo();
 
-                DecoratedRTA drta = derivationView.getViewLines().get(row).getLineContentDRTA();
+                DecoratedRTA drta = drvtnExpView.getViewLines().get(row).getLineContentDRTA();
                 RichTextArea rta = drta.getEditor();
                 rta.applyCss();
                 rta.layout();
@@ -539,9 +562,9 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
     private void deleteLineAction() {
         int row = -1;
-        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
-        List<ViewLine> viewLines = derivationView.getViewLines();
+        List<ViewLine> viewLines = drvtnExpView.getViewLines();
         if (row >= 0 && row < viewLines.size()) {
 
             if (!LineType.isSetupLine(viewLines.get(row).getLineType())) {
@@ -558,7 +581,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                     if (LineType.isShelfLine(type) || LineType.isGapLine(type)) viewLines.remove(row);
                 }
 
-                derivationView.setGridFromViewLines();
+                drvtnExpView.setGridFromViewLines();
 
                 pushUndoRedo();
 
@@ -580,10 +603,10 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
     private void indentLineAction() {
         int row = -1;
-        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
-            List<ViewLine> viewLines = derivationView.getViewLines();
+            List<ViewLine> viewLines = drvtnExpView.getViewLines();
             ViewLine viewLine = viewLines.get(row);
             if (!LineType.isSetupLine(viewLine.getLineType())) {
                 int depth = viewLine.getDepth();
@@ -597,7 +620,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                             viewLines.set(row, nextLine);
                         }
                     }
-                    derivationView.setGridFromViewLines();
+                    drvtnExpView.setGridFromViewLines();
                     pushUndoRedo();
                     exerciseModified = true;
 
@@ -614,10 +637,10 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
     private void outdentLineAction() {
         int row = -1;
-        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
-            List<ViewLine> viewLines = derivationView.getViewLines();
+            List<ViewLine> viewLines = drvtnExpView.getViewLines();
             ViewLine viewLine = viewLines.get(row);
             if (!LineType.isSetupLine(viewLine.getLineType())) {
                 int depth = viewLine.getDepth();
@@ -636,7 +659,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                         }
                     }
 
-                    derivationView.setGridFromViewLines();
+                    drvtnExpView.setGridFromViewLines();
                     pushUndoRedo();
                     exerciseModified = true;
                 } else {
@@ -651,10 +674,10 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
     private void addShelfLineAction() {
         int row = -1;
-        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
-            List<ViewLine> viewLines = derivationView.getViewLines();
+            List<ViewLine> viewLines = drvtnExpView.getViewLines();
             ViewLine viewLine = viewLines.get(row);
             int depth = viewLine.getDepth();
             if (!LineType.isSetupLine(viewLine.getLineType())) {
@@ -664,7 +687,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                             ViewLine shelfLine = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
                             viewLines.add(row, shelfLine);
                             viewLine.getLineContentDRTA().getEditor().requestFocus();
-                            derivationView.setGridFromViewLines();
+                            drvtnExpView.setGridFromViewLines();
                             pushUndoRedo();
                             exerciseModified = true;
                         } else {
@@ -685,10 +708,10 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
     private void addGapLineAction() {
         int row = -1;
-        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
-            List<ViewLine> viewLines = derivationView.getViewLines();
+            List<ViewLine> viewLines = drvtnExpView.getViewLines();
             ViewLine viewLine = viewLines.get(row);
             int depth = viewLine.getDepth();
             if (!LineType.isSetupLine(viewLine.getLineType())) {
@@ -698,7 +721,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                             ViewLine gapLine = new ViewLine(null, depth, LineType.GAP_LINE, null, null, null);
                             viewLines.add(row, gapLine);
                             viewLine.getLineContentDRTA().getEditor().requestFocus();
-                            derivationView.setGridFromViewLines();
+                            drvtnExpView.setGridFromViewLines();
                             pushUndoRedo();
                             exerciseModified = true;
 
@@ -720,23 +743,23 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
     private void insertSubAction() {
         int row = -1;
-        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
-            ViewLine viewLine = derivationView.getViewLines().get(row);
+            ViewLine viewLine = drvtnExpView.getViewLines().get(row);
             int depth = viewLine.getDepth();
             depth++;
             if (!LineType.isSetupLine(viewLine.getLineType()) || viewLine.getLineType() == LineType.CONCLUSION_LINE) {
                 addEmptyViewContentRow(row, depth);
                 addEmptyViewContentRow(row, depth);
                 addEmptyViewContentRow(row, depth);
-                if (derivationModel.isDefaultShelf()) {
+                if (drvtnExpModel.isDefaultShelf()) {
                     ViewLine shelfLine = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
-                    derivationView.getViewLines().add(row, shelfLine);
+                    drvtnExpView.getViewLines().add(row, shelfLine);
                 }
                 addEmptyViewContentRow(row, depth);
 
-                derivationView.setGridFromViewLines();
+                drvtnExpView.setGridFromViewLines();
                 pushUndoRedo();
                 exerciseModified = true;
 
@@ -750,34 +773,34 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
     private void insertSubsAction() {
         int row = -1;
-        if (derivationView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = derivationView.getGrid().getRowIndex(lastFocusedNode.getParent());
+        if (drvtnExpView.getGrid().getChildren().contains(lastFocusedNode.getParent())) row = drvtnExpView.getGrid().getRowIndex(lastFocusedNode.getParent());
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         if (row >= 0) {
-            ViewLine viewLine = derivationView.getViewLines().get(row);
+            ViewLine viewLine = drvtnExpView.getViewLines().get(row);
             int depth = viewLine.getDepth();
             depth++;
             if (!LineType.isSetupLine(viewLine.getLineType()) || viewLine.getLineType() == LineType.CONCLUSION_LINE) {
                 addEmptyViewContentRow(row, depth);
                 addEmptyViewContentRow(row, depth);
                 addEmptyViewContentRow(row, depth);
-                if (derivationModel.isDefaultShelf()) {
+                if (drvtnExpModel.isDefaultShelf()) {
                     ViewLine shelfLine1 = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
-                    derivationView.getViewLines().add(row, shelfLine1);
+                    drvtnExpView.getViewLines().add(row, shelfLine1);
                 }
                 addEmptyViewContentRow(row, depth);
 
                 ViewLine gapLine = new ViewLine(null, depth, LineType.GAP_LINE,  null, null, null);
-                derivationView.getViewLines().add(row, gapLine);
+                drvtnExpView.getViewLines().add(row, gapLine);
 
                 addEmptyViewContentRow(row, depth);
                 addEmptyViewContentRow(row, depth);
                 addEmptyViewContentRow(row, depth);
-                if (derivationModel.isDefaultShelf()) {
+                if (drvtnExpModel.isDefaultShelf()) {
                     ViewLine shelfLine2 = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
-                    derivationView.getViewLines().add(row, shelfLine2);
+                    drvtnExpView.getViewLines().add(row, shelfLine2);
                 }
                 addEmptyViewContentRow(row, depth);
-                derivationView.setGridFromViewLines();
+                drvtnExpView.setGridFromViewLines();
                 pushUndoRedo();
                 exerciseModified = true;
 
@@ -791,29 +814,29 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
 
     @Override
-    public DerivationModel getExerciseModel() { return derivationModel; }
+    public DrvtnExpModel getExerciseModel() { return drvtnExpModel; }
     @Override
-    public DerivationView getExerciseView() { return derivationView; }
+    public DrvtnExpView getExerciseView() { return drvtnExpView; }
     @Override
     public void saveExercise(boolean saveAs) {
-        boolean success = DiskUtilities.saveExercise(saveAs, getDerivationModelFromView());
+        boolean success = DiskUtilities.saveExercise(saveAs, getDrvtnExpModelFromView());
         if (success) exerciseModified = false;
     }
     @Override
-    public void printExercise() { PrintUtilities.printExercise(getPrintNodes(), derivationModel.getExerciseName()); }
+    public void printExercise() { PrintUtilities.printExercise(getPrintNodes(), drvtnExpModel.getExerciseName()); }
 
     @Override
-    public void exportExerciseToPDF() { PrintUtilities.exportExerciseToPDF(getPrintNodes(), derivationModel.getExerciseName()); }
+    public void exportExerciseToPDF() { PrintUtilities.exportExerciseToPDF(getPrintNodes(), drvtnExpModel.getExerciseName()); }
 
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        derivationModel = getDerivationModelFromView();
-        DerivationExercise exercise = new DerivationExercise(derivationModel, mainWindow);
+        drvtnExpModel = getDrvtnExpModelFromView();
+        DrvtnExpExercise exercise = new DrvtnExpExercise(drvtnExpModel, mainWindow);
         double nodeWidth = PrintUtilities.getPageWidth();
 
         //header node
-        Label exerciseName = new Label(derivationModel.getExerciseName());
+        Label exerciseName = new Label(drvtnExpModel.getExerciseName());
         exerciseName.setStyle("-fx-font-weight: bold;");
         HBox hbox = new HBox(exerciseName);
         hbox.setPadding(new Insets(0,0,10,0));
@@ -849,13 +872,21 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         GridPane derivationPane = exercise.getExerciseView().getGrid();
         derivationPane.setPadding(new Insets(15,0,15,0));
 
-        double width = derivationModel.getGridWidth() * PrintUtilities.getPageWidth();
+        double width = drvtnExpModel.getGridWidth() * PrintUtilities.getPageWidth();
         derivationPane.setMaxWidth(width);
         derivationPane.setMinWidth(width);
         HBox gridBox = new HBox(derivationPane);
         gridBox.setAlignment(Pos.CENTER);
         nodeList.add(gridBox);
 
+        RichTextArea explanationRTA = exercise.getExerciseView().getExplanationDRTA().getEditor();
+        RichTextAreaSkin explanationRTASkin = ((RichTextAreaSkin) explanationRTA.getSkin());
+        double explanationHeight = explanationRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+        explanationRTA.setPrefHeight(explanationHeight + 35.0);
+        explanationRTA.setContentAreaWidth(nodeWidth);
+        explanationRTA.setPrefWidth(nodeWidth);
+        explanationRTA.getStylesheets().clear(); statementRTA.getStylesheets().add("richTextAreaPrinter.css");
+        nodeList.add(explanationRTA);
 
         Separator contentSeparator = new Separator(Orientation.HORIZONTAL);
         contentSeparator.setStyle("-fx-stroke-dash-array:0.1 5.0");
@@ -878,12 +909,13 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
 
     @Override
-    public Exercise<DerivationModel, DerivationView> getContentClearExercise() {
-        RichTextArea commentRTA = derivationView.getExerciseComment().getEditor();
+    public Exercise<DrvtnExpModel, DrvtnExpView> getContentClearExercise() {
+        RichTextArea commentRTA = drvtnExpView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
         originalModel.setExerciseComment(commentDocument);
-        DerivationExercise clearExercise = new DerivationExercise(originalModel, mainWindow);
+
+        DrvtnExpExercise clearExercise = new DrvtnExpExercise(originalModel, mainWindow);
         return clearExercise;
     }
 
@@ -891,20 +923,22 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     public boolean isExerciseModified() {
 
 
-        RichTextArea commentEditor = derivationView.getExerciseComment().getEditor();
-        if (commentEditor.isModified()) {
-            exerciseModified = true;
-        }
+        RichTextArea commentEditor = drvtnExpView.getExerciseComment().getEditor();
+        if (commentEditor.isModified()) exerciseModified = true;
 
-        List<ViewLine> viewLines = derivationView.getViewLines();
+
+        RichTextArea explanationEditor = drvtnExpView.getExplanationDRTA().getEditor();
+        if (explanationEditor.isModified()) exerciseModified = true;
+
+
+        List<ViewLine> viewLines = drvtnExpView.getViewLines();
         for (ViewLine viewLine : viewLines) {
             if (LineType.isContentLine(viewLine.getLineType())) {
                 RichTextArea rta = viewLine.getLineContentDRTA().getEditor();
-                if (rta.isModified()) {
-                    exerciseModified = true;
-                }
+                if (rta.isModified()) exerciseModified = true;
             }
         }
+
         return exerciseModified;
     }
 
@@ -913,17 +947,34 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
     @Override
     public void updateContentHeight(boolean isRequired) {
-        double gridHeight = derivationView.getGridHeight();
-        mainWindow.getMainView().updateNodeHeightLabel(gridHeight + 20);
+        RichTextArea explanationEditor = drvtnExpView.getExplanationDRTA().getEditor();
+        System.out.println("requested node: " + focusedNode.toString());
+
+        if (explanationEditor.isFocused() && (isRequired || lastFocusedNode != explanationEditor)) {
+            lastFocusedNode = explanationEditor;
+
+
+
+            DrvtnExpModel model = getDrvtnExpModelFromView();
+            DrvtnExpExercise exercise = new DrvtnExpExercise(model, mainWindow);
+            RichTextArea explanationRTA = exercise.getExerciseView().getExplanationDRTA().getEditor();
+            RichTextAreaSkin explanationRTASkin = ((RichTextAreaSkin) explanationRTA.getSkin());
+            double explanationHeight = explanationRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+            mainWindow.getMainView().updateNodeHeightLabel(explanationHeight + 20);
+        } else {
+
+            double gridHeight = drvtnExpView.getGridHeight();
+            mainWindow.getMainView().updateNodeHeightLabel(gridHeight + 20);
+        }
     }
 
     @Override
     public void updateCommentHeight(boolean isRequired) {
-        if (isRequired || lastFocusedNode != derivationView.getExerciseComment().getEditor()) {
-            lastFocusedNode = derivationView.getExerciseComment().getEditor();
+        if (isRequired || lastFocusedNode != drvtnExpView.getExerciseComment().getEditor()) {
+            lastFocusedNode = drvtnExpView.getExerciseComment().getEditor();
 
-            DerivationModel model = getDerivationModelFromView();
-            DerivationExercise exercise = new DerivationExercise(model, mainWindow);
+            DrvtnExpModel model = getDrvtnExpModelFromView();
+            DrvtnExpExercise exercise = new DrvtnExpExercise(model, mainWindow);
             RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
             RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
             double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
@@ -933,11 +984,11 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
     @Override
     public void updateStatementHeight(boolean isRequired) {
-        if (isRequired || lastFocusedNode != derivationView.getExerciseStatementNode()) {
-            lastFocusedNode = derivationView.getExerciseStatementNode();
+        if (isRequired || lastFocusedNode != drvtnExpView.getExerciseStatementNode()) {
+            lastFocusedNode = drvtnExpView.getExerciseStatementNode();
 
-            derivationModel = getDerivationModelFromView();
-            DerivationExercise exercise = new DerivationExercise(derivationModel, mainWindow);
+            drvtnExpModel = getDrvtnExpModelFromView();
+            DrvtnExpExercise exercise = new DrvtnExpExercise(drvtnExpModel, mainWindow);
             RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
             statementRTA.setEditable(true);
             RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
@@ -947,28 +998,33 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
 
     @Override
-    public ExerciseModel<DerivationModel, DerivationView> getExerciseModelFromView() {
-        return (ExerciseModel) getDerivationModelFromView();
+    public ExerciseModel<DrvtnExpModel, DrvtnExpView> getExerciseModelFromView() {
+        return (ExerciseModel) getDrvtnExpModelFromView();
     }
 
-    private DerivationModel getDerivationModelFromView() {
-        String name = derivationView.getExerciseName();
+    private DrvtnExpModel getDrvtnExpModelFromView() {
+        String name = drvtnExpView.getExerciseName();
+        String prompt = drvtnExpView.getContentPrompt();
+        Boolean started = (drvtnExpModel.isStarted() || exerciseModified);
+        double statementHeight = drvtnExpView.getExerciseStatement().getEditor().getPrefHeight();
+        double gridWidth = drvtnExpView.getSplitPane().getDividerPositions()[0];
 
-        Boolean started = (derivationModel.isStarted() || exerciseModified);
-        double statementHeight = derivationView.getExerciseStatement().getEditor().getPrefHeight();
-        double gridWidth = derivationView.getExerciseContent().getDividerPositions()[0];
 
+        boolean leftmostScopeLine = drvtnExpModel.isLeftmostScopeLine();
+        boolean defaultShelf = drvtnExpModel.isDefaultShelf();
+        Document statementDocument = drvtnExpModel.getExerciseStatement();
 
-        boolean leftmostScopeLine = derivationModel.isLeftmostScopeLine();
-        boolean defaultShelf = derivationModel.isDefaultShelf();
-        Document statementDocument = derivationModel.getExerciseStatement();
-
-        RichTextArea commentRTA = derivationView.getExerciseComment().getEditor();
+        RichTextArea commentRTA = drvtnExpView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
 
+        RichTextArea explanationRTA = drvtnExpView.getExplanationDRTA().getEditor();
+        explanationRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        Document explanationDocument = explanationRTA.getDocument();
+
+
         List<ModelLine> modelLines = new ArrayList<>();
-        List<ViewLine> viewLines = derivationView.getViewLines();
+        List<ViewLine> viewLines = drvtnExpView.getViewLines();
         for (int i = 0; i < viewLines.size(); i++) {
             ViewLine viewLine = viewLines.get(i);
             int depth = viewLine.getDepth();
@@ -996,7 +1052,9 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             ModelLine modelLine = new ModelLine(depth, lineContentDocument, justification, lineType);
             modelLines.add(modelLine);
         }
-        DerivationModel model = new DerivationModel(name, started, statementHeight,gridWidth, leftmostScopeLine, defaultShelf, statementDocument, commentDocument, modelLines);
+
+
+        DrvtnExpModel model = new DrvtnExpModel(name, started, statementHeight, gridWidth, prompt, leftmostScopeLine, defaultShelf, statementDocument, commentDocument, explanationDocument, modelLines);
 
         return model;
     }

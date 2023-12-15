@@ -142,8 +142,8 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     }
     @Override
     public void saveExercise(boolean saveAs) {
-        DiskUtilities.saveExercise(saveAs, getSimpleEditModelFromView());
-        exerciseModified = false;
+        boolean success = DiskUtilities.saveExercise(saveAs, getSimpleEditModelFromView());
+        if (success) exerciseModified = false;
     }
     @Override
     public void printExercise() {

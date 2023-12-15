@@ -18,7 +18,8 @@ public class DiskUtilities {
     private static File userHomeFile = new File(System.getProperty("user.home"));
 
 
-    public static void saveExercise(boolean saveAs, ExerciseModel exerciseModel) {
+    public static boolean saveExercise(boolean saveAs, ExerciseModel exerciseModel) {
+        boolean success = false;
         File fileToSave;
         if (saveAs || exerciseDirectory == null) {
             FileChooser fileChooser = new FileChooser();
@@ -30,7 +31,7 @@ public class DiskUtilities {
             fileChooser.setInitialFileName(exerciseModel.getExerciseName() + ".sle");
             fileToSave = fileChooser.showSaveDialog(EditorMain.mainStage);
             if (fileToSave == null)
-                return;
+                return success;
         }
         else fileToSave = new File(exerciseDirectory, exerciseModel.getExerciseName() + ".sle");
 
@@ -39,7 +40,7 @@ public class DiskUtilities {
         }
         catch (IOException e) {
             EditorAlerts.showSimpleAlert("Cannot Save", "No access to save " + fileToSave.getPath());
-            return;
+            return success;
         }
         //legit fileToSave
         exerciseDirectory = fileToSave.getParentFile();
@@ -49,13 +50,15 @@ public class DiskUtilities {
 
             String locationString = ".";
             if (fileToSave.getParent() != null) locationString = "\n\nin " + fileToSave.getParent() +".";
-
             EditorAlerts.fleetingPopup(fileToSave.getName() + " saved" + locationString);
+            success = true;
         }
         catch (IOException e) {
 //            e.printStackTrace();
             EditorAlerts.showSimpleAlert("Error Saving", e.getClass().getCanonicalName());
+            return success;
         }
+        return success;
     }
 
     public static boolean saveAssignment(boolean saveAs, Assignment assignment) {
@@ -96,6 +99,7 @@ public class DiskUtilities {
         catch (IOException e) {
             e.printStackTrace();
             EditorAlerts.showSimpleAlert("Error Saving", e.getClass().getCanonicalName());
+            return success;
         }
         return success;
     }

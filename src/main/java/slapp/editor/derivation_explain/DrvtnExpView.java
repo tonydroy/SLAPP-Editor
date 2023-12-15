@@ -1,4 +1,4 @@
-package slapp.editor.derivation;
+package slapp.editor.derivation_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
@@ -14,22 +14,27 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 import slapp.editor.decorated_rta.DecoratedRTA;
+import slapp.editor.derivation.LineType;
+import slapp.editor.derivation.ViewLine;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
+public class DrvtnExpView implements ExerciseView<DecoratedRTA, VBox> {
     MainWindowView mainView;
     private String exerciseName = new String("");
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private String contentPrompt = new String("");
+    private DecoratedRTA explanationDRTA = new DecoratedRTA();
     private boolean isLeftmostScopeLine = true;
     private Node exerciseControlNode = new VBox();
     private SplitPane contentSplitPane = new SplitPane();
     private GridPane grid = new GridPane();
+    private VBox contentBox = new VBox();
     private List<ViewLine> viewLines = new ArrayList<>();
     private Button insertLineButton;
     private Button deleteLineButton;
@@ -46,7 +51,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
     private double gapRowHeight = 7.0;
 
 
-    public DerivationView(MainWindowView mainView) {
+    public DrvtnExpView(MainWindowView mainView) {
         this.mainView = mainView;
         Pane blankPane = new Pane();
         blankPane.setMinWidth(0);
@@ -54,6 +59,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
         blankPane.setStyle("-fx-background-color: white;");
         contentSplitPane.getItems().addAll(grid, blankPane);
         contentSplitPane.setOrientation(Orientation.HORIZONTAL);
+
 
         ColumnConstraints fixedCol = new ColumnConstraints();
         fixedCol.setMinWidth(10);
@@ -113,13 +119,18 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setEditable(false);
 
-
-
         RichTextArea commentRTA = exerciseComment.getEditor();
         commentRTA.getStylesheets().add("slappTextArea.css");
         commentRTA.setPrefHeight(70.0);
         commentRTA.setPromptText("Comment:");
 
+
+        RichTextArea explanationRTA = explanationDRTA.getEditor();
+        explanationRTA.getStylesheets().add("slappTextArea.css");
+        explanationRTA.setPrefHeight(150.0);
+        explanationRTA.setPromptText(contentPrompt);
+
+        contentBox.getChildren().addAll(contentSplitPane, explanationDRTA.getEditor());
     }
 
     public void setGridFromViewLines() {
@@ -224,7 +235,15 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
 
     public Button getRedoButton() {  return redoButton; }
 
+    public SplitPane getSplitPane() {return contentSplitPane; }
 
+    public DecoratedRTA getExplanationDRTA() { return explanationDRTA;  }
+
+    public void setExplanationDRTA(DecoratedRTA explanationDRTA) { this.explanationDRTA = explanationDRTA;  }
+
+    public String getContentPrompt() {
+        return contentPrompt;
+    }
 
     @Override
     public String getExerciseName() { return exerciseName; }
@@ -250,17 +269,17 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
         exerciseStatement.getEditor().setPrefHeight(height);
     }
     @Override
-    public SplitPane getExerciseContent() { return contentSplitPane; }
+    public VBox getExerciseContent() { return contentBox; }
     @Override
-    public void setExerciseContent(SplitPane contentSplitPane) { this.contentSplitPane = contentSplitPane; }
+    public void setExerciseContent(VBox contentBox) { this.contentBox = contentBox; }
     @Override
-    public Node getExerciseContentNode() { return contentSplitPane; }
+    public Node getExerciseContentNode() { return contentBox; }
     @Override
     public void setContentPrompt(String prompt) { contentPrompt = prompt; }
     @Override
     public DoubleProperty getContentHeightProperty() { return grid.prefHeightProperty(); }
     @Override
-    public double getContentFixedHeight() { return 0.0; }
+    public double getContentFixedHeight() { return explanationDRTA.getEditor().getHeight(); }
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
 

@@ -213,8 +213,8 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
     }
     @Override
     public void saveExercise(boolean saveAs) {
-        DiskUtilities.saveExercise(saveAs, getABEFGmodelFromView());
-        exerciseModified = false;
+        boolean success = DiskUtilities.saveExercise(saveAs, getABEFGmodelFromView());
+        if (success) exerciseModified = false;
     }
     @Override
     public void printExercise() {

@@ -35,7 +35,7 @@ public class MainWindow {
     Exercise currentExercise;
     Assignment currentAssignment = null;
     int assignmentIndex = 0;
-    boolean isAssignmentContentModified = false;
+    boolean assignmentContentModified = false;
     ChangeListener<Node> focusListener;
     Node lastFocusOwner;
 
@@ -51,6 +51,8 @@ public class MainWindow {
             if (nv != null) {
                 if (nv.focusedProperty().get() == true) {
                     lastFocusOwner = ov;
+                    if (ov != null) System.out.println("mainwin ov: " + ov.toString() + " mainwin nv: " + nv.toString());
+
                     updateNodeContainerHeight(nv, false);
                 }
             }
@@ -282,7 +284,7 @@ public class MainWindow {
 
     private boolean checkContinueAssignment(String title, String content) {
         boolean okContinue = true;
-        if (currentAssignment != null && (currentExercise.isExerciseModified() || isAssignmentContentModified)) {
+        if (currentAssignment != null && (currentExercise.isExerciseModified() || assignmentContentModified)) {
             Alert confirm = EditorAlerts.confirmationAlert(title, content);
             Optional<ButtonType> result = confirm.showAndWait();
             if (result.get() != OK) okContinue = false;
@@ -324,7 +326,7 @@ public class MainWindow {
         } else {
             AssignmentCommentWindow commentWindow = new AssignmentCommentWindow(currentAssignment.getHeader());
             AssignmentHeader header = commentWindow.getHeaderComment();
-            if (!(header.getComment().equals(currentAssignment.getComment()))) isAssignmentContentModified = true;
+            if (!(header.getComment().equals(currentAssignment.getComment()))) assignmentContentModified = true;
             currentAssignment.setHeader(header);
         }
     }
@@ -333,12 +335,14 @@ public class MainWindow {
             EditorAlerts.fleetingPopup("There is no open assignment to save.");
         } else {
             if (currentExercise.isExerciseModified()) {
+                assignmentContentModified = true;
                 ExerciseModel model = currentExercise.getExerciseModelFromView();
                 currentAssignment.replaceExerciseModel(assignmentIndex, model);
                 currentExercise.setExerciseModified(false);
             }
             boolean saved = DiskUtilities.saveAssignment(saveAs, currentAssignment);
-            if (saved) isAssignmentContentModified = false;
+
+            if (saved) assignmentContentModified = false;
         }
     }
 
@@ -360,7 +364,7 @@ public class MainWindow {
                         currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                         mainView.setupExercise();
                         mainView.setUpLowerAssignmentBar();
-                        isAssignmentContentModified = false;
+                        assignmentContentModified = false;
                     }
                 }
             }
@@ -375,7 +379,7 @@ public class MainWindow {
                 setUpExercise(getEmptyExercise());
                 isExerciseOpen = false;
                 currentAssignment = null;
-                isAssignmentContentModified = false;
+                assignmentContentModified = false;
             }
         }
     }
@@ -387,7 +391,7 @@ public class MainWindow {
             List<Node> printNodes = new ArrayList<>();
             printNodes.add(mainView.getAssignmentHeader());
 
-            if (currentExercise.isExerciseModified()) isAssignmentContentModified = true;
+            if (currentExercise.isExerciseModified()) assignmentContentModified = true;
             ExerciseModel currentModel = currentExercise.getExerciseModelFromView();
             currentAssignment.replaceExerciseModel(assignmentIndex, currentModel);
 
@@ -415,7 +419,7 @@ public class MainWindow {
             List<Node> printNodes = new ArrayList<>();
             printNodes.add(mainView.getAssignmentHeader());
 
-            if (currentExercise.isExerciseModified()) isAssignmentContentModified = true;
+            if (currentExercise.isExerciseModified()) assignmentContentModified = true;
             ExerciseModel currentModel = currentExercise.getExerciseModelFromView();
             currentAssignment.replaceExerciseModel(assignmentIndex, currentModel);
 
@@ -465,7 +469,7 @@ public class MainWindow {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("Cannot Advance.  There is no open assignment.");
         } else {
-            if (currentExercise.isExerciseModified()) isAssignmentContentModified = true;
+            if (currentExercise.isExerciseModified()) assignmentContentModified = true;
             int prevIndex = assignmentIndex - 1;
             if (prevIndex >= 0) {
                 ExerciseModel model = currentExercise.getExerciseModelFromView();
@@ -483,7 +487,7 @@ public class MainWindow {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("Cannot Advance.  There is no open assignment.");
         } else {
-            if (currentExercise.isExerciseModified()) isAssignmentContentModified = true;
+            if (currentExercise.isExerciseModified()) assignmentContentModified = true;
             int nextIndex = assignmentIndex + 1;
             if (nextIndex < currentAssignment.getExerciseModels().size()) {
                 ExerciseModel model = currentExercise.getExerciseModelFromView();
@@ -501,7 +505,7 @@ public class MainWindow {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("Cannot Jump.  There is no open assignment.");
         } else {
-            if (currentExercise.isExerciseModified()) isAssignmentContentModified = true;
+            if (currentExercise.isExerciseModified()) assignmentContentModified = true;
 
             Popup exercisePopup = new Popup();
             ListView exerciseList = new ListView();

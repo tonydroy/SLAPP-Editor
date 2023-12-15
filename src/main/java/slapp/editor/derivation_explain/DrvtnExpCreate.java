@@ -1,4 +1,4 @@
-package slapp.editor.derivation;
+package slapp.editor.derivation_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
@@ -28,6 +28,9 @@ import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
+import slapp.editor.derivation.LineType;
+import slapp.editor.derivation.ModelLine;
+
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
 
@@ -37,13 +40,15 @@ import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
-public class DerivationCreate {
+public class DrvtnExpCreate {
     private MainWindow mainWindow;
     private RichTextArea statementRTA;
     private DecoratedRTA statementDRTA;
     private TextField nameField;
+    private TextField promptField;
     private boolean fieldModified = false;
     private ChangeListener nameListener;
+    private ChangeListener promptFieldListener;
     private ChangeListener leftmostScopeListner;
     private ChangeListener defaultShelfListener;
     private double scale = 1.0;
@@ -54,7 +59,7 @@ public class DerivationCreate {
     private VBox centerBox;
     private CheckBox scopeLineCheck;
     private CheckBox defaultShelfCheck;
-    private List<SetupLine> setupLines;
+    private List<DrvtnExpSetupLine> setupLines;
     private GridPane setupLinesPane;
     private Spinner<Double> widthSpinner;
     private ChangeListener defaultWidthListener;
@@ -71,17 +76,18 @@ public class DerivationCreate {
     private ToolBar paragraphToolbar;;
     private ToolBar kbdDiaToolBar;
 
-    public DerivationCreate(MainWindow mainWindow) {
+    public DrvtnExpCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
-    public DerivationCreate(MainWindow mainWindow, DerivationModel originalModel) {
+    public DrvtnExpCreate(MainWindow mainWindow, DrvtnExpModel originalModel) {
         this(mainWindow);
 
         statementRTA.setDocument(originalModel.getExerciseStatement());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         nameField.setText(originalModel.getExerciseName());
+        promptField.setText(originalModel.getContentPrompt());
         scopeLineCheck.setSelected(originalModel.isLeftmostScopeLine());
         defaultShelfCheck.setSelected(originalModel.isDefaultShelf());
         widthSpinner.getValueFactory().setValue(((double) Math.round(originalModel.getGridWidth() * 100/2)) * 2);
@@ -129,6 +135,24 @@ public class DerivationCreate {
         };
         nameField.textProperty().addListener(nameListener);
 
+        Label promptLabel = new Label("Explain prompt");
+        promptLabel.setPrefWidth(95);
+        promptField = new TextField();
+        promptField.setPromptText("(plain text)");
+        promptFieldListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldModified = true;
+                promptField.textProperty().removeListener(promptFieldListener);
+            }
+        };
+        promptField.textProperty().addListener(promptFieldListener);
+
+
+        HBox nameBox = new HBox(10, nameLabel, nameField, promptLabel, promptField);
+        nameBox.setAlignment(Pos.CENTER_LEFT);
+        nameBox.setMargin(promptLabel, new Insets(0,0,0,20));
+
         //check boxes
         scopeLineCheck = new CheckBox("Leftmost scope line");
         leftmostScopeListner = new ChangeListener() {
@@ -174,9 +198,9 @@ public class DerivationCreate {
         removeSetupLineButton.setPadding(new Insets(1,8,1,8));
 
         addSetupLineButton.setOnAction(e -> {
-            SetupLine newLine = new SetupLine(this);
+            DrvtnExpSetupLine newLine = new DrvtnExpSetupLine(this);
 
-            setupLines.add(new SetupLine(this));
+            setupLines.add(new DrvtnExpSetupLine(this));
             fieldModified = true;
             updateGridFromSetupLines();
         });
@@ -192,8 +216,8 @@ public class DerivationCreate {
             }
         });
 
-        HBox nameBox = new HBox(10, nameLabel, nameField);
-        nameBox.setAlignment(Pos.CENTER_LEFT);
+
+
         Label widthLabel = new Label("Width: ");
         HBox topFields = new HBox(30, scopeLineCheck, defaultShelfCheck, widthLabel, widthSpinner, setupLinesLabel, addSetupLineButton, removeSetupLineButton);
         topFields.setAlignment(Pos.CENTER_LEFT);
@@ -203,7 +227,7 @@ public class DerivationCreate {
         //setup lines pane
         setupLines = new ArrayList<>();
 
-        SetupLine firstLine = new SetupLine(this);
+        DrvtnExpSetupLine firstLine = new DrvtnExpSetupLine(this);
         RichTextArea firstLineFormulaRTA = firstLine.getFormulaDRTA().getEditor();
         firstLineFormulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
@@ -221,14 +245,13 @@ public class DerivationCreate {
         upperFieldsBox = new VBox(10, nameBox, topFields, setupLinesPane);
         upperFieldsBox.setPadding(new Insets(20,0,20,20));
 
-        String helpText = "Derivation Exercise is appropriate for any exercise that calls for a derivation as response.\n\n" +
-                "For the derivation exercise, provide the exercise statement, exercise name, and select whether there is to be a leftmost scope line, and/or a \"shelf\" beneath the top line of automatically an generated subderivation. "  +
-                "A typical natural derivation system (as chapter 6 of Symbolic Logic) selects both.  The width is the (default) percentage of the window's width allocated to this derivation.\n\n" +
-                "After that, insert setup derivation lines as appropriate.  In the ordinary case, there will be some premise lines with justification 'P' (the last sitting on a shelf), a couple of blank lines, and a conclusion line (without justification), all at scope depth 1. " +
-                "A line identified as a premise cannot have either its formula or justification modified; one identified as a conclusion cannot have its formula modified.  Different arrangements (as, e.g. \"fill in the justification\" exercises) are possible.";
+        String helpText = "Derivation Explain is appropriate for any exercise that calls for a derivation together with an explanation.\n\n" +
+                "Setup is the same as Derivation Exercise except that you may add a prompt to appear in the explanation area.  For the derivation exercise, provide the exercise name, and explanation prompt.  Then and select whether there is to be " +
+                "a leftmost scope line, and/or a \"shelf\" beneath the top line of automatically an generated subderivation; width is the (default) percentage of the window's width allocated to this derivation.\n\n" +
+                "After that, give the exercise statement, and insert setup derivation lines as appropriate.";
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(250);
+        helpArea.setPrefHeight(200);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
@@ -312,7 +335,7 @@ public class DerivationCreate {
         Platform.runLater(() -> nameField.requestFocus());
     }
 
-    private void updateSetupLinesFromModel(DerivationModel originalModel) {
+    private void updateSetupLinesFromModel(DrvtnExpModel originalModel) {
 
         List<ModelLine> modelLines = originalModel.getExerciseContent();
         setupLines.clear();
@@ -320,7 +343,7 @@ public class DerivationCreate {
         while (i < modelLines.size()) {
             ModelLine modelLine = modelLines.get(i);
             if (LineType.isContentLine(modelLine.getLineType())) {
-                SetupLine setupLine = new SetupLine(this);
+                DrvtnExpSetupLine setupLine = new DrvtnExpSetupLine(this);
 
                 DecoratedRTA formulaDRTA = setupLine.getFormulaDRTA();
                 RichTextArea formulaRTA = formulaDRTA.getEditor();
@@ -356,7 +379,7 @@ public class DerivationCreate {
     private void updateGridFromSetupLines() {
         setupLinesPane.getChildren().clear();
         for (int i = 0; i < setupLines.size(); i++) {
-            SetupLine setupLine = setupLines.get(i);
+            DrvtnExpSetupLine setupLine = setupLines.get(i);
             RichTextArea formulaRTA = setupLine.getFormulaDRTA().getEditor();
             RichTextArea justificationRTA = setupLine.getJustificationDRTA().getEditor();
             setupLinesPane.addRow(i,
@@ -405,14 +428,16 @@ public class DerivationCreate {
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
+            promptField.clear();
             nameField.textProperty().addListener(nameListener);
+            promptField.textProperty().addListener(promptFieldListener);
 
             scopeLineCheck.setSelected(true);
             defaultShelfCheck.setSelected(true);
             widthSpinner.getValueFactory().setValue(0.0);
 
             setupLines.clear();
-            SetupLine firstLine = new SetupLine(this);
+            DrvtnExpSetupLine firstLine = new DrvtnExpSetupLine(this);
             firstLine.getFormulaDRTA().getEditor().getActionFactory().saveNow().execute(new ActionEvent());
             firstLine.getJustificationDRTA().getEditor().getActionFactory().saveNow().execute(new ActionEvent());
             setupLines.add(firstLine);
@@ -428,7 +453,7 @@ public class DerivationCreate {
 
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
-        for (SetupLine line : setupLines) {
+        for (DrvtnExpSetupLine line : setupLines) {
             if (line.isModified()) fieldModified = true;
         }
         if (fieldModified || statementRTA.isModified()) {
@@ -440,7 +465,7 @@ public class DerivationCreate {
     }
 
     private void viewExercise() {
-        DerivationExercise exercise = new DerivationExercise(extractModelFromWindow(), mainWindow);
+        DrvtnExpExercise exercise = new DrvtnExpExercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
@@ -453,12 +478,16 @@ public class DerivationCreate {
     private void saveExercise(boolean saveAs) {
 
         nameField.textProperty().addListener(nameListener);
+        promptField.textProperty().addListener(promptFieldListener);
         scopeLineCheck.selectedProperty().addListener(leftmostScopeListner);
         defaultShelfCheck.selectedProperty().addListener(defaultShelfListener);
 
-        DerivationExercise exercise = new DerivationExercise(extractModelFromWindow(), mainWindow);
+        DrvtnExpExercise exercise = new DrvtnExpExercise(extractModelFromWindow(), mainWindow);
 
-        for (SetupLine line : setupLines) { line.setModified(false); }
+
+
+
+        for (DrvtnExpSetupLine line : setupLines) { line.setModified(false); }
 
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
@@ -467,16 +496,13 @@ public class DerivationCreate {
         rta.setEditable(false);
         exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
-
-
-
-
         exercise.saveExercise(saveAs);
 
         fieldModified = false;
     }
-    private DerivationModel extractModelFromWindow() {
+    private DrvtnExpModel extractModelFromWindow() {
         String name = nameField.getText();
+        String prompt = promptField.getText();
 
         boolean leftmostScope = scopeLineCheck.isSelected();
         boolean defaultShelf = defaultShelfCheck.isSelected();
@@ -488,7 +514,7 @@ public class DerivationCreate {
 
         List<ModelLine> modelLines = new ArrayList<>();
         for (int i = 0; i < setupLines.size(); i++) {
-            SetupLine setupLine = setupLines.get(i);
+            DrvtnExpSetupLine setupLine = setupLines.get(i);
             if (setupLine.isModified()) fieldModified = true;
 
             int depth = (Integer) setupLine.getDepthSpinner().getValue();
@@ -518,7 +544,7 @@ public class DerivationCreate {
         }
 
 
-        DerivationModel model = new DerivationModel(name, false, 70.0, gridWidth, leftmostScope, defaultShelf, statementDocument, new Document(), modelLines);
+        DrvtnExpModel model = new DrvtnExpModel(name, false, 70.0, gridWidth, prompt, leftmostScope, defaultShelf, statementDocument, new Document(), new Document(), modelLines);
         return model;
     }
 
