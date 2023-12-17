@@ -4,7 +4,6 @@ import javafx.scene.image.Image;
 import javafx.stage.*;
 import javafx.application.*;
 import slapp.editor.tests.*;
-import slapp.editor.main_window.*;
 
 public class EditorMain extends Application {
 
@@ -21,9 +20,9 @@ public class EditorMain extends Application {
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
         //        ExtendedDemo demo = new ExtendedDemo(stage); demo.start();
 
-        MainWindow mainWindowController = new MainWindow();
+    //    MainWindow mainWindowController = new MainWindow();
     //   DerivationTest test = new DerivationTest(); test.testGrid(stage);
-    //    RtaInsertTest test = new RtaInsertTest(); test.rtaInsertTest(stage);
+        ExtractFromDoc test = new ExtractFromDoc(); test.rtaInsertTest(stage);
     }
 
 

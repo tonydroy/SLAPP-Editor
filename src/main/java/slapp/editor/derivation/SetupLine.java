@@ -3,6 +3,7 @@ package slapp.editor.derivation;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
+import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -50,6 +51,12 @@ public class SetupLine {
             if (nv) {
                derivationCreate.editorInFocus(formulaDRTA, ControlType.FIELD);
             }
+            else if (ov) {
+                formulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
+                System.out.println(formulaRTA.getDocument().toString());
+            }
+
+
         });
 
         justificationDRTA = new DecoratedRTA();

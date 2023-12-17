@@ -229,9 +229,6 @@ public class MainWindowView {
         centerBox.getChildren().clear();
         centerBox.getChildren().addAll(commentNode, statementNode, contentNode);
 
-
-
-
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         upperStatusBox.getChildren().clear();
         lowerStatusPane.getChildren().clear();
