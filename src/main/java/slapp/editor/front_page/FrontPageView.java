@@ -16,7 +16,7 @@ import slapp.editor.main_window.MainWindowView;
  * (need to update "logo here" to some final displayed content)
  */
 
-public class FrontPageView implements ExerciseView<Label, Label> {
+public class FrontPageView implements ExerciseView<Label> {
 
     private String name = "";
     private Label exerciseStatement;
@@ -81,12 +81,8 @@ public class FrontPageView implements ExerciseView<Label, Label> {
     @Override
     public void setStatementPrefHeight(double height) { }
     @Override
-    public Label getExerciseContent() { return exerciseContent; }
-    @Override
-    public void setExerciseContent(Label contentSplitPane) {}
-    @Override
     public Node getExerciseContentNode() { return exerciseContent; }
-    @Override
+
     public void setContentPrompt(String prompt) {}
     @Override
     public DoubleProperty getContentHeightProperty() { return exerciseContent.prefHeightProperty(); }

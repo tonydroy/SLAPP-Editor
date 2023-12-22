@@ -146,7 +146,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         abefgView.setExerciseComment(commentDRTA);
 
         ArrayList<DecoratedRTA> contentList = new ArrayList<>();
-        for (Document doc : abefgModel.getExerciseContent()) {
+        for (Document doc : abefgModel.getExercisePageDocs()) {
             DecoratedRTA drta = new DecoratedRTA();
             RichTextArea editor = drta.getEditor();
             editor.setDocument(doc);
@@ -159,7 +159,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
             });
             contentList.add(drta);
         }
-        abefgView.setExerciseContent(contentList);
+        abefgView.setContentPageList(contentList);
 
         abefgView.initializeViewDetails();
         abefgView.getAddPageButton().setOnAction(e -> addPageAction());
@@ -168,7 +168,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
 
     private void addPageAction() {
         int newPageIndex = abefgView.getContentPageIndex() + 1;
-        abefgModel.addBlankContentPage(newPageIndex);
+        abefgModel.addBlankExercisePage(newPageIndex);
 
         DecoratedRTA drta = new DecoratedRTA();
         RichTextArea editor = drta.getEditor();
@@ -183,19 +183,19 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
     }
 
     private void removePageAction() {
-        if (abefgModel.getExerciseContent().size() <= 1) {
+        if (abefgModel.getExercisePageDocs().size() <= 1) {
             EditorAlerts.showSimpleAlert("Cannot Remove", "Your response must include at least one page.");
         }
         else {
             int currentPageIndex = abefgView.getContentPageIndex();
             boolean okContinue = true;
-            if (abefgView.getExerciseContent().get(currentPageIndex).getEditor().isModified()) {
+            if (abefgView.getContentPageList().get(currentPageIndex).getEditor().isModified()) {
                 Alert confirm = EditorAlerts.confirmationAlert("Confirm Remove", "This page appears to have been changed.  Continue to remove?");
                 Optional<ButtonType> result = confirm.showAndWait();
                 if (result.get() != OK) okContinue = false;
             }
             if (okContinue) {
-                abefgModel.getExerciseContent().remove(currentPageIndex);
+                abefgModel.getExercisePageDocs().remove(currentPageIndex);
                 abefgView.removeContentPage(currentPageIndex);
                 exerciseModified = true;
             }
@@ -294,7 +294,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
 
         nodeList.add(checksBox);
 
-        ArrayList<DecoratedRTA> pageList = exercise.getExerciseView().getExerciseContent();
+        ArrayList<DecoratedRTA> pageList = exercise.getExerciseView().getContentPageList();
         for (DecoratedRTA drta : pageList) {
             RichTextArea pageRTA = drta.getEditor();
             RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
@@ -340,7 +340,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         RichTextArea commentEditor = abefgView.getExerciseComment().getEditor();
         if (commentEditor.isModified()) exerciseModified = true;
 
-        ArrayList<DecoratedRTA> exerciseContent = abefgView.getExerciseContent();
+        ArrayList<DecoratedRTA> exerciseContent = abefgView.getContentPageList();
         for (DecoratedRTA drta : exerciseContent) {
             RichTextArea editor = drta.getEditor();
             if (editor.isModified()) {
@@ -362,7 +362,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
 
             ABEFGmodel model = getABEFGmodelFromView();
             ABEFGexercise exercise = new ABEFGexercise(model, mainWindow);
-            ArrayList<DecoratedRTA> pageList = exercise.getExerciseView().getExerciseContent();
+            ArrayList<DecoratedRTA> pageList = exercise.getExerciseView().getContentPageList();
             RichTextArea pageRTA = pageList.get(contentPageNum).getEditor();
             RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
             double pageHeight = pageRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
@@ -408,7 +408,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
 
-        ArrayList<DecoratedRTA> exerciseContent = abefgView.getExerciseContent();
+        ArrayList<DecoratedRTA> exerciseContent = abefgView.getContentPageList();
         ArrayList<Document> contentList = new ArrayList<>();
         for (DecoratedRTA drta : exerciseContent) {
             RichTextArea editor = drta.getEditor();

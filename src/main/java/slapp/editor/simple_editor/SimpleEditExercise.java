@@ -73,7 +73,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         editView.setExerciseComment(commentDRTA);
 
         ArrayList<DecoratedRTA> contentList = new ArrayList<>();
-        for (Document doc : editModel.getExerciseContent()) {
+        for (Document doc : editModel.getExercisePageDocs()) {
             DecoratedRTA drta = new DecoratedRTA();
             RichTextArea editor = drta.getEditor();
             editor.setDocument(doc);
@@ -87,7 +87,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
             });
             contentList.add(drta);
         }
-        editView.setExerciseContent(contentList);
+        editView.setContentPageList(contentList);
 
         editView.initializeViewDetails();
         editView.getAddPageButton().setOnAction(e -> addPageAction());
@@ -111,19 +111,19 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     }
 
     private void removePageAction() {
-        if (editModel.getExerciseContent().size() <= 1) {
+        if (editModel.getExercisePageDocs().size() <= 1) {
             EditorAlerts.showSimpleAlert("Cannot Remove", "Your response must include at least one page.");
         }
         else {
             int currentPageIndex = editView.getContentPageIndex();
             boolean okContinue = true;
-            if (editView.getExerciseContent().get(currentPageIndex).getEditor().isModified()) {
+            if (editView.getContentPageList().get(currentPageIndex).getEditor().isModified()) {
                 Alert confirm = EditorAlerts.confirmationAlert("Confirm Remove", "This page appears to have been changed.  Continue to remove?");
                 Optional<ButtonType> result = confirm.showAndWait();
                 if (result.get() != OK) okContinue = false;
             }
             if (okContinue) {
-                editModel.getExerciseContent().remove(currentPageIndex);
+                editModel.getExercisePageDocs().remove(currentPageIndex);
                 editView.removeContentPage(currentPageIndex);
                 exerciseModified = true;
             }
@@ -192,7 +192,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
 
 
         //content nodes
-        List<DecoratedRTA> pageList = exercise.getExerciseView().getExerciseContent();
+        List<DecoratedRTA> pageList = exercise.getExerciseView().getContentPageList();
         for (DecoratedRTA drta : pageList) {
             RichTextArea pageRTA = drta.getEditor();
             RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
@@ -237,7 +237,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         RichTextArea commentEditor = editView.getExerciseComment().getEditor();
         if (commentEditor.isModified()) exerciseModified = true;
 
-        List<DecoratedRTA> exerciseContent = editView.getExerciseContent();
+        List<DecoratedRTA> exerciseContent = editView.getContentPageList();
         for (DecoratedRTA drta : exerciseContent) {
             RichTextArea editor = drta.getEditor();
             if (editor.isModified()) {
@@ -259,7 +259,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
 
             SimpleEditModel model = getSimpleEditModelFromView();
             SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
-            List<DecoratedRTA> pageList = exercise.getExerciseView().getExerciseContent();
+            List<DecoratedRTA> pageList = exercise.getExerciseView().getContentPageList();
             RichTextArea pageRTA = pageList.get(contentPageNum).getEditor();
             RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
             double pageHeight = pageRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
@@ -305,7 +305,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
 
-        List<DecoratedRTA> exerciseContent = editView.getExerciseContent();
+        List<DecoratedRTA> exerciseContent = editView.getContentPageList();
         List<Document> contentList = new ArrayList<>();
         for (DecoratedRTA drta : exerciseContent) {
             RichTextArea editor = drta.getEditor();

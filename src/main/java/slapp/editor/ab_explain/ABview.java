@@ -12,8 +12,9 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
 import java.util.ArrayList;
+import java.util.List;
 
-public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA>> {
+public class ABview implements ExerciseView<DecoratedRTA> {
 
     private MainWindowView mainView;
     private String exerciseName = new String();
@@ -23,7 +24,7 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
-    private ArrayList<DecoratedRTA> exerciseContent = new ArrayList<>();
+    private ArrayList<DecoratedRTA> contentPageList = new ArrayList<>();
     private String contentPrompt = new String();
     private Pagination pagination;
     private Button addPageButton;
@@ -48,7 +49,7 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
         pagination.setPageFactory((index) -> {
             Node page;
             if (index == 0) {
-                DecoratedRTA drtaPage0 = exerciseContent.get(index);
+                DecoratedRTA drtaPage0 = contentPageList.get(index);
                 RichTextArea rtaPage0 = drtaPage0.getEditor();
                 rtaPage0.getStylesheets().add("slappTextArea.css");
                 mainView.setContentHeightProperty(rtaPage0.prefHeightProperty());
@@ -56,7 +57,7 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
                 topContentPage.setMargin(abBbox, new Insets(5,0,0,0));
                 page = topContentPage;
             } else {
-                DecoratedRTA DRTApage = exerciseContent.get(index);
+                DecoratedRTA DRTApage = contentPageList.get(index);
                 RichTextArea RTApage = DRTApage.getEditor();
                 RTApage.getStylesheets().add("slappTextArea.css");
                 mainView.setContentHeightProperty(RTApage.prefHeightProperty());
@@ -88,23 +89,23 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
         exerciseComment.getEditor().setPrefHeight(70.0);
         exerciseComment.getEditor().setPromptText("Comment:");
         exerciseComment.getEditor().getStylesheets().add("slappTextArea.css");
-        if (!exerciseContent.isEmpty()) {
-            exerciseContent.get(0).getEditor().setPromptText(contentPrompt);
+        if (!contentPageList.isEmpty()) {
+            contentPageList.get(0).getEditor().setPromptText(contentPrompt);
         }
-        pagination.setPageCount(exerciseContent.size());
+        pagination.setPageCount(contentPageList.size());
     }
 
     void addBlankContentPage(int index, DecoratedRTA drta) {
-        exerciseContent.add(index, drta);
-        pagination.setPageCount(exerciseContent.size());
+        contentPageList.add(index, drta);
+        pagination.setPageCount(contentPageList.size());
         pagination.setCurrentPageIndex(index);
     }
     void removeContentPage(int index) {
         if (index == 0) {
             EditorAlerts.showSimpleAlert("Cannot Remove", "Cannot remove top page with selection boxes.");
         } else {
-            exerciseContent.remove(index);
-            int newSize = exerciseContent.size();
+            contentPageList.remove(index);
+            int newSize = contentPageList.size();
             pagination.setPageCount(newSize);
             if (newSize >= index) {
                 pagination.setCurrentPageIndex(index);
@@ -114,20 +115,30 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
         }
     }
 
-    int getContentPageIndex() {
-        return pagination.getCurrentPageIndex();
+    public Label getLeaderLabel() {
+        return leaderLabel;
     }
+    public CheckBox getCheckBoxA() {
+        return checkBoxA;
+    }
+    public CheckBox getCheckBoxB() {
+        return checkBoxB;
+    }
+    int getContentPageIndex() { return pagination.getCurrentPageIndex(); }
     Button getAddPageButton() { return addPageButton; }
     Button getRemovePageButton() { return removePageButton; }
+    public List<DecoratedRTA> getContentPageList() { return contentPageList; }
+    public void setContentPageList(ArrayList<DecoratedRTA> contentPageList) { this.contentPageList = contentPageList; }
+    public void setContentPrompt(String prompt) {
+        contentPrompt = prompt;
+    }
 
     @Override
     public String getExerciseName() {return exerciseName; }
     @Override
     public void setExerciseName(String name) { this.exerciseName = name; }
     @Override
-    public DecoratedRTA getExerciseComment() {
-        return exerciseComment;
-    }
+    public DecoratedRTA getExerciseComment() { return exerciseComment;     }
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment; }
     @Override
@@ -135,13 +146,9 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
     @Override
     public DecoratedRTA getExerciseStatement() { return exerciseStatement; }
     @Override
-    public void setExerciseStatement(DecoratedRTA exerciseStatement) {
-        this.exerciseStatement = exerciseStatement;
-    }
+    public void setExerciseStatement(DecoratedRTA exerciseStatement) { this.exerciseStatement = exerciseStatement; }
     @Override
-    public Node getExerciseStatementNode() {
-        return exerciseStatement.getEditor();
-    }
+    public Node getExerciseStatementNode() { return exerciseStatement.getEditor(); }
     @Override
     public double getStatementHeight() { return exerciseStatement.getEditor().getHeight(); }
     public void setStatementPrefHeight(double height) {
@@ -149,37 +156,17 @@ public class ABview implements ExerciseView<DecoratedRTA, ArrayList<DecoratedRTA
         exerciseStatement.getEditor().setPrefHeight(height);
     }
     @Override
-    public ArrayList<DecoratedRTA> getExerciseContent() {
-        return exerciseContent;
-    }
-    @Override
-    public void setExerciseContent(ArrayList<DecoratedRTA> contentSplitPane) { this.exerciseContent = contentSplitPane; }
-    @Override
     public Node getExerciseContentNode() {
         return pagination;
     }
     @Override
-    public void setContentPrompt(String prompt) {
-        contentPrompt = prompt;
-    }
-    @Override
-    public DoubleProperty getContentHeightProperty() { return exerciseContent.get(pagination.getCurrentPageIndex()).getEditor().prefHeightProperty(); }
+    public DoubleProperty getContentHeightProperty() { return contentPageList.get(pagination.getCurrentPageIndex()).getEditor().prefHeightProperty(); }
     @Override
     public double getContentFixedHeight() { return 55; }
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
 
-    public Label getLeaderLabel() {
-        return leaderLabel;
-    }
 
-    public CheckBox getCheckBoxA() {
-        return checkBoxA;
-    }
-
-    public CheckBox getCheckBoxB() {
-        return checkBoxB;
-    }
 
 }
 

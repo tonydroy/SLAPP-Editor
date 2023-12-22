@@ -31,7 +31,7 @@ public class ExtractSubText {
                 currentDec = decorationAtIndex;
                 sb.append(docString.charAt(i));
             } else {
-                sb.append(docString.charAt(i));
+                if (!Character.isWhitespace(docString.charAt(i))) sb.append(docString.charAt(i));
             }
         }
         if (sb.length() != 0) {

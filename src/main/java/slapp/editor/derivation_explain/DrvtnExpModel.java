@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrvtnExpModel implements ExerciseModel<Document, List<ModelLine>>, Serializable {
+public class DrvtnExpModel implements ExerciseModel<Document>, Serializable {
     private String exerciseName = new String("");
     private boolean started = false;
     private double statementPrefHeight = 80;
@@ -41,6 +41,8 @@ public class DrvtnExpModel implements ExerciseModel<Document, List<ModelLine>>, 
     public boolean isDefaultShelf() { return defaultShelf; }
     public double getGridWidth() {return gridWidth; }
     public Document getExplanationDocument() { return explanationDocument;  }
+    public List<ModelLine> getDerivationLines() { return derivationLines; }
+    public String getContentPrompt() { return contentPrompt; }
 
     @Override
     public String getExerciseName() { return exerciseName; }
@@ -58,10 +60,6 @@ public class DrvtnExpModel implements ExerciseModel<Document, List<ModelLine>>, 
     public double getStatementPrefHeight() { return statementPrefHeight; }
     @Override
     public void setStatementPrefHeight(double height) { this.statementPrefHeight = height; }
-    @Override
-    public List<ModelLine> getExerciseContent() { return derivationLines; }
-    @Override
-    public String getContentPrompt() { return contentPrompt; }
     @Override
     public String toString() { return exerciseName; }
 

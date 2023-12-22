@@ -61,7 +61,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     private void setDerivationView() {
 
         derivationView.setExerciseName(derivationModel.getExerciseName());
-        derivationView.setContentPrompt(derivationModel.getContentPrompt());
         derivationView.setLeftmostScopeLine(derivationModel.isLeftmostScopeLine());
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
@@ -101,8 +100,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
 
 
-        derivationView.getExerciseContent().setDividerPosition(0, derivationModel.getGridWidth());
-        derivationView.getExerciseContent().getDividers().get(0).positionProperty().addListener((ob, ov, nv) -> {
+        derivationView.getContentSplitPane().setDividerPosition(0, derivationModel.getGridWidth());
+        derivationView.getContentSplitPane().getDividers().get(0).positionProperty().addListener((ob, ov, nv) -> {
             double diff = (double) nv - (double) ov;
             if (Math.abs(diff) >= .02) exerciseModified = true;
         });
@@ -114,7 +113,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
     private void setViewLinesFromModel() {
 
-        List<ModelLine> modelLines = derivationModel.getExerciseContent();
+        List<ModelLine> modelLines = derivationModel.getDerivationLines();
         List<ViewLine> viewLines = new ArrayList<>();
         int lineNumber = 1;
         for (int rowIndex = 0; rowIndex < modelLines.size(); rowIndex++) {
@@ -951,7 +950,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
 
     @Override
-    public ExerciseModel<DerivationModel, DerivationView> getExerciseModelFromView() {
+    public ExerciseModel<DerivationModel> getExerciseModelFromView() {
         return (ExerciseModel) getDerivationModelFromView();
     }
 
@@ -960,7 +959,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
         Boolean started = (derivationModel.isStarted() || exerciseModified);
         double statementHeight = derivationView.getExerciseStatement().getEditor().getPrefHeight();
-        double gridWidth = derivationView.getExerciseContent().getDividerPositions()[0];
+        double gridWidth = derivationView.getContentSplitPane().getDividerPositions()[0];
 
 
         boolean leftmostScopeLine = derivationModel.isLeftmostScopeLine();

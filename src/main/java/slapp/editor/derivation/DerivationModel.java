@@ -7,20 +7,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DerivationModel implements ExerciseModel<Document, List<ModelLine>>, Serializable {
+public class DerivationModel implements ExerciseModel<Document>, Serializable {
     private String exerciseName = new String("");
     private boolean started = false;
     private double statementPrefHeight = 80;
     private double gridWidth = 0;
-
     private boolean isLeftmostScopeLine = true;
     private boolean defaultShelf = true;
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
-    private List<ModelLine> exerciseContent = new ArrayList<>();
+    private List<ModelLine> derivationLines = new ArrayList<>();
 
 
-    public DerivationModel(String name, boolean started, double statementPrefHeight, double gridWidth, boolean isLeftmostScopeLine, boolean defaultShelf, Document exerciseStatement, Document exerciseComment, List<ModelLine> exerciseContent) {
+    public DerivationModel(String name, boolean started, double statementPrefHeight, double gridWidth, boolean isLeftmostScopeLine, boolean defaultShelf, Document exerciseStatement, Document exerciseComment, List<ModelLine> derivationLines) {
         this.exerciseName = name;
         this.started = started;
         this.statementPrefHeight = statementPrefHeight;
@@ -29,12 +28,13 @@ public class DerivationModel implements ExerciseModel<Document, List<ModelLine>>
         this.defaultShelf = defaultShelf;
         this.exerciseStatement = exerciseStatement;
         this.exerciseComment = exerciseComment;
-        this.exerciseContent = exerciseContent;
+        this.derivationLines = derivationLines;
     }
 
     public boolean isLeftmostScopeLine() { return isLeftmostScopeLine; }
     public boolean isDefaultShelf() { return defaultShelf; }
     public double getGridWidth() {return gridWidth; }
+    public List<ModelLine> getDerivationLines() { return derivationLines; }
 
     @Override
     public String getExerciseName() { return exerciseName; }
@@ -52,10 +52,6 @@ public class DerivationModel implements ExerciseModel<Document, List<ModelLine>>
     public double getStatementPrefHeight() { return statementPrefHeight; }
     @Override
     public void setStatementPrefHeight(double height) { this.statementPrefHeight = height; }
-    @Override
-    public List<ModelLine> getExerciseContent() { return exerciseContent; }
-    @Override
-    public String getContentPrompt() { return ""; }
     @Override
     public String toString() { return exerciseName; }
 

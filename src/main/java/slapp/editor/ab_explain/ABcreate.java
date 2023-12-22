@@ -335,14 +335,13 @@ public class ABcreate {
 
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
-
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
             statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
             statementRTA.setDocument(new Document());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
-            fieldsModified = false;
             viewExercise();
+            fieldsModified = false;
         }
     }
 
@@ -368,7 +367,7 @@ public class ABcreate {
     }
 
     private void saveExercise(boolean saveAs) {
-        fieldsModified = false;
+
         nameField.textProperty().addListener(nameListener);
         ABexercise exercise = new ABexercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
@@ -379,6 +378,7 @@ public class ABcreate {
         exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
         exercise.saveExercise(saveAs);
+        fieldsModified = false;
     }
     private ABmodel extractModelFromWindow() {
         String name = nameField.getText();

@@ -314,7 +314,7 @@ public class DerivationCreate {
 
     private void updateSetupLinesFromModel(DerivationModel originalModel) {
 
-        List<ModelLine> modelLines = originalModel.getExerciseContent();
+        List<ModelLine> modelLines = originalModel.getDerivationLines();
         setupLines.clear();
         int i = 0;
         while (i < modelLines.size()) {

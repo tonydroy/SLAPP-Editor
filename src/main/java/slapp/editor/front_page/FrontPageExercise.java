@@ -45,7 +45,7 @@ public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView
     @Override
     public void updateStatementHeight(boolean isRequired) {    }
     @Override
-    public ExerciseModel<FrontPageModel, FrontPageView> getExerciseModelFromView() { return (ExerciseModel) new FrontPageModel(); }
+    public ExerciseModel<FrontPageModel> getExerciseModelFromView() { return (ExerciseModel) new FrontPageModel(); }
 
 
 }

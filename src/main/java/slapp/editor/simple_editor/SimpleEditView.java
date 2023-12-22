@@ -14,14 +14,14 @@ import slapp.editor.main_window.MainWindowView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleEditView implements ExerciseView<DecoratedRTA, List<DecoratedRTA>> {
+public class SimpleEditView implements ExerciseView<DecoratedRTA> {
 
     private MainWindowView mainView;
     private String exerciseName = new String();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
-    private List<DecoratedRTA> exerciseContent = new ArrayList<>();
+    private List<DecoratedRTA> contentPageList = new ArrayList<>();
     private String contentPrompt = new String();
     private Pagination pagination;
     private Button addPageButton;
@@ -33,7 +33,7 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, List<Decorated
         this.pagination = new Pagination();
         pagination.setMaxPageIndicatorCount(5);
         pagination.setPageFactory((index) -> {
-            DecoratedRTA drtaPage = exerciseContent.get(index);
+            DecoratedRTA drtaPage = contentPageList.get(index);
             RichTextArea rtaPage = drtaPage.getEditor();
             rtaPage.getStylesheets().add("slappTextArea.css");
             mainView.setContentHeightProperty(rtaPage.prefHeightProperty());
@@ -65,20 +65,20 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, List<Decorated
         commentRTA.setPrefHeight(70.0);
         commentRTA.setPromptText("Comment:");
 
-        if (!exerciseContent.isEmpty()) {
-            exerciseContent.get(0).getEditor().setPromptText(contentPrompt);
+        if (!contentPageList.isEmpty()) {
+            contentPageList.get(0).getEditor().setPromptText(contentPrompt);
         }
-        pagination.setPageCount(exerciseContent.size());
+        pagination.setPageCount(contentPageList.size());
     }
 
     void addBlankContentPage(int index, DecoratedRTA drta) {
-        exerciseContent.add(index, drta);
-        pagination.setPageCount(exerciseContent.size());
+        contentPageList.add(index, drta);
+        pagination.setPageCount(contentPageList.size());
         pagination.setCurrentPageIndex(index);
     }
     void removeContentPage(int index) {
-        exerciseContent.remove(index);
-        int newSize = exerciseContent.size();
+        contentPageList.remove(index);
+        int newSize = contentPageList.size();
         pagination.setPageCount(newSize);
         if (newSize >= index) {
             pagination.setCurrentPageIndex(index);
@@ -87,20 +87,21 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, List<Decorated
             pagination.setCurrentPageIndex(Math.max(0, index - 1));
         }
     }
-    int getContentPageIndex() {
-        return pagination.getCurrentPageIndex();
-    }
+    int getContentPageIndex() { return pagination.getCurrentPageIndex();  }
     Button getAddPageButton() { return addPageButton; }
     Button getRemovePageButton() { return removePageButton; }
+    public List<DecoratedRTA> getContentPageList() { return contentPageList; }
+    public void setContentPageList(List<DecoratedRTA> contentPageList) { this.contentPageList = contentPageList; }
+    public void setContentPrompt(String prompt) {
+        contentPrompt = prompt;
+    }
 
     @Override
     public String getExerciseName() {return exerciseName; }
     @Override
     public void setExerciseName(String name) { this.exerciseName = name; }
     @Override
-    public DecoratedRTA getExerciseComment() {
-        return exerciseComment;
-    }
+    public DecoratedRTA getExerciseComment() { return exerciseComment; }
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment; }
     @Override
@@ -108,13 +109,9 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, List<Decorated
     @Override
     public DecoratedRTA getExerciseStatement() { return exerciseStatement; }
     @Override
-    public void setExerciseStatement(DecoratedRTA exerciseStatement) {
-        this.exerciseStatement = exerciseStatement;
-    }
+    public void setExerciseStatement(DecoratedRTA exerciseStatement) {  this.exerciseStatement = exerciseStatement;  }
     @Override
-    public Node getExerciseStatementNode() {
-        return exerciseStatement.getEditor();
-    }
+    public Node getExerciseStatementNode() {  return exerciseStatement.getEditor();  }
     @Override
     public double getStatementHeight() { return exerciseStatement.getEditor().getHeight(); }
     public void setStatementPrefHeight(double height) {
@@ -122,19 +119,11 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA, List<Decorated
         exerciseStatement.getEditor().setPrefHeight(height);
     }
     @Override
-    public List<DecoratedRTA> getExerciseContent() { return exerciseContent; }
-    @Override
-    public void setExerciseContent(List<DecoratedRTA> contentSplitPane) { this.exerciseContent = contentSplitPane; }
-    @Override
     public Node getExerciseContentNode() {
         return pagination;
     }
     @Override
-    public void setContentPrompt(String prompt) {
-        contentPrompt = prompt;
-    }
-    @Override
-    public DoubleProperty getContentHeightProperty() { return exerciseContent.get(pagination.getCurrentPageIndex()).getEditor().prefHeightProperty(); }
+    public DoubleProperty getContentHeightProperty() { return contentPageList.get(pagination.getCurrentPageIndex()).getEditor().prefHeightProperty(); }
     @Override
     public double getContentFixedHeight() { return 0.0; }
     @Override

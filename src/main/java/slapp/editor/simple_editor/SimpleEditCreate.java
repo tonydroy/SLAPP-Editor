@@ -268,8 +268,8 @@ public class SimpleEditCreate {
             statementRTA.setDocument(new Document());
             statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
-            fieldModified = false;
             viewExercise();
+            fieldModified = false;
         }
     }
 
@@ -295,7 +295,7 @@ public class SimpleEditCreate {
     }
 
     private void saveExercise(boolean saveAs) {
-        fieldModified = false;
+
         nameField.textProperty().addListener(nameListener);
         SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
@@ -306,6 +306,7 @@ public class SimpleEditCreate {
         exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
         exercise.saveExercise(saveAs);
+        fieldModified = false;
     }
     private SimpleEditModel extractModelFromWindow() {
         String name = nameField.getText();

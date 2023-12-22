@@ -23,7 +23,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import org.apache.commons.lang3.SerializationUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
@@ -130,7 +129,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
     private void setViewLinesFromModel() {
 
-        List<ModelLine> modelLines = drvtnExpModel.getExerciseContent();
+        List<ModelLine> modelLines = drvtnExpModel.getDerivationLines();
         List<ViewLine> viewLines = new ArrayList<>();
         int lineNumber = 1;
         for (int rowIndex = 0; rowIndex < modelLines.size(); rowIndex++) {
@@ -1001,7 +1000,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     }
 
     @Override
-    public ExerciseModel<DrvtnExpModel, DrvtnExpView> getExerciseModelFromView() {
+    public ExerciseModel<DrvtnExpModel> getExerciseModelFromView() {
         return (ExerciseModel) getDrvtnExpModelFromView();
     }
 

@@ -396,8 +396,8 @@ public class ABEFGcreate {
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-            fieldsModified = false;
             viewExercise();
+            fieldsModified = false;
         }
     }
 
@@ -423,7 +423,6 @@ public class ABEFGcreate {
     }
 
     private void saveExercise(boolean saveAs) {
-        fieldsModified = false;
         nameField.textProperty().addListener(nameListener);
         ABEFGexercise exercise = new ABEFGexercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
@@ -434,6 +433,7 @@ public class ABEFGcreate {
         exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
         exercise.saveExercise(saveAs);
+        fieldsModified = false;
     }
     private ABEFGmodel extractModelFromWindow() {
         String name = nameField.getText();

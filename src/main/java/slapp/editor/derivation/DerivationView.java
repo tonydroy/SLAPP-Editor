@@ -19,13 +19,12 @@ import slapp.editor.main_window.MainWindowView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
+public class DerivationView implements ExerciseView<DecoratedRTA> {
     MainWindowView mainView;
     private String exerciseName = new String("");
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
-    private String contentPrompt = new String("");
     private boolean isLeftmostScopeLine = true;
     private Node exerciseControlNode = new VBox();
     private SplitPane contentSplitPane = new SplitPane();
@@ -204,27 +203,18 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
     public void setLeftmostScopeLine(boolean leftmostScopeLine) { isLeftmostScopeLine = leftmostScopeLine;  }
     public List<ViewLine> getViewLines() { return viewLines; }
     public void setViewLines(List<ViewLine> viewLines) {this.viewLines = viewLines; }
+    public SplitPane getContentSplitPane() { return contentSplitPane; }
+
     public Button getInsertLineButton() { return insertLineButton;  }
-
     public Button getDeleteLineButton() { return deleteLineButton; }
-
     public Button getIndentButton() { return indentButton; }
-
     public Button getOutdentButton() { return outdentButton; }
-
     public Button getAddShelfButton() { return addShelfButton; }
-
     public Button getAddGapButton() { return addGapButton; }
-
     public Button getInsertSubButton() { return insertSubButton;  }
-
     public Button getInsertSubsButton() { return insertSubsButton; }
-
     public Button getUndoButton() { return undoButton;  }
-
     public Button getRedoButton() {  return redoButton; }
-
-
 
     @Override
     public String getExerciseName() { return exerciseName; }
@@ -250,13 +240,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA, SplitPane> {
         exerciseStatement.getEditor().setPrefHeight(height);
     }
     @Override
-    public SplitPane getExerciseContent() { return contentSplitPane; }
-    @Override
-    public void setExerciseContent(SplitPane contentSplitPane) { this.contentSplitPane = contentSplitPane; }
-    @Override
     public Node getExerciseContentNode() { return contentSplitPane; }
-    @Override
-    public void setContentPrompt(String prompt) { contentPrompt = prompt; }
     @Override
     public DoubleProperty getContentHeightProperty() { return grid.prefHeightProperty(); }
     @Override

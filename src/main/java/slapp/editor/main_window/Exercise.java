@@ -18,6 +18,6 @@ public interface Exercise<T,U> {
     void updateContentHeight(Node focusedNode, boolean isRequired);
     void updateCommentHeight(boolean isRequired);
     void updateStatementHeight(boolean isRequired);
-    ExerciseModel<T, U> getExerciseModelFromView();
+    ExerciseModel<T> getExerciseModelFromView();
 
 }

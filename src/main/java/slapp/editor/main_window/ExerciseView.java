@@ -4,7 +4,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
 import slapp.editor.decorated_rta.DecoratedRTA;
 
-public interface ExerciseView<T,U> {
+public interface ExerciseView<T> {
 
     String getExerciseName();
     void setExerciseName(String name);
@@ -16,10 +16,7 @@ public interface ExerciseView<T,U> {
     Node getExerciseStatementNode();
     double getStatementHeight();
     void setStatementPrefHeight(double height);
-    U getExerciseContent();
-    void setExerciseContent(U contentSplitPane);
     Node getExerciseContentNode();
-    void setContentPrompt(String prompt);
     DoubleProperty getContentHeightProperty();
     double getContentFixedHeight();
     Node getExerciseControl();

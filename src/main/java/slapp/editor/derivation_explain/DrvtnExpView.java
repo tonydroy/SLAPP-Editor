@@ -22,7 +22,7 @@ import slapp.editor.main_window.MainWindowView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrvtnExpView implements ExerciseView<DecoratedRTA, VBox> {
+public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
     MainWindowView mainView;
     private String exerciseName = new String("");
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
@@ -268,13 +268,13 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA, VBox> {
         statementPrefHeight = height;
         exerciseStatement.getEditor().setPrefHeight(height);
     }
-    @Override
+
     public VBox getExerciseContent() { return contentBox; }
-    @Override
+
     public void setExerciseContent(VBox contentBox) { this.contentBox = contentBox; }
     @Override
     public Node getExerciseContentNode() { return contentBox; }
-    @Override
+
     public void setContentPrompt(String prompt) { contentPrompt = prompt; }
     @Override
     public DoubleProperty getContentHeightProperty() { return grid.prefHeightProperty(); }

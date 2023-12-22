@@ -6,7 +6,7 @@ import slapp.editor.main_window.ExerciseModel;
 /**
  * Dummy model to support FrontPageExercise
  */
-public class FrontPageModel implements ExerciseModel<Document, Document> {
+public class FrontPageModel implements ExerciseModel<Document> {
 
     @Override
     public String getExerciseName() { return ""; }
@@ -24,10 +24,6 @@ public class FrontPageModel implements ExerciseModel<Document, Document> {
     public double getStatementPrefHeight() { return 0; }
     @Override
     public void setStatementPrefHeight(double height) { }
-    @Override
-    public Document getExerciseContent() { return null; }
-    @Override
-    public String getContentPrompt() { return null; }
     @Override
     public String toString() { return ""; }
 }

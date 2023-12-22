@@ -99,7 +99,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         abView.setExerciseComment(commentDRTA);
 
         ArrayList<DecoratedRTA> contentList = new ArrayList<>();
-        for (Document doc : abModel.getExerciseContent()) {
+        for (Document doc : abModel.getExercisePageDocs()) {
             DecoratedRTA drta = new DecoratedRTA();
             RichTextArea editor = drta.getEditor();
             editor.setDocument(doc);
@@ -112,7 +112,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
             });
             contentList.add(drta);
         }
-        abView.setExerciseContent(contentList);
+        abView.setContentPageList(contentList);
 
         abView.initializeViewDetails();
         abView.getAddPageButton().setOnAction(e -> addPageAction());
@@ -121,7 +121,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
 
     private void addPageAction() {
         int newPageIndex = abView.getContentPageIndex() + 1;
-        abModel.addBlankContentPage(newPageIndex);
+        abModel.addBlankExercisePage(newPageIndex);
 
         DecoratedRTA drta = new DecoratedRTA();
         RichTextArea editor = drta.getEditor();
@@ -136,19 +136,19 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
     }
 
     private void removePageAction() {
-        if (abModel.getExerciseContent().size() <= 1) {
+        if (abModel.getExercisePageDocs().size() <= 1) {
             EditorAlerts.showSimpleAlert("Cannot Remove", "Your response must include at least one page.");
         }
         else {
             int currentPageIndex = abView.getContentPageIndex();
             boolean okContinue = true;
-            if (abView.getExerciseContent().get(currentPageIndex).getEditor().isModified()) {
+            if (abView.getContentPageList().get(currentPageIndex).getEditor().isModified()) {
                 Alert confirm = EditorAlerts.confirmationAlert("Confirm Remove", "This page appears to have been changed.  Continue to remove?");
                 Optional<ButtonType> result = confirm.showAndWait();
                 if (result.get() != OK) okContinue = false;
             }
             if (okContinue) {
-                abModel.getExerciseContent().remove(currentPageIndex);
+                abModel.getExercisePageDocs().remove(currentPageIndex);
                 abView.removeContentPage(currentPageIndex);
                 exerciseModified = true;
             }
@@ -234,7 +234,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         abBox.getChildren().addAll(leaderLabel, boxA, boxB);
         nodeList.add(abBox);
 
-        ArrayList<DecoratedRTA> pageList = exercise.getExerciseView().getExerciseContent();
+        List<DecoratedRTA> pageList = exercise.getExerciseView().getContentPageList();
         for (DecoratedRTA drta : pageList) {
             RichTextArea pageRTA = drta.getEditor();
             RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
@@ -280,7 +280,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         RichTextArea commentEditor = abView.getExerciseComment().getEditor();
         if (commentEditor.isModified()) exerciseModified = true;
 
-        ArrayList<DecoratedRTA> exerciseContent = abView.getExerciseContent();
+        List<DecoratedRTA> exerciseContent = abView.getContentPageList();
         for (DecoratedRTA drta : exerciseContent) {
             RichTextArea editor = drta.getEditor();
             if (editor.isModified()) {
@@ -302,7 +302,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
 
             ABmodel model = getABmodelFromView();
             ABexercise exercise = new ABexercise(model, mainWindow);
-            ArrayList<DecoratedRTA> pageList = exercise.getExerciseView().getExerciseContent();
+            List<DecoratedRTA> pageList = exercise.getExerciseView().getContentPageList();
             RichTextArea pageRTA = pageList.get(contentPageNum).getEditor();
             RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
             double pageHeight = pageRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
@@ -348,8 +348,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
 
-        ArrayList<DecoratedRTA> exerciseContent = abView.getExerciseContent();
-        ArrayList<Document> contentList = new ArrayList<>();
+        List<DecoratedRTA> exerciseContent = abView.getContentPageList();
+        List<Document> contentList = new ArrayList<>();
         for (DecoratedRTA drta : exerciseContent) {
             RichTextArea editor = drta.getEditor();
             if (editor.isModified()) exerciseModified = true;
