@@ -7,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -60,8 +61,8 @@ public class ParseTableDocTest {
             for (int i = 0; i < headItems.size(); i++) {
                 TableHeadItem item = headItems.get(i);
                 grid.getColumnConstraints().add(item.getColumnConstraints());
-                System.out.println(item.getExpression().toString());
                 grid.add(item.getExpression(), i, 0);
+                grid.add(new Label("T"), i, 1 );
             }
         });
 

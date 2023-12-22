@@ -37,9 +37,7 @@ public class ParseDocForTTable {
     public List<TableHeadItem> generateHeadItems(Document doc) {
         formulaString = doc.getText();
         formulaLength = formulaString.length();
-        for (int i = 0; i < formulaString.length(); i++) {
-            System.out.println((int) formulaString.charAt(i));
-        }
+
 
 
 
@@ -59,7 +57,7 @@ public class ParseDocForTTable {
                 return headItems;
             }
         }
-        System.out.println(headItems.toString());
+
         return headItems;
     }
 
@@ -93,18 +91,23 @@ public class ParseDocForTTable {
         }
         while (start + span < formulaLength && isRelationChar(formulaString.charAt(start + span))) {
             span++;
+            if (start + span < formulaLength) bracketMatch(formulaString.charAt(start + span));
         }
         TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
         ColumnConstraints constraints = new ColumnConstraints();
         constraints.setHalignment(HPos.RIGHT);
         TableHeadItem headItem = new TableHeadItem(flow, constraints);
         headItems.add(headItem);
+
+
+
         start = start + span;
     }
 
     private void relationSequence() {
         while (start + span < formulaLength && isRelationChar(formulaString.charAt(start + span))) {
             span++;
+            if (start + span < formulaLength) bracketMatch(formulaString.charAt(start + span));
         }
         if (start + span < formulaLength && isOperator(formulaString.charAt(start + span))) {
             TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
@@ -120,11 +123,13 @@ public class ParseDocForTTable {
         }
         TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
         ColumnConstraints constraints = new ColumnConstraints();
-        constraints.setHalignment(HPos.RIGHT);
+        constraints.setHalignment(HPos.LEFT);
         TableHeadItem headItem = new TableHeadItem(flow, constraints);
         headItems.add(headItem);
         start = start + span;
     }
+
+
 
     private boolean isOpenBracket(char c) {
         return (c == '(' || c == '[');
@@ -151,6 +156,24 @@ public class ParseDocForTTable {
     }
     private boolean isRelationChar(char c) {
         return (!isOpenBracket(c) && !isCloseBracket(c) && !isOperator(c) );
+    }
+    private boolean isMatchingBracket(char open, char test) {
+        boolean match = false;
+        if (open == '(' && test == ')') match = true;
+        if (open == '[' && test == ']') match = true;
+        return match;
+    }
+    private void bracketMatch(char c) {
+        if (isOpenBracket(c)) {
+            int count = 1;
+
+            while (start + span < formulaLength && count != 0) {
+                span++;
+                if (start + span < formulaLength && formulaString.charAt(start + span) == c) count++;
+                if (start + span < formulaLength && isMatchingBracket(c, formulaString.charAt(start + span)))  count--;
+            }
+            span++;
+        }
     }
 
 
