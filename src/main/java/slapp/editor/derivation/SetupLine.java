@@ -51,10 +51,12 @@ public class SetupLine {
             if (nv) {
                derivationCreate.editorInFocus(formulaDRTA, ControlType.FIELD);
             }
+            /*
             else if (ov) {
                 formulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
                 System.out.println(formulaRTA.getDocument().toString());
             }
+             */
 
 
         });

@@ -19,12 +19,12 @@ public class EditorMain extends Application {
         this.mainStage = stage;
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon32x32.png")));
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
-//        MainWindow mainWindowController = new MainWindow();
+        MainWindow mainWindow = new MainWindow();
 
 //        ExtendedDemo demo = new ExtendedDemo(stage); demo.start();
 //        DerivationTest test = new DerivationTest(); test.testGrid(stage);
 //        ExtractFromDoc test = new ExtractFromDoc(); test.rtaInsertTest(stage);
-        ParseTableDocTest test = new ParseTableDocTest(); test.parseTableDocTest(stage);
+//        ParseTableDocTest test = new ParseTableDocTest(); test.parseTableDocTest(stage);
     }
 
 

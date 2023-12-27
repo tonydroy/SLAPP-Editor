@@ -16,6 +16,8 @@ import slapp.editor.derivation_explain.DrvtnExpModel;
 import slapp.editor.simple_editor.SimpleEditCreate;
 import slapp.editor.simple_editor.SimpleEditExercise;
 import slapp.editor.simple_editor.SimpleEditModel;
+import slapp.editor.truth_table.TruthTableExercise;
+import slapp.editor.truth_table.TruthTableModel;
 
 
 public class TypeSelectorFactories {
@@ -138,6 +140,12 @@ public class TypeSelectorFactories {
             case SIMPLE_EDITOR: {
                 SimpleEditCreate simpleEditCreate = new SimpleEditCreate(mainWindow);
                 break;
+            }
+            //dummy
+            case TRUTH_TABLE: {
+                TruthTableModel model = new TruthTableModel();
+                TruthTableExercise exercise = new TruthTableExercise(model, mainWindow);
+                mainWindow.setUpExercise(exercise);
             }
 
 

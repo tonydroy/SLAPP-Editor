@@ -12,34 +12,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ParseDocForTTable {
-
     private static List<TableHeadItem> headItems = new ArrayList<>();
-    private char[] unaryOperators;
-    private char[] binaryOperators;
-
+    private List<Character> unaryOperators;
+    private List<Character> binaryOperators;
     Document doc;
-
     int start = 0;
     int span = 0;
-
     String formulaString;
     int formulaLength;
 
-
-
-
-    public ParseDocForTTable(char[] unaryOperators, char[] binaryOperators, Document doc) {
+    public ParseDocForTTable(List unaryOperators, List binaryOperators ) {
         this.unaryOperators = unaryOperators;
         this.binaryOperators = binaryOperators;
-        this.doc = doc;
+
     }
 
-    public List<TableHeadItem> generateHeadItems(Document doc) {
+    public List<TableHeadItem> generateHeadItems(Document document) {
+        this.doc = document;
         formulaString = doc.getText();
         formulaLength = formulaString.length();
-
-
-
 
         while (start < formulaLength) {
             span = 1;
@@ -57,7 +48,6 @@ public class ParseDocForTTable {
                 return headItems;
             }
         }
-
         return headItems;
     }
 
@@ -98,9 +88,6 @@ public class ParseDocForTTable {
         constraints.setHalignment(HPos.RIGHT);
         TableHeadItem headItem = new TableHeadItem(flow, constraints);
         headItems.add(headItem);
-
-
-
         start = start + span;
     }
 
@@ -128,8 +115,6 @@ public class ParseDocForTTable {
         headItems.add(headItem);
         start = start + span;
     }
-
-
 
     private boolean isOpenBracket(char c) {
         return (c == '(' || c == '[');
@@ -166,7 +151,6 @@ public class ParseDocForTTable {
     private void bracketMatch(char c) {
         if (isOpenBracket(c)) {
             int count = 1;
-
             while (start + span < formulaLength && count != 0) {
                 span++;
                 if (start + span < formulaLength && formulaString.charAt(start + span) == c) count++;
@@ -175,8 +159,5 @@ public class ParseDocForTTable {
             span++;
         }
     }
-
-
-
 
 }

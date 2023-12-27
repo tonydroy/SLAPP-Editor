@@ -7,6 +7,7 @@ public class TableHeadItem {
 
     private TextFlow expression;
     private ColumnConstraints columnConstraints;
+    boolean blankColumn = false;
 
     TableHeadItem(TextFlow expression, ColumnConstraints columnConstraints) {
         this.expression = expression;
@@ -17,15 +18,12 @@ public class TableHeadItem {
         return expression;
     }
 
-    public void setExpression(TextFlow expression) {
-        this.expression = expression;
-    }
-
     public ColumnConstraints getColumnConstraints() {
         return columnConstraints;
     }
 
-    public void setColumnConstraints(ColumnConstraints columnConstraints) {
-        this.columnConstraints = columnConstraints;
-    }
+    public boolean isBlankColumn() { return blankColumn; }
+
+    public void setBlankColumn(boolean blankColumn) {this.blankColumn = blankColumn;  }
+
 }

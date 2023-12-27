@@ -17,6 +17,7 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.truth_table.ParseDocForTTable;
 import slapp.editor.truth_table.TableHeadItem;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ParseTableDocTest {
@@ -54,7 +55,7 @@ public class ParseTableDocTest {
         button.setOnAction(e -> {
             rta.getActionFactory().saveNow().execute(new ActionEvent());
             document = rta.getDocument();
-            ParseDocForTTable parser = new ParseDocForTTable(new char[]{(char) 0x223c}, new char[]{(char) 0x2227, (char) 0x2228, (char) 0x2192, (char) 0x2194}, document);
+            ParseDocForTTable parser = new ParseDocForTTable(Arrays.asList((char) 0x223c), Arrays.asList((char) 0x2227, (char) 0x2228, (char) 0x2192, (char) 0x2194));
 
             List<TableHeadItem> headItems = parser.generateHeadItems(document);
 
