@@ -15,14 +15,18 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     private double statementPrefHeight = 80;
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
-    private List<Document> mainFormulas = new ArrayList<>();
-    private List<Document> basicFormulas = new ArrayList<>();
+
     private List<Character> unaryOperators = new ArrayList<>();
     private List<Character> binaryOperators = new ArrayList<>();
-    private List<List<Character>> tableValues = new ArrayList<>();   //[w][h]
-    private List<Document> rowComments = new ArrayList<>(); //[h]
-    private List<Boolean> columnHighlights = new ArrayList<>(); //[w]
-    private boolean conclusionDivider;
+
+    private List<Document> mainFormulas = new ArrayList<>();
+    private List<Document> basicFormulas = new ArrayList<>();
+    private String[][]  tableValues;   //[w][h]
+    private Document[] rowComments; //[h]
+    private boolean[] columnHighlights; //[w]
+
+
+    private boolean conclusionDivider = false;
     private boolean showChoiceArea = false;
     private String choiceLead = new String("");
     private String aPrompt = new String("");
@@ -30,10 +34,13 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     private String bPrompt = new String("");
     private boolean bSelected = false;
     private Document explainDocument = new Document();
+    private int tableRows = 0;
 
+
+    public TruthTableModel(){}
 
     //dummy model
-    public TruthTableModel() {
+    public TruthTableModel(boolean test) {
         exerciseName = "Test Truth Table";
         exerciseStatement = new Document("This is a dummy truth table exercise.");
         mainFormulas.addAll(new ArrayList<>(Arrays.asList(new Document("A\u2192B"), new Document("\u223cB"), new Document("\u223cA"))));
@@ -41,44 +48,86 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
         unaryOperators.add((char) 0x223c);
         binaryOperators.addAll(new ArrayList<>(Arrays.asList((char) 0x2227, (char) 0x2228, (char) 0x2192, (char) 0x2194)));
 
-        List<Character> col1 = new ArrayList<>(Arrays.asList( 'T', 'T', 'F', 'F' ));
-        tableValues.add(col1);
-        List<Character> col2 = new ArrayList<>(Arrays.asList( 'T', 'F', 'T', 'F' ));
-        tableValues.add(col2);
-        List<Character> col3 = new ArrayList<>(Arrays.asList( 'T', 'T', 'F', 'F'));
-        tableValues.add(col3);
-        List<Character> col4 = new ArrayList<>(Arrays.asList('T', 'F', 'T', 'T'));
-        tableValues.add(col4);
-        List<Character> col5 = new ArrayList<>(Arrays.asList('T', 'F', 'T', 'F'));
-        tableValues.add(col5);
-        List<Character> col6 = new ArrayList<>(Arrays.asList('F', 'T', 'F', 'T'));
-        tableValues.add(col6);
-        List<Character> col7 = new ArrayList<>(Arrays.asList('T', 'F', 'T', 'T'));
-        tableValues.add(col7);
-        List<Character> col8 = new ArrayList<>(Arrays.asList('F', 'F', 'T', 'T'));
-        tableValues.add(col8);
-        List<Character> col9 = new ArrayList<>(Arrays.asList('T', 'T', 'F', 'F'));
-        tableValues.add(col9);
 
-        columnHighlights.addAll(new ArrayList<>(Arrays.asList(false, false, false, false, false, false, false, false, false)));
-        if (mainFormulas.size() > 1) conclusionDivider = true;
+        String[][] tableVals = new String[15][4];
+        String[] col1 = { "T", "T", "F", "F" };
+        tableVals[0] = col1;
+        String[] col2 = { "T", "F", "T", "F" };
+        tableVals[2] = col2;
+        String[] col3 = { "T", "T", "F", "F" };
+        tableVals[5] = col3;
+        String[] col4 = { "T", "F", "T", "T" };
+        tableVals[6] = col4;
+        String[] col5 = { "T", "F", "T", "F" };
+        tableVals[7] = col5;
+        String[] col6 = { "F", "T", "F", "T" };
+        tableVals[9] = col6;
+        String[] col7 = { "T", "F", "T", "T" };
+        tableVals[10]  = col7;
+        String[] col8 = { "F", "F", "T", "T" };
+        tableVals[13] =  col8;
+        String[] col9 = { "T", "T", "F", "F" };
+        tableVals[14] = col9;
+        tableValues = tableVals;
+
+        boolean[] hghlts = { false, false, false, false, false, false, false, false, false };
+        columnHighlights = hghlts;
+
+        conclusionDivider = true;
+
+        Document[] rowCmts = {new Document(), new Document(), new Document(), new Document() };
+        rowComments = rowCmts;
+
+
         showChoiceArea = true;
+        tableRows = 4;
         choiceLead = "This argument is,";
         aPrompt = "Valid";
         bPrompt = "Invalid";
     }
 
-    public List<Document> getRowComments() { return rowComments;}
 
-    public List<Boolean> getColumnHighlights() { return columnHighlights; }
+    public void setEmptyTableContents(int columns) {
+        String[][] mainValues = new String[columns][tableRows];
+        for (int i = 0; i < columns; i++) {
+            String[] column = new String[tableRows];
+            for (int j = 0; j < tableRows; j++) {
+                column[j] = "";
+            }
+            mainValues[i] = column;
+        }
+        tableValues = mainValues;
 
-    public List<List<Character>> getTableValues() { return tableValues; }
+        boolean[] highlights = new boolean[columns];
+        for (int i = 0; i < columns; i++) {
+            highlights[i] = false;
+        }
+        columnHighlights = highlights;
+
+        Document[] cmts = new Document[tableRows];
+        for (int i = 0; i < tableRows; i++) {
+            cmts[i] = new Document();
+        }
+        rowComments = cmts;
+    }
+
+
+    public void setTableRows(int tableRows) { this.tableRows = tableRows;  }
+
+    public int getTableRows() { return tableRows; }
+    public Document[] getRowComments() { return rowComments;}
+
+    public boolean[] getColumnHighlights() { return columnHighlights; }
+
+    public String[][] getTableValues() { return tableValues; }
 
     public boolean isConclusionDivider() { return conclusionDivider; }
     public List<Document> getMainFormulas() { return mainFormulas; }
     public List<Character> getUnaryOperators() { return unaryOperators; }
 
     public List<Character> getBinaryOperators() { return binaryOperators; }
+
+    public void setBasicFormulas(List<Document> basicFormulas) { this.basicFormulas = basicFormulas;  }
 
     public List<Document> getBasicFormulas() { return basicFormulas; }
 

@@ -4,6 +4,7 @@ import com.gluonhq.richtextarea.model.Document;
 import javafx.geometry.HPos;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import slapp.editor.EditorAlerts;
 import slapp.editor.decorated_rta.ExtractSubText;
@@ -28,6 +29,9 @@ public class ParseDocForTTable {
     }
 
     public List<TableHeadItem> generateHeadItems(Document document) {
+        headItems.clear();
+        start = 0;
+        span = 0;
         this.doc = document;
         formulaString = doc.getText();
         formulaLength = formulaString.length();
@@ -53,6 +57,9 @@ public class ParseDocForTTable {
 
     private void operatorSequence(char c) {
         TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
+        flow.setTextAlignment(TextAlignment.CENTER);
+
+
         if (isBinaryOperator(c)) {
             flow.getChildren().add(0, new Text(" "));
             flow.getChildren().add(new Text(" "));
@@ -72,8 +79,12 @@ public class ParseDocForTTable {
         if (start + span < formulaLength && isOperator(formulaString.charAt(start + span))) {
             span++;
             TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
+            flow.setTextAlignment(TextAlignment.CENTER);
+
             ColumnConstraints constraints = new ColumnConstraints();
-            constraints.setHalignment(HPos.RIGHT);
+ //           constraints.setHalignment(HPos.RIGHT);
+            constraints.setHalignment(HPos.CENTER);
+
             TableHeadItem headItem = new TableHeadItem(flow, constraints);
             headItems.add(headItem);
             start = start + span;
@@ -84,8 +95,11 @@ public class ParseDocForTTable {
             if (start + span < formulaLength) bracketMatch(formulaString.charAt(start + span));
         }
         TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
+        flow.setTextAlignment(TextAlignment.CENTER);
+
         ColumnConstraints constraints = new ColumnConstraints();
-        constraints.setHalignment(HPos.RIGHT);
+ //       constraints.setHalignment(HPos.RIGHT);
+        constraints.setHalignment(HPos.CENTER);
         TableHeadItem headItem = new TableHeadItem(flow, constraints);
         headItems.add(headItem);
         start = start + span;
@@ -98,8 +112,11 @@ public class ParseDocForTTable {
         }
         if (start + span < formulaLength && isOperator(formulaString.charAt(start + span))) {
             TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
+            flow.setTextAlignment(TextAlignment.CENTER);
+
             ColumnConstraints constraints = new ColumnConstraints();
-            constraints.setHalignment(HPos.RIGHT);
+  //          constraints.setHalignment(HPos.RIGHT);
+            constraints.setHalignment(HPos.CENTER);
             TableHeadItem headItem = new TableHeadItem(flow, constraints);
             headItems.add(headItem);
             start = start + span;
@@ -109,8 +126,11 @@ public class ParseDocForTTable {
             span++;
         }
         TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
+        flow.setTextAlignment(TextAlignment.CENTER);
+
         ColumnConstraints constraints = new ColumnConstraints();
-        constraints.setHalignment(HPos.LEFT);
+        constraints.setHalignment(HPos.CENTER);
+  //      constraints.setHalignment(HPos.LEFT);
         TableHeadItem headItem = new TableHeadItem(flow, constraints);
         headItems.add(headItem);
         start = start + span;

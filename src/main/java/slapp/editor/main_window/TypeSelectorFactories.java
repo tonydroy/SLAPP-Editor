@@ -143,7 +143,7 @@ public class TypeSelectorFactories {
             }
             //dummy
             case TRUTH_TABLE: {
-                TruthTableModel model = new TruthTableModel();
+                TruthTableModel model = new TruthTableModel(true);
                 TruthTableExercise exercise = new TruthTableExercise(model, mainWindow);
                 mainWindow.setUpExercise(exercise);
             }

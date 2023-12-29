@@ -7,10 +7,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextFlow;
 import slapp.editor.EditorAlerts;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
@@ -19,6 +20,7 @@ import slapp.editor.main_window.MainWindowView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 public class TruthTableView implements ExerciseView<DecoratedRTA> {
     private MainWindowView mainView;
@@ -36,16 +38,18 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     private Label choiceLeadLabel = new Label();
     private CheckBox aCheckBox = new CheckBox();
     private CheckBox bCheckBox = new CheckBox();
-    private GridPane tablePane;
+    private GridPane tableGrid;
     private VBox resultsBox;
     private HBox choiceBox;
     private VBox centerBox;
-    private double contentFixedHeight = 0;
-    private List<TableHeadItem> basicFormulasHeadItems = new ArrayList<>();
-    private List<TableHeadItem> mainFormulasHeadItems = new ArrayList<>();
-    private List<List<TextField>> tableFields = new ArrayList<>(); //list of text field columns
-    private List<DecoratedRTA> rowCommentsList = new ArrayList<>();
-    private List<ToggleButton> highlightButtons = new ArrayList<>();
+    private double contentFixedHeight = 150;
+
+
+    private List<TableHeadItem> tableHeadItemsList;
+    private TextField[][]  tableFields; //list of text field columns
+    private DecoratedRTA[] rowCommentsArray;
+    private ToggleButton[] highlightButtons;
+    private int tableRows = 0;
 
 
 
@@ -71,11 +75,11 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         HBox controlButtonBox = new HBox(20, addBasicFormulaButton, removeBasicFormulaButton);
         VBox upperControlBox = new VBox(10, basicFormulasLabel, controlButtonBox);
 
-        basicFormulasDRTAList.add(newDRTAField());
+        basicFormulasDRTAList.add(newFormulaDRTAField());
         updateBasicFormulasPaneFromList();
 
         addBasicFormulaButton.setOnAction(e -> {
-            basicFormulasDRTAList.add(newDRTAField());
+            basicFormulasDRTAList.add(newFormulaDRTAField());
             updateBasicFormulasPaneFromList();
         });
         removeBasicFormulaButton.setOnAction(e -> {
@@ -104,11 +108,66 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
         choiceBox = new HBox(20, choiceLeadLabel, aCheckBox, bCheckBox);
         resultsBox = new VBox(10, choiceBox, explainDRTA.getEditor());
-        tablePane = new GridPane();
-        centerBox = new VBox(10, tablePane);
+        tableGrid = new GridPane();
+        tableGrid.setPadding(new Insets(20,0,20,0));
+        centerBox = new VBox(10, tableGrid);
 
 
 
+
+    }
+
+    public void updateTableGridFromTableItems() {
+        tableGrid.getChildren().clear();
+        List<ColumnConstraints> gridColConstraints =  tableGrid.getColumnConstraints();
+        gridColConstraints.clear();
+
+        for (int i = 0; i < tableHeadItemsList.size(); i++) {
+
+            TableHeadItem headItem = tableHeadItemsList.get(i);
+            gridColConstraints.add(headItem.getColumnConstraints());
+
+            if (!headItem.isBlankColumn()) {
+                TextFlow headFlow = headItem.getExpression();
+                headFlow.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0;");
+                tableGrid.add(headFlow, i, 0);
+                for (int j = 0; j < tableRows; j++) {
+                    tableGrid.add(tableFields[i][j], i, j + 2);
+                }
+                tableGrid.add(highlightButtons[i], i, tableRows + 3);
+
+            } else if (headItem.isDividerColumn()) {
+                TextFlow headFlow = headItem.getExpression();
+                headFlow.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 1");
+                tableGrid.add(headFlow, i, 0);
+                for (int j = 0; j < tableRows + 3; j++) {
+                    Pane dividerPane = new Pane();
+                    dividerPane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1");
+                    tableGrid.add(dividerPane, i, j + 1);
+                }
+            } else if (headItem.isBlankColumn()) {
+                TextFlow headFlow = headItem.getExpression();
+                headFlow.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
+                tableGrid.add(headFlow, i, 0);
+            }
+        }
+
+        for (int j = 0; j < tableRows; j++) {
+            Pane pane = new Pane();
+            pane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
+            tableGrid.add(pane, tableHeadItemsList.size(), 0);
+
+            tableGrid.add(rowCommentsArray[j].getEditor(), tableHeadItemsList.size(), j + 2);
+        }
+
+        //setup blank separator row gaps
+        List<RowConstraints> tableRowConstraints = tableGrid.getRowConstraints();
+        tableRowConstraints.clear();
+        tableRowConstraints.add(new RowConstraints());
+        tableRowConstraints.add(new RowConstraints(5));
+        for (int i = 0; i < tableRows; i++) tableRowConstraints.add(new RowConstraints());
+        tableRowConstraints.add(new RowConstraints(5));
+        tableRowConstraints.add(new RowConstraints());
     }
 
     public void updateBasicFormulasPaneFromList() {
@@ -118,7 +177,110 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         }
     }
 
-    public DecoratedRTA newDRTAField() {
+    TextField newSingleCharTextField(int column, int row) {
+        TextField singleCharField = new TextField();
+        singleCharField.setPrefWidth(25);
+        singleCharField.setAlignment(Pos.CENTER);
+        singleCharField.setStyle("-fx-background-radius: 2");
+        singleCharField.setPadding(new Insets(3));
+
+        UnaryOperator<TextFormatter.Change> textFilter = c -> {
+            if (c.getText().matches("[0-9a-zA-Z]")) {
+                c.setRange(0, singleCharField.getText().length());
+                return c;
+            } else if (c.getText().isEmpty()) {
+                return c;
+            }
+            return null;
+        };
+        TextFormatter<String> formatter = new TextFormatter<>(textFilter);
+        singleCharField.setTextFormatter(formatter);
+
+        singleCharField.addEventFilter(KeyEvent.KEY_TYPED, e -> {
+           if (row < tableRows - 1) {
+                tableFields[column][row + 1].requestFocus();
+           } else {
+                tableFields[column][0].requestFocus();
+           }
+
+        });
+
+        singleCharField.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            KeyCode code = e.getCode();
+            if (code == KeyCode.UP && row > 0) {
+                tableFields[column][row - 1].requestFocus();
+                e.consume();
+            } else if (code == KeyCode.DOWN && row < tableRows - 1) {
+                tableFields[column][row + 1].requestFocus();
+                e.consume();
+            } else if (code == KeyCode.RIGHT) {
+                tableFields[tableColToRight(column)][row].requestFocus();
+                e.consume();
+            }  else if (code == KeyCode.LEFT) {
+                tableFields[tableColToLeft(column)][row].requestFocus();
+                e.consume();
+            }
+
+        });
+
+        return singleCharField;
+    }
+
+    private int tableColToRight(int column) {
+        int rightCol = column;
+        for (int i = column + 1; i < tableHeadItemsList.size(); i++) {
+            TableHeadItem item = tableHeadItemsList.get(i);
+            if (!item.isBlankColumn()) {
+                rightCol = i;
+                break;
+            }
+        }
+        System.out.println(rightCol);
+        return rightCol;
+    }
+
+    private int tableColToLeft(int column) {
+        int leftCol = column;
+        for (int i = column - 1; i >= 0; i--) {
+            TableHeadItem item = tableHeadItemsList.get(i);
+            if (!item.isBlankColumn()) {
+                leftCol = i;
+                break;
+            }
+        }
+        System.out.println(leftCol);
+        return leftCol;
+    }
+
+
+
+    ToggleButton newHighlightButton(int index) {
+        ToggleButton button = new ToggleButton();
+        button.setPadding(new Insets(0));
+        button.setPrefWidth(20);
+
+        button.setStyle("-fx-border-radius: 10; -fx-border-color: lightblue; -fx-background-color: ghostwhite");
+
+        button.setOnAction(e -> {
+            if (button.isSelected()) {
+                button.setStyle("-fx-border-radius: 10; -fx-border-color: tomato; -fx-background-color: lavenderblush;");
+                for (int j = 0; j < tableRows; j++) {
+                    tableFields[index][j].setStyle("-fx-background-radius: 2; -fx-background-color: pink");
+                }
+
+            } else {
+                button.setStyle("-fx-border-radius: 10; -fx-border-color: lightblue; -fx-background-color: ghostwhite;");
+                for (int j = 0; j < tableRows; j++) {
+                    tableFields[index][j].setStyle("-fx-background-radius: 2; -fxBackground-color: white");
+                }
+            }
+
+        });
+
+        return button;
+    }
+
+    public DecoratedRTA newFormulaDRTAField() {
         DecoratedRTA drta = new DecoratedRTA();
         drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
         RichTextArea rta = drta.getEditor();
@@ -128,6 +290,24 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         rta.setPrefWidth(100);
         rta.getStylesheets().add("RichTextField.css");
         rta.setPromptText("Formula");
+        rta.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) {
+                mainView.editorInFocus(drta, ControlType.FIELD);
+            }
+        });
+        return drta;
+    }
+
+    public DecoratedRTA newCommentDRTAField() {
+        DecoratedRTA drta = new DecoratedRTA();
+  //      drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
+        RichTextArea rta = drta.getEditor();
+        rta.setMaxHeight(27);
+        rta.setMinHeight(27);
+        rta.setContentAreaWidth(200);
+        rta.setPrefWidth(100);
+        rta.getStylesheets().add("RichTextField.css");
+        rta.setPromptText("Comment");
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(drta, ControlType.FIELD);
@@ -160,17 +340,25 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
     }
 
-    public List<DecoratedRTA> getRowCommentsList() { return rowCommentsList; }
+    public void setTableRows(int tableRows) { this.tableRows = tableRows;  }
 
-    public List<ToggleButton> getHighlightButtons() { return highlightButtons; }
+    public void setTableFields(TextField[][] tableFields) {  this.tableFields = tableFields; }
 
-    public List<List<TextField>> getTableFields() { return tableFields; }
+    public List<TableHeadItem> getTableHeadItemsList() { return tableHeadItemsList;  }
 
-    public List<TableHeadItem> getMainFormulasHeadItems() { return mainFormulasHeadItems; }
+    public void setTableHeadItemsList(List<TableHeadItem> tableHeadItemsList) {   this.tableHeadItemsList = tableHeadItemsList;  }
 
-    public List<TableHeadItem> getBasicFormulasHeadItems() { return basicFormulasHeadItems; }
+    public void setRowCommentsArray(DecoratedRTA[] rowComments) {  this.rowCommentsArray = rowComments;   }
 
-    public void setBasicFormulasHeadItems(List<TableHeadItem> basicFormulasHeadItems) {this.basicFormulasHeadItems = basicFormulasHeadItems;   }
+    public void setHighlightButtons(ToggleButton[] highlightButtons) {   this.highlightButtons = highlightButtons; }
+
+
+
+    public DecoratedRTA[] getRowCommentsArray() { return rowCommentsArray; }
+
+    public ToggleButton[] getHighlightButtons() { return highlightButtons; }
+
+    public TextField[][] getTableFields() { return tableFields; }
 
     public Button getSetupTableButton() { return setupTableButton; }
 
@@ -232,7 +420,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     public Node getExerciseContentNode() { return centerBox;  }
 
     @Override
-    public DoubleProperty getContentHeightProperty() { return tablePane.prefHeightProperty(); }
+    public DoubleProperty getContentHeightProperty() { return tableGrid.prefHeightProperty(); }
 
     @Override
     public double getContentFixedHeight() { return contentFixedHeight; }
