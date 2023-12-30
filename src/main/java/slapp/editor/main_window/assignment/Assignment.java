@@ -29,8 +29,6 @@ public class Assignment implements Serializable {
 
 
 
-    public void print(){ System.out.println("print assignment"); }
-    public void exportToPdf() {System.out.println("export assignment to pdf"); }
 
     public boolean hasCompletedHeader() {
         return !getHeader().getStudentName().isEmpty();

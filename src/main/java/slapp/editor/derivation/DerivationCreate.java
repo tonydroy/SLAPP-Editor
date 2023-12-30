@@ -69,7 +69,7 @@ public class DerivationCreate {
     private ToolBar fontsToolbar;
     private ToolBar insertToolbar;
     private ToolBar paragraphToolbar;;
-    private ToolBar kbdDiaToolBar;
+    private ToolBar kbdDiaToolbar;
 
     public DerivationCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -534,10 +534,10 @@ public class DerivationCreate {
         fontsToolbar = decoratedRTA.getFontsToolbar();
         insertToolbar = decoratedRTA.getInsertToolbar();
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
-        kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
+        kbdDiaToolbar = decoratedRTA.getKbdDiaToolbar();
 
 
-        if (!kbdDiaToolBar.getItems().contains(saveButton)) {
+        if (!kbdDiaToolbar.getItems().contains(saveButton)) {
   //          kbdDiaToolBar.getItems().add(0, updateHeightButton);
   //          kbdDiaToolBar.getItems().add(0, zoomSpinner);
   //          kbdDiaToolBar.getItems().add(0, zoomLabel);
@@ -546,7 +546,7 @@ public class DerivationCreate {
 
             switch (control) {
                 case NONE: {
-                    kbdDiaToolBar.setDisable(true);
+                    kbdDiaToolbar.setDisable(true);
                 }
                 case STATEMENT: {
                     editToolbar.setDisable(true);
@@ -577,7 +577,7 @@ public class DerivationCreate {
         ToolBar dudSaveBar = new ToolBar(spacer1, saveButton);
         //
 
-        HBox editAndKbdBox = new HBox(editToolbar, dudBar, kbdDiaToolBar, dudSaveBar);
+        HBox editAndKbdBox = new HBox(editToolbar, dudBar, kbdDiaToolbar, dudSaveBar);
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, insertAndFontsBox, editAndKbdBox, upperFieldsBox);
 //        topBox.layout();

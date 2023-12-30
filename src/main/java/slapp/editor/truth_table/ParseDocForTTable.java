@@ -14,8 +14,8 @@ import java.util.List;
 
 public class ParseDocForTTable {
     private static List<TableHeadItem> headItems = new ArrayList<>();
-    private List<Character> unaryOperators;
-    private List<Character> binaryOperators;
+    private List<String> unaryOperators;
+    private List<String> binaryOperators;
     Document doc;
     int start = 0;
     int span = 0;
@@ -39,7 +39,8 @@ public class ParseDocForTTable {
         while (start < formulaLength) {
             span = 1;
             char c = formulaString.charAt(start);
-            if (isOpenBracket(c)) openBracketSequence();
+            if (Character.isWhitespace(c)) start++;
+            else if (isOpenBracket(c)) openBracketSequence();
             else if (isOperator(c)) operatorSequence(c);
             else if (isRelationChar(c)) relationSequence();
             else if (isCloseBracket(c)) {
@@ -144,14 +145,16 @@ public class ParseDocForTTable {
     }
     private boolean isUnaryOperator(char c) {
         boolean isUnaryOperator = false;
-        for (char op : unaryOperators) {
+        for (String ops : unaryOperators) {
+            char op = ops.charAt(0);
             if (c == op) isUnaryOperator = true;
         }
         return isUnaryOperator;
     }
     private boolean isBinaryOperator(char c) {
         boolean isBinaryOperator = false;
-        for (char op : binaryOperators) {
+        for (String ops : binaryOperators) {
+            char op = ops.charAt(0);
             if (c == op) isBinaryOperator = true;
         }
         return isBinaryOperator;
@@ -160,7 +163,7 @@ public class ParseDocForTTable {
         return (isBinaryOperator(c) || isUnaryOperator(c));
     }
     private boolean isRelationChar(char c) {
-        return (!isOpenBracket(c) && !isCloseBracket(c) && !isOperator(c) );
+        return (!isOpenBracket(c) && !isCloseBracket(c) && !isOperator(c)  );
     }
     private boolean isMatchingBracket(char open, char test) {
         boolean match = false;

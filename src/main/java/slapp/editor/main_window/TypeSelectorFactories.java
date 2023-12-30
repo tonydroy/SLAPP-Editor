@@ -16,8 +16,12 @@ import slapp.editor.derivation_explain.DrvtnExpModel;
 import slapp.editor.simple_editor.SimpleEditCreate;
 import slapp.editor.simple_editor.SimpleEditExercise;
 import slapp.editor.simple_editor.SimpleEditModel;
+import slapp.editor.truth_table.TruthTableCreate;
 import slapp.editor.truth_table.TruthTableExercise;
 import slapp.editor.truth_table.TruthTableModel;
+import slapp.editor.truth_table_explain.TruthTableExpCreate;
+import slapp.editor.truth_table_explain.TruthTableExpExercise;
+import slapp.editor.truth_table_explain.TruthTableExpModel;
 
 
 public class TypeSelectorFactories {
@@ -51,6 +55,14 @@ public class TypeSelectorFactories {
             case "DrvtnExpModel": {
                 DrvtnExpModel drvtnExpModel = (DrvtnExpModel) objectModel;
                 return new DrvtnExpExercise(drvtnExpModel, mainWindow);
+            }
+            case "TruthTableModel": {
+                TruthTableModel truthTableModel = (TruthTableModel) objectModel;
+                return new TruthTableExercise(truthTableModel, mainWindow);
+            }
+            case "TruthTableExpModel": {
+                TruthTableExpModel truthTableExpModel = (TruthTableExpModel) objectModel;
+                return new TruthTableExpExercise(truthTableExpModel, mainWindow);
             }
 
             default: {
@@ -103,10 +115,28 @@ public class TypeSelectorFactories {
             case "DrvtnExpModel": {
                 DrvtnExpModel drvtnExpModel = (DrvtnExpModel) objectModel;
                 if (drvtnExpModel.isStarted()) {
-                    EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appers to have the content area modified.  Cannot open in create window.");
+                    EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
                     break;
                 }
                 DrvtnExpCreate drvtnExpCreate = new DrvtnExpCreate(mainWindow, drvtnExpModel);
+                break;
+            }
+            case "TruthTableModel": {
+                TruthTableModel truthTableModel = (TruthTableModel) objectModel;
+                if (truthTableModel.isStarted()) {
+                    EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
+                    break;
+                }
+                TruthTableCreate truthTableCreate = new TruthTableCreate(mainWindow, truthTableModel);
+                break;
+            }
+            case "TruthTableExpModel": {
+                TruthTableExpModel truthTableExpModel = (TruthTableExpModel) objectModel;
+                if (truthTableExpModel.isStarted()) {
+                    EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
+                    break;
+                }
+                TruthTableExpCreate truthTableExpCreate = new TruthTableExpCreate(mainWindow, truthTableExpModel);
                 break;
             }
 
@@ -141,11 +171,11 @@ public class TypeSelectorFactories {
                 SimpleEditCreate simpleEditCreate = new SimpleEditCreate(mainWindow);
                 break;
             }
-            //dummy
             case TRUTH_TABLE: {
-                TruthTableModel model = new TruthTableModel(true);
-                TruthTableExercise exercise = new TruthTableExercise(model, mainWindow);
-                mainWindow.setUpExercise(exercise);
+                TruthTableCreate truthTableCreate = new TruthTableCreate(mainWindow);
+            }
+            case TRUTH_TABLE_EXPLAIN: {
+                TruthTableExpCreate truthTableExpCreate = new TruthTableExpCreate(mainWindow);
             }
 
 

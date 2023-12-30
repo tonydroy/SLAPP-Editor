@@ -1,4 +1,4 @@
-package slapp.editor.truth_table;
+package slapp.editor.truth_table_explain;
 
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TruthTableModel implements ExerciseModel<Document>, Serializable {
+public class TruthTableExpModel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
     private boolean started = false;
@@ -16,18 +16,15 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
 
-    private List<Character> unaryOperators = new ArrayList<>();
-    private List<Character> binaryOperators = new ArrayList<>();
+    private List<String> unaryOperators = new ArrayList<>();
+    private List<String> binaryOperators = new ArrayList<>();
 
     private List<Document> mainFormulas = new ArrayList<>();
     private List<Document> basicFormulas = new ArrayList<>();
     private String[][]  tableValues;   //[w][h]
     private Document[] rowComments; //[h]
     private boolean[] columnHighlights; //[w]
-
-
     private boolean conclusionDivider = false;
-    private boolean showChoiceArea = false;
     private String choiceLead = new String("");
     private String aPrompt = new String("");
     private boolean aSelected = false;
@@ -37,16 +34,16 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     private int tableRows = 0;
 
 
-    public TruthTableModel(){}
+    public TruthTableExpModel(){}
 
     //dummy model
-    public TruthTableModel(boolean test) {
+    public TruthTableExpModel(boolean test) {
         exerciseName = "Test Truth Table";
         exerciseStatement = new Document("This is a dummy truth table exercise.");
         mainFormulas.addAll(new ArrayList<>(Arrays.asList(new Document("A\u2192B"), new Document("\u223cB"), new Document("\u223cA"))));
         basicFormulas.addAll(new ArrayList<>(Arrays.asList(new Document("A"), new Document("B"))));
-        unaryOperators.add((char) 0x223c);
-        binaryOperators.addAll(new ArrayList<>(Arrays.asList((char) 0x2227, (char) 0x2228, (char) 0x2192, (char) 0x2194)));
+        unaryOperators.add("\u223c");
+        binaryOperators.addAll(new ArrayList<>(Arrays.asList("\u2227", "\u2228", "\u2192", "\u2194")));
 
 
         String[][] tableVals = new String[15][4];
@@ -78,8 +75,6 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
         Document[] rowCmts = {new Document(), new Document(), new Document(), new Document() };
         rowComments = rowCmts;
 
-
-        showChoiceArea = true;
         tableRows = 4;
         choiceLead = "This argument is,";
         aPrompt = "Valid";
@@ -112,6 +107,66 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     }
 
 
+    public void setExerciseName(String exerciseName) {
+        this.exerciseName = exerciseName;
+    }
+
+    public void setExerciseStatement(Document exerciseStatement) {
+        this.exerciseStatement = exerciseStatement;
+    }
+
+    public void setUnaryOperators(List<String> unaryOperators) {
+        this.unaryOperators = unaryOperators;
+    }
+
+    public void setBinaryOperators(List<String> binaryOperators) {
+        this.binaryOperators = binaryOperators;
+    }
+
+    public void setMainFormulas(List<Document> mainFormulas) {
+        this.mainFormulas = mainFormulas;
+    }
+
+    public void setTableValues(String[][] tableValues) {
+        this.tableValues = tableValues;
+    }
+
+    public void setRowComments(Document[] rowComments) {
+        this.rowComments = rowComments;
+    }
+
+    public void setColumnHighlights(boolean[] columnHighlights) {
+        this.columnHighlights = columnHighlights;
+    }
+
+    public void setConclusionDivider(boolean conclusionDivider) {
+        this.conclusionDivider = conclusionDivider;
+    }
+
+    public void setChoiceLead(String choiceLead) {
+        this.choiceLead = choiceLead;
+    }
+
+    public void setaPrompt(String aPrompt) {
+        this.aPrompt = aPrompt;
+    }
+
+    public void setaSelected(boolean aSelected) {
+        this.aSelected = aSelected;
+    }
+
+    public void setbPrompt(String bPrompt) {
+        this.bPrompt = bPrompt;
+    }
+
+    public void setbSelected(boolean bSelected) {
+        this.bSelected = bSelected;
+    }
+
+    public void setExplainDocument(Document explainDocument) {
+        this.explainDocument = explainDocument;
+    }
+
     public void setTableRows(int tableRows) { this.tableRows = tableRows;  }
 
     public int getTableRows() { return tableRows; }
@@ -123,9 +178,9 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
 
     public boolean isConclusionDivider() { return conclusionDivider; }
     public List<Document> getMainFormulas() { return mainFormulas; }
-    public List<Character> getUnaryOperators() { return unaryOperators; }
+    public List<String> getUnaryOperators() { return unaryOperators; }
 
-    public List<Character> getBinaryOperators() { return binaryOperators; }
+    public List<String> getBinaryOperators() { return binaryOperators; }
 
     public void setBasicFormulas(List<Document> basicFormulas) { this.basicFormulas = basicFormulas;  }
 
@@ -142,8 +197,6 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     public String getbPrompt() { return bPrompt; }
 
     public boolean isbSelected() { return bSelected; }
-
-    public boolean isShowChoiceArea() { return showChoiceArea; }
 
     @Override
     public String getExerciseName() {

@@ -13,7 +13,7 @@ public class TableHeadItem {
     boolean blankColumn = false;
     boolean dividerColumn = false;
 
-    TableHeadItem(TextFlow expression, ColumnConstraints columnConstraints) {
+    public TableHeadItem(TextFlow expression, ColumnConstraints columnConstraints) {
         this.expression = expression;
         this.columnConstraints = columnConstraints;
     }

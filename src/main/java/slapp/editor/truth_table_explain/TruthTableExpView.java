@@ -1,4 +1,4 @@
-package slapp.editor.truth_table;
+package slapp.editor.truth_table_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
@@ -17,12 +17,13 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
+import slapp.editor.truth_table.TableHeadItem;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-public class TruthTableView implements ExerciseView<DecoratedRTA> {
+public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private MainWindowView mainView;
     private String exerciseName = new String();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
@@ -56,7 +57,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
 
 
-    TruthTableView(MainWindowView mainView) {
+    TruthTableExpView(MainWindowView mainView) {
         this.mainView = mainView;
 
         Font labelFont = new Font("Noto Serif Combo", 11);
@@ -138,6 +139,12 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
                     tableGrid.add(tableFields[i][j], i, j + 2);
                 }
                 tableGrid.add(highlightButtons[i], i, tableRows + 3);
+                if (highlightButtons[i].isSelected()) {
+                    highlightButtons[i].setStyle("-fx-border-radius: 10; -fx-border-color: tomato; -fx-background-color: lavenderblush;");
+                    for (int j = 0; j < tableRows; j++) {
+                        tableFields[i][j].setStyle("-fx-background-radius: 2; -fx-background-color: pink");
+                    }
+                }
 
             } else if (headItem.isDividerColumn()) {
                 TextFlow headFlow = headItem.getExpression();
