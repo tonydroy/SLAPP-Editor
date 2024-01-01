@@ -277,7 +277,7 @@ public class DerivationCreate {
             setCenterVgrow();
         });
 
-        FontIcon heightIcon = new FontIcon(LineAwesomeSolid.TEXT_HEIGHT);
+        FontIcon heightIcon = new FontIcon(LineAwesomeSolid.ARROWS_ALT);
         heightIcon.setIconSize(20);
         updateHeightButton = new Button();
         updateHeightButton.setGraphic(heightIcon);

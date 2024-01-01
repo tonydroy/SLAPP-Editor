@@ -13,7 +13,10 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextFlow;
 import slapp.editor.EditorAlerts;
+import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
+import slapp.editor.derivation.LineType;
+import slapp.editor.derivation.ViewLine;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
@@ -51,6 +54,8 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private DecoratedRTA[] rowCommentsArray;
     private ToggleButton[] highlightButtons;
     private int tableRows = 0;
+
+    private VBox[] sizers;
 
 
 
@@ -114,10 +119,7 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         resultsBox = new VBox(10, choiceBox, explainDRTA.getEditor());
         tableGrid = new GridPane();
         tableGrid.setPadding(new Insets(20,0,20,0));
-        centerBox = new VBox(10, tableGrid);
-
-
-
+        centerBox = new VBox(10, tableGrid, resultsBox);
 
     }
 
@@ -150,6 +152,7 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
                 TextFlow headFlow = headItem.getExpression();
                 headFlow.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 1");
                 tableGrid.add(headFlow, i, 0);
+
                 for (int j = 0; j < tableRows + 3; j++) {
                     Pane dividerPane = new Pane();
                     dividerPane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1");
@@ -166,8 +169,14 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
             Pane pane = new Pane();
             pane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
             tableGrid.add(pane, tableHeadItemsList.size(), 0);
-
             tableGrid.add(rowCommentsArray[j].getEditor(), tableHeadItemsList.size(), j + 2);
+        }
+
+        sizers = new VBox[tableRows + 3];
+
+        for (int i = 0; i < tableRows + 3; i++) {
+            sizers[i] = new VBox();
+            tableGrid.add(sizers[i], tableHeadItemsList.size() + 1, i);
         }
 
         //setup blank separator row gaps
@@ -189,7 +198,12 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
 
     TextField newSingleCharTextField(int column, int row) {
         TextField singleCharField = new TextField();
-        singleCharField.setPrefWidth(25);
+
+    //    singleCharField.setPrefWidth(25);
+
+        singleCharField.setPadding(new Insets(0));
+        singleCharField.setPrefWidth(15);
+
         singleCharField.setAlignment(Pos.CENTER);
         singleCharField.setStyle("-fx-background-radius: 2");
         singleCharField.setPadding(new Insets(3));
@@ -340,13 +354,13 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         explainRTA.setPrefHeight(60.0);
         explainRTA.setPromptText("Explain:");
 
-
-
-
-
-
-
     }
+
+
+
+    public VBox[] getSizers() {  return sizers; }
+
+    public GridPane getTableGrid() { return tableGrid; }
 
     public void setTableRows(int tableRows) { this.tableRows = tableRows;  }
 

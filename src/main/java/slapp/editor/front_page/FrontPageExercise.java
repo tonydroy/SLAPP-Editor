@@ -33,7 +33,7 @@ public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView
     @Override
     public List<Node> getPrintNodes() { return null; }
     @Override
-    public Exercise<FrontPageModel, FrontPageView> getContentClearExercise() { return new FrontPageExercise(mainWindow); }
+    public Exercise<FrontPageModel, FrontPageView> resetExercise() { return new FrontPageExercise(mainWindow); }
     @Override
     public boolean isExerciseModified() { return false; }
     @Override

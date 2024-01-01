@@ -905,7 +905,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     }
 
     @Override
-    public Exercise<DrvtnExpModel, DrvtnExpView> getContentClearExercise() {
+    public Exercise<DrvtnExpModel, DrvtnExpView> resetExercise() {
         RichTextArea commentRTA = drvtnExpView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
@@ -946,7 +946,8 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
         if (isContainer(drvtnExpView.getSplitPane(), focusedNode)) {
             double gridHeight = drvtnExpView.getGridHeight();
-            mainWindow.getMainView().updateNodeHeightLabel(gridHeight + 20);
+            mainWindow.getMainView().updatePageSizeLabels(gridHeight + 20);
+            mainWindow.getLastFocusOwner().requestFocus();
 
         } else if (isContainer(drvtnExpView.getExplanationDRTA().getEditor(), focusedNode)) {
             DrvtnExpModel model = getDrvtnExpModelFromView();
@@ -954,7 +955,8 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             RichTextArea explanationRTA = exercise.getExerciseView().getExplanationDRTA().getEditor();
             RichTextAreaSkin explanationRTASkin = ((RichTextAreaSkin) explanationRTA.getSkin());
             double explanationHeight = explanationRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updateNodeHeightLabel(explanationHeight + 20);
+            mainWindow.getMainView().updatePageSizeLabels(explanationHeight + 20);
+            mainWindow.getLastFocusOwner().requestFocus();
         }
     }
 
@@ -980,7 +982,8 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
             RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
             double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updateNodeHeightLabel(Math.max(70, commentHeight + 35));
+            mainWindow.getMainView().updatePageSizeLabels(Math.max(70, commentHeight + 35));
+            mainWindow.getLastFocusOwner().requestFocus();
         }
     }
 
@@ -995,7 +998,8 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             statementRTA.setEditable(true);
             RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
             double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updateNodeHeightLabel(statementHeight + 35);
+            mainWindow.getMainView().updatePageSizeLabels(statementHeight + 35);
+            mainWindow.getLastFocusOwner().requestFocus();
         }
     }
 

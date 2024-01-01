@@ -40,7 +40,7 @@ public class ParseDocForTTable {
             span = 1;
             char c = formulaString.charAt(start);
             if (Character.isWhitespace(c)) start++;
-            else if (isOpenBracket(c)) openBracketSequence();
+            if (isOpenBracket(c)) openBracketSequence();
             else if (isOperator(c)) operatorSequence(c);
             else if (isRelationChar(c)) relationSequence();
             else if (isCloseBracket(c)) {

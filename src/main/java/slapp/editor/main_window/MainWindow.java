@@ -51,7 +51,7 @@ public class MainWindow {
             if (nv != null) {
                 if (nv.focusedProperty().get() == true) {
                     lastFocusOwner = ov;
-                    updateNodeContainerHeight(nv, false);
+ //                   updateNodeContainerHeight(nv, false);
                 }
             }
         };
@@ -210,7 +210,8 @@ public class MainWindow {
             if (result.get() != OK) okContinue = false;
         }
         if (okContinue) {
-            Exercise clearExercise = currentExercise.getContentClearExercise();
+            Exercise clearExercise = currentExercise.resetExercise();
+            mainView.resetPageSizeValues();
             setUpExercise(clearExercise);
         }
     }
@@ -219,6 +220,7 @@ public class MainWindow {
         //revert to empty simple edit exercise
         SimpleEditModel emptyModel = new SimpleEditModel("",false,"",80,new Document(), new Document(), new ArrayList<>());
         SimpleEditExercise emptyExercise = new SimpleEditExercise(emptyModel, mainWindow);
+        mainView.resetPageSizeValues();
         return emptyExercise;
     }
 
@@ -314,7 +316,7 @@ public class MainWindow {
         PrintUtilities.updatePageLayout();
         mainView.setupExercise();
         mainView.updateZoom(mainView.getZoomSpinner().getValue());
-        mainView.updatePageHeightLabel(PrintUtilities.getPageHeight());
+        mainView.resetPageSizeValues();
     }
 
 

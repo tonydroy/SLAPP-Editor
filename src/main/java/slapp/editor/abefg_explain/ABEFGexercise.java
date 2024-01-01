@@ -325,7 +325,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         return nodeList;
     }
     @Override
-    public ABEFGexercise getContentClearExercise() {
+    public ABEFGexercise resetExercise() {
         RichTextArea commentRTA = abefgView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
@@ -366,7 +366,8 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
             RichTextArea pageRTA = pageList.get(contentPageNum).getEditor();
             RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
             double pageHeight = pageRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updateNodeHeightLabel(pageHeight + 35);
+            mainWindow.getMainView().updatePageSizeLabels(pageHeight + 35);
+            mainWindow.getLastFocusOwner().requestFocus();
         }
     }
     @Override
@@ -380,7 +381,8 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
             RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
             RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
             double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updateNodeHeightLabel(Math.max(70, commentHeight + 35));
+            mainWindow.getMainView().updatePageSizeLabels(Math.max(70, commentHeight + 35));
+            mainWindow.getLastFocusOwner().requestFocus();
         }
     }
     @Override
@@ -395,7 +397,8 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
             statementRTA.setEditable(true);
             RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
             double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updateNodeHeightLabel(statementHeight + 35);
+            mainWindow.getMainView().updatePageSizeLabels(statementHeight + 35);
+            mainWindow.getLastFocusOwner().requestFocus();
         }
     }
     @Override

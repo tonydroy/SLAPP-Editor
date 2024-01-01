@@ -301,7 +301,7 @@ public class ABEFGcreate {
             scene.getWindow().setWidth(Math.max(860, PrintUtilities.getPageWidth() * scale + 55));
             setCenterVgrow();
         });
-        FontIcon heightIcon = new FontIcon(LineAwesomeSolid.TEXT_HEIGHT);
+        FontIcon heightIcon = new FontIcon(LineAwesomeSolid.ARROWS_ALT);
         heightIcon.setIconSize(20);
         Button updateHeightButton = new Button();
         updateHeightButton.setGraphic(heightIcon);

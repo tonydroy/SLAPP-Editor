@@ -263,7 +263,7 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
     }
 
     @Override
-    public Exercise<TruthTableModel, TruthTableView> getContentClearExercise() {
+    public Exercise<TruthTableModel, TruthTableView> resetExercise() {
         return null;
     }
 

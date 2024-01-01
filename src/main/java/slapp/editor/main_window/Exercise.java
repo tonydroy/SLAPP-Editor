@@ -12,7 +12,7 @@ public interface Exercise<T,U> {
     void printExercise();
     void exportExerciseToPDF();
     List<Node> getPrintNodes();
-    Exercise<T,U> getContentClearExercise();
+    Exercise<T,U> resetExercise();
     boolean isExerciseModified();
     void setExerciseModified(boolean modified);
     void updateContentHeight(Node focusedNode, boolean isRequired);

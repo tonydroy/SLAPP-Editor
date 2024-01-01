@@ -15,25 +15,20 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
-import slapp.editor.DiskUtilities;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
-import slapp.editor.front_page.FrontPageView;
 import slapp.editor.main_window.assignment.AssignmentHeader;
 import slapp.editor.main_window.assignment.AssignmentHeaderItem;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 
 public class MainWindowView {
     private Stage stage = EditorMain.mainStage;
@@ -67,8 +62,12 @@ public class MainWindowView {
     private Button saveButton;
     private Button updateHeightButton = new Button();
     private Label nodeHeightLabel = new Label("0");
-    private Label pageHeightLabel = new Label("100");
+    private Label pageWidthLabel = new Label("0");
+    private Label pageHeightLabel = new Label("0");
     private Label nodePercentageLabel = new Label("0");
+    private Label pagePercentLabel = new Label("0");
+    private double lastCheckedNodeHeight = 0.0;
+
 
     private MenuItem createNewExerciseItem = new MenuItem("Create New");
     private MenuItem createRevisedExerciseItem = new MenuItem("Create Revised");
@@ -123,31 +122,37 @@ public class MainWindowView {
 
         Region spacer = new Region();
         Label slashLabel = new Label("/");
-        Label percentSignLabel = new Label("%");
+        Label percentSignLabel1 = new Label("%");
+        Label percentSignLabel2 = new Label("%");
         Label heightLabel = new Label("Block Height: ");
-        menuBox = new HBox(menuBar, spacer, heightLabel, nodeHeightLabel, slashLabel, pageHeightLabel, nodePercentageLabel, percentSignLabel);
+        Label widthLabel = new Label("Page Width: ");
+        menuBox = new HBox(menuBar, spacer, widthLabel, pagePercentLabel, percentSignLabel1, heightLabel, nodePercentageLabel, percentSignLabel2);
         menuBox.setStyle("-fx-background-color: aliceblue; fx-border-color: white;");
         menuBox.setPadding(new Insets(0,15,0,0));
         menuBox.setMaxWidth(minStageWidth - 10);
-        menuBox.setMargin(heightLabel, new Insets(8,2,0,0));
+        menuBox.setMargin(heightLabel, new Insets(8,1,0,10));
         menuBox.setMargin(nodeHeightLabel, new Insets(8,0,0,0));
         menuBox.setMargin(slashLabel, new Insets(8,0,0,0));
         menuBox.setMargin(pageHeightLabel, new Insets(8,0,0,0));
-        menuBox.setMargin(nodePercentageLabel, new Insets(8,0,0,5));
-        menuBox.setMargin(percentSignLabel, new Insets(8,0,0,0));
+        menuBox.setMargin(nodePercentageLabel, new Insets(8,0,0,0));
+
+        menuBox.setMargin(widthLabel, new Insets(8,1,0,0));
+        menuBox.setMargin(pagePercentLabel, new Insets(8,0,0,0));
+        menuBox.setMargin(percentSignLabel1, new Insets(8,0,0,0));
+        menuBox.setMargin(percentSignLabel2, new Insets(8,0,0,0));
 
 //        menuBox.setMargin(updateHeightButton, new Insets(6,0,0,10));
         menuBox.setHgrow(spacer, Priority.ALWAYS);
 //        updateHeightButton.setPadding(new Insets(1,4,1,4));
 
-        FontIcon heightIcon = new FontIcon(LineAwesomeSolid.TEXT_HEIGHT);
+        FontIcon heightIcon = new FontIcon(LineAwesomeSolid.ARROWS_ALT);
         heightIcon.setIconSize(20);
         updateHeightButton.setGraphic(heightIcon);
-        updateHeightButton.setTooltip(new Tooltip("Update text height"));
+        updateHeightButton.setTooltip(new Tooltip("Update content width and height"));
 
 
 
-        updatePageHeightLabel(PrintUtilities.getPageHeight());
+  //      updatePageSizeValues();
 
         zoomLabel = new Label(" Zoom ");
         zoomSpinner = new Spinner(25, 500, 100, 5);
@@ -190,6 +195,8 @@ public class MainWindowView {
 
         mainScene = new Scene(borderPane);
         mainScene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
+
+
         stage.setScene(mainScene);
         stage.setTitle("SLAPP Editor");
         stage.setMinWidth(minStageWidth);
@@ -267,18 +274,19 @@ public class MainWindowView {
 
     }
 
-    public void updateNodeHeightLabel(double nodeHeight) {
-        double pageHeight = Double.parseDouble(pageHeightLabel.getText());
-        double percentValue = (nodeHeight / pageHeight) * 100;
-        nodeHeightLabel.setText(Integer.toString((int) Math.round(nodeHeight)));
-        nodePercentageLabel.setText(Integer.toString((int) Math.round(percentValue)));
+    public void updatePageSizeLabels(double nodeHeight) {
+        lastCheckedNodeHeight = nodeHeight;
+        double heightPercentValue = (nodeHeight / PrintUtilities.getPageHeight()) * 100;
+        nodePercentageLabel.setText(Integer.toString((int) Math.round(heightPercentValue)));
+        double pageWidth = statementNode.getLayoutBounds().getWidth() - 40;
+        double widthPercentValue = (pageWidth / PrintUtilities.getPageWidth()) * 100;
+        pagePercentLabel.setText(Integer.toString((int) Math.round(widthPercentValue)));
     }
 
-    public void updatePageHeightLabel(double pageHeight) {
-        double nodeHeight = Double.parseDouble(nodeHeightLabel.getText());
-        double percentValue = (nodeHeight / pageHeight) * 100;
-        pageHeightLabel.setText(Integer.toString((int) Math.round(pageHeight)));
-        nodePercentageLabel.setText(Integer.toString((int) Math.round(percentValue)));
+    public void resetPageSizeValues() {
+        nodePercentageLabel.setText("0");
+        pagePercentLabel.setText("0");
+    //    updatePageSizeLabels(lastCheckedNodeHeight);
     }
 
     public void setCenterVgrow() {

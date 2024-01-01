@@ -266,7 +266,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         return nodeList;
     }
     @Override
-    public ABexercise getContentClearExercise() {
+    public ABexercise resetExercise() {
         RichTextArea commentRTA = abView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
@@ -306,7 +306,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
             RichTextArea pageRTA = pageList.get(contentPageNum).getEditor();
             RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
             double pageHeight = pageRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updateNodeHeightLabel(pageHeight + 35);
+            mainWindow.getMainView().updatePageSizeLabels(pageHeight + 35);
+            mainWindow.getLastFocusOwner().requestFocus();
         }
     }
     @Override
@@ -320,7 +321,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
             RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
             RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
             double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updateNodeHeightLabel(Math.max(70, commentHeight + 35));
+            mainWindow.getMainView().updatePageSizeLabels(Math.max(70, commentHeight + 35));
+            mainWindow.getLastFocusOwner().requestFocus();
         }
     }
     @Override
@@ -335,7 +337,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
             statementRTA.setEditable(true);
             RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
             double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updateNodeHeightLabel(statementHeight + 35);
+            mainWindow.getMainView().updatePageSizeLabels(statementHeight + 35);
+            mainWindow.getLastFocusOwner().requestFocus();
         }
     }
     @Override

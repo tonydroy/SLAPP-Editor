@@ -881,7 +881,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
 
     @Override
-    public Exercise<DerivationModel, DerivationView> getContentClearExercise() {
+    public Exercise<DerivationModel, DerivationView> resetExercise() {
         RichTextArea commentRTA = derivationView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
@@ -917,7 +917,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     @Override
     public void updateContentHeight(Node focusedNode, boolean isRequired) {
         double gridHeight = derivationView.getGridHeight();
-        mainWindow.getMainView().updateNodeHeightLabel(gridHeight + 20);
+        mainWindow.getMainView().updatePageSizeLabels(gridHeight + 20);
+        mainWindow.getLastFocusOwner().requestFocus();
     }
 
     @Override
@@ -930,7 +931,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
             RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
             double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updateNodeHeightLabel(Math.max(70, commentHeight + 35));
+            mainWindow.getMainView().updatePageSizeLabels(Math.max(70, commentHeight + 35));
+            mainWindow.getLastFocusOwner().requestFocus();
         }
     }
 
@@ -945,7 +947,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             statementRTA.setEditable(true);
             RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
             double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updateNodeHeightLabel(statementHeight + 35);
+            mainWindow.getMainView().updatePageSizeLabels(statementHeight + 35);
+            mainWindow.getLastFocusOwner().requestFocus();
         }
     }
 
