@@ -22,28 +22,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
+public class TruthTableView implements ExerciseView<DecoratedRTA> {
     private MainWindowView mainView;
     private String exerciseName = new String();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private DecoratedRTA explainDRTA = new DecoratedRTA();
-    private String explainPrompt = "";
     private GridPane basicFormulasPane;
     private List<DecoratedRTA> basicFormulasDRTAList;
     private VBox controlBox;
     private Spinner rowsSpinner;
     Button setupTableButton;
-    private Label choiceLeadLabel = new Label();
-    private CheckBox aCheckBox = new CheckBox();
-    private CheckBox bCheckBox = new CheckBox();
     private GridPane tableGrid;
-    private VBox resultsBox;
-    private HBox choiceBox;
     private VBox centerBox;
     private double contentFixedHeight = 170;
-
     private List<TableHeadItem> tableHeadItemsList;
     private TextField[][]  tableFields; //list of text field columns
     private DecoratedRTA[] rowCommentsArray;
@@ -52,12 +45,8 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private VBox[] sizers;
 
 
-    TruthTableExpView(MainWindowView mainView) {
+    TruthTableView(MainWindowView mainView) {
         this.mainView = mainView;
-
-        Font labelFont = new Font("Noto Serif Combo", 11);
-        choiceLeadLabel.setFont(labelFont); aCheckBox.setFont(labelFont); bCheckBox.setFont(labelFont);
-
 
         basicFormulasPane = new GridPane();
         basicFormulasPane.setVgap(10);
@@ -105,13 +94,10 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         controlBox = new VBox(20, upperControlBox, basicFormulasPane, spinnerBox, setupTableButton);
         controlBox.setPadding(new Insets(80, 0, 20, 20));
 
-        choiceBox = new HBox(20, choiceLeadLabel, aCheckBox, bCheckBox);
-        resultsBox = new VBox(10, choiceBox, explainDRTA.getEditor());
-        resultsBox.setPadding(new Insets(0,0,10,0));
 
         tableGrid = new GridPane();
         tableGrid.setPadding(new Insets(20,0,20,0));
-        centerBox = new VBox(10, tableGrid, resultsBox);
+        centerBox = new VBox(10, tableGrid);
 
     }
 
@@ -377,15 +363,7 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
 
     public void setContentFixedHeight(double contentFixedHeight) { this.contentFixedHeight = contentFixedHeight; }
 
-    public VBox getResultsBox() { return resultsBox; }
-
     public VBox getCenterBox() {return centerBox; }
-
-    public Label getChoiceLeadLabel() { return choiceLeadLabel; }
-
-    public CheckBox getaCheckBox() { return aCheckBox;  }
-
-    public CheckBox getbCheckBox() { return bCheckBox; }
 
     public DecoratedRTA getExplainDRTA() {return explainDRTA; }
 

@@ -29,7 +29,6 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private double statementPrefHeight = 80;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private DecoratedRTA explainDRTA = new DecoratedRTA();
-    private String explainPrompt = "";
     private GridPane basicFormulasPane;
     private List<DecoratedRTA> basicFormulasDRTAList;
     private VBox controlBox;

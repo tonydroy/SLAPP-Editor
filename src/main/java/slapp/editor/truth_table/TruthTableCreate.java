@@ -41,7 +41,7 @@ import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
-public class TruthTableExpCreate {
+public class TruthTableCreate {
     private MainWindow mainWindow;
     private MainWindowView mainView;
     private TextField nameField;
@@ -56,9 +56,6 @@ public class TruthTableExpCreate {
     private TextArea helpArea;
     private VBox centerBox;
     private CheckBox conclusionDividerCheck;
-    private TextField choiceLeadField;
-    private TextField aPromptField;
-    private TextField bPromptField;
     private List<DecoratedRTA> unaryOperatorList;
     private List<DecoratedRTA> binaryOperatorList;
     private List<DecoratedRTA> mainFormulaList;
@@ -77,25 +74,19 @@ public class TruthTableExpCreate {
     private ToolBar paragraphToolbar;
     private ToolBar kbdDiaToolbar;
     ChangeListener nameListener;
-    ChangeListener choiceLeadListener;
-    ChangeListener aPromptListener;
-    ChangeListener bPromptListener;
 
 
-    public TruthTableExpCreate(MainWindow mainWindow) {
+    public TruthTableCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
-    public TruthTableExpCreate(MainWindow mainWindow, TruthTableExpModel originalModel) {
+    public TruthTableCreate(MainWindow mainWindow, TruthTableModel originalModel) {
         this(mainWindow);
 
         nameField.setText(originalModel.getExerciseName());
         statementRTA.setDocument(originalModel.getExerciseStatement());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
-        choiceLeadField.setText(originalModel.getChoiceLead());
-        aPromptField.setText(originalModel.getaPrompt());
-        bPromptField.setText(originalModel.getbPrompt());
         conclusionDividerCheck.setSelected(originalModel.isConclusionDivider());
         updateOperatorFieldsFromModel(originalModel);
         updateUnaryOperatorGridFromFields();
@@ -144,46 +135,7 @@ public class TruthTableExpCreate {
         HBox nameBox = new HBox(10, nameLabel, nameField);
         nameBox.setAlignment(Pos.CENTER_LEFT);
 
-        //choice fields
-        Label choiceLeadLabel = new Label("Checkbox lead: ");
-        choiceLeadLabel.setPrefWidth(95);
-        choiceLeadField  = new TextField();
-        choiceLeadField.setPromptText("(plain text)");
-        choiceLeadListener = new ChangeListener() {
-            @Override
-            public void changed(ObservableValue ob, Object ov, Object nv) {
-                fieldModified = true;
-                choiceLeadField.textProperty().removeListener(choiceLeadListener);
-            }
-        };
-        choiceLeadField.textProperty().addListener(choiceLeadListener);
 
-        Label aPromptLabel = new Label("A prompt: ");
-        aPromptField  = new TextField();
-        aPromptField.setPromptText("(plain text)");
-        aPromptListener = new ChangeListener() {
-            @Override
-            public void changed(ObservableValue ob, Object ov, Object nv) {
-                fieldModified = true;
-                aPromptField.textProperty().removeListener(aPromptListener);
-            }
-        };
-        aPromptField.textProperty().addListener(aPromptListener);
-
-        Label bPromptLabel = new Label("B prompt: ");
-        bPromptField  = new TextField();
-        bPromptField.setPromptText("(plain text)");
-        bPromptListener = new ChangeListener() {
-            @Override
-            public void changed(ObservableValue ob, Object ov, Object nv) {
-                fieldModified = true;
-                bPromptField.textProperty().removeListener(bPromptListener);
-            }
-        };
-        bPromptField.textProperty().addListener(bPromptListener);
-
-        HBox choicesBox = new HBox(10, choiceLeadLabel, choiceLeadField, aPromptLabel, aPromptField, bPromptLabel, bPromptField);
-        choicesBox.setAlignment(Pos.CENTER_LEFT);
 
         //language presets
         Label operatorPresetLabel = new Label("Preset operators: ");
@@ -346,7 +298,7 @@ public class TruthTableExpCreate {
         mainFormulasTop.setAlignment(Pos.CENTER_LEFT);
         mainFormulasTop.setMargin(conclusionDividerCheck, new Insets(0, 0, 0, 100));
 
-        upperFieldsBox = new VBox(10, nameBox, choicesBox, languagePresetsBox, unaryOperatorBox, binaryOperatorBox, mainFormulasTop, mainFormulasPane);
+        upperFieldsBox = new VBox(10, nameBox, languagePresetsBox, unaryOperatorBox, binaryOperatorBox, mainFormulasTop, mainFormulasPane);
         upperFieldsBox.setPadding(new Insets(20, 0, 20, 20));
 
         //center area
@@ -425,7 +377,7 @@ public class TruthTableExpCreate {
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
 
-        stage.setTitle("Create Truth Table Explain Exercise:");
+        stage.setTitle("Create Truth Table Exercise:");
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
         stage.setWidth(1000);
         stage.setHeight(800);
@@ -445,7 +397,7 @@ public class TruthTableExpCreate {
 
     }
 
-    private void updateOperatorFieldsFromModel(TruthTableExpModel model){
+    private void updateOperatorFieldsFromModel(TruthTableModel model){
         unaryOperatorList.clear();
         List<String> unaryList = model.getUnaryOperators();
         for (String str : unaryList) {
@@ -482,7 +434,7 @@ public class TruthTableExpCreate {
         }
     }
 
-    private void updateMainFormulaFieldsFromModel(TruthTableExpModel model){
+    private void updateMainFormulaFieldsFromModel(TruthTableModel model){
         mainFormulaList.clear();
         List<Document> formulasList = model.getMainFormulas();
         for (Document doc : formulasList) {
@@ -546,6 +498,7 @@ public class TruthTableExpCreate {
                 editorInFocus(drta, ControlType.FIELD);
             }
         });
+        rta.getActionFactory().saveNow().execute(new ActionEvent());
         return drta;
     }
 
@@ -556,7 +509,7 @@ public class TruthTableExpCreate {
         }
     }
     private void viewExercise() {
-        TruthTableExpExercise exercise = new TruthTableExpExercise(extractModelFromWindow(), mainWindow, true);
+        TruthTableExercise exercise = new TruthTableExercise(extractModelFromWindow(), mainWindow, true);
         exercise.generateEmptyTableModel();
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
@@ -570,12 +523,6 @@ public class TruthTableExpCreate {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-            choiceLeadField.clear();
-            choiceLeadField.textProperty().addListener(choiceLeadListener);
-            aPromptField.clear();
-            aPromptField.textProperty().addListener(aPromptListener);
-            bPromptField.clear();
-            bPromptField.textProperty().addListener(bPromptListener);
 
             conclusionDividerCheck.setSelected(false);
             unaryOperatorList.clear();
@@ -597,11 +544,8 @@ public class TruthTableExpCreate {
     }
     private void saveExercise(boolean saveAs) {
         nameField.textProperty().addListener(nameListener);
-        choiceLeadField.textProperty().addListener(choiceLeadListener);
-        aPromptField.textProperty().addListener(aPromptListener);
-        bPromptField.textProperty().addListener(bPromptListener);
 
-        TruthTableExpExercise exercise = new TruthTableExpExercise(extractModelFromWindow(), mainWindow, true);
+        TruthTableExercise exercise = new TruthTableExercise(extractModelFromWindow(), mainWindow, true);
 
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
@@ -617,15 +561,19 @@ public class TruthTableExpCreate {
 
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
+
         for (DecoratedRTA drta : unaryOperatorList) {
             if (drta.getEditor().isModified()) {fieldModified = true; }
         }
+
         for (DecoratedRTA drta : binaryOperatorList) {
             if (drta.getEditor().isModified()) {fieldModified = true; }
         }
+
         for (DecoratedRTA drta : mainFormulaList) {
             if (drta.getEditor().isModified()) {fieldModified = true; }
         }
+
         if (statementRTA.isModified()) {fieldModified = true;  }
 
         if (fieldModified) {
@@ -662,8 +610,8 @@ public class TruthTableExpCreate {
     }
 
     //this leaves tableValues, rowComments, columnHighlights to be initialized by the TruthTableExercise (based on the model mainFormulas).
-    private TruthTableExpModel extractModelFromWindow() {
-        TruthTableExpModel model = new TruthTableExpModel();
+    private TruthTableModel extractModelFromWindow() {
+        TruthTableModel model = new TruthTableModel();
 
         model.setExerciseName(nameField.getText());
         model.setStarted(false);
@@ -704,9 +652,6 @@ public class TruthTableExpCreate {
         model.setMainFormulas(mainFormulaDocs);
 
         model.setConclusionDivider(conclusionDividerCheck.isSelected());
-        model.setChoiceLead(choiceLeadField.getText());
-        model.setaPrompt(aPromptField.getText());
-        model.setbPrompt(bPromptField.getText());
 
         return model;
     }

@@ -29,11 +29,11 @@ import slapp.editor.main_window.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TruthTableExpExercise implements Exercise<TruthTableExpModel, TruthTableExpView> {
+public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableView> {
     private MainWindow mainWindow;
-    private TruthTableExpModel truthTableExpModel;
-    private TruthTableExpModel originalModel;
-    private TruthTableExpView truthTableExpView;
+    private TruthTableModel truthTableModel;
+    private TruthTableModel originalModel;
+    private TruthTableView truthTableView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
     private ParseDocForTTable docParser;
@@ -42,57 +42,57 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
 
 
     //applies when table elements are set to model with rows != 0
-    public TruthTableExpExercise(TruthTableExpModel truthTableExpModel, MainWindow mainWindow) {
+    public TruthTableExercise(TruthTableModel truthTableModel, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
-        this.truthTableExpModel = truthTableExpModel;
+        this.truthTableModel = truthTableModel;
         this.mainView = mainWindow.getMainView();
-        this.truthTableExpView = new TruthTableExpView(mainView);
-        docParser = new ParseDocForTTable(truthTableExpModel.getUnaryOperators(), truthTableExpModel.getBinaryOperators());
-        tableRows = truthTableExpModel.getTableRows();
-        this.originalModel = truthTableExpModel;
+        this.truthTableView = new TruthTableView(mainView);
+        docParser = new ParseDocForTTable(truthTableModel.getUnaryOperators(), truthTableModel.getBinaryOperators());
+        tableRows = truthTableModel.getTableRows();
+        this.originalModel = truthTableModel;
 
 
         setTruthTableView();
     }
 
     //applies when table elements need to be set to empty table
-    public TruthTableExpExercise(TruthTableExpModel truthTableExpModel, MainWindow mainWindow, boolean create) {
+    public TruthTableExercise(TruthTableModel truthTableModel, MainWindow mainWindow, boolean create) {
         this.mainWindow = mainWindow;
-        this.truthTableExpModel = truthTableExpModel;
+        this.truthTableModel = truthTableModel;
         this.mainView = mainWindow.getMainView();
-        this.truthTableExpView = new TruthTableExpView(mainView);
-        docParser = new ParseDocForTTable(truthTableExpModel.getUnaryOperators(), truthTableExpModel.getBinaryOperators());
-        tableRows = truthTableExpModel.getTableRows();
+        this.truthTableView = new TruthTableView(mainView);
+        docParser = new ParseDocForTTable(truthTableModel.getUnaryOperators(), truthTableModel.getBinaryOperators());
+        tableRows = truthTableModel.getTableRows();
         generateEmptyTableModel();                                  //** the difference
-        this.originalModel = truthTableExpModel;
+        this.originalModel = truthTableModel;
 
         setTruthTableView();
     }
 
     public void generateEmptyTableModel() {
         setupHeadItemsFromModel();
-        truthTableExpModel.setEmptyTableContents(tableColumns);
+        truthTableModel.setEmptyTableContents(tableColumns);
     }
 
     private void setTruthTableView() {
-        truthTableExpView.setExerciseName(truthTableExpModel.getExerciseName());
-        truthTableExpView.setTableRows(tableRows);
+        truthTableView.setExerciseName(truthTableModel.getExerciseName());
+        truthTableView.setTableRows(tableRows);
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
-        statementEditor.setDocument(truthTableExpModel.getExerciseStatement());
-        truthTableExpView.setStatementPrefHeight(truthTableExpModel.getStatementPrefHeight());
+        statementEditor.setDocument(truthTableModel.getExerciseStatement());
+        truthTableView.setStatementPrefHeight(truthTableModel.getStatementPrefHeight());
         mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
             }
         });
-        truthTableExpView.setExerciseStatement(statementDRTA);
+        truthTableView.setExerciseStatement(statementDRTA);
 
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
-        commentEditor.setDocument(truthTableExpModel.getExerciseComment());
+        commentEditor.setDocument(truthTableModel.getExerciseComment());
         commentEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(commentDRTA, ControlType.AREA);
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
@@ -100,35 +100,13 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
             }
         });
-        truthTableExpView.setExerciseComment(commentDRTA);
-
-        truthTableExpView.getChoiceLeadLabel().setText(truthTableExpModel.getChoiceLead());
-        CheckBox aCheckBox = truthTableExpView.getaCheckBox();
-        CheckBox bCheckBox = truthTableExpView.getbCheckBox();
-        aCheckBox.setText(truthTableExpModel.getaPrompt());
-        aCheckBox.setSelected(truthTableExpModel.isaSelected());
-        aCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ob, Boolean ov, Boolean nv) {
-                if (nv == true) bCheckBox.setSelected(false);
-                exerciseModified = true;
-            }
-        });
-        bCheckBox.setText(truthTableExpModel.getbPrompt());
-        bCheckBox.setSelected(truthTableExpModel.isbSelected());
-        bCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ob, Boolean ov, Boolean nv) {
-                if (nv == true) aCheckBox.setSelected(false);
-                exerciseModified = true;
-            }
-        });
+        truthTableView.setExerciseComment(commentDRTA);
 
 
 
-        DecoratedRTA explainDRTA = truthTableExpView.getExplainDRTA();
+        DecoratedRTA explainDRTA = truthTableView.getExplainDRTA();
         RichTextArea explainEditor = explainDRTA.getEditor();
-        explainEditor.setDocument(truthTableExpModel.getExplainDocument());
+        explainEditor.setDocument(truthTableModel.getExplainDocument());
         explainEditor.setPromptText("Explain:");
         explainEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(explainDRTA, ControlType.AREA);
@@ -139,24 +117,24 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         });
 
         //initialize basic formulas control
-        List<Document> basicFormulaDocs = truthTableExpModel.getBasicFormulas();
-        if (!basicFormulaDocs.isEmpty()) truthTableExpView.getBasicFormulasDRTAList().clear();
+        List<Document> basicFormulaDocs = truthTableModel.getBasicFormulas();
+        if (!basicFormulaDocs.isEmpty()) truthTableView.getBasicFormulasDRTAList().clear();
         for (Document doc : basicFormulaDocs ) {
-            DecoratedRTA drta = truthTableExpView.newFormulaDRTAField();
+            DecoratedRTA drta = truthTableView.newFormulaDRTAField();
             RichTextArea rta = drta.getEditor();
             rta.setDocument(doc);
-            truthTableExpView.getBasicFormulasDRTAList().add(drta);
+            truthTableView.getBasicFormulasDRTAList().add(drta);
         }
-        truthTableExpView.updateBasicFormulasPaneFromList();
-        truthTableExpView.getRowsSpinner().getValueFactory().setValue(tableRows);
+        truthTableView.updateBasicFormulasPaneFromList();
+        truthTableView.getRowsSpinner().getValueFactory().setValue(tableRows);
 
-        Button setupTableButton = truthTableExpView.getSetupTableButton();
+        Button setupTableButton = truthTableView.getSetupTableButton();
         setupTableButton.setOnAction(e -> {
-            tableRows = (int) truthTableExpView.getRowsSpinner().getValue();
-            truthTableExpModel.setTableRows(tableRows);
-            truthTableExpView.setTableRows(tableRows);
+            tableRows = (int) truthTableView.getRowsSpinner().getValue();
+            truthTableModel.setTableRows(tableRows);
+            truthTableView.setTableRows(tableRows);
 
-            List<DecoratedRTA> basicFormulasDRTAList = truthTableExpView.getBasicFormulasDRTAList();
+            List<DecoratedRTA> basicFormulasDRTAList = truthTableView.getBasicFormulasDRTAList();
             List<Document> newBasicFormulaDocs = new ArrayList<>();
             for (DecoratedRTA drta : basicFormulasDRTAList) {
                 RichTextArea rta = drta.getEditor();
@@ -164,41 +142,41 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
                 Document formulaDoc = rta.getDocument();
                 newBasicFormulaDocs.add(formulaDoc);
             }
-            truthTableExpModel.setBasicFormulas(newBasicFormulaDocs);
+            truthTableModel.setBasicFormulas(newBasicFormulaDocs);
             setupHeadItemsFromModel();
-            truthTableExpModel.setEmptyTableContents(tableColumns);
+            truthTableModel.setEmptyTableContents(tableColumns);
             updateViewTableItems();
-            truthTableExpView.updateTableGridFromTableItems();
+            truthTableView.updateTableGridFromTableItems();
             exerciseModified = true;
         });
 
         //table contents
 
         updateViewTableItems();
-        truthTableExpView.updateTableGridFromTableItems();
+        truthTableView.updateTableGridFromTableItems();
 
-        truthTableExpView.initializeViewDetails();
+        truthTableView.initializeViewDetails();
     }
 
     private void updateViewTableItems() {
         setupHeadItemsFromModel();
 
-        Document[] commentDocs = truthTableExpModel.getRowComments();
+        Document[] commentDocs = truthTableModel.getRowComments();
         DecoratedRTA[] commentDRTAs = new DecoratedRTA[tableRows];
         for (int i = 0; i < commentDocs.length; i++) {
             Document doc = commentDocs[i];
-            DecoratedRTA drta = truthTableExpView.newCommentDRTAField();
+            DecoratedRTA drta = truthTableView.newCommentDRTAField();
             RichTextArea rta = drta.getEditor();
             rta.setDocument(doc);
             rta.getActionFactory().saveNow().execute(new ActionEvent());
             commentDRTAs[i] = drta;
         }
-        truthTableExpView.setRowCommentsArray(commentDRTAs);
+        truthTableView.setRowCommentsArray(commentDRTAs);
 
 
         ToggleButton[] buttons = new ToggleButton[tableColumns];
         TextField[][] columns = new TextField[tableColumns][tableRows];
-        List<TableHeadItem> tableHeadItems = truthTableExpView.getTableHeadItemsList();
+        List<TableHeadItem> tableHeadItems = truthTableView.getTableHeadItemsList();
 
 
         for (int i = 0; i < tableColumns; i++) {
@@ -206,21 +184,21 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
             if (!headItem.isBlankColumn()) {
                 TextField[] column = new TextField[tableRows];
                 for (int j = 0; j < tableRows; j++) {
-                    TextField charField = truthTableExpView.newSingleCharTextField(i, j);
-                    charField.setText(truthTableExpModel.getTableValues()[i][j]);
+                    TextField charField = truthTableView.newSingleCharTextField(i, j);
+                    charField.setText(truthTableModel.getTableValues()[i][j]);
                     charField.textProperty().addListener((ob, ov, nv) -> exerciseModified = true);
                     column[j] = charField;
                 }
                 columns[i] = column;
-                ToggleButton highlightButton = truthTableExpView.newHighlightButton(i);
-                highlightButton.setSelected(truthTableExpModel.getColumnHighlights()[i]);
+                ToggleButton highlightButton = truthTableView.newHighlightButton(i);
+                highlightButton.setSelected(truthTableModel.getColumnHighlights()[i]);
                 highlightButton.selectedProperty().addListener((ob, ov, nv) -> exerciseModified = true);
                 buttons[i] = highlightButton;
 
             }
         }
-        truthTableExpView.setTableFields(columns);
-        truthTableExpView.setHighlightButtons(buttons);
+        truthTableView.setTableFields(columns);
+        truthTableView.setHighlightButtons(buttons);
     }
 
     private void setupHeadItemsFromModel() {
@@ -228,7 +206,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         List<TableHeadItem> headList = new ArrayList<>();
 
         //basic formulas head items
-        List<Document> basicFormulas = truthTableExpModel.getBasicFormulas();
+        List<Document> basicFormulas = truthTableModel.getBasicFormulas();
         for (int i = 0; i < basicFormulas.size(); i++) {
             List<TableHeadItem> basicHeadItems = docParser.generateHeadItems(basicFormulas.get(i));
             headList.addAll(basicHeadItems);
@@ -247,7 +225,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
 
 
         //main formula head items
-        List<Document> mainFormulas = truthTableExpModel.getMainFormulas();
+        List<Document> mainFormulas = truthTableModel.getMainFormulas();
         for (int i = 0; i < mainFormulas.size() - 1; i++) {
             List<TableHeadItem> mainHeadItems = docParser.generateHeadItems(mainFormulas.get(i));
             headList.addAll(mainHeadItems);
@@ -255,7 +233,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
             spaceColHead.setBlankColumn(true);
             headList.add(spaceColHead);
         }
-        if (truthTableExpModel.isConclusionDivider()) {
+        if (truthTableModel.isConclusionDivider()) {
             ColumnConstraints slashItemConstraints = new ColumnConstraints(10);
             slashItemConstraints.setHalignment(HPos.RIGHT);
             TableHeadItem slashHeadItem = new TableHeadItem(new TextFlow(new Text("/")), slashItemConstraints);
@@ -270,15 +248,15 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         spaceColHead.setBlankColumn(true);
         headList.add(spaceColHead);
 
-        truthTableExpView.setTableHeadItemsList(headList);
+        truthTableView.setTableHeadItemsList(headList);
         tableColumns = headList.size();
     }
 
     @Override
-    public TruthTableExpModel getExerciseModel() { return truthTableExpModel;  }
+    public TruthTableModel getExerciseModel() { return truthTableModel;  }
 
     @Override
-    public TruthTableExpView getExerciseView() { return truthTableExpView; }
+    public TruthTableView getExerciseView() { return truthTableView; }
 
     @Override
     public void saveExercise(boolean saveAs) {
@@ -287,20 +265,20 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
     }
 
     @Override
-    public void printExercise() { PrintUtilities.printExercise(getPrintNodes(), truthTableExpModel.getExerciseName()); }
+    public void printExercise() { PrintUtilities.printExercise(getPrintNodes(), truthTableModel.getExerciseName()); }
 
     @Override
-    public void exportExerciseToPDF() { PrintUtilities.exportExerciseToPDF(getPrintNodes(), truthTableExpModel.getExerciseName());  }
+    public void exportExerciseToPDF() { PrintUtilities.exportExerciseToPDF(getPrintNodes(), truthTableModel.getExerciseName());  }
 
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        truthTableExpModel = getTruthTableExpModelFromView();
-        TruthTableExpExercise exercise = new TruthTableExpExercise(truthTableExpModel, mainWindow);
+        truthTableModel = getTruthTableExpModelFromView();
+        TruthTableExercise exercise = new TruthTableExercise(truthTableModel, mainWindow);
         double nodeWidth = PrintUtilities.getPageWidth();
 
         //header node
-        Label exerciseName = new Label(truthTableExpModel.getExerciseName());
+        Label exerciseName = new Label(truthTableModel.getExerciseName());
         exerciseName.setStyle("-fx-font-weight: bold;");
         HBox hbox = new HBox(exerciseName);
         hbox.setPadding(new Insets(0,0,10,0));
@@ -344,28 +322,6 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         gridBox.setAlignment(Pos.CENTER);
         nodeList.add(gridBox);
 
-        Label leaderLabel = new Label(truthTableExpModel.getChoiceLead());
-        CheckBox boxA = new CheckBox(truthTableExpModel.getaPrompt());
-        boxA.setSelected(truthTableExpModel.isaSelected());
-        CheckBox boxB = new CheckBox(truthTableExpModel.getbPrompt());
-        boxB.setSelected(truthTableExpModel.isbSelected());
-        Font labelFont = new Font("Noto Serif Combo", 11);
-        leaderLabel.setFont(labelFont); boxA.setFont(labelFont); boxB.setFont(labelFont);
-
-        HBox abBox = new HBox(20);
-        abBox.setPadding(new Insets(10,10,10,0));
-        abBox.getChildren().addAll(leaderLabel, boxA, boxB);
-        nodeList.add(abBox);
-
-        RichTextArea explanationRTA = exercise.getExerciseView().getExplainDRTA().getEditor();
-        RichTextAreaSkin explanationRTASkin = ((RichTextAreaSkin) explanationRTA.getSkin());
-        double explanationHeight = explanationRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-        explanationRTA.setPrefHeight(explanationHeight + 35.0);
-        explanationRTA.setContentAreaWidth(nodeWidth);
-        explanationRTA.setPrefWidth(nodeWidth);
-        explanationRTA.getStylesheets().clear(); statementRTA.getStylesheets().add("richTextAreaPrinter.css");
-        nodeList.add(explanationRTA);
-
         Separator contentSeparator = new Separator(Orientation.HORIZONTAL);
         contentSeparator.setStyle("-fx-stroke-dash-array:0.1 5.0");
         contentSeparator.setPrefWidth(100);
@@ -387,25 +343,25 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
     }
 
     @Override
-    public Exercise<TruthTableExpModel, TruthTableExpView> resetExercise() {
-        RichTextArea commentRTA = truthTableExpView.getExerciseComment().getEditor();
+    public Exercise<TruthTableModel, TruthTableView> resetExercise() {
+        RichTextArea commentRTA = truthTableView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
         originalModel.setExerciseComment(commentDocument);
-        TruthTableExpExercise clearExercise = new TruthTableExpExercise(originalModel, mainWindow);
+        TruthTableExercise clearExercise = new TruthTableExercise(originalModel, mainWindow);
         return clearExercise;
     }
 
     @Override
     public boolean isExerciseModified() {
 
-        RichTextArea commentEditor = truthTableExpView.getExerciseComment().getEditor();
+        RichTextArea commentEditor = truthTableView.getExerciseComment().getEditor();
         if (commentEditor.isModified()) exerciseModified = true;
 
-        RichTextArea explanationEditor = truthTableExpView.getExplainDRTA().getEditor();
+        RichTextArea explanationEditor = truthTableView.getExplainDRTA().getEditor();
         if (explanationEditor.isModified()) exerciseModified = true;
 
-        DecoratedRTA[] rowComments = truthTableExpView.getRowCommentsArray();
+        DecoratedRTA[] rowComments = truthTableView.getRowCommentsArray();
         for (int i = 0; i < rowComments.length; i++) {
             RichTextArea rowCommentEditor = rowComments[i].getEditor();
             if (rowCommentEditor.isModified()) exerciseModified = true;
@@ -419,19 +375,10 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
 
     @Override
     public void updateContentHeight(Node focusedNode, boolean isRequired) {
-        if (isContainer(truthTableExpView.getTableGrid(), focusedNode)) {
+        if (isContainer(truthTableView.getTableGrid(), focusedNode)) {
             double tableHeight = 0;
-            for (int i = 0; i < tableRows + 3; i++) tableHeight = tableHeight + truthTableExpView.getSizers()[i].getHeight();
+            for (int i = 0; i < tableRows + 3; i++) tableHeight = tableHeight + truthTableView.getSizers()[i].getHeight();
             mainWindow.getMainView().updatePageSizeLabels(tableHeight + 20);
-        }
-        else if (isContainer(truthTableExpView.getResultsBox(), focusedNode)) {
-            TruthTableExpModel model = getTruthTableExpModelFromView();
-            TruthTableExpExercise exercise = new TruthTableExpExercise(model, mainWindow);
-            RichTextArea explanationRTA = exercise.getExerciseView().getExplainDRTA().getEditor();
-            RichTextAreaSkin explanationRTASkin = ((RichTextAreaSkin) explanationRTA.getSkin());
-            double explanationHeight = explanationRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updatePageSizeLabels(explanationHeight + 20);
-            mainWindow.getLastFocusOwner().requestFocus();
         }
     }
 
@@ -449,11 +396,11 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
 
     @Override
     public void updateCommentHeight(boolean isRequired) {
-        if (isRequired || mainWindow.getLastFocusOwner() != truthTableExpView.getExerciseComment().getEditor()) {
-            mainWindow.setLastFocusOwner(truthTableExpView.getExerciseComment().getEditor());
+        if (isRequired || mainWindow.getLastFocusOwner() != truthTableView.getExerciseComment().getEditor()) {
+            mainWindow.setLastFocusOwner(truthTableView.getExerciseComment().getEditor());
 
-            TruthTableExpModel model = getTruthTableExpModelFromView();
-            TruthTableExpExercise exercise = new TruthTableExpExercise(model, mainWindow);
+            TruthTableModel model = getTruthTableExpModelFromView();
+            TruthTableExercise exercise = new TruthTableExercise(model, mainWindow);
             RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
             RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
             double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
@@ -464,11 +411,11 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
 
     @Override
     public void updateStatementHeight(boolean isRequired) {
-        if (isRequired || mainWindow.getLastFocusOwner() != truthTableExpView.getExerciseStatementNode()) {
-            mainWindow.setLastFocusOwner(truthTableExpView.getExerciseStatementNode());
+        if (isRequired || mainWindow.getLastFocusOwner() != truthTableView.getExerciseStatementNode()) {
+            mainWindow.setLastFocusOwner(truthTableView.getExerciseStatementNode());
 
-            TruthTableExpModel model = getTruthTableExpModelFromView();
-            TruthTableExpExercise exercise = new TruthTableExpExercise(model, mainWindow);
+            TruthTableModel model = getTruthTableExpModelFromView();
+            TruthTableExercise exercise = new TruthTableExercise(model, mainWindow);
             RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
             statementRTA.setEditable(true);
             RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
@@ -479,26 +426,26 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
     }
 
     @Override
-    public ExerciseModel<TruthTableExpModel> getExerciseModelFromView() {
+    public ExerciseModel<TruthTableModel> getExerciseModelFromView() {
         return (ExerciseModel) getTruthTableExpModelFromView();
     }
 
-    private TruthTableExpModel getTruthTableExpModelFromView() {
-        TruthTableExpModel model = new TruthTableExpModel();
-        model.setExerciseName(truthTableExpView.getExerciseName());
-        model.setStarted(truthTableExpModel.isStarted() || exerciseModified);
-        model.setStatementPrefHeight(truthTableExpView.getExerciseStatement().getEditor().getPrefHeight());
-        model.setExerciseStatement(truthTableExpModel.getExerciseStatement());
+    private TruthTableModel getTruthTableExpModelFromView() {
+        TruthTableModel model = new TruthTableModel();
+        model.setExerciseName(truthTableView.getExerciseName());
+        model.setStarted(truthTableModel.isStarted() || exerciseModified);
+        model.setStatementPrefHeight(truthTableView.getExerciseStatement().getEditor().getPrefHeight());
+        model.setExerciseStatement(truthTableModel.getExerciseStatement());
 
-        RichTextArea commentRTA = truthTableExpView.getExerciseComment().getEditor();
+        RichTextArea commentRTA = truthTableView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setExerciseComment(commentRTA.getDocument());
 
-        model.setUnaryOperators(truthTableExpModel.getUnaryOperators());
-        model.setBinaryOperators(truthTableExpModel.getBinaryOperators());
-        model.setMainFormulas(truthTableExpModel.getMainFormulas());
+        model.setUnaryOperators(truthTableModel.getUnaryOperators());
+        model.setBinaryOperators(truthTableModel.getBinaryOperators());
+        model.setMainFormulas(truthTableModel.getMainFormulas());
 
-        List<DecoratedRTA> basicDRTAs = truthTableExpView.getBasicFormulasDRTAList();
+        List<DecoratedRTA> basicDRTAs = truthTableView.getBasicFormulasDRTAList();
         List<Document> basicDocs = new ArrayList<>();
         for (DecoratedRTA drta : basicDRTAs) {
             RichTextArea rta = drta.getEditor();
@@ -509,7 +456,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         model.setBasicFormulas(basicDocs);
 
         String[][] tableStrVals = new String[tableColumns][tableRows];
-        TextField[][] tableFields = truthTableExpView.getTableFields();
+        TextField[][] tableFields = truthTableView.getTableFields();
         for (int i = 0; i < tableColumns; i ++) {
             String[] column = new String[tableRows];
             for (int j = 0; j < tableRows; j++) {
@@ -522,7 +469,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         }
         model.setTableValues(tableStrVals);
 
-        DecoratedRTA[] lineCommentDRTAs = truthTableExpView.getRowCommentsArray();
+        DecoratedRTA[] lineCommentDRTAs = truthTableView.getRowCommentsArray();
         Document[] commentDocs = new Document[tableRows];
         for (int i = 0; i < tableRows; i++) {
             DecoratedRTA drta = lineCommentDRTAs[i];
@@ -533,7 +480,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         }
         model.setRowComments(commentDocs);
 
-        ToggleButton[] highlightButtons = truthTableExpView.getHighlightButtons();
+        ToggleButton[] highlightButtons = truthTableView.getHighlightButtons();
         boolean[] highlightValues = new boolean[tableColumns];
         for (int i = 0; i < tableColumns; i++) {
             if (highlightButtons[i] != null) {
@@ -542,14 +489,10 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         }
         model.setColumnHighlights(highlightValues);
 
-        model.setConclusionDivider(truthTableExpModel.isConclusionDivider());
-        model.setChoiceLead(truthTableExpModel.getChoiceLead());
-        model.setaPrompt(truthTableExpModel.getaPrompt());
-        model.setaSelected(truthTableExpView.getaCheckBox().isSelected());
-        model.setbPrompt(truthTableExpModel.getbPrompt());
-        model.setbSelected(truthTableExpView.getbCheckBox().isSelected());
+        model.setConclusionDivider(truthTableModel.isConclusionDivider());
 
-        RichTextArea explainRTA = truthTableExpView.getExplainDRTA().getEditor();
+
+        RichTextArea explainRTA = truthTableView.getExplainDRTA().getEditor();
         explainRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setExplainDocument(explainRTA.getDocument());
         model.setTableRows(tableRows);

@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TruthTableExpModel implements ExerciseModel<Document>, Serializable {
+public class TruthTableModel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
     private boolean started = false;
@@ -24,16 +24,11 @@ public class TruthTableExpModel implements ExerciseModel<Document>, Serializable
     private Document[] rowComments; //[h]
     private boolean[] columnHighlights; //[w]
     private boolean conclusionDivider = false;
-    private String choiceLead = new String("");
-    private String aPrompt = new String("");
-    private boolean aSelected = false;
-    private String bPrompt = new String("");
-    private boolean bSelected = false;
     private Document explainDocument = new Document();
     private int tableRows = 0;
 
 
-    public TruthTableExpModel(){}
+    public TruthTableModel(){}
 
     public void setEmptyTableContents(int columns) {
         String[][] mainValues = new String[columns][tableRows];
@@ -96,26 +91,6 @@ public class TruthTableExpModel implements ExerciseModel<Document>, Serializable
         this.conclusionDivider = conclusionDivider;
     }
 
-    public void setChoiceLead(String choiceLead) {
-        this.choiceLead = choiceLead;
-    }
-
-    public void setaPrompt(String aPrompt) {
-        this.aPrompt = aPrompt;
-    }
-
-    public void setaSelected(boolean aSelected) {
-        this.aSelected = aSelected;
-    }
-
-    public void setbPrompt(String bPrompt) {
-        this.bPrompt = bPrompt;
-    }
-
-    public void setbSelected(boolean bSelected) {
-        this.bSelected = bSelected;
-    }
-
     public void setExplainDocument(Document explainDocument) {
         this.explainDocument = explainDocument;
     }
@@ -133,12 +108,6 @@ public class TruthTableExpModel implements ExerciseModel<Document>, Serializable
     public void setBasicFormulas(List<Document> basicFormulas) { this.basicFormulas = basicFormulas;  }
     public List<Document> getBasicFormulas() { return basicFormulas; }
     public Document getExplainDocument() { return explainDocument; }
-    public String getChoiceLead() {return choiceLead; }
-    public String getaPrompt() { return aPrompt; }
-    public boolean isaSelected() { return aSelected; }
-    public String getbPrompt() { return bPrompt; }
-    public boolean isbSelected() { return bSelected; }
-
     @Override
     public String getExerciseName() {
         return exerciseName;

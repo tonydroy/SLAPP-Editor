@@ -547,6 +547,7 @@ public class TruthTableExpCreate {
                 editorInFocus(drta, ControlType.FIELD);
             }
         });
+        rta.getActionFactory().saveNow().execute(new ActionEvent());
         return drta;
     }
 

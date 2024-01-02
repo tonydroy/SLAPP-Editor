@@ -16,10 +16,12 @@ import slapp.editor.derivation_explain.DrvtnExpModel;
 import slapp.editor.simple_editor.SimpleEditCreate;
 import slapp.editor.simple_editor.SimpleEditExercise;
 import slapp.editor.simple_editor.SimpleEditModel;
+import slapp.editor.truth_table.TruthTableCreate;
+import slapp.editor.truth_table.TruthTableExercise;
+import slapp.editor.truth_table.TruthTableModel;
 import slapp.editor.truth_table_explain.TruthTableExpCreate;
 import slapp.editor.truth_table_explain.TruthTableExpExercise;
 import slapp.editor.truth_table_explain.TruthTableExpModel;
-
 
 public class TypeSelectorFactories {
     private MainWindow mainWindow;
@@ -170,9 +172,11 @@ public class TypeSelectorFactories {
             }
             case TRUTH_TABLE: {
                 TruthTableCreate truthTableCreate = new TruthTableCreate(mainWindow);
+                break;
             }
             case TRUTH_TABLE_EXPLAIN: {
                 TruthTableExpCreate truthTableExpCreate = new TruthTableExpCreate(mainWindow);
+                break;
             }
 
 
