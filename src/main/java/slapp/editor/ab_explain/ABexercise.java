@@ -90,6 +90,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.setDocument(abModel.getExerciseComment());
+        commentEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(commentDRTA, ControlType.AREA);
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {

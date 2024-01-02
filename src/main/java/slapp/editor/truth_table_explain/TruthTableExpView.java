@@ -13,15 +13,11 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextFlow;
 import slapp.editor.EditorAlerts;
-import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
-import slapp.editor.derivation.LineType;
-import slapp.editor.derivation.ViewLine;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
 import slapp.editor.truth_table.TableHeadItem;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -46,20 +42,14 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private VBox resultsBox;
     private HBox choiceBox;
     private VBox centerBox;
-    private double contentFixedHeight = 150;
-
+    private double contentFixedHeight = 170;
 
     private List<TableHeadItem> tableHeadItemsList;
     private TextField[][]  tableFields; //list of text field columns
     private DecoratedRTA[] rowCommentsArray;
     private ToggleButton[] highlightButtons;
     private int tableRows = 0;
-
     private VBox[] sizers;
-
-
-
-
 
 
     TruthTableExpView(MainWindowView mainView) {
@@ -117,6 +107,8 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
 
         choiceBox = new HBox(20, choiceLeadLabel, aCheckBox, bCheckBox);
         resultsBox = new VBox(10, choiceBox, explainDRTA.getEditor());
+        resultsBox.setPadding(new Insets(0,0,10,0));
+
         tableGrid = new GridPane();
         tableGrid.setPadding(new Insets(20,0,20,0));
         centerBox = new VBox(10, tableGrid, resultsBox);
@@ -275,7 +267,6 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     }
 
 
-
     ToggleButton newHighlightButton(int index) {
         ToggleButton button = new ToggleButton();
         button.setPadding(new Insets(0));
@@ -322,7 +313,6 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
 
     public DecoratedRTA newCommentDRTAField() {
         DecoratedRTA drta = new DecoratedRTA();
-  //      drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
         RichTextArea rta = drta.getEditor();
         rta.setMaxHeight(27);
         rta.setMinHeight(27);
@@ -353,7 +343,6 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         explainRTA.getStylesheets().add("slappTextArea.css");
         explainRTA.setPrefHeight(60.0);
         explainRTA.setPromptText("Explain:");
-
     }
 
 
@@ -373,8 +362,6 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     public void setRowCommentsArray(DecoratedRTA[] rowComments) {  this.rowCommentsArray = rowComments;   }
 
     public void setHighlightButtons(ToggleButton[] highlightButtons) {   this.highlightButtons = highlightButtons; }
-
-
 
     public DecoratedRTA[] getRowCommentsArray() { return rowCommentsArray; }
 
@@ -399,9 +386,6 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     public CheckBox getaCheckBox() { return aCheckBox;  }
 
     public CheckBox getbCheckBox() { return bCheckBox; }
-
- //   public void setExplainDRTA(DecoratedRTA explain) { explainDRTA = explain; }
-
 
     public DecoratedRTA getExplainDRTA() {return explainDRTA; }
 
@@ -446,7 +430,6 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
 
     @Override
     public double getContentFixedHeight() { return contentFixedHeight; }
-
 
     @Override
     public Node getExerciseControl() { return controlBox; }

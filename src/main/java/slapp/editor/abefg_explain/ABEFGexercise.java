@@ -137,6 +137,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.setDocument(abefgModel.getExerciseComment());
+        commentEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(commentDRTA, ControlType.AREA);
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {

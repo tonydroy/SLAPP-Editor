@@ -62,8 +62,6 @@ public class MainWindowView {
     private Button saveButton;
     private Button updateHeightButton = new Button();
     private Label nodeHeightLabel = new Label("0");
-    private Label pageWidthLabel = new Label("0");
-    private Label pageHeightLabel = new Label("0");
     private Label nodePercentageLabel = new Label("0");
     private Label pagePercentLabel = new Label("0");
     private double lastCheckedNodeHeight = 0.0;
@@ -121,7 +119,6 @@ public class MainWindowView {
         printMenu.getItems().addAll(printExerciseItemPM, exportExerciseToPDFItemPM, printAssignmentItemPM, exportAssignmentToPDFItemPM, pageSetupItem, exportSetupItem);
 
         Region spacer = new Region();
-        Label slashLabel = new Label("/");
         Label percentSignLabel1 = new Label("%");
         Label percentSignLabel2 = new Label("%");
         Label heightLabel = new Label("Block Height: ");
@@ -132,12 +129,9 @@ public class MainWindowView {
         menuBox.setMaxWidth(minStageWidth - 10);
         menuBox.setMargin(heightLabel, new Insets(8,1,0,10));
         menuBox.setMargin(nodeHeightLabel, new Insets(8,0,0,0));
-        menuBox.setMargin(slashLabel, new Insets(8,0,0,0));
-        menuBox.setMargin(pageHeightLabel, new Insets(8,0,0,0));
         menuBox.setMargin(nodePercentageLabel, new Insets(8,0,0,0));
-
-        menuBox.setMargin(widthLabel, new Insets(8,1,0,0));
         menuBox.setMargin(pagePercentLabel, new Insets(8,0,0,0));
+        menuBox.setMargin(widthLabel, new Insets(8,1,0,0));
         menuBox.setMargin(percentSignLabel1, new Insets(8,0,0,0));
         menuBox.setMargin(percentSignLabel2, new Insets(8,0,0,0));
 

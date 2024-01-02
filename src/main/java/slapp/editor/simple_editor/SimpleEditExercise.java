@@ -64,6 +64,8 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.setDocument(editModel.getExerciseComment());
+        commentEditor.getActionFactory().saveNow().execute(new ActionEvent());
+
         mainView.editorInFocus(commentDRTA, ControlType.AREA);
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {

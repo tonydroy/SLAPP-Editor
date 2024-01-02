@@ -1,4 +1,4 @@
-package slapp.editor.truth_table_explain;
+package slapp.editor.truth_table;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
@@ -25,8 +25,6 @@ import slapp.editor.DiskUtilities;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
-import slapp.editor.truth_table.ParseDocForTTable;
-import slapp.editor.truth_table.TableHeadItem;
 
 import java.util.ArrayList;
 import java.util.List;

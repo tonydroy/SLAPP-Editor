@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-public class TruthTableView implements ExerciseView<DecoratedRTA> {
+public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private MainWindowView mainView;
     private String exerciseName = new String();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
@@ -42,21 +42,17 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     private VBox resultsBox;
     private HBox choiceBox;
     private VBox centerBox;
-    private double contentFixedHeight = 150;
-
+    private double contentFixedHeight = 170;
 
     private List<TableHeadItem> tableHeadItemsList;
     private TextField[][]  tableFields; //list of text field columns
     private DecoratedRTA[] rowCommentsArray;
     private ToggleButton[] highlightButtons;
     private int tableRows = 0;
+    private VBox[] sizers;
 
 
-
-
-
-
-    TruthTableView(MainWindowView mainView) {
+    TruthTableExpView(MainWindowView mainView) {
         this.mainView = mainView;
 
         Font labelFont = new Font("Noto Serif Combo", 11);
@@ -111,12 +107,11 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
         choiceBox = new HBox(20, choiceLeadLabel, aCheckBox, bCheckBox);
         resultsBox = new VBox(10, choiceBox, explainDRTA.getEditor());
+        resultsBox.setPadding(new Insets(0,0,10,0));
+
         tableGrid = new GridPane();
         tableGrid.setPadding(new Insets(20,0,20,0));
-        centerBox = new VBox(10, tableGrid);
-
-
-
+        centerBox = new VBox(10, tableGrid, resultsBox);
 
     }
 
@@ -138,11 +133,18 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
                     tableGrid.add(tableFields[i][j], i, j + 2);
                 }
                 tableGrid.add(highlightButtons[i], i, tableRows + 3);
+                if (highlightButtons[i].isSelected()) {
+                    highlightButtons[i].setStyle("-fx-border-radius: 10; -fx-border-color: tomato; -fx-background-color: lavenderblush;");
+                    for (int j = 0; j < tableRows; j++) {
+                        tableFields[i][j].setStyle("-fx-background-radius: 2; -fx-background-color: pink");
+                    }
+                }
 
             } else if (headItem.isDividerColumn()) {
                 TextFlow headFlow = headItem.getExpression();
                 headFlow.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 1");
                 tableGrid.add(headFlow, i, 0);
+
                 for (int j = 0; j < tableRows + 3; j++) {
                     Pane dividerPane = new Pane();
                     dividerPane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1");
@@ -159,8 +161,14 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
             Pane pane = new Pane();
             pane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
             tableGrid.add(pane, tableHeadItemsList.size(), 0);
-
             tableGrid.add(rowCommentsArray[j].getEditor(), tableHeadItemsList.size(), j + 2);
+        }
+
+        sizers = new VBox[tableRows + 3];
+
+        for (int i = 0; i < tableRows + 3; i++) {
+            sizers[i] = new VBox();
+            tableGrid.add(sizers[i], tableHeadItemsList.size() + 1, i);
         }
 
         //setup blank separator row gaps
@@ -182,7 +190,12 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
     TextField newSingleCharTextField(int column, int row) {
         TextField singleCharField = new TextField();
-        singleCharField.setPrefWidth(25);
+
+    //    singleCharField.setPrefWidth(25);
+
+        singleCharField.setPadding(new Insets(0));
+        singleCharField.setPrefWidth(15);
+
         singleCharField.setAlignment(Pos.CENTER);
         singleCharField.setStyle("-fx-background-radius: 2");
         singleCharField.setPadding(new Insets(3));
@@ -254,7 +267,6 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     }
 
 
-
     ToggleButton newHighlightButton(int index) {
         ToggleButton button = new ToggleButton();
         button.setPadding(new Insets(0));
@@ -301,7 +313,6 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
     public DecoratedRTA newCommentDRTAField() {
         DecoratedRTA drta = new DecoratedRTA();
-  //      drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
         RichTextArea rta = drta.getEditor();
         rta.setMaxHeight(27);
         rta.setMinHeight(27);
@@ -332,14 +343,13 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         explainRTA.getStylesheets().add("slappTextArea.css");
         explainRTA.setPrefHeight(60.0);
         explainRTA.setPromptText("Explain:");
-
-
-
-
-
-
-
     }
+
+
+
+    public VBox[] getSizers() {  return sizers; }
+
+    public GridPane getTableGrid() { return tableGrid; }
 
     public void setTableRows(int tableRows) { this.tableRows = tableRows;  }
 
@@ -352,8 +362,6 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     public void setRowCommentsArray(DecoratedRTA[] rowComments) {  this.rowCommentsArray = rowComments;   }
 
     public void setHighlightButtons(ToggleButton[] highlightButtons) {   this.highlightButtons = highlightButtons; }
-
-
 
     public DecoratedRTA[] getRowCommentsArray() { return rowCommentsArray; }
 
@@ -378,9 +386,6 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     public CheckBox getaCheckBox() { return aCheckBox;  }
 
     public CheckBox getbCheckBox() { return bCheckBox; }
-
- //   public void setExplainDRTA(DecoratedRTA explain) { explainDRTA = explain; }
-
 
     public DecoratedRTA getExplainDRTA() {return explainDRTA; }
 
@@ -425,7 +430,6 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
     @Override
     public double getContentFixedHeight() { return contentFixedHeight; }
-
 
     @Override
     public Node getExerciseControl() { return controlBox; }
