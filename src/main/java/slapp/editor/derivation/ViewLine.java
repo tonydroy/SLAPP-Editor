@@ -2,6 +2,7 @@ package slapp.editor.derivation;
 
 import javafx.scene.control.Label;
 import javafx.scene.text.TextFlow;
+import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 
 import java.util.ArrayList;
@@ -12,16 +13,16 @@ public class ViewLine {
     private Label lineNumberLabel = null;
     private int depth = 0;
     private LineType lineType = null;
-    private DecoratedRTA lineContentDRTA = null;
+    private BoxedDRTA lineContentBoxedDRTA = null;
     private TextFlow justificationFlow = null;
     private List<Label> clientLabels = new ArrayList<Label>();
 
     public ViewLine(){}
-    public ViewLine(Label lineNumberLabel, int depth, LineType lineType, DecoratedRTA drta, TextFlow justificationFlow, List<Label> clientLabels) {
+    public ViewLine(Label lineNumberLabel, int depth, LineType lineType, BoxedDRTA bdrta, TextFlow justificationFlow, List<Label> clientLabels) {
         this.lineNumberLabel = lineNumberLabel;
         this.depth = depth;
         this.lineType = lineType;
-        this.lineContentDRTA = drta;
+        this.lineContentBoxedDRTA = bdrta;
         this.justificationFlow = justificationFlow;
         this.clientLabels = clientLabels;
     }
@@ -36,8 +37,8 @@ public class ViewLine {
         this.lineType = type;
     }
 
-    public void setLineContentDRTA(DecoratedRTA lineContentDRTA) {
-        this.lineContentDRTA = lineContentDRTA;
+    public void setLineContentBoxedDRTA(BoxedDRTA lineContentBoxedDRTA) {
+        this.lineContentBoxedDRTA = lineContentBoxedDRTA;
     }
 
     public void setJustificationFlow(TextFlow justificationFlow) {this.justificationFlow = justificationFlow; }
@@ -54,8 +55,8 @@ public class ViewLine {
         return lineType;
     }
 
-    public DecoratedRTA getLineContentDRTA() {
-        return lineContentDRTA;
+    public BoxedDRTA getLineContentBoxedDRTA() {
+        return lineContentBoxedDRTA;
     }
 
     public TextFlow getJustificationFlow() {

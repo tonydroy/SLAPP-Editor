@@ -26,6 +26,7 @@ import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
+import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.ControlType;
@@ -204,11 +205,11 @@ public class DerivationCreate {
         setupLines = new ArrayList<>();
 
         SetupLine firstLine = new SetupLine(this);
-        RichTextArea firstLineFormulaRTA = firstLine.getFormulaDRTA().getEditor();
+        RichTextArea firstLineFormulaRTA = firstLine.getFormulaBoxedDRTA().getRTA();
         firstLineFormulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
 
-        RichTextArea firstLineJustificationRTA = firstLine.getJustificationDRTA().getEditor();
+        RichTextArea firstLineJustificationRTA = firstLine.getJustificationBoxedDRTA().getRTA();
         firstLineJustificationRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
         setupLines.add(firstLine);
@@ -322,13 +323,13 @@ public class DerivationCreate {
             if (LineType.isContentLine(modelLine.getLineType())) {
                 SetupLine setupLine = new SetupLine(this);
 
-                DecoratedRTA formulaDRTA = setupLine.getFormulaDRTA();
-                RichTextArea formulaRTA = formulaDRTA.getEditor();
+                BoxedDRTA formulaBoxedDRTA = setupLine.getFormulaBoxedDRTA();
+                RichTextArea formulaRTA = formulaBoxedDRTA.getRTA();
                 formulaRTA.setDocument(modelLine.getLineContentDoc());
                 formulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
-                DecoratedRTA justificationDRTA = setupLine.getJustificationDRTA();
-                RichTextArea justificationRTA = justificationDRTA.getEditor();
+                BoxedDRTA justificationBoxedDRTA = setupLine.getJustificationBoxedDRTA();
+                RichTextArea justificationRTA = justificationBoxedDRTA.getRTA();
                 justificationRTA.setDocument(new Document(modelLine.getJustification()));
                 justificationRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
@@ -357,11 +358,11 @@ public class DerivationCreate {
         setupLinesPane.getChildren().clear();
         for (int i = 0; i < setupLines.size(); i++) {
             SetupLine setupLine = setupLines.get(i);
-            RichTextArea formulaRTA = setupLine.getFormulaDRTA().getEditor();
-            RichTextArea justificationRTA = setupLine.getJustificationDRTA().getEditor();
+            BoxedDRTA formulaBoxedDRTA = setupLine.getFormulaBoxedDRTA();
+            BoxedDRTA justificationBoxedDRTA = setupLine.getJustificationBoxedDRTA();
             setupLinesPane.addRow(i,
-                    formulaRTA,
-                    justificationRTA,
+                    formulaBoxedDRTA.getBoxedRTA(),
+                    justificationBoxedDRTA.getBoxedRTA(),
                     setupLine.getSpinnerBox(),
                     setupLine.getPremiseBox(),
                     setupLine.getConclusionBox(),
@@ -413,8 +414,8 @@ public class DerivationCreate {
 
             setupLines.clear();
             SetupLine firstLine = new SetupLine(this);
-            firstLine.getFormulaDRTA().getEditor().getActionFactory().saveNow().execute(new ActionEvent());
-            firstLine.getJustificationDRTA().getEditor().getActionFactory().saveNow().execute(new ActionEvent());
+            firstLine.getFormulaBoxedDRTA().getRTA().getActionFactory().saveNow().execute(new ActionEvent());
+            firstLine.getJustificationBoxedDRTA().getRTA().getActionFactory().saveNow().execute(new ActionEvent());
             setupLines.add(firstLine);
             updateGridFromSetupLines();
 
@@ -493,11 +494,11 @@ public class DerivationCreate {
 
             int depth = (Integer) setupLine.getDepthSpinner().getValue();
 
-            RichTextArea formulaRTA = setupLine.getFormulaDRTA().getEditor();
+            RichTextArea formulaRTA = setupLine.getFormulaBoxedDRTA().getRTA();
             formulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
             Document formulaDocument = formulaRTA.getDocument();
 
-            RichTextArea justificationRTA = setupLine.getJustificationDRTA().getEditor();
+            RichTextArea justificationRTA = setupLine.getJustificationBoxedDRTA().getRTA();
             justificationRTA.getActionFactory().saveNow().execute(new ActionEvent());
             String justificationString = justificationRTA.getDocument().getText();
 

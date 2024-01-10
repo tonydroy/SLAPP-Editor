@@ -1,18 +1,16 @@
 package slapp.editor.tests;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import slapp.editor.decorated_rta.BoxedDRTA;
 
 public class BoxedRTATest {
 
@@ -20,12 +18,15 @@ public class BoxedRTATest {
 
     BoxedDRTA boxedDRTA2;
 
+    BoxedDRTA lastBoxedDRTA;
+
     public void testBoxedDRTA(Stage primaryStage) {
+        lastBoxedDRTA = boxedDRTA1;
 
 
         boxedDRTA1 = new BoxedDRTA();
 
-        RichTextArea rta1 = boxedDRTA1.getDrta().getEditor();
+        RichTextArea rta1 = boxedDRTA1.getDRTA().getEditor();
         rta1.setMaxHeight(27);
         rta1.setMinHeight(27);
         rta1.setPrefWidth(200);
@@ -35,7 +36,7 @@ public class BoxedRTATest {
 
         boxedDRTA2 = new BoxedDRTA();
 
-        RichTextArea rta2 = boxedDRTA2.getDrta().getEditor();
+        RichTextArea rta2 = boxedDRTA2.getDRTA().getEditor();
         rta2.setMaxHeight(27);
         rta2.setMinHeight(27);
         rta2.setPrefWidth(200);
@@ -59,27 +60,15 @@ public class BoxedRTATest {
 
 
         EventHandler<KeyEvent> keyEventHandler1 = e -> {
-
             if (e.getCode() == KeyCode.TAB) {
                 e.consume();
-                button.requestFocus();
+                lastBoxedDRTA = (lastBoxedDRTA == boxedDRTA1) ? boxedDRTA2 : boxedDRTA1;
+                lastBoxedDRTA.getRTA().requestFocus();
             }
         };
         pane.addEventFilter(KeyEvent.ANY, keyEventHandler1);
 
-        /*
-        EventHandler<KeyEvent> keyEventHandler2 = e -> {
 
-            if (e.getCode() == KeyCode.TAB) {
-                e.consume();
-                button.requestFocus();
-            }
-        };
-
-        pane.addEventFilter(KeyEvent.ANY, keyEventHandler2);
-
-
-         */
 
 
 

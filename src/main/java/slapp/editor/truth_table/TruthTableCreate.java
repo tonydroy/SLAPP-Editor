@@ -29,6 +29,7 @@ import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
+import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.ControlType;
@@ -56,9 +57,9 @@ public class TruthTableCreate {
     private TextArea helpArea;
     private VBox centerBox;
     private CheckBox conclusionDividerCheck;
-    private List<DecoratedRTA> unaryOperatorList;
-    private List<DecoratedRTA> binaryOperatorList;
-    private List<DecoratedRTA> mainFormulaList;
+    private List<BoxedDRTA> unaryOperatorList;
+    private List<BoxedDRTA> binaryOperatorList;
+    private List<BoxedDRTA> mainFormulaList;
     private GridPane unaryOperatorsPane;
     private GridPane binaryOperatorsPane;
     private GridPane mainFormulasPane;
@@ -167,22 +168,22 @@ public class TruthTableCreate {
 
         baseLangPresetButton.setOnAction(e -> {
            unaryOperatorList.clear();
-           unaryOperatorList.add(contentOperatorDRTA("\u223c"));
+           unaryOperatorList.add(contentOperatorBoxedDRTA("\u223c"));
            updateUnaryOperatorGridFromFields();
            binaryOperatorList.clear();
-           binaryOperatorList.add(contentOperatorDRTA("\u2192"));
+           binaryOperatorList.add(contentOperatorBoxedDRTA("\u2192"));
            updateBinaryOperatorGridFromFields();
            fieldModified = true;
         });
         plusLangPresetButton.setOnAction(e -> {
             unaryOperatorList.clear();
-            unaryOperatorList.add(contentOperatorDRTA("\u223c"));
+            unaryOperatorList.add(contentOperatorBoxedDRTA("\u223c"));
             updateUnaryOperatorGridFromFields();
             binaryOperatorList.clear();
-            binaryOperatorList.add(contentOperatorDRTA("\u2192"));
-            binaryOperatorList.add(contentOperatorDRTA("\u2194"));
-            binaryOperatorList.add(contentOperatorDRTA("\u2227"));
-            binaryOperatorList.add(contentOperatorDRTA("\u2228"));
+            binaryOperatorList.add(contentOperatorBoxedDRTA("\u2192"));
+            binaryOperatorList.add(contentOperatorBoxedDRTA("\u2194"));
+            binaryOperatorList.add(contentOperatorBoxedDRTA("\u2227"));
+            binaryOperatorList.add(contentOperatorBoxedDRTA("\u2228"));
             updateBinaryOperatorGridFromFields();
             fieldModified = true;
         });
@@ -200,8 +201,8 @@ public class TruthTableCreate {
         addUnaryOperatorButton.setPadding(new Insets(0, 5, 0, 5)); removeUnaryOperatorButton.setPadding(new Insets(1, 8, 1, 8));
 
         addUnaryOperatorButton.setOnAction(e -> {
-            DecoratedRTA drta = newOperatorDRTAField();
-            unaryOperatorList.add(drta);
+            BoxedDRTA bdrta = newOperatorBoxedDRTA();
+            unaryOperatorList.add(bdrta);
             fieldModified = true;
             updateUnaryOperatorGridFromFields();
         });
@@ -231,8 +232,8 @@ public class TruthTableCreate {
         addBinaryOperatorButton.setPadding(new Insets(0, 5, 0, 5)); removeBinaryOperatorButton.setPadding(new Insets(1, 8, 1, 8));
 
         addBinaryOperatorButton.setOnAction(e -> {
-            DecoratedRTA drta = newOperatorDRTAField();
-            binaryOperatorList.add(drta);
+            BoxedDRTA bdrta = newOperatorBoxedDRTA();
+            binaryOperatorList.add(bdrta);
             fieldModified = true;
             updateBinaryOperatorGridFromFields();
         });
@@ -254,8 +255,8 @@ public class TruthTableCreate {
         mainFormulasPane.setPadding(new Insets(10, 0, 20, 105));
         mainFormulasPane.setVgap(10);
         mainFormulaList = new ArrayList<>();
-        DecoratedRTA mainFormulaDRTA = newMainFormulaDRTAField();
-        mainFormulaList.add(mainFormulaDRTA);
+        BoxedDRTA mainFormulaBoxedDRTA = newMainFormulaBoxedDRTA();
+        mainFormulaList.add(mainFormulaBoxedDRTA);
         updateMainFormulaGridFromFields();
 
         Label mainFormulaLabel = new Label("Main formulas: ");
@@ -266,8 +267,8 @@ public class TruthTableCreate {
         addMainFormulaButton.setPadding(new Insets(0, 5, 0, 5)); removeMainFormulaButton.setPadding(new Insets(1, 8, 1, 8));
 
         addMainFormulaButton.setOnAction(e -> {
-            DecoratedRTA drta = newMainFormulaDRTAField();
-            mainFormulaList.add(drta);
+            BoxedDRTA bdrta = newMainFormulaBoxedDRTA();
+            mainFormulaList.add(bdrta);
             fieldModified = true;
             updateMainFormulaGridFromFields();
         });
@@ -401,36 +402,34 @@ public class TruthTableCreate {
         unaryOperatorList.clear();
         List<String> unaryList = model.getUnaryOperators();
         for (String str : unaryList) {
-            DecoratedRTA drta = newOperatorDRTAField();
-            RichTextArea rta = drta.getEditor();
+            BoxedDRTA bdrta = newOperatorBoxedDRTA();
+            RichTextArea rta = bdrta.getRTA();
             rta.setDocument(new Document(str));
             rta.getActionFactory().saveNow().execute(new ActionEvent());
-            unaryOperatorList.add(drta);
+            unaryOperatorList.add(bdrta);
         }
         binaryOperatorList.clear();
         List<String> binaryList = model.getBinaryOperators();
        for (String str : binaryList) {
-           DecoratedRTA drta = newOperatorDRTAField();
-           RichTextArea rta = drta.getEditor();
+           BoxedDRTA bdrta = newOperatorBoxedDRTA();
+           RichTextArea rta = bdrta.getRTA();
            rta.setDocument(new Document(str));
            rta.getActionFactory().saveNow().execute(new ActionEvent());
-           binaryOperatorList.add(drta);
+           binaryOperatorList.add(bdrta);
        }
     }
     private void updateUnaryOperatorGridFromFields(){
         unaryOperatorsPane.getChildren().clear();
         for (int i = 0; i < unaryOperatorList.size(); i++) {
-            DecoratedRTA drta = unaryOperatorList.get(i);
-            RichTextArea rta = drta.getEditor();
-            unaryOperatorsPane.add(rta, i, 0);
+            BoxedDRTA bdrta = unaryOperatorList.get(i);
+            unaryOperatorsPane.add(bdrta.getBoxedRTA(), i, 0);
         }
     }
     private void updateBinaryOperatorGridFromFields(){
         binaryOperatorsPane.getChildren().clear();
         for (int i = 0; i < binaryOperatorList.size(); i++) {
-            DecoratedRTA drta = binaryOperatorList.get(i);
-            RichTextArea rta = drta.getEditor();
-            binaryOperatorsPane.add(rta, i, 0);
+            BoxedDRTA bdrta = binaryOperatorList.get(i);
+            binaryOperatorsPane.add(bdrta.getBoxedRTA(), i, 0);
         }
     }
 
@@ -438,27 +437,28 @@ public class TruthTableCreate {
         mainFormulaList.clear();
         List<Document> formulasList = model.getMainFormulas();
         for (Document doc : formulasList) {
-            DecoratedRTA drta = newMainFormulaDRTAField();
-            RichTextArea rta = drta.getEditor();
+            BoxedDRTA bdrta = newMainFormulaBoxedDRTA();
+
+            RichTextArea rta = bdrta.getRTA();
             rta.setDocument(doc);
             rta.getActionFactory().saveNow().execute(new ActionEvent());
-            mainFormulaList.add(drta);
+            mainFormulaList.add(bdrta);
         }
     }
 
     private void updateMainFormulaGridFromFields(){
         mainFormulasPane.getChildren().clear();
         for (int i = 0; i < mainFormulaList.size(); i++) {
-            DecoratedRTA drta = mainFormulaList.get(i);
-            RichTextArea rta = drta.getEditor();
-            mainFormulasPane.add(rta, 0, i);
+            BoxedDRTA bdrta = mainFormulaList.get(i);
+            mainFormulasPane.add(bdrta.getBoxedRTA(), 0, i);
         }
     }
 
-    private DecoratedRTA newOperatorDRTAField() {
-        DecoratedRTA drta = new DecoratedRTA();
+    private BoxedDRTA newOperatorBoxedDRTA() {
+        BoxedDRTA boxedDRTA = new BoxedDRTA();
+        DecoratedRTA drta = boxedDRTA.getDRTA();
         drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
-        RichTextArea rta = drta.getEditor();
+        RichTextArea rta = boxedDRTA.getRTA();
         rta.setMaxHeight(27);
         rta.setMinHeight(27);
         rta.setPrefWidth(30);
@@ -473,21 +473,22 @@ public class TruthTableCreate {
                 editorInFocus(drta, ControlType.STATEMENT);
             }
         });
-        return drta;
+        return boxedDRTA;
     }
 
-    private DecoratedRTA contentOperatorDRTA(String operator) {
-        DecoratedRTA drta = newOperatorDRTAField();
-        RichTextArea rta = drta.getEditor();
+    private BoxedDRTA contentOperatorBoxedDRTA(String operator) {
+        BoxedDRTA bdrta = newOperatorBoxedDRTA();
+        RichTextArea rta = bdrta.getRTA();
         rta.setDocument(new Document(operator));
         rta.getActionFactory().saveNow().execute(new ActionEvent());
-        return drta;
+        return bdrta;
     }
 
-    private DecoratedRTA newMainFormulaDRTAField() {
-        DecoratedRTA drta = new DecoratedRTA();
+    private BoxedDRTA newMainFormulaBoxedDRTA() {
+        BoxedDRTA boxedDRTA = new BoxedDRTA();
+        DecoratedRTA drta = boxedDRTA.getDRTA();
         drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
-        RichTextArea rta = drta.getEditor();
+        RichTextArea rta = boxedDRTA.getRTA();
         rta.setMaxHeight(27);
         rta.setMinHeight(27);
         rta.setPrefWidth(300);
@@ -499,7 +500,7 @@ public class TruthTableCreate {
             }
         });
         rta.getActionFactory().saveNow().execute(new ActionEvent());
-        return drta;
+        return boxedDRTA;
     }
 
     private void closeWindow() {
@@ -530,8 +531,8 @@ public class TruthTableCreate {
             binaryOperatorList.clear();
             updateBinaryOperatorGridFromFields();
             mainFormulaList.clear();
-            DecoratedRTA mainFormulaDRTA = newMainFormulaDRTAField();
-            mainFormulaList.add(mainFormulaDRTA);
+            BoxedDRTA mainFormulaBoxedDRTA = newMainFormulaBoxedDRTA();
+            mainFormulaList.add(mainFormulaBoxedDRTA);
             updateMainFormulaGridFromFields();
 
             statementRTA.setDocument(new Document());
@@ -562,16 +563,16 @@ public class TruthTableCreate {
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
 
-        for (DecoratedRTA drta : unaryOperatorList) {
-            if (drta.getEditor().isModified()) {fieldModified = true; }
+        for (BoxedDRTA bdrta : unaryOperatorList) {
+            if (bdrta.getRTA().isModified()) {fieldModified = true; }
         }
 
-        for (DecoratedRTA drta : binaryOperatorList) {
-            if (drta.getEditor().isModified()) {fieldModified = true; }
+        for (BoxedDRTA bdrta : binaryOperatorList) {
+            if (bdrta.getRTA().isModified()) {fieldModified = true; }
         }
 
-        for (DecoratedRTA drta : mainFormulaList) {
-            if (drta.getEditor().isModified()) {fieldModified = true; }
+        for (BoxedDRTA bdrta : mainFormulaList) {
+            if (bdrta.getRTA().isModified()) {fieldModified = true; }
         }
 
         if (statementRTA.isModified()) {fieldModified = true;  }
@@ -622,8 +623,8 @@ public class TruthTableCreate {
         model.setExerciseStatement(statementRTA.getDocument());
 
         List<String> unaryOperatorStrings = new ArrayList<>();
-        for (DecoratedRTA drta : unaryOperatorList) {
-            RichTextArea rta = drta.getEditor();
+        for (BoxedDRTA bdrta : unaryOperatorList) {
+            RichTextArea rta = bdrta.getRTA();
             if (rta.isModified()) fieldModified = true;
             rta.getActionFactory().saveNow().execute(new ActionEvent());
             String op = rta.getDocument().getText();
@@ -632,8 +633,8 @@ public class TruthTableCreate {
         model.setUnaryOperators(unaryOperatorStrings);
 
         List<String> binaryOperatorStrings = new ArrayList<>();
-        for (DecoratedRTA drta : binaryOperatorList) {
-            RichTextArea rta = drta.getEditor();
+        for (BoxedDRTA bdrta : binaryOperatorList) {
+            RichTextArea rta = bdrta.getRTA();
             if (rta.isModified()) fieldModified = true;
             rta.getActionFactory().saveNow().execute(new ActionEvent());
             String op = rta.getDocument().getText();
@@ -642,8 +643,8 @@ public class TruthTableCreate {
         model.setBinaryOperators(binaryOperatorStrings);
 
         List<Document> mainFormulaDocs = new ArrayList<>();
-        for (DecoratedRTA drta : mainFormulaList) {
-            RichTextArea rta = drta.getEditor();
+        for (BoxedDRTA bdrta : mainFormulaList) {
+            RichTextArea rta = bdrta.getRTA();
             if (rta.isModified()) fieldModified = true;
             rta.getActionFactory().saveNow().execute(new ActionEvent());
             Document doc = rta.getDocument();

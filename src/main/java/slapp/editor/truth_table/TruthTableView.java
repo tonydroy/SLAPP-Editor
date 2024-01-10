@@ -13,6 +13,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextFlow;
 import slapp.editor.EditorAlerts;
+import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.ExerciseView;
@@ -30,7 +31,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private DecoratedRTA explainDRTA = new DecoratedRTA();
     private GridPane basicFormulasPane;
-    private List<DecoratedRTA> basicFormulasDRTAList;
+    private List<BoxedDRTA> basicFormulasBoxedDRTAList;
     private VBox controlBox;
     private Spinner rowsSpinner;
     Button setupTableButton;
@@ -39,7 +40,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     private double contentFixedHeight = 170;
     private List<TableHeadItem> tableHeadItemsList;
     private TextField[][]  tableFields; //list of text field columns
-    private DecoratedRTA[] rowCommentsArray;
+    private BoxedDRTA[] rowCommentsArray;
     private ToggleButton[] highlightButtons;
     private int tableRows = 0;
     private VBox[] sizers;
@@ -50,7 +51,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
         basicFormulasPane = new GridPane();
         basicFormulasPane.setVgap(10);
-        basicFormulasDRTAList = new ArrayList<>();
+        basicFormulasBoxedDRTAList = new ArrayList<>();
 
         Label basicFormulasLabel = new Label("Basic Sentences:");
         Button addBasicFormulaButton = new Button("+");
@@ -63,18 +64,18 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         HBox controlButtonBox = new HBox(20, addBasicFormulaButton, removeBasicFormulaButton);
         VBox upperControlBox = new VBox(10, basicFormulasLabel, controlButtonBox);
 
-        basicFormulasDRTAList.add(newFormulaDRTAField());
+        basicFormulasBoxedDRTAList.add(newFormulaDRTAField());
         updateBasicFormulasPaneFromList();
 
         addBasicFormulaButton.setOnAction(e -> {
-            basicFormulasDRTAList.add(newFormulaDRTAField());
+            basicFormulasBoxedDRTAList.add(newFormulaDRTAField());
             updateBasicFormulasPaneFromList();
         });
         removeBasicFormulaButton.setOnAction(e -> {
-           int index = basicFormulasDRTAList.size();
+           int index = basicFormulasBoxedDRTAList.size();
            index--;
            if (index > 0) {
-               basicFormulasDRTAList.remove(index);
+               basicFormulasBoxedDRTAList.remove(index);
                updateBasicFormulasPaneFromList();
            } else {
                EditorAlerts.showSimpleAlert("Cannot Remove", "A truth table must include at least one basic sentence.");
@@ -147,7 +148,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
             Pane pane = new Pane();
             pane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
             tableGrid.add(pane, tableHeadItemsList.size(), 0);
-            tableGrid.add(rowCommentsArray[j].getEditor(), tableHeadItemsList.size(), j + 2);
+            tableGrid.add(rowCommentsArray[j].getBoxedRTA(), tableHeadItemsList.size(), j + 2);
         }
 
         sizers = new VBox[tableRows + 3];
@@ -169,8 +170,8 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
     public void updateBasicFormulasPaneFromList() {
         basicFormulasPane.getChildren().clear();
-        for (int i = 0; i < basicFormulasDRTAList.size(); i++) {
-            basicFormulasPane.add(basicFormulasDRTAList.get(i).getEditor(),0, i);
+        for (int i = 0; i < basicFormulasBoxedDRTAList.size(); i++) {
+            basicFormulasPane.add(basicFormulasBoxedDRTAList.get(i).getBoxedRTA(),0, i);
         }
     }
 
@@ -279,10 +280,10 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         return button;
     }
 
-    public DecoratedRTA newFormulaDRTAField() {
-        DecoratedRTA drta = new DecoratedRTA();
-        drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
-        RichTextArea rta = drta.getEditor();
+    public BoxedDRTA newFormulaDRTAField() {
+        BoxedDRTA bdrta = new BoxedDRTA();
+        bdrta.getDRTA().getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
+        RichTextArea rta = bdrta.getRTA();
         rta.setMaxHeight(27);
         rta.setMinHeight(27);
         rta.setContentAreaWidth(200);
@@ -291,15 +292,15 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         rta.setPromptText("Formula");
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(drta, ControlType.FIELD);
+                mainView.editorInFocus(bdrta.getDRTA(), ControlType.FIELD);
             }
         });
-        return drta;
+        return bdrta;
     }
 
-    public DecoratedRTA newCommentDRTAField() {
-        DecoratedRTA drta = new DecoratedRTA();
-        RichTextArea rta = drta.getEditor();
+    public BoxedDRTA newCommentBoxedDRTA() {
+        BoxedDRTA bdrta = new BoxedDRTA();
+        RichTextArea rta = bdrta.getRTA();
         rta.setMaxHeight(27);
         rta.setMinHeight(27);
         rta.setContentAreaWidth(200);
@@ -308,10 +309,10 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         rta.setPromptText("Comment");
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
-                mainView.editorInFocus(drta, ControlType.FIELD);
+                mainView.editorInFocus(bdrta.getDRTA(), ControlType.FIELD);
             }
         });
-        return drta;
+        return bdrta;
     }
 
     void initializeViewDetails() {
@@ -345,11 +346,11 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
     public void setTableHeadItemsList(List<TableHeadItem> tableHeadItemsList) {   this.tableHeadItemsList = tableHeadItemsList;  }
 
-    public void setRowCommentsArray(DecoratedRTA[] rowComments) {  this.rowCommentsArray = rowComments;   }
+    public void setRowCommentsArray(BoxedDRTA[] rowComments) {  this.rowCommentsArray = rowComments;   }
 
     public void setHighlightButtons(ToggleButton[] highlightButtons) {   this.highlightButtons = highlightButtons; }
 
-    public DecoratedRTA[] getRowCommentsArray() { return rowCommentsArray; }
+    public BoxedDRTA[] getRowCommentsArray() { return rowCommentsArray; }
 
     public ToggleButton[] getHighlightButtons() { return highlightButtons; }
 
@@ -357,7 +358,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
     public Button getSetupTableButton() { return setupTableButton; }
 
-    public List<DecoratedRTA> getBasicFormulasDRTAList() {return basicFormulasDRTAList; }
+    public List<BoxedDRTA> getBasicFormulasBoxedDRTAList() {return basicFormulasBoxedDRTAList; }
 
     public Spinner getRowsSpinner() { return rowsSpinner;  }
 

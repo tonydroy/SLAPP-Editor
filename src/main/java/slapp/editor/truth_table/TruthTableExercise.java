@@ -3,8 +3,6 @@ package slapp.editor.truth_table;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -18,11 +16,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import slapp.editor.DiskUtilities;
 import slapp.editor.PrintUtilities;
+import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
 
@@ -118,12 +116,12 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
 
         //initialize basic formulas control
         List<Document> basicFormulaDocs = truthTableModel.getBasicFormulas();
-        if (!basicFormulaDocs.isEmpty()) truthTableView.getBasicFormulasDRTAList().clear();
+        if (!basicFormulaDocs.isEmpty()) truthTableView.getBasicFormulasBoxedDRTAList().clear();
         for (Document doc : basicFormulaDocs ) {
-            DecoratedRTA drta = truthTableView.newFormulaDRTAField();
-            RichTextArea rta = drta.getEditor();
+            BoxedDRTA bdrta = truthTableView.newFormulaDRTAField();
+            RichTextArea rta = bdrta.getRTA();
             rta.setDocument(doc);
-            truthTableView.getBasicFormulasDRTAList().add(drta);
+            truthTableView.getBasicFormulasBoxedDRTAList().add(bdrta);
         }
         truthTableView.updateBasicFormulasPaneFromList();
         truthTableView.getRowsSpinner().getValueFactory().setValue(tableRows);
@@ -134,10 +132,10 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
             truthTableModel.setTableRows(tableRows);
             truthTableView.setTableRows(tableRows);
 
-            List<DecoratedRTA> basicFormulasDRTAList = truthTableView.getBasicFormulasDRTAList();
+            List<BoxedDRTA> basicFormulasBoxedDRTAList = truthTableView.getBasicFormulasBoxedDRTAList();
             List<Document> newBasicFormulaDocs = new ArrayList<>();
-            for (DecoratedRTA drta : basicFormulasDRTAList) {
-                RichTextArea rta = drta.getEditor();
+            for (BoxedDRTA bdrta : basicFormulasBoxedDRTAList) {
+                RichTextArea rta = bdrta.getRTA();
                 rta.getActionFactory().saveNow().execute(new ActionEvent());
                 Document formulaDoc = rta.getDocument();
                 newBasicFormulaDocs.add(formulaDoc);
@@ -162,16 +160,16 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         setupHeadItemsFromModel();
 
         Document[] commentDocs = truthTableModel.getRowComments();
-        DecoratedRTA[] commentDRTAs = new DecoratedRTA[tableRows];
+        BoxedDRTA[] commentBoxedDRTAs = new BoxedDRTA[tableRows];
         for (int i = 0; i < commentDocs.length; i++) {
             Document doc = commentDocs[i];
-            DecoratedRTA drta = truthTableView.newCommentDRTAField();
-            RichTextArea rta = drta.getEditor();
+            BoxedDRTA bdrta = truthTableView.newCommentBoxedDRTA();
+            RichTextArea rta = bdrta.getRTA();
             rta.setDocument(doc);
             rta.getActionFactory().saveNow().execute(new ActionEvent());
-            commentDRTAs[i] = drta;
+            commentBoxedDRTAs[i] = bdrta;
         }
-        truthTableView.setRowCommentsArray(commentDRTAs);
+        truthTableView.setRowCommentsArray(commentBoxedDRTAs);
 
 
         ToggleButton[] buttons = new ToggleButton[tableColumns];
@@ -361,9 +359,9 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         RichTextArea explanationEditor = truthTableView.getExplainDRTA().getEditor();
         if (explanationEditor.isModified()) exerciseModified = true;
 
-        DecoratedRTA[] rowComments = truthTableView.getRowCommentsArray();
+        BoxedDRTA[] rowComments = truthTableView.getRowCommentsArray();
         for (int i = 0; i < rowComments.length; i++) {
-            RichTextArea rowCommentEditor = rowComments[i].getEditor();
+            RichTextArea rowCommentEditor = rowComments[i].getRTA();
             if (rowCommentEditor.isModified()) exerciseModified = true;
         }
 
@@ -445,10 +443,10 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         model.setBinaryOperators(truthTableModel.getBinaryOperators());
         model.setMainFormulas(truthTableModel.getMainFormulas());
 
-        List<DecoratedRTA> basicDRTAs = truthTableView.getBasicFormulasDRTAList();
+        List<BoxedDRTA> basicBoxedDRTAs = truthTableView.getBasicFormulasBoxedDRTAList();
         List<Document> basicDocs = new ArrayList<>();
-        for (DecoratedRTA drta : basicDRTAs) {
-            RichTextArea rta = drta.getEditor();
+        for (BoxedDRTA bdrta : basicBoxedDRTAs) {
+            RichTextArea rta = bdrta.getRTA();
             rta.getActionFactory().saveNow().execute(new ActionEvent());
             Document doc = rta.getDocument();
             basicDocs.add(doc);
@@ -469,11 +467,11 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         }
         model.setTableValues(tableStrVals);
 
-        DecoratedRTA[] lineCommentDRTAs = truthTableView.getRowCommentsArray();
+        BoxedDRTA[] rowCommentsArray = truthTableView.getRowCommentsArray();
         Document[] commentDocs = new Document[tableRows];
         for (int i = 0; i < tableRows; i++) {
-            DecoratedRTA drta = lineCommentDRTAs[i];
-            RichTextArea rta = drta.getEditor();
+            BoxedDRTA bdrta = rowCommentsArray[i];
+            RichTextArea rta = bdrta.getRTA();
             rta.getActionFactory().saveNow().execute(new ActionEvent());
             Document doc = rta.getDocument();
             commentDocs[i] = doc;

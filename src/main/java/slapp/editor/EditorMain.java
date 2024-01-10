@@ -9,6 +9,7 @@ import slapp.editor.tests.*;
 public class EditorMain extends Application {
 
     public static Stage mainStage;
+    public static Image textFieldImage;
 
     public static void main(String[] args) {
         launch(args);
@@ -19,13 +20,14 @@ public class EditorMain extends Application {
         this.mainStage = stage;
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon32x32.png")));
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
-//        MainWindow mainWindow = new MainWindow();
+        textFieldImage = new Image(EditorMain.class.getResourceAsStream("text_field.png"));           //move this line to different class?
+        MainWindow mainWindow = new MainWindow();
 
 //        ExtendedDemo demo = new ExtendedDemo(stage); demo.start();
 //        DerivationTest test = new DerivationTest(); test.testGrid(stage);
 //        ExtractFromDoc test = new ExtractFromDoc(); test.rtaInsertTest(stage);
 //        ParseTableDocTest test = new ParseTableDocTest(); test.parseTableDocTest(stage);
-        BoxedRTATest test = new BoxedRTATest(); test.testBoxedDRTA(stage);
+//        BoxedRTATest test = new BoxedRTATest(); test.testBoxedDRTA(stage);
     }
 
 

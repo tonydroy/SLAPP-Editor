@@ -23,6 +23,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import slapp.editor.DiskUtilities;
 import slapp.editor.PrintUtilities;
+import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
 import slapp.editor.truth_table.ParseDocForTTable;
@@ -142,12 +143,12 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
 
         //initialize basic formulas control
         List<Document> basicFormulaDocs = truthTableExpModel.getBasicFormulas();
-        if (!basicFormulaDocs.isEmpty()) truthTableExpView.getBasicFormulasDRTAList().clear();
+        if (!basicFormulaDocs.isEmpty()) truthTableExpView.getBasicFormulasBoxedDRTAs().clear();
         for (Document doc : basicFormulaDocs ) {
-            DecoratedRTA drta = truthTableExpView.newFormulaDRTAField();
-            RichTextArea rta = drta.getEditor();
+            BoxedDRTA bdrta = truthTableExpView.newFormulaBoxedDRTA();
+            RichTextArea rta = bdrta.getRTA();
             rta.setDocument(doc);
-            truthTableExpView.getBasicFormulasDRTAList().add(drta);
+            truthTableExpView.getBasicFormulasBoxedDRTAs().add(bdrta);
         }
         truthTableExpView.updateBasicFormulasPaneFromList();
         truthTableExpView.getRowsSpinner().getValueFactory().setValue(tableRows);
@@ -158,10 +159,10 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
             truthTableExpModel.setTableRows(tableRows);
             truthTableExpView.setTableRows(tableRows);
 
-            List<DecoratedRTA> basicFormulasDRTAList = truthTableExpView.getBasicFormulasDRTAList();
+            List<BoxedDRTA> basicFormulasBoxedDRTAs = truthTableExpView.getBasicFormulasBoxedDRTAs();
             List<Document> newBasicFormulaDocs = new ArrayList<>();
-            for (DecoratedRTA drta : basicFormulasDRTAList) {
-                RichTextArea rta = drta.getEditor();
+            for (BoxedDRTA bdrta : basicFormulasBoxedDRTAs) {
+                RichTextArea rta = bdrta.getRTA();
                 rta.getActionFactory().saveNow().execute(new ActionEvent());
                 Document formulaDoc = rta.getDocument();
                 newBasicFormulaDocs.add(formulaDoc);
@@ -186,16 +187,16 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         setupHeadItemsFromModel();
 
         Document[] commentDocs = truthTableExpModel.getRowComments();
-        DecoratedRTA[] commentDRTAs = new DecoratedRTA[tableRows];
+        BoxedDRTA[] commentBoxedDRTAs = new BoxedDRTA[tableRows];
         for (int i = 0; i < commentDocs.length; i++) {
             Document doc = commentDocs[i];
-            DecoratedRTA drta = truthTableExpView.newCommentDRTAField();
-            RichTextArea rta = drta.getEditor();
+            BoxedDRTA bdrta = truthTableExpView.newCommentBoxedDRTA();
+            RichTextArea rta = bdrta.getRTA();
             rta.setDocument(doc);
             rta.getActionFactory().saveNow().execute(new ActionEvent());
-            commentDRTAs[i] = drta;
+            commentBoxedDRTAs[i] = bdrta;
         }
-        truthTableExpView.setRowCommentsArray(commentDRTAs);
+        truthTableExpView.setRowCommentsArray(commentBoxedDRTAs);
 
 
         ToggleButton[] buttons = new ToggleButton[tableColumns];
@@ -407,9 +408,9 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         RichTextArea explanationEditor = truthTableExpView.getExplainDRTA().getEditor();
         if (explanationEditor.isModified()) exerciseModified = true;
 
-        DecoratedRTA[] rowComments = truthTableExpView.getRowCommentsArray();
+        BoxedDRTA[] rowComments = truthTableExpView.getRowCommentsArray();
         for (int i = 0; i < rowComments.length; i++) {
-            RichTextArea rowCommentEditor = rowComments[i].getEditor();
+            RichTextArea rowCommentEditor = rowComments[i].getRTA();
             if (rowCommentEditor.isModified()) exerciseModified = true;
         }
 
@@ -500,10 +501,10 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         model.setBinaryOperators(truthTableExpModel.getBinaryOperators());
         model.setMainFormulas(truthTableExpModel.getMainFormulas());
 
-        List<DecoratedRTA> basicDRTAs = truthTableExpView.getBasicFormulasDRTAList();
+        List<BoxedDRTA> basicBoxedDRTAs = truthTableExpView.getBasicFormulasBoxedDRTAs();
         List<Document> basicDocs = new ArrayList<>();
-        for (DecoratedRTA drta : basicDRTAs) {
-            RichTextArea rta = drta.getEditor();
+        for (BoxedDRTA bdrta : basicBoxedDRTAs) {
+            RichTextArea rta = bdrta.getRTA();
             rta.getActionFactory().saveNow().execute(new ActionEvent());
             Document doc = rta.getDocument();
             basicDocs.add(doc);
@@ -524,11 +525,11 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         }
         model.setTableValues(tableStrVals);
 
-        DecoratedRTA[] lineCommentDRTAs = truthTableExpView.getRowCommentsArray();
+        BoxedDRTA[] lineCommentBoxedDRTAs = truthTableExpView.getRowCommentsArray();
         Document[] commentDocs = new Document[tableRows];
         for (int i = 0; i < tableRows; i++) {
-            DecoratedRTA drta = lineCommentDRTAs[i];
-            RichTextArea rta = drta.getEditor();
+            BoxedDRTA bdrta = lineCommentBoxedDRTAs[i];
+            RichTextArea rta = bdrta.getRTA();
             rta.getActionFactory().saveNow().execute(new ActionEvent());
             Document doc = rta.getDocument();
             commentDocs[i] = doc;

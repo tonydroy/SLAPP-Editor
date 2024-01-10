@@ -1,42 +1,36 @@
-package slapp.editor.tests;
+package slapp.editor.decorated_rta;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import javafx.event.EventHandler;
-import javafx.scene.input.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import slapp.editor.decorated_rta.DecoratedRTA;
 
 public class BoxedDRTA {
 
     DecoratedRTA drta;
     HBox boxedRTA;
 
-    BoxedDRTA() {
+    public BoxedDRTA() {
         drta = new DecoratedRTA();
         RichTextArea rta = drta.getEditor();
         boxedRTA = new HBox(rta);
-
 
         EventHandler<MouseEvent> mouseEventHandler = e -> {
             rta.requestFocus();
             e.consume();
         };
         boxedRTA.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseEventHandler);
-
-
-
-
-
-
     }
 
 
 
-    public DecoratedRTA getDrta() {
+    public DecoratedRTA getDRTA() {
         return drta;
     }
 
     public HBox getBoxedRTA() {
         return boxedRTA;
     }
+
+    public RichTextArea getRTA() {return drta.getEditor(); }
 }

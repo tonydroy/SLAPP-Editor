@@ -26,6 +26,7 @@ import org.apache.commons.lang3.SerializationUtils;
 import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
+import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
 import java.util.ArrayList;
@@ -130,8 +131,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                 numLabel.setFont(labelFont);
                 viewLine.setLineNumberLabel(numLabel);
 
-                DecoratedRTA drta = new DecoratedRTA();
-                RichTextArea rta = drta.getEditor();
+                BoxedDRTA bdrta = new BoxedDRTA();
+                RichTextArea rta = bdrta.getRTA();
                 rta.setDocument(modelLine.getLineContentDoc());
                 rta.getActionFactory().saveNow().execute(new ActionEvent());
 
@@ -153,22 +154,22 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                         e.consume();
                     } else if (code == KeyCode.UP) {
                         ViewLine contentLineAbove = getContentLineAbove(row);
-                        if (contentLineAbove != null) contentLineAbove.getLineContentDRTA().getEditor().requestFocus();
+                        if (contentLineAbove != null) contentLineAbove.getLineContentBoxedDRTA().getRTA().requestFocus();
                         e.consume();
                     } else if (code == KeyCode.DOWN) {
                         ViewLine contentLineBelow = getContentLineBelow(row);
-                        if (contentLineBelow != null) contentLineBelow.getLineContentDRTA().getEditor().requestFocus();
+                        if (contentLineBelow != null) contentLineBelow.getLineContentBoxedDRTA().getRTA().requestFocus();
                         e.consume();
                     }
                 });
-                viewLine.setLineContentDRTA(drta);
+                viewLine.setLineContentBoxedDRTA(bdrta);
 
                 TextFlow justificationFlow = getJustificationFlow(modelLine.getJustification(), viewLines);
                 viewLine.setJustificationFlow(justificationFlow);
 
             } else {
                 viewLine.setLineNumberLabel(null);
-                viewLine.setLineContentDRTA(null);
+                viewLine.setLineContentBoxedDRTA(null);
                 viewLine.setJustificationFlow(null);
             }
             viewLines.add(viewLine);
@@ -180,8 +181,9 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         List<ViewLine> viewLines = derivationView.getViewLines();
         for (ViewLine viewLine : viewLines) {
             if (LineType.isContentLine(viewLine.getLineType())) {
-                DecoratedRTA drta = viewLine.getLineContentDRTA();
-                RichTextArea rta = drta.getEditor();
+                BoxedDRTA bdrta = viewLine.getLineContentBoxedDRTA();
+                DecoratedRTA drta = bdrta.getDRTA();
+                RichTextArea rta = bdrta.getRTA();
                 mainView.editorInFocus(drta, ControlType.FIELD);
                 rta.focusedProperty().addListener((o, ov, nv) -> {
                     if (nv) {
@@ -351,12 +353,12 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             if (code == KeyCode.ENTER || (code == KeyCode.RIGHT && e.isShortcutDown())) {
                 derivationView.setGridFromViewLines();
                 ViewLine contentLineBelow = getContentLineBelow(row);
-                if (contentLineBelow != null) contentLineBelow.getLineContentDRTA().getEditor().requestFocus();
+                if (contentLineBelow != null) contentLineBelow.getLineContentBoxedDRTA().getRTA().requestFocus();
                 e.consume();
             } else if (code == KeyCode.LEFT && e.isShortcutDown()) {
                 derivationView.setGridFromViewLines();
                 ViewLine currentLine = derivationView.getViewLines().get(row);
-                currentLine.getLineContentDRTA().getEditor().requestFocus();
+                currentLine.getLineContentBoxedDRTA().getRTA().requestFocus();
                 e.consume();
             } else if (code == KeyCode.UP ) {
                 derivationView.setGridFromViewLines();
@@ -429,8 +431,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         Label numLabel = new Label();
         numLabel.setFont(labelFont);
 
-        DecoratedRTA drta = new DecoratedRTA();
-        RichTextArea rta = drta.getEditor();
+        BoxedDRTA bdrta = new BoxedDRTA();
+        RichTextArea rta = bdrta.getRTA();
         rta.getStylesheets().add("slappDerivation.css");
 
         rta.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
@@ -444,17 +446,17 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                 if (getContentLineAbove(row) != null) getContentLineAbove(row).getJustificationFlow().requestFocus();
                 e.consume();
             } else if (code == KeyCode.UP ) {
-                if (getContentLineAbove(row) != null) getContentLineAbove(row).getLineContentDRTA().getEditor().requestFocus();
+                if (getContentLineAbove(row) != null) getContentLineAbove(row).getLineContentBoxedDRTA().getRTA().requestFocus();
                 e.consume();
             } else if (code == KeyCode.DOWN) {
-                if (getContentLineBelow(row) != null) getContentLineBelow(row).getLineContentDRTA().getEditor().requestFocus();
+                if (getContentLineBelow(row) != null) getContentLineBelow(row).getLineContentBoxedDRTA().getRTA().requestFocus();
                 e.consume();
             }
         });
 
         TextFlow flow = new TextFlow();
         TextFlow justificationFlow = getStyledJustificationFlow(flow);
-        ViewLine viewLine = new ViewLine(numLabel, depth, LineType.MAIN_CONTENT_LINE, drta, justificationFlow, new ArrayList<Label>());
+        ViewLine viewLine = new ViewLine(numLabel, depth, LineType.MAIN_CONTENT_LINE, bdrta, justificationFlow, new ArrayList<Label>());
 
         derivationView.getViewLines().add(newRow, viewLine);
     }
@@ -507,8 +509,9 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                 derivationView.setGridFromViewLines();
                 pushUndoRedo();
 
-                DecoratedRTA drta = derivationView.getViewLines().get(row).getLineContentDRTA();
-                RichTextArea rta = drta.getEditor();
+                BoxedDRTA bdrta = derivationView.getViewLines().get(row).getLineContentBoxedDRTA();
+                DecoratedRTA drta = bdrta.getDRTA();
+                RichTextArea rta = bdrta.getRTA();
                 rta.applyCss();
                 rta.layout();
                 exerciseModified = true;
@@ -560,8 +563,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                 pushUndoRedo();
 
                 for (int i = row; i < viewLines.size(); i++) {
-                    if (viewLines.get(i).getLineContentDRTA() != null) {
-                        viewLines.get(i).getLineContentDRTA().getEditor().requestFocus();
+                    if (viewLines.get(i).getLineContentBoxedDRTA() != null) {
+                        viewLines.get(i).getLineContentBoxedDRTA().getRTA().requestFocus();
                         break;
                     }
                 }
@@ -663,7 +666,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                         if (!(LineType.isShelfLine(viewLines.get(row).getLineType()) || LineType.isGapLine(viewLines.get(row).getLineType()))) {
                             ViewLine shelfLine = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
                             viewLines.add(row, shelfLine);
-                            viewLine.getLineContentDRTA().getEditor().requestFocus();
+                            viewLine.getLineContentBoxedDRTA().getRTA().requestFocus();
                             derivationView.setGridFromViewLines();
                             pushUndoRedo();
                             exerciseModified = true;
@@ -698,7 +701,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                         if (!(LineType.isShelfLine(viewLines.get(row).getLineType())|| LineType.isGapLine(viewLines.get(row).getLineType()))) {
                             ViewLine gapLine = new ViewLine(null, depth, LineType.GAP_LINE, null, null, null);
                             viewLines.add(row, gapLine);
-                            viewLine.getLineContentDRTA().getEditor().requestFocus();
+                            viewLine.getLineContentBoxedDRTA().getRTA().requestFocus();
                             derivationView.setGridFromViewLines();
                             pushUndoRedo();
                             exerciseModified = true;
@@ -902,7 +905,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         List<ViewLine> viewLines = derivationView.getViewLines();
         for (ViewLine viewLine : viewLines) {
             if (LineType.isContentLine(viewLine.getLineType())) {
-                RichTextArea rta = viewLine.getLineContentDRTA().getEditor();
+                RichTextArea rta = viewLine.getLineContentBoxedDRTA().getRTA();
                 if (rta.isModified()) {
                     exerciseModified = true;
                 }
@@ -984,7 +987,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             String justification = "";
             if (LineType.isContentLine(lineType)) {
 
-                RichTextArea lineContentRTA = viewLine.getLineContentDRTA().getEditor();
+                RichTextArea lineContentRTA = viewLine.getLineContentBoxedDRTA().getRTA();
 
                 boolean editable = lineContentRTA.isEditable();
                 lineContentRTA.setEditable(true);

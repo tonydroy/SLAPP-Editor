@@ -10,13 +10,14 @@ import javafx.scene.control.Spinner;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
+import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
 
 public class DrvtnExpSetupLine {
     private DrvtnExpCreate drvtnExpCreate;
-    private DecoratedRTA formulaDRTA;
-    private DecoratedRTA justificationDRTA;
+    private BoxedDRTA formulaBoxedDRTA;
+    private BoxedDRTA justificationBoxedDRTA;
     private Spinner<Integer> depthSpinner;
     private CheckBox premiseBox;
     private CheckBox conclusionBox;
@@ -27,9 +28,9 @@ public class DrvtnExpSetupLine {
 
     public DrvtnExpSetupLine(DrvtnExpCreate drvtnExpCreate) {
         this.drvtnExpCreate = drvtnExpCreate;
-        formulaDRTA = new DecoratedRTA();
-        formulaDRTA.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
-        RichTextArea formulaRTA = formulaDRTA.getEditor();
+        formulaBoxedDRTA = new BoxedDRTA();
+        formulaBoxedDRTA.getDRTA().getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
+        RichTextArea formulaRTA = formulaBoxedDRTA.getRTA();
 
         formulaRTA.setMaxHeight(27);
         formulaRTA.setMinHeight(27);
@@ -41,20 +42,20 @@ public class DrvtnExpSetupLine {
         formulaRTA.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
             KeyCode code = e.getCode();
             if (code == KeyCode.ENTER || (code == KeyCode.RIGHT && e.isShortcutDown())) {
-                justificationDRTA.getEditor().requestFocus();
+                justificationBoxedDRTA.getRTA().requestFocus();
                 e.consume();
             }
         });
 
         formulaRTA.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
-               drvtnExpCreate.editorInFocus(formulaDRTA, ControlType.FIELD);
+               drvtnExpCreate.editorInFocus(formulaBoxedDRTA.getDRTA(), ControlType.FIELD);
             }
         });
 
-        justificationDRTA = new DecoratedRTA();
-        justificationDRTA.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.BASE);
-        RichTextArea justificationRTA = justificationDRTA.getEditor();
+        justificationBoxedDRTA = new BoxedDRTA();
+        justificationBoxedDRTA.getDRTA().getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.BASE);
+        RichTextArea justificationRTA = justificationBoxedDRTA.getRTA();
         justificationRTA.setDocument(new Document(""));
         justificationRTA.setMaxHeight(27);
         justificationRTA.setMinHeight(27);
@@ -77,7 +78,7 @@ public class DrvtnExpSetupLine {
 
         justificationRTA.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
-                drvtnExpCreate.editorInFocus(justificationDRTA, ControlType.STATEMENT);
+                drvtnExpCreate.editorInFocus(justificationBoxedDRTA.getDRTA(), ControlType.STATEMENT);
             }
         });
 
@@ -124,11 +125,11 @@ public class DrvtnExpSetupLine {
     }
 
 
-    public DecoratedRTA getFormulaDRTA() {
-        return formulaDRTA;
+    public BoxedDRTA getFormulaBoxedDRTA() {
+        return formulaBoxedDRTA;
     }
-    public DecoratedRTA getJustificationDRTA() {
-        return justificationDRTA;
+    public BoxedDRTA getJustificationBoxedDRTA() {
+        return justificationBoxedDRTA;
     }
     public Spinner getDepthSpinner() {
         return depthSpinner;
@@ -150,7 +151,7 @@ public class DrvtnExpSetupLine {
     }
 
     public boolean isModified() {
-        return (modified || formulaDRTA.getEditor().isModified() || justificationDRTA.getEditor().isModified());
+        return (modified || formulaBoxedDRTA.getRTA().isModified() || justificationBoxedDRTA.getRTA().isModified());
     }
     public void setModified(boolean modified) { this.modified = modified; }
 

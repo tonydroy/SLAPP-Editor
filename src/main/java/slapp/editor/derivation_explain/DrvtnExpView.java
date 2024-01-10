@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
+import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.derivation.LineType;
 import slapp.editor.derivation.ViewLine;
@@ -159,17 +160,18 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
 
             int depth = viewLine.getDepth();
             HBox contentBox = new HBox();
-            if (viewLine.getLineContentDRTA() != null) {
-                DecoratedRTA drta = viewLine.getLineContentDRTA();
+            if (viewLine.getLineContentBoxedDRTA() != null) {
+                BoxedDRTA bdrta = viewLine.getLineContentBoxedDRTA();
+                DecoratedRTA drta = bdrta.getDRTA();
                 drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
-                RichTextArea rta = drta.getEditor();
+                RichTextArea rta = bdrta.getRTA();
                 rta.setMaxHeight(contentRowHeight);
                 rta.setMinHeight(contentRowHeight);
                 rta.setPrefWidth(100);
                 rta.getStylesheets().add("slappDerivation.css");
 
-                contentBox.getChildren().add(rta);
-                contentBox.setHgrow(rta, Priority.ALWAYS);
+                contentBox = bdrta.getBoxedRTA();
+                contentBox.setHgrow(bdrta.getRTA(), Priority.ALWAYS);
             }
             if (depth > 1) {
                 Pane spacer1 = new Pane();
