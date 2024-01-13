@@ -13,6 +13,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 
 public class RootLayout extends AnchorPane {
     SplitPane base_pane;
@@ -42,18 +44,32 @@ public class RootLayout extends AnchorPane {
     private void setupWindow() {
 
         this.getStylesheets().add("/drag_drop.css");
+        right_pane.setStyle("-fx-background-color: white," +
+                "linear-gradient(from 0.5px 0.0px to 24.5px  0.0px, repeat, #f5f5f5 1%, transparent 5%)," +
+                "linear-gradient(from 0.0px 0.5px to  0.0px 24.5px, repeat, #f5f5f5 1%, transparent 5%);");
+
+
         this.setMinWidth(200); this.setMinHeight(200);
         this.setBottomAnchor(base_pane, 0.0); this.setTopAnchor(base_pane, 0.0); this.setLeftAnchor(base_pane, 0.0); this.setRightAnchor(base_pane, 0.0);
         scroll_pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); scroll_pane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scroll_pane.setPrefWidth(100); scroll_pane.setMinWidth(100); scroll_pane.setMaxWidth(100);
         scroll_pane.setPadding(new Insets(6,0,0,8));
         left_pane.setSpacing(10);
+
         base_pane.setResizableWithParent(right_pane, true);
+
+
+
+
+
+
 
     }
 
 
+
     public void initialize() {
+
 
         //Add one icon that will be used for the drag-drop process
         //This is added as a child to the root anchorpane so it can be visible
@@ -183,7 +199,15 @@ public class RootLayout extends AnchorPane {
                 if (container != null) {
                     if (container.getValue("scene_coords") != null) {
 
-                        if (container.getValue("type").equals(DragIconType.cubic_curve.toString())) {
+                        if (container.getValue("type").equals(DragIconType.dashed_line.toString())) {
+                            DashedLine line = new DashedLine();
+                            right_pane.getChildren().add(line);
+                            Point2D cursorPoint = container.getValue("scene_coords");
+                            line.relocateToGridPoint(new Point2D(cursorPoint.getX() - 28, cursorPoint.getY()));
+                        }
+
+
+                        else if (container.getValue("type").equals(DragIconType.cubic_curve.toString())) {
                             CubicCurveDemo curve = new CubicCurveDemo();
 
                             right_pane.getChildren().add(curve);
@@ -194,6 +218,8 @@ public class RootLayout extends AnchorPane {
                                     new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32)
                             );
                         }
+
+
                         else {
 
                             DraggableNode node = new DraggableNode();

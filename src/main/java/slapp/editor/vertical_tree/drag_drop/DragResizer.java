@@ -77,6 +77,7 @@ public class DragResizer {
     }
 
     protected boolean isInDraggableZone(MouseEvent event) {
+
         return event.getX() > (region.getWidth() - RESIZE_MARGIN);
     }
 

@@ -2,9 +2,10 @@ package slapp.editor.vertical_tree.drag_drop;
 
 public enum DragIconType {
     cubic_curve,
-    red,
-    green,
-    blue,
+    text_field,
+    bracket,
+    dashed_line,
+
     black,
     yellow,
     purple,

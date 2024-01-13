@@ -11,8 +11,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         BorderPane root = new BorderPane();
-        RootLayout rootLayout = new RootLayout();
-        root.setCenter(rootLayout);
+
 
         try {
             Scene scene = new Scene(root,640,480);
@@ -23,6 +22,11 @@ public class Main extends Application {
         } catch(Exception e) {
             e.printStackTrace();
         }
+
+        RootLayout rootLayout = new RootLayout();
+        root.setCenter(rootLayout);
+
+
 
     }
 

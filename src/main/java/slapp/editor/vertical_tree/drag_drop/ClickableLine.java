@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeType;
 
 public class ClickableLine {
     private DoubleProperty startX;
@@ -35,12 +36,14 @@ public class ClickableLine {
         upper.setStrokeWidth(clickableWidth);
         upper.setStroke(Color.TRANSPARENT);
         upper.setStrokeLineCap(StrokeLineCap.ROUND);
+        upper.setStrokeType(StrokeType.INSIDE);
 
         Line lower = new Line();
         lower.startXProperty().bind(startX);
         lower.startYProperty().bind(startY);
         lower.endXProperty().bind(endX);
         lower.endYProperty().bind(endY);
+        lower.setStrokeType(StrokeType.INSIDE);
 
         Line[] lines = {upper, lower};
         return lines;
