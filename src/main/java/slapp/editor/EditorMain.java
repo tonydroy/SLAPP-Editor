@@ -20,7 +20,6 @@ public class EditorMain extends Application {
         this.mainStage = stage;
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon32x32.png")));
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
-        textFieldImage = new Image(EditorMain.class.getResourceAsStream("text_field.png"));           //move this line to different class?
         MainWindow mainWindow = new MainWindow();
 
 //        ExtendedDemo demo = new ExtendedDemo(stage); demo.start();

@@ -10,100 +10,98 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Line;
 
-public class DashedLine extends AnchorPane {
-
-    private Label leftDragLabel;
+public class VerticalBracket extends AnchorPane {
+    private Label topDragLabel;
     private Label closeLabel;
 
     private EventHandler<DragEvent> mContextDragOver;
     private EventHandler <DragEvent> mContextDragDropped;
 
-    private DragIconType mType = DragIconType.dashed_line;
+    private DragIconType mType = DragIconType.bracket;
 
     private Point2D mDragOffset = new Point2D (0.0, 0.0);
 
-    private final DashedLine self;
+    private final VerticalBracket self;
 
 
 
-    DashedLine() {
+    VerticalBracket() {
         self = this;
 
-        leftDragLabel = new Label("");
-        leftDragLabel.setMaxWidth(10);
-        leftDragLabel.setMinWidth(10);
-        leftDragLabel.setMaxHeight(12);
-        leftDragLabel.setPadding(new Insets(0));
- //       leftDragLabel.setStyle("-fx-background-color: red");
+        topDragLabel = new Label("");
+        topDragLabel.setMaxHeight(10);
+        topDragLabel.setMinHeight(10);
+        topDragLabel.setMaxWidth(12);
+        topDragLabel.setPadding(new Insets(0));
+        //       bottomDragLabel.setStyle("-fx-background-color: red");
 
         closeLabel = new Label();
-        closeLabel.setMaxHeight(12);
-        closeLabel.setMaxWidth(10);
+        closeLabel.setMaxHeight(10);
+        closeLabel.setMinHeight(10);
+        closeLabel.setMaxWidth(12);
         closeLabel.setPadding(new Insets(0));
 
         GridPane labelPane = new GridPane();
-        ColumnConstraints columnConstraints = new ColumnConstraints(10);
-        columnConstraints.setHgrow(Priority.NEVER);
-        labelPane.getColumnConstraints().add(columnConstraints);
-        RowConstraints closeRowConstraints = new RowConstraints(12);
-        closeRowConstraints.setVgrow(Priority.NEVER);
-        RowConstraints moveRowConstraints = new RowConstraints(12);
-        moveRowConstraints.setVgrow(Priority.SOMETIMES);
-        labelPane.getRowConstraints().addAll(closeRowConstraints, moveRowConstraints);
-        labelPane.add(closeLabel, 0, 0); labelPane.add(leftDragLabel, 0, 1);
+        RowConstraints rowConstraints = new RowConstraints(10);
+        rowConstraints.setVgrow(Priority.NEVER);
+        labelPane.getRowConstraints().add(rowConstraints);
+        ColumnConstraints closeColumnConstraints = new ColumnConstraints(12);
+        closeColumnConstraints.setHgrow(Priority.NEVER);
+        ColumnConstraints moveColumnConstraints = new ColumnConstraints(12);
+        moveColumnConstraints.setHgrow(Priority.SOMETIMES);
+        labelPane.getColumnConstraints().addAll(moveColumnConstraints, closeColumnConstraints);
+        labelPane.add(topDragLabel, 0, 0); labelPane.add(closeLabel, 1, 0);
 
 
-  //      VBox labelBox = new VBox(closeLabel, leftDragLabel);
 
-
-        leftDragLabel.setOnMouseEntered(e -> {
-            leftDragLabel.setStyle("-fx-background-color: grey; -fx-background-radius: 0 0 8 8;");
-            closeLabel.setStyle("-fx-background-color: black; -fx-background-radius: 8 8 0 0;");
+        topDragLabel.setOnMouseEntered(e -> {
+            topDragLabel.setStyle("-fx-background-color: grey; -fx-background-radius: 8 0 0 8;");
+            closeLabel.setStyle("-fx-background-color: black; -fx-background-radius: 0 8 8 0;");
 //            leftDragLabel.setCursor(Cursor.MOVE);
         });
-        leftDragLabel.setOnMouseExited(e -> {
-            leftDragLabel.setStyle("-fx-background-color: transparent");
+        topDragLabel.setOnMouseExited(e -> {
+            topDragLabel.setStyle("-fx-background-color: transparent");
             closeLabel.setStyle("-fx-background-color:transparent");
- //           leftDragLabel.setCursor(Cursor.DEFAULT);
+            //           leftDragLabel.setCursor(Cursor.DEFAULT);
         });
 
         closeLabel.setOnMouseEntered(e -> {
-            leftDragLabel.setStyle("-fx-background-color: grey; -fx-background-radius: 0 0 8 8");
-            closeLabel.setStyle("-fx-background-color: black; -fx-background-radius: 8 8 0 0");
+            topDragLabel.setStyle("-fx-background-color: grey; -fx-background-radius: 8 0 0 8");
+            closeLabel.setStyle("-fx-background-color: black; -fx-background-radius: 0 8 8 0");
 //            leftDragLabel.setCursor(Cursor.MOVE);
         });
         closeLabel.setOnMouseExited(e -> {
-            leftDragLabel.setStyle("-fx-background-color: transparent");
+            topDragLabel.setStyle("-fx-background-color: transparent");
             closeLabel.setStyle("-fx-background-color:transparent");
             //           leftDragLabel.setCursor(Cursor.DEFAULT);
         });
 
 
-
-
-
-        Line line = new Line(4, 12, 48, 12);
-        line.getStrokeDashArray().addAll(5.0, 5.0);
+        Pane brackPane = new Pane();
+        brackPane.setMinWidth(8.0); brackPane.setMaxWidth(8.0);
+        brackPane.setMinHeight(64); brackPane.setMaxHeight(64);
+        brackPane.setStyle("-fx-border-width: 1.5 0.0 1.5 1.5; -fx-border-color: black; -fx-border-radius: 5 0 0 5");
 
         AnchorPane mainPane = new AnchorPane();
-        mainPane.setMinHeight(24.0);
-        mainPane.setPrefWidth(52);
+        mainPane.setMinWidth(24.0);
+        mainPane.setPrefWidth(24.0);
+        mainPane.setPrefHeight(48);
 
- //       mainPane.setStyle("-fx-border-color: red; fx-border-width: 1 1 1 1");
+        //       mainPane.setStyle("-fx-border-color: red; fx-border-width: 1 1 1 1");
 
-        mainPane.getChildren().add(line);
+        mainPane.getChildren().add(brackPane);
         //       linesBox.setStyle("-fx-border-color: blue; -fx-border-width: 2 2 2 2;");
-        line.endXProperty().bind(mainPane.widthProperty().subtract(4.0));
-        RightDragResizer.makeResizable(mainPane);
+        mainPane.setLeftAnchor(brackPane, 8.0);
 
-        HBox mainBox = new HBox(labelPane, mainPane);
+
+        BottomDragResizer.makeResizable(mainPane);
+        brackPane.minHeightProperty().bind(mainPane.heightProperty());
+
+        VBox mainBox = new VBox(labelPane, mainPane);
         self.getChildren().addAll(mainBox);
-        mainBox.setHgrow(mainPane, Priority.ALWAYS);
+        mainBox.setVgrow(mainPane, Priority.ALWAYS);
         self.setBottomAnchor(mainBox, 0.0); self.setLeftAnchor(mainBox, 0.0); self.setTopAnchor(mainBox, 0.0); self.setRightAnchor(mainBox, 0.0);
-
-
 
         initialize();
     }
@@ -117,7 +115,6 @@ public class DashedLine extends AnchorPane {
     }
 
     public void buildNodeDragHandlers() {
-
 
         mContextDragOver = new EventHandler <DragEvent>() {
 
@@ -148,8 +145,6 @@ public class DashedLine extends AnchorPane {
                         new Point2D(event.getSceneX(), event.getSceneY())
                 );
                 self.setCursor(Cursor.DEFAULT);
-
-
             }
         };
 
@@ -166,7 +161,7 @@ public class DashedLine extends AnchorPane {
 
 
 
-        leftDragLabel.setOnDragDetected ( new EventHandler <MouseEvent> () {
+        topDragLabel.setOnDragDetected (new EventHandler <MouseEvent> () {
 
             @Override
             public void handle(MouseEvent event) {
@@ -207,12 +202,14 @@ public class DashedLine extends AnchorPane {
         Point2D localCoords = getParent().sceneToLocal(p);
 
 
-        double localY = Math.round(localCoords.getY() / 24.0) * 24.0 - 4;
+        double localY = Math.round((localCoords.getY() - 20)  / 24.0) * 24.0;
 
         relocate (
-                (int) localCoords.getX() - 6,
-       //         (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
-                (int) (localY - (getBoundsInLocal().getHeight() / 2 ))
+                (int) localCoords.getX() - 12,
+                //         (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
+
+                (int) localY - 20
+ //               (int) (localY - (getBoundsInLocal().getHeight() / 2 ))
 
 
                 //             (int) (localCoords.getY() - (getBoundsInLocal().getHeight() / 2 ))
@@ -228,12 +225,12 @@ public class DashedLine extends AnchorPane {
         Point2D localCoords = getParent().sceneToLocal(p);
 
 
-        double localY = Math.round((localCoords.getY() - 4) / 24.0) * 24.0 + 4;
+        double localY = Math.round((localCoords.getY() + 24) / 24.0) * 24.0 ;
 
         relocate (
-                (int) localCoords.getX(),
-        //        (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
-                (int) (localY - (getBoundsInLocal().getHeight() / 2 ))
+                (int) localCoords.getX() - 12,
+                //        (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
+                (int) localY - 20
 
 
                 //             (int) (localCoords.getY() - (getBoundsInLocal().getHeight() / 2 ))
@@ -250,13 +247,17 @@ public class DashedLine extends AnchorPane {
         Point2D localCoords = getParent().sceneToLocal(p);
 
 
- //       double localY = Math.round(localCoords.getY() / 24.0) * 24.0;
+        //       double localY = Math.round(localCoords.getY() / 24.0) * 24.0;
 
         relocate (
-                (int) localCoords.getX(),
-     //           (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
-                (int) ((localCoords.getY() - (getBoundsInLocal().getHeight()) / 2 ))
+  //              (int) localCoords.getX(),
+                           (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
+
+                (int) localCoords.getY()
+  //              (int) ((localCoords.getY() - (getBoundsInLocal().getHeight()) / 2 ))
         );
     }
+
+
 
 }

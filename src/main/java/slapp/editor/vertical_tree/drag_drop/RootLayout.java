@@ -206,6 +206,13 @@ public class RootLayout extends AnchorPane {
                             line.relocateToGridPoint(new Point2D(cursorPoint.getX() - 28, cursorPoint.getY()));
                         }
 
+                        else if (container.getValue("type").equals(DragIconType.bracket.toString())) {
+                            VerticalBracket bracket = new VerticalBracket();
+                            right_pane.getChildren().add(bracket);
+                            Point2D cursorPoint = container.getValue("scene_coords");
+                            bracket.relocateToGridPoint(new Point2D(cursorPoint.getX(), cursorPoint.getY()));
+                        }
+
 
                         else if (container.getValue("type").equals(DragIconType.cubic_curve.toString())) {
                             CubicCurveDemo curve = new CubicCurveDemo();
