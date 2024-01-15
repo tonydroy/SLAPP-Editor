@@ -9,7 +9,6 @@ import slapp.editor.tests.*;
 public class EditorMain extends Application {
 
     public static Stage mainStage;
-    public static Image textFieldImage;
 
     public static void main(String[] args) {
         launch(args);

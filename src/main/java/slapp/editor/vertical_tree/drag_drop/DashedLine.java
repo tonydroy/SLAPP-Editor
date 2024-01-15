@@ -34,12 +34,12 @@ public class DashedLine extends AnchorPane {
         leftDragLabel = new Label("");
         leftDragLabel.setMaxWidth(10);
         leftDragLabel.setMinWidth(10);
-        leftDragLabel.setMaxHeight(12);
+        leftDragLabel.setMaxHeight(10);
         leftDragLabel.setPadding(new Insets(0));
  //       leftDragLabel.setStyle("-fx-background-color: red");
 
         closeLabel = new Label();
-        closeLabel.setMaxHeight(12);
+        closeLabel.setMaxHeight(10);
         closeLabel.setMaxWidth(10);
         closeLabel.setPadding(new Insets(0));
 
@@ -47,10 +47,10 @@ public class DashedLine extends AnchorPane {
         ColumnConstraints columnConstraints = new ColumnConstraints(10);
         columnConstraints.setHgrow(Priority.NEVER);
         labelPane.getColumnConstraints().add(columnConstraints);
-        RowConstraints closeRowConstraints = new RowConstraints(12);
+        RowConstraints closeRowConstraints = new RowConstraints(10);
         closeRowConstraints.setVgrow(Priority.NEVER);
-        RowConstraints moveRowConstraints = new RowConstraints(12);
-        moveRowConstraints.setVgrow(Priority.SOMETIMES);
+        RowConstraints moveRowConstraints = new RowConstraints(10);
+        moveRowConstraints.setVgrow(Priority.NEVER);
         labelPane.getRowConstraints().addAll(closeRowConstraints, moveRowConstraints);
         labelPane.add(closeLabel, 0, 0); labelPane.add(leftDragLabel, 0, 1);
 

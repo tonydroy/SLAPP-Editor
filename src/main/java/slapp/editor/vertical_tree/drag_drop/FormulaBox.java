@@ -1,5 +1,8 @@
 package slapp.editor.vertical_tree.drag_drop;
 
+import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.RichTextAreaSkin;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -10,98 +13,92 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Line;
+import slapp.editor.decorated_rta.BoxedDRTA;
+import slapp.editor.decorated_rta.DecoratedRTA;
+import slapp.editor.main_window.ControlType;
 
-public class VerticalBracket extends AnchorPane {
-    private Label topDragLabel;
+public class FormulaBox extends AnchorPane {
+
+
+    private Label leftDragLabel;
     private Label closeLabel;
 
     private EventHandler<DragEvent> mContextDragOver;
     private EventHandler <DragEvent> mContextDragDropped;
 
-    private DragIconType mType = DragIconType.bracket;
+    private DragIconType mType = DragIconType.dashed_line;
 
     private Point2D mDragOffset = new Point2D (0.0, 0.0);
 
-    private final VerticalBracket self;
+    private final FormulaBox self;
 
 
 
-    VerticalBracket() {
+    FormulaBox() {
         self = this;
 
-        topDragLabel = new Label("");
-        topDragLabel.setMaxHeight(10);
-        topDragLabel.setMinHeight(10);
-        topDragLabel.setMaxWidth(10);
-        topDragLabel.setPadding(new Insets(0));
-        //       bottomDragLabel.setStyle("-fx-background-color: red");
+        leftDragLabel = new Label("");
+        leftDragLabel.setMaxWidth(10);
+        leftDragLabel.setMinWidth(10);
+        leftDragLabel.setMaxHeight(10);
+        leftDragLabel.setPadding(new Insets(0));
+        //       leftDragLabel.setStyle("-fx-background-color: red");
 
         closeLabel = new Label();
         closeLabel.setMaxHeight(10);
-        closeLabel.setMinHeight(10);
         closeLabel.setMaxWidth(10);
         closeLabel.setPadding(new Insets(0));
 
         GridPane labelPane = new GridPane();
-        RowConstraints rowConstraints = new RowConstraints(10);
-        rowConstraints.setVgrow(Priority.NEVER);
-        labelPane.getRowConstraints().add(rowConstraints);
-        ColumnConstraints closeColumnConstraints = new ColumnConstraints(10);
-        closeColumnConstraints.setHgrow(Priority.NEVER);
-        ColumnConstraints moveColumnConstraints = new ColumnConstraints(10);
-        moveColumnConstraints.setHgrow(Priority.NEVER);
-        labelPane.getColumnConstraints().addAll(moveColumnConstraints, closeColumnConstraints);
-        labelPane.add(topDragLabel, 0, 0); labelPane.add(closeLabel, 1, 0);
+        ColumnConstraints columnConstraints = new ColumnConstraints(10);
+        columnConstraints.setHgrow(Priority.NEVER);
+        labelPane.getColumnConstraints().add(columnConstraints);
+        RowConstraints closeRowConstraints = new RowConstraints(10);
+        closeRowConstraints.setVgrow(Priority.NEVER);
+        RowConstraints moveRowConstraints = new RowConstraints(10);
+        moveRowConstraints.setVgrow(Priority.NEVER);
+        labelPane.getRowConstraints().addAll(closeRowConstraints, moveRowConstraints);
+        labelPane.add(closeLabel, 0, 0); labelPane.add(leftDragLabel, 0, 1);
 
 
+        //      VBox labelBox = new VBox(closeLabel, leftDragLabel);
 
-        topDragLabel.setOnMouseEntered(e -> {
-            topDragLabel.setStyle("-fx-background-color: grey; -fx-background-radius: 8 0 0 8;");
-            closeLabel.setStyle("-fx-background-color: black; -fx-background-radius: 0 8 8 0;");
+
+        leftDragLabel.setOnMouseEntered(e -> {
+            leftDragLabel.setStyle("-fx-background-color: grey; -fx-background-radius: 0 0 0 5;");
+            closeLabel.setStyle("-fx-background-color: black; -fx-background-radius: 5 0 0 0;");
 //            leftDragLabel.setCursor(Cursor.MOVE);
         });
-        topDragLabel.setOnMouseExited(e -> {
-            topDragLabel.setStyle("-fx-background-color: transparent");
+        leftDragLabel.setOnMouseExited(e -> {
+            leftDragLabel.setStyle("-fx-background-color: transparent");
             closeLabel.setStyle("-fx-background-color:transparent");
             //           leftDragLabel.setCursor(Cursor.DEFAULT);
         });
 
         closeLabel.setOnMouseEntered(e -> {
-            topDragLabel.setStyle("-fx-background-color: grey; -fx-background-radius: 8 0 0 8");
-            closeLabel.setStyle("-fx-background-color: black; -fx-background-radius: 0 8 8 0");
+            leftDragLabel.setStyle("-fx-background-color: grey; -fx-background-radius: 0 0 0 5");
+            closeLabel.setStyle("-fx-background-color: black; -fx-background-radius: 5 0 0 0");
 //            leftDragLabel.setCursor(Cursor.MOVE);
         });
         closeLabel.setOnMouseExited(e -> {
-            topDragLabel.setStyle("-fx-background-color: transparent");
+            leftDragLabel.setStyle("-fx-background-color: transparent");
             closeLabel.setStyle("-fx-background-color:transparent");
             //           leftDragLabel.setCursor(Cursor.DEFAULT);
         });
 
 
-        Pane brackPane = new Pane();
-        brackPane.setMinWidth(8.0); brackPane.setMaxWidth(8.0);
-        brackPane.setMinHeight(64); brackPane.setMaxHeight(64);
-        brackPane.setStyle("-fx-border-width: 1.5 0.0 1.5 1.5; -fx-border-color: black; -fx-border-radius: 5 0 0 5");
-
-        AnchorPane mainPane = new AnchorPane();
-        mainPane.setMinWidth(24.0);
-        mainPane.setPrefWidth(24.0);
-        mainPane.setPrefHeight(48);
-
-        //       mainPane.setStyle("-fx-border-color: red; fx-border-width: 1 1 1 1");
-
-        mainPane.getChildren().add(brackPane);
-        //       linesBox.setStyle("-fx-border-color: blue; -fx-border-width: 2 2 2 2;");
-        mainPane.setLeftAnchor(brackPane, 8.0);
+        BoxedDRTA formulaBox = newFormulaBoxedDRTA();
 
 
-        BottomDragResizer.makeResizable(mainPane);
-        brackPane.minHeightProperty().bind(mainPane.heightProperty());
+        RightDragResizer.makeResizable(formulaBox.getRTA());
 
-        VBox mainBox = new VBox(labelPane, mainPane);
+        HBox mainBox = new HBox(labelPane, formulaBox.getRTA());
         self.getChildren().addAll(mainBox);
-        mainBox.setVgrow(mainPane, Priority.ALWAYS);
+        mainBox.setHgrow(formulaBox.getRTA(), Priority.ALWAYS);
         self.setBottomAnchor(mainBox, 0.0); self.setLeftAnchor(mainBox, 0.0); self.setTopAnchor(mainBox, 0.0); self.setRightAnchor(mainBox, 0.0);
+
+
 
         initialize();
     }
@@ -115,6 +112,7 @@ public class VerticalBracket extends AnchorPane {
     }
 
     public void buildNodeDragHandlers() {
+
 
         mContextDragOver = new EventHandler <DragEvent>() {
 
@@ -145,6 +143,8 @@ public class VerticalBracket extends AnchorPane {
                         new Point2D(event.getSceneX(), event.getSceneY())
                 );
                 self.setCursor(Cursor.DEFAULT);
+
+
             }
         };
 
@@ -161,7 +161,7 @@ public class VerticalBracket extends AnchorPane {
 
 
 
-        topDragLabel.setOnDragDetected (new EventHandler <MouseEvent> () {
+        leftDragLabel.setOnDragDetected ( new EventHandler <MouseEvent> () {
 
             @Override
             public void handle(MouseEvent event) {
@@ -202,14 +202,12 @@ public class VerticalBracket extends AnchorPane {
         Point2D localCoords = getParent().sceneToLocal(p);
 
 
-        double localY = Math.round((localCoords.getY() - 20)  / 24.0) * 24.0;
+        double localY = Math.round((localCoords.getY() - 8) / 24.0) * 24.0 + 1;
 
         relocate (
-                (int) localCoords.getX() - 12,
+                (int) localCoords.getX() - 36,
                 //         (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
-
-                (int) localY - 20
- //               (int) (localY - (getBoundsInLocal().getHeight() / 2 ))
+                (int) (localY - (getBoundsInLocal().getHeight() / 2 ))
 
 
                 //             (int) (localCoords.getY() - (getBoundsInLocal().getHeight() / 2 ))
@@ -225,12 +223,12 @@ public class VerticalBracket extends AnchorPane {
         Point2D localCoords = getParent().sceneToLocal(p);
 
 
-        double localY = Math.round((localCoords.getY() + 24) / 24.0) * 24.0 ;
+        double localY = Math.round((localCoords.getY() + 4) / 24.0) * 24.0 - 8;
 
         relocate (
-                (int) localCoords.getX() - 12,
+                (int) localCoords.getX(),
                 //        (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
-                (int) localY - 20
+                (int) (localY - (getBoundsInLocal().getHeight() / 2 ))
 
 
                 //             (int) (localCoords.getY() - (getBoundsInLocal().getHeight() / 2 ))
@@ -250,12 +248,30 @@ public class VerticalBracket extends AnchorPane {
         //       double localY = Math.round(localCoords.getY() / 24.0) * 24.0;
 
         relocate (
-  //              (int) localCoords.getX(),
-                           (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
-
-                (int) localCoords.getY()
-  //              (int) ((localCoords.getY() - (getBoundsInLocal().getHeight()) / 2 ))
+                (int) localCoords.getX(),
+                //           (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
+                (int) ((localCoords.getY() - (getBoundsInLocal().getHeight()) / 2 ))
         );
+    }
+
+    private BoxedDRTA newFormulaBoxedDRTA() {
+        BoxedDRTA boxedDRTA = new BoxedDRTA();
+        DecoratedRTA drta = boxedDRTA.getDRTA();
+        drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
+        RichTextArea rta = boxedDRTA.getRTA();
+        rta.setMaxHeight(24);
+        rta.setMinHeight(24);
+        rta.setPrefWidth(36);
+     //   rta.getStylesheets().add("slappDerivation.css");
+       rta.getStylesheets().add("formulaBox.css");
+        rta.setPromptText("X");
+        rta.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) {
+//                editorInFocus(drta, ControlType.FIELD);             **needs to be revived once integrated into SLAPP**
+            }
+        });
+        rta.getActionFactory().saveNow().execute(new ActionEvent());
+        return boxedDRTA;
     }
 
 
