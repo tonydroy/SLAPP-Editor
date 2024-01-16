@@ -10,76 +10,30 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.CubicCurve;
+import javafx.scene.shape.Line;
 
 import java.util.UUID;
 
+import static javafx.beans.binding.Bindings.add;
+
 public class NodeLink extends Pane {
 
-    CubicCurve node_link;
+    Line node_link;
 
-    private final DoubleProperty mControlOffsetX = new SimpleDoubleProperty();
-    private final DoubleProperty mControlOffsetY = new SimpleDoubleProperty();
-    private final DoubleProperty mControlDirectionX1 = new SimpleDoubleProperty();
-    private final DoubleProperty mControlDirectionY1 = new SimpleDoubleProperty();
-    private final DoubleProperty mControlDirectionX2 = new SimpleDoubleProperty();
-    private final DoubleProperty mControlDirectionY2 = new SimpleDoubleProperty();
 
     public NodeLink() {
         this.getStylesheets().add("/drag_drop.css");
 
-        node_link = new CubicCurve();
-        node_link.setControlX2(50.0); node_link.setControlY1(10.0); node_link.setControlY2(10.0); node_link.setEndX(10.0); node_link.setFill(Paint.valueOf("#1f93ff00")); node_link.setStroke(Color.BLACK);
+        node_link = new Line();
         this.getChildren().add(node_link);
 
         //provide a universally unique identifier for this object
         setId(UUID.randomUUID().toString());
 
 
-        initialize();
     }
 
 
-    private void initialize() {
-
-        mControlOffsetX.set(100.0);
-        mControlOffsetY.set(50.0);
-
-
-        mControlDirectionX1.bind(new When (
-                node_link.startXProperty().greaterThan(node_link.endXProperty()))
-                .then(-1.0).otherwise(1.0));
-
-        mControlDirectionX2.bind(new When (
-                node_link.startXProperty().greaterThan(node_link.endXProperty()))
-                .then(1.0).otherwise(-1.0));
-
-
-        node_link.controlX1Property().bind(
-                Bindings.add(
-                        node_link.startXProperty(), mControlOffsetX.multiply(mControlDirectionX1)
-                )
-        );
-
-        node_link.controlX2Property().bind(
-                Bindings.add(
-                        node_link.endXProperty(), mControlOffsetX.multiply(mControlDirectionX2)
-                )
-        );
-
-        node_link.controlY1Property().bind(
-                Bindings.add(
-                        node_link.startYProperty(), mControlOffsetY.multiply(mControlDirectionY1)
-                )
-        );
-
-        node_link.controlY2Property().bind(
-                Bindings.add(
-                        node_link.endYProperty(), mControlOffsetY.multiply(mControlDirectionY2)
-                )
-        );
-
-
-    }
 
 
     public void setStart(Point2D startPoint) {
@@ -95,18 +49,21 @@ public class NodeLink extends Pane {
     }
 
 
-    public void bindEnds (DraggableNode source, DraggableNode target) {
-        node_link.startXProperty().bind(
-                Bindings.add(source.layoutXProperty(), (source.getWidth() / 2.0)));
+    public void bindEnds (FormulaBox source, FormulaBox target) {
+
+        DoubleProperty constantProp = new SimpleDoubleProperty(2.0);
+
+        node_link.startXProperty().bind(add(source.layoutXProperty(), (source.widthProperty().divide(constantProp))));
+        node_link.endXProperty().bind(add(target.layoutXProperty(), (target.widthProperty().divide(constantProp))));
+
 
         node_link.startYProperty().bind(
-                Bindings.add(source.layoutYProperty(), (source.getWidth() / 2.0)));
+                add(source.layoutYProperty(), (source.getHeight() / 2.0)));
 
-        node_link.endXProperty().bind(
-                Bindings.add(target.layoutXProperty(), (target.getWidth() / 2.0)));
+
 
         node_link.endYProperty().bind(
-                Bindings.add(target.layoutYProperty(), (target.getWidth() / 2.0)));
+                add(target.layoutYProperty(), (target.getHeight() / 2.0)));
 
         source.registerLink (getId());
         target.registerLink (getId());

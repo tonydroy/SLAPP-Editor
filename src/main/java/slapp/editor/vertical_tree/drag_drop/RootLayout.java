@@ -280,8 +280,8 @@ public class RootLayout extends AnchorPane {
                         //add our link at the top of the rendering order so it's rendered first
                         right_pane.getChildren().add(0,link);
 
-                        DraggableNode source = null;
-                        DraggableNode target = null;
+                        FormulaBox source = null;
+                        FormulaBox target = null;
 
                         for (Node n: right_pane.getChildren()) {
 
@@ -289,10 +289,10 @@ public class RootLayout extends AnchorPane {
                                 continue;
 
                             if (n.getId().equals(sourceId))
-                                source = (DraggableNode) n;
+                                source = (FormulaBox) n;
 
                             if (n.getId().equals(targetId))
-                                target = (DraggableNode) n;
+                                target = (FormulaBox) n;
 
                         }
 
