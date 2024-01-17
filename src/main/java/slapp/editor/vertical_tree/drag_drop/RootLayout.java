@@ -274,8 +274,10 @@ public class RootLayout extends AnchorPane {
 
                     if (sourceId != null && targetId != null) {
 
-                        //	System.out.println(container.getData());
-                        NodeLink link = new NodeLink();
+     //                   //	System.out.println(container.getData());
+     //                  NodeLink link = new NodeLink();
+                        ClickableNodeLink link = new ClickableNodeLink();
+
 
                         //add our link at the top of the rendering order so it's rendered first
                         right_pane.getChildren().add(0,link);

@@ -1,20 +1,15 @@
 package slapp.editor.vertical_tree.drag_drop;
 
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.When;
+
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
-
 import java.util.UUID;
-
 import static javafx.beans.binding.Bindings.add;
+
 
 public class NodeLink extends Pane {
 
@@ -56,14 +51,14 @@ public class NodeLink extends Pane {
         node_link.startXProperty().bind(add(source.layoutXProperty(), (source.widthProperty().divide(constantProp))));
         node_link.endXProperty().bind(add(target.layoutXProperty(), (target.widthProperty().divide(constantProp))));
 
+        if (source.getLayoutY() < target.getLayoutY()) {
+            node_link.startYProperty().bind(add(source.layoutYProperty(), (source.getHeight() - 9.0)));
+            node_link.endYProperty().bind(add(target.layoutYProperty(), 9.0));
+        } else {
+            node_link.startYProperty().bind(add(source.layoutYProperty(), 9.0));
+            node_link.endYProperty().bind(add(target.layoutYProperty(), (target.getHeight() - 9.0)));
+        }
 
-        node_link.startYProperty().bind(
-                add(source.layoutYProperty(), (source.getHeight() / 2.0)));
-
-
-
-        node_link.endYProperty().bind(
-                add(target.layoutYProperty(), (target.getHeight() / 2.0)));
 
         source.registerLink (getId());
         target.registerLink (getId());

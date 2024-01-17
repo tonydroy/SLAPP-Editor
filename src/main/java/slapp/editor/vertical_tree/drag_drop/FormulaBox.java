@@ -12,12 +12,14 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
@@ -40,6 +42,8 @@ public class FormulaBox extends AnchorPane {
     private EventHandler <DragEvent> mContextLinkDragDropped;
     private EventHandler<DragEvent> mContextDragOver;
     private EventHandler <DragEvent> mContextDragDropped;
+
+//    private ClickableNodeLink mDragLink = null;
     private NodeLink mDragLink = null;
     private AnchorPane right_pane = null;
     private final List<String> mLinkIds = new ArrayList<>();
@@ -61,7 +65,8 @@ public class FormulaBox extends AnchorPane {
         top_link_handle.setOnMouseEntered(e -> top_link_handle.setStyle("-fx-background-color: grey; -fx-background-radius: 5 5 0 0") );
         top_link_handle.setOnDragOver(e -> top_link_handle.setStyle("-fx-background-color: grey; -fx-background-radius: 5 5 0 0") );
         top_link_handle.setOnMouseExited(e ->  top_link_handle.setStyle("-fx-background-color: transparent") );
-        top_link_handle.setOnDragDetected(e ->  top_link_handle.setStyle("-fx-background-color: transparent"));
+        top_link_handle.setOnMouseDragged(e ->  top_link_handle.setStyle("-fx-background-color: transparent"));
+
 
         bottom_link_handle = new AnchorPane();
         bottom_link_handle.setPrefHeight(9);
@@ -70,7 +75,8 @@ public class FormulaBox extends AnchorPane {
         bottom_link_handle.setOnMouseEntered(e -> bottom_link_handle.setStyle("-fx-background-color: grey; -fx-background-radius: 0 0 5 5"));
         bottom_link_handle.setOnDragOver(e -> bottom_link_handle.setStyle("-fx-background-color: grey; -fx-background-radius: 0 0 5 5") );
         bottom_link_handle.setOnMouseExited(e -> bottom_link_handle.setStyle("fx-background-color: transparent"));
-        bottom_link_handle.setOnDragDetected(e ->  bottom_link_handle.setStyle("-fx-background-color: transparent"));
+        bottom_link_handle.setOnMouseDragged(e ->  bottom_link_handle.setStyle("-fx-background-color: transparent"));
+
 
 
         leftDragLabel = new Label("");
@@ -129,20 +135,20 @@ public class FormulaBox extends AnchorPane {
         VBox centerBox = new VBox(top_link_handle, formulaBox.getRTA(), bottom_link_handle);
         centerBox.setAlignment(Pos.CENTER);
 
+/*
+        TextField annotationField = new TextField();
+        annotationField.setFont(new Font("Noto Sans", 9));
+        annotationField.setPadding(new Insets(0));
+        annotationField.setMaxWidth(10);
+        HBox mainBox = new HBox(labelPane, centerBox, annotationField);
+ */
+
+
+
         HBox mainBox = new HBox(labelPane, centerBox);
         mainBox.setAlignment(Pos.CENTER);
         mainBox.setMargin(labelPane, new Insets(10, 0, 0, 0));
-
-
-
-        /*
-        HBox centerBox = new HBox(labelPane, formulaBox.getRTA());
-        centerBox.setHgrow(formulaBox.getRTA(), Priority.ALWAYS);
-
-        VBox mainBox = new VBox(top_link_handle, centerBox, bottom_link_handle);
-        mainBox.setAlignment(Pos.CENTER);
-         */
-
+ //       mainBox.setMargin(annotationField, new Insets(0,0, 14, 0));
 
         self.getChildren().addAll(mainBox);
         self.setBottomAnchor(mainBox, 0.0); self.setLeftAnchor(mainBox, 0.0); self.setTopAnchor(mainBox, 0.0); self.setRightAnchor(mainBox, 0.0);
@@ -161,6 +167,7 @@ public class FormulaBox extends AnchorPane {
         top_link_handle.setOnDragDropped(mLinkHandleDragDropped);
         bottom_link_handle.setOnDragDropped(mLinkHandleDragDropped);
 
+  //      mDragLink = new ClickableNodeLink();
         mDragLink = new NodeLink();
         mDragLink.setVisible(false);
 
@@ -413,17 +420,11 @@ public class FormulaBox extends AnchorPane {
         //relocates the object to a point that has been converted to
         //scene coordinates
         Point2D localCoords = getParent().sceneToLocal(p);
-
-
-        double localY = Math.round((localCoords.getY() - 8) / 24.0) * 24.0 + 1;
+        double localY = Math.round((localCoords.getY() - 16) / 24.0) * 24.0;
 
         relocate (
                 (int) localCoords.getX() - 36,
-                //         (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
-                (int) (localY - (getBoundsInLocal().getHeight() / 2 ))
-
-
-                //             (int) (localCoords.getY() - (getBoundsInLocal().getHeight() / 2 ))
+                (int) (localY - 7 )
         );
     }
 
@@ -434,17 +435,11 @@ public class FormulaBox extends AnchorPane {
         //relocates the object to a point that has been converted to
         //scene coordinates
         Point2D localCoords = getParent().sceneToLocal(p);
-
-
-        double localY = Math.round((localCoords.getY() + 4) / 24.0) * 24.0 - 8;
+        double localY = Math.round((localCoords.getY() - 16) / 24.0) * 24.0 ;
 
         relocate (
                 (int) localCoords.getX(),
-                //        (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
-                (int) (localY - (getBoundsInLocal().getHeight() / 2 ))
-
-
-                //             (int) (localCoords.getY() - (getBoundsInLocal().getHeight() / 2 ))
+                (int) (localY - 7)
         );
     }
 
