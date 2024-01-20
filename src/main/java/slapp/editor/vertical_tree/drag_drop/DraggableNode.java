@@ -159,27 +159,7 @@ public class DraggableNode extends AnchorPane {
         getStyleClass().clear();
         getStyleClass().add("dragicon");
 
-        switch (mType) {
 
-            case grey:
-                getStyleClass().add("icon-grey");
-                break;
-
-            case purple:
-                getStyleClass().add("icon-purple");
-                break;
-
-            case yellow:
-                getStyleClass().add("icon-yellow");
-                break;
-
-            case black:
-                getStyleClass().add("icon-black");
-                break;
-
-            default:
-                break;
-        }
     }
 
     public void buildNodeDragHandlers() {

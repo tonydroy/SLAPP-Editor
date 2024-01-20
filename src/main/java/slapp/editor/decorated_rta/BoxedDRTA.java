@@ -15,11 +15,12 @@ public class BoxedDRTA {
         RichTextArea rta = drta.getEditor();
         boxedRTA = new HBox(rta);
 
+
         EventHandler<MouseEvent> mouseEventHandler = e -> {
             rta.requestFocus();
             e.consume();
         };
-        boxedRTA.addEventFilter(MouseEvent.MOUSE_PRESSED, mouseEventHandler);
+        boxedRTA.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEventHandler);
     }
 
 

@@ -124,29 +124,7 @@ public class DragIcon extends AnchorPane {
                 this.setLeftAnchor(dashLinePane, 8.0);
                 break;
 
-            case grey:
-                this.setPrefHeight(64); this.setPrefWidth(64);
-                this.setMaxWidth(64); this.setMinWidth(64); this.setMaxHeight(64); this.setMinHeight(64);
-                getStyleClass().add("icon-grey");
-                break;
 
-            case purple:
-                this.setPrefHeight(64); this.setPrefWidth(64);
-                this.setMaxWidth(64); this.setMinWidth(64); this.setMaxHeight(64); this.setMinHeight(64);
-                getStyleClass().add("icon-purple");
-                break;
-
-            case yellow:
-                this.setPrefHeight(64); this.setPrefWidth(64);
-                this.setMaxWidth(64); this.setMinWidth(64); this.setMaxHeight(64); this.setMinHeight(64);
-                getStyleClass().add("icon-yellow");
-                break;
-
-            case black:
-                this.setPrefHeight(64); this.setPrefWidth(64);
-                this.setMaxWidth(64); this.setMinWidth(64); this.setMaxHeight(64); this.setMinHeight(64);
-                getStyleClass().add("icon-black");
-                break;
 
             default:
                 break;

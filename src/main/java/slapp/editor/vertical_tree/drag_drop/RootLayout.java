@@ -1,26 +1,35 @@
 package slapp.editor.vertical_tree.drag_drop;
 
 
+import javafx.beans.value.ChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 
 public class RootLayout extends AnchorPane {
     SplitPane base_pane;
     ScrollPane scroll_pane;
     AnchorPane right_pane;
     VBox left_pane;
+    EventHandler boxClickFilter;
+    EventHandler starClickFilter;
+    EventHandler circleClickFilter;
+    EventHandler underlineClickFilter;
+    ToggleButton boxToggle;
+    ToggleButton starToggle;
+    ToggleButton circleToggle;
+    ToggleButton underlineToggle;
 
     private DragIcon mDragOverIcon = null;
     private EventHandler<DragEvent> mIconDragOverRoot = null;
@@ -36,12 +45,54 @@ public class RootLayout extends AnchorPane {
         base_pane.getItems().addAll(scroll_pane, right_pane);
         this.getChildren().add(base_pane);
 
+
+
+
         setupWindow();
         initialize();
 
     }
 
     private void setupWindow() {
+        boxToggle = new ToggleButton();
+        boxToggle.setPrefWidth(64);
+        boxToggle.setPrefHeight(28);
+        FontIcon boxToggleIcon = new FontIcon(LineAwesomeSolid.STOP);
+        boxToggleIcon.setIconSize(20);
+        boxToggle.setGraphic(boxToggleIcon);
+        boxToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) box"));
+
+
+        starToggle = new ToggleButton();
+        starToggle.setPrefWidth(64);
+        starToggle.setPrefHeight(28);
+        FontIcon starToggleIcon = new FontIcon(LineAwesomeSolid.STAR);
+        starToggleIcon.setIconSize(15);
+        starToggle.setGraphic(starToggleIcon);
+        starToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) star"));
+
+        circleToggle = new ToggleButton("O");
+        circleToggle.setPrefWidth(64);
+        circleToggle.setPrefHeight(28);
+  //      FontIcon circleToggleIcon = new FontIcon(LineAwesomeSolid.CIRCLE);
+    //    starToggleIcon.setIconSize(20);
+    //    circleToggle.setGraphic(circleToggleIcon);
+        circleToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) circle"));
+
+        underlineToggle = new ToggleButton();
+        underlineToggle.setPrefWidth(64);
+        underlineToggle.setPrefHeight(28);
+        FontIcon underlineToggleIcon = new FontIcon(LineAwesomeSolid.GRIP_LINES);
+        underlineToggleIcon.setIconSize(20);
+        underlineToggle.setGraphic(underlineToggleIcon);
+        underlineToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) underline"));
+
+        ToggleGroup buttonGroup = new ToggleGroup();
+        boxToggle.setToggleGroup(buttonGroup);
+        starToggle.setToggleGroup(buttonGroup);
+        circleToggle.setToggleGroup(buttonGroup);
+        underlineToggle.setToggleGroup(buttonGroup);
+
 
         this.getStylesheets().add("/drag_drop.css");
         right_pane.setStyle("-fx-background-color: white," +
@@ -49,14 +100,99 @@ public class RootLayout extends AnchorPane {
                 "linear-gradient(from 0.0px 0.5px to  0.0px 24.5px, repeat, #f5f5f5 1%, transparent 5%);");
 
 
+
+
         this.setMinWidth(200); this.setMinHeight(200);
         this.setBottomAnchor(base_pane, 0.0); this.setTopAnchor(base_pane, 0.0); this.setLeftAnchor(base_pane, 0.0); this.setRightAnchor(base_pane, 0.0);
         scroll_pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); scroll_pane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scroll_pane.setPrefWidth(100); scroll_pane.setMinWidth(100); scroll_pane.setMaxWidth(100);
         scroll_pane.setPadding(new Insets(6,0,0,8));
+
         left_pane.setSpacing(10);
+        left_pane.setAlignment(Pos.CENTER);
 
         base_pane.setResizableWithParent(right_pane, true);
+
+
+        boxClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ObservableList<Node> nodesList = right_pane.getChildren();
+                for (Node node : nodesList) {
+                    if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
+                        if (node instanceof FormulaBox) {
+                            ((FormulaBox) node).processBoxRequest(event.getButton() == MouseButton.PRIMARY);
+                            break;
+                        }
+                    }
+                }
+
+            }
+        };
+        boxToggle.selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv)  right_pane.addEventFilter(MouseEvent.MOUSE_PRESSED, boxClickFilter );
+            else right_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, boxClickFilter);
+        });
+
+        starClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ObservableList<Node> nodesList = right_pane.getChildren();
+                for (Node node : nodesList) {
+                    if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
+                        if (node instanceof FormulaBox) {
+                            ((FormulaBox) node).processStarRequest(event.getButton() == MouseButton.PRIMARY);
+                            break;
+                        }
+                    }
+                }
+
+            }
+        };
+        starToggle.selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv)  right_pane.addEventFilter(MouseEvent.MOUSE_PRESSED, starClickFilter );
+            else right_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, starClickFilter);
+        });
+
+        circleClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ObservableList<Node> nodesList = right_pane.getChildren();
+                for (Node node : nodesList) {
+                    if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
+                        if (node instanceof FormulaBox) {
+                            ((FormulaBox) node).processCircleRequest(event.getButton() == MouseButton.PRIMARY);
+                            break;
+                        }
+                    }
+                }
+
+            }
+        };
+        circleToggle.selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv)  right_pane.addEventFilter(MouseEvent.MOUSE_PRESSED, circleClickFilter );
+            else right_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, circleClickFilter);
+        });
+
+        underlineClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ObservableList<Node> nodesList = right_pane.getChildren();
+                for (Node node : nodesList) {
+                    if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
+                        if (node instanceof FormulaBox) {
+                            ((FormulaBox) node).processUnderlineRequest(event.getButton() == MouseButton.PRIMARY);
+                            break;
+                        }
+                    }
+                }
+
+            }
+        };
+        underlineToggle.selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv)  right_pane.addEventFilter(MouseEvent.MOUSE_PRESSED, underlineClickFilter );
+            else right_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, underlineClickFilter);
+        });
 
 
 
@@ -81,7 +217,7 @@ public class RootLayout extends AnchorPane {
         getChildren().add(mDragOverIcon);
 
         //populate left pane with multiple colored icons for testing
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 4; i++) {
 
             DragIcon icn = new DragIcon();
 
@@ -90,7 +226,27 @@ public class RootLayout extends AnchorPane {
             icn.setType(DragIconType.values()[i]);
             left_pane.getChildren().add(icn);
         }
+        left_pane.getChildren().addAll(boxToggle, starToggle, circleToggle, underlineToggle);
+        left_pane.setMargin(boxToggle, new Insets(0, 0, 0, 10));
+        left_pane.setMargin(starToggle, new Insets(5, 0, 0, 10));
+        left_pane.setMargin(circleToggle, new Insets(5, 0, 0, 10));
+        left_pane.setMargin(underlineToggle, new Insets(5, 0, 0, 10));
+
+
         buildDragHandlers();
+    }
+
+    public static boolean inHierarchy(Node node, Node potentialHierarchyElement) {
+        if (potentialHierarchyElement == null) {
+            return true;
+        }
+        while (node != null) {
+            if (node == potentialHierarchyElement) {
+                return true;
+            }
+            node = node.getParent();
+        }
+        return false;
     }
 
     private void addDragDetection(DragIcon dragIcon) {

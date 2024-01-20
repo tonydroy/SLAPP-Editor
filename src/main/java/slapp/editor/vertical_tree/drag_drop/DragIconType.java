@@ -4,10 +4,7 @@ public enum DragIconType {
     cubic_curve,
     text_field,
     bracket,
-    dashed_line,
+    dashed_line
 
-    black,
-    yellow,
-    purple,
-    grey
+
 }

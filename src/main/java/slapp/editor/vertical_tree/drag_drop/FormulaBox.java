@@ -6,6 +6,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -13,13 +14,12 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import slapp.editor.EditorAlerts;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
@@ -54,10 +54,40 @@ public class FormulaBox extends AnchorPane {
 
     private final FormulaBox self;
 
+    private BoxedDRTA formulaBox;
+
+    private HBox mainBox;
+    private GridPane labelPane;
+    private VBox centerBox;
+    private VBox middleBox;
+    private AnchorPane linesPane = new AnchorPane();
+
+
+
+    Rectangle oval = new Rectangle();
+    EventHandler circleKeyFilter;
+    int circleStage = 0;
+    Label[] circleMarkers;
+    Double[] circleXAnchors = new Double[2];
+    EventHandler ulineKeyFilter;
+    int ulineStage = 0;
+    Label[] ulineMarkers;
+    Double[] ulineXAnchors = new Double[2];
+    double ulineSpace = 3.0;
+    List<Integer> baseline = new ArrayList<>();
+
+
+
+
+
 
 
     FormulaBox() {
         self = this;
+        circleMarkers = new Label[]{new Label("|"), new Label("|")};
+        ulineMarkers = new Label[]{new Label("|"), new Label("|")};
+
+
 
         top_link_handle = new AnchorPane();
         top_link_handle.setPrefHeight(9);
@@ -65,8 +95,7 @@ public class FormulaBox extends AnchorPane {
         top_link_handle.setOnMouseEntered(e -> top_link_handle.setStyle("-fx-background-color: grey; -fx-background-radius: 5 5 0 0") );
         top_link_handle.setOnDragOver(e -> top_link_handle.setStyle("-fx-background-color: grey; -fx-background-radius: 5 5 0 0") );
         top_link_handle.setOnMouseExited(e ->  top_link_handle.setStyle("-fx-background-color: transparent") );
-        top_link_handle.setOnMouseDragged(e ->  top_link_handle.setStyle("-fx-background-color: transparent"));
-
+        top_link_handle.setOnDragExited(e ->  top_link_handle.setStyle("-fx-background-color: transparent" ));
 
         bottom_link_handle = new AnchorPane();
         bottom_link_handle.setPrefHeight(9);
@@ -75,7 +104,7 @@ public class FormulaBox extends AnchorPane {
         bottom_link_handle.setOnMouseEntered(e -> bottom_link_handle.setStyle("-fx-background-color: grey; -fx-background-radius: 0 0 5 5"));
         bottom_link_handle.setOnDragOver(e -> bottom_link_handle.setStyle("-fx-background-color: grey; -fx-background-radius: 0 0 5 5") );
         bottom_link_handle.setOnMouseExited(e -> bottom_link_handle.setStyle("fx-background-color: transparent"));
-        bottom_link_handle.setOnMouseDragged(e ->  bottom_link_handle.setStyle("-fx-background-color: transparent"));
+        bottom_link_handle.setOnDragExited(e ->  bottom_link_handle.setStyle("-fx-background-color: transparent"));
 
 
 
@@ -91,7 +120,7 @@ public class FormulaBox extends AnchorPane {
         closeLabel.setMaxWidth(10);
         closeLabel.setPadding(new Insets(0));
 
-        GridPane labelPane = new GridPane();
+        labelPane = new GridPane();
         ColumnConstraints columnConstraints = new ColumnConstraints(10);
         columnConstraints.setHgrow(Priority.NEVER);
         labelPane.getColumnConstraints().add(columnConstraints);
@@ -101,9 +130,6 @@ public class FormulaBox extends AnchorPane {
         moveRowConstraints.setVgrow(Priority.NEVER);
         labelPane.getRowConstraints().addAll(closeRowConstraints, moveRowConstraints);
         labelPane.add(closeLabel, 0, 0); labelPane.add(leftDragLabel, 0, 1);
-
-
-        //      VBox labelBox = new VBox(closeLabel, leftDragLabel);
 
 
         leftDragLabel.setOnMouseEntered(e -> {
@@ -129,10 +155,13 @@ public class FormulaBox extends AnchorPane {
         });
 
 
-        BoxedDRTA formulaBox = newFormulaBoxedDRTA();
+        formulaBox = newFormulaBoxedDRTA();
         RightDragResizer.makeResizable(formulaBox.getRTA());
 
-        VBox centerBox = new VBox(top_link_handle, formulaBox.getRTA(), bottom_link_handle);
+        middleBox = new VBox(formulaBox.getBoxedRTA(), linesPane);
+
+
+        centerBox = new VBox(top_link_handle, middleBox, bottom_link_handle);
         centerBox.setAlignment(Pos.CENTER);
 
 /*
@@ -145,13 +174,16 @@ public class FormulaBox extends AnchorPane {
 
 
 
-        HBox mainBox = new HBox(labelPane, centerBox);
+        mainBox = new HBox(labelPane, centerBox);
         mainBox.setAlignment(Pos.CENTER);
         mainBox.setMargin(labelPane, new Insets(10, 0, 0, 0));
  //       mainBox.setMargin(annotationField, new Insets(0,0, 14, 0));
 
         self.getChildren().addAll(mainBox);
-        self.setBottomAnchor(mainBox, 0.0); self.setLeftAnchor(mainBox, 0.0); self.setTopAnchor(mainBox, 0.0); self.setRightAnchor(mainBox, 0.0);
+//        self.setBottomAnchor(mainBox, 0.0);
+        self.setLeftAnchor(mainBox, 0.0);
+        self.setTopAnchor(mainBox, 0.0);
+ //       self.setRightAnchor(mainBox, 0.0);
 
         setId(UUID.randomUUID().toString());
         initialize();
@@ -177,6 +209,114 @@ public class FormulaBox extends AnchorPane {
                 right_pane = (AnchorPane) getParent();
             }
         });
+
+        circleKeyFilter = new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent e) {
+                RichTextArea rta = formulaBox.getRTA();
+                KeyCode code = e.getCode();
+                Bounds rtaBounds = self.sceneToLocal(rta.localToScene(rta.getBoundsInLocal()));
+                if (code == KeyCode.ESCAPE) {
+                    if (circleStage <= 2) {
+                        Bounds caretBounds = ((RichTextAreaSkin) formulaBox.getRTA().getSkin()).getCaretPosition();
+                        Bounds newCaretBounds = rta.sceneToLocal(caretBounds);
+                        double xAnchor = newCaretBounds.getMaxX() + rtaBounds.getMinX() - 1.0;
+                        double yAnchor = newCaretBounds.getMaxY() + rtaBounds.getMinY();
+                        if (circleStage < 2) {
+                            Label marker = circleMarkers[circleStage];
+                            circleXAnchors[circleStage] = xAnchor;
+                            self.getChildren().add(marker);
+                            self.setLeftAnchor(marker, xAnchor);
+                            self.setTopAnchor(marker, yAnchor);
+                            circleStage++;
+                        } else {
+                            double minX = Math.min(circleXAnchors[0], circleXAnchors[1]);
+                            double maxX = Math.max(circleXAnchors[0], circleXAnchors[1]);
+                            self.getChildren().removeAll(circleMarkers);
+                            self.getChildren().add(oval);
+                            oval.setWidth(maxX - minX);
+
+                            oval.setHeight(rtaBounds.getHeight() - 6.0);
+                            oval.setStyle("-fx-fill: transparent; -fx-stroke: black; -fx-stroke-width: 1;");
+                            oval.setArcHeight(rtaBounds.getHeight() - 6.0);
+                            oval.setArcWidth((maxX - minX));
+                            self.setLeftAnchor(oval, minX);
+                            self.setTopAnchor(oval, rtaBounds.getMinY() + 2.0 );
+                            circleStage++;
+                        }
+                    } else {
+                        EditorAlerts.fleetingPopup("Text field has at most one circle annotation.");
+                    }
+                    e.consume();
+                }
+            }
+        };
+
+        ulineKeyFilter = new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent e) {
+                RichTextArea rta = formulaBox.getRTA();
+                KeyCode code = e.getCode();
+                Bounds rtaBounds = self.sceneToLocal(rta.localToScene(rta.getBoundsInLocal()));
+                if (code == KeyCode.ESCAPE) {
+                    if (ulineStage <= 2) {
+                        Bounds caretBounds = ((RichTextAreaSkin) formulaBox.getRTA().getSkin()).getCaretPosition();
+                        Bounds newCaretBounds = rta.sceneToLocal(caretBounds);
+                        double xAnchor = newCaretBounds.getMaxX() + rtaBounds.getMinX() - 1.0;
+                        double yAnchor = newCaretBounds.getMaxY() + rtaBounds.getMinY();
+                        if (ulineStage < 2) {
+                            Label marker = ulineMarkers[ulineStage];
+                            ulineXAnchors[ulineStage] = xAnchor;
+                            self.getChildren().add(marker);
+                            self.setLeftAnchor(marker, xAnchor);
+                            self.setTopAnchor(marker, yAnchor);
+                            ulineStage++;
+                        } else {
+                            double minX = Math.min(ulineXAnchors[0], ulineXAnchors[1]);
+                            double maxX = Math.max(ulineXAnchors[0], ulineXAnchors[1]);
+                            self.getChildren().removeAll(ulineMarkers);
+                            setLine(minX, maxX);
+                            ulineStage = 0;
+                        }
+                    } else {
+                        EditorAlerts.fleetingPopup("Something is wrong.");
+                    }
+                    e.consume();
+                }
+            }
+        };
+
+
+    }
+
+    private void setLine(double startX, double endX) {
+        //make sure there is a baseline for new line
+        int intStartX = (int) Math.round(startX);
+        int intEndX = (int) Math.round(endX);
+
+        for (int i = baseline.size(); i <= intEndX; i++) {
+            baseline.add(-((int) ulineSpace) + 1);
+        }
+
+        //find base for line
+        int maxBase = 0;
+        for (int i = intStartX; i <= intEndX; i++) {
+            if (baseline.get(i) > maxBase) {
+                maxBase = baseline.get(i);
+            }
+        }
+
+        //get yPosition of new line and update baseline
+        double yPos = (double) maxBase + ulineSpace;
+        for (int i = intStartX; i <= intEndX; i++) {
+            baseline.set(i, (int) Math.round(yPos));
+        }
+
+        //add line to linesPane
+        Line line = new Line(0, 0, endX - startX, 0);
+        linesPane.getChildren().add(line);
+        linesPane.setLeftAnchor(line, startX);
+        linesPane.setBottomAnchor(line, yPos);
     }
 
     public void registerLink(String linkId) {mLinkIds.add(linkId); }
@@ -360,6 +500,9 @@ public class FormulaBox extends AnchorPane {
                 mDragLink.setVisible(false);
                 right_pane.getChildren().remove(0);
 
+     //           bottom_link_handle.setStyle("-fx-background-color: transparent");
+     //           top_link_handle.setStyle("-fx-background-color: transparent");
+
                 AnchorPane link_handle = (AnchorPane) event.getSource();
 
                 ClipboardContent content = new ClipboardContent();
@@ -472,7 +615,7 @@ public class FormulaBox extends AnchorPane {
         rta.setPrefWidth(36);
      //   rta.getStylesheets().add("slappDerivation.css");
        rta.getStylesheets().add("formulaBox.css");
-        rta.setPromptText("X");
+        rta.setPromptText("");
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
 //                editorInFocus(drta, ControlType.FIELD);             **needs to be revived once integrated into SLAPP**
@@ -480,6 +623,58 @@ public class FormulaBox extends AnchorPane {
         });
         rta.getActionFactory().saveNow().execute(new ActionEvent());
         return boxedDRTA;
+    }
+
+    void processBoxRequest(boolean add) {
+        if (add) {
+//            formulaBox.getRTA().getStylesheets().clear();
+//            formulaBox.getRTA().getStylesheets().add("boldFormulaBox.css");
+            middleBox.setStyle("-fx-border-color: black; -fx-border-width: 1 1 1 1");
+        } else {
+//            formulaBox.getRTA().getStylesheets().clear();
+//            formulaBox.getRTA().getStylesheets().add("formulaBox.css");
+            middleBox.setStyle("-fx-border-width: 0 0 0 0");
+
+        }
+    }
+
+    void processStarRequest(boolean add) {
+        if (add) {
+            Label star = new Label("\u2605");
+            mainBox.getChildren().clear();
+            mainBox.getChildren().addAll(labelPane, centerBox, star);
+            mainBox.setMargin(star, new Insets(0,0, 14, 0));
+
+        } else {
+            mainBox.getChildren().clear();
+            mainBox.getChildren().addAll(labelPane, centerBox);
+        }
+    }
+
+    void processCircleRequest(boolean add) {
+        if (add) {
+            RichTextArea rta = formulaBox.getRTA();
+            rta.requestFocus();
+            self.addEventFilter(KeyEvent.KEY_PRESSED, circleKeyFilter);
+        } else {
+            self.removeEventFilter(KeyEvent.KEY_PRESSED, circleKeyFilter);
+            self.getChildren().removeAll(circleMarkers[0], circleMarkers[1], oval);
+            circleStage = 0;
+        }
+    }
+    void processUnderlineRequest(boolean add) {
+        if (add) {
+            RichTextArea rta = formulaBox.getRTA();
+            rta.requestFocus();
+            self.addEventFilter(KeyEvent.KEY_PRESSED, ulineKeyFilter);
+        } else {
+            self.removeEventFilter(KeyEvent.KEY_PRESSED, ulineKeyFilter);
+            self.getChildren().removeAll(ulineMarkers[0], ulineMarkers[1]);
+            linesPane.getChildren().clear();
+            baseline.clear();
+        }
+
+
     }
 
 
