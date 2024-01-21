@@ -175,7 +175,7 @@ public class FormulaBox extends AnchorPane {
 
 
         mainBox = new HBox(labelPane, centerBox);
-        mainBox.setAlignment(Pos.CENTER);
+        mainBox.setAlignment(Pos.TOP_CENTER);
         mainBox.setMargin(labelPane, new Insets(10, 0, 0, 0));
  //       mainBox.setMargin(annotationField, new Insets(0,0, 14, 0));
 
@@ -275,11 +275,11 @@ public class FormulaBox extends AnchorPane {
                             double minX = Math.min(ulineXAnchors[0], ulineXAnchors[1]);
                             double maxX = Math.max(ulineXAnchors[0], ulineXAnchors[1]);
                             self.getChildren().removeAll(ulineMarkers);
-                            setLine(minX, maxX);
+                            setLine(minX - rtaBounds.getMinX(), maxX - rtaBounds.getMinX());
                             ulineStage = 0;
                         }
                     } else {
-                        EditorAlerts.fleetingPopup("Something is wrong.");
+                        throw new IndexOutOfBoundsException("Index out of bounds: ulineKeyFilter.");
                     }
                     e.consume();
                 }
@@ -295,7 +295,7 @@ public class FormulaBox extends AnchorPane {
         int intEndX = (int) Math.round(endX);
 
         for (int i = baseline.size(); i <= intEndX; i++) {
-            baseline.add(-((int) ulineSpace) + 1);
+            baseline.add(-((int) ulineSpace));
         }
 
         //find base for line
@@ -459,7 +459,9 @@ public class FormulaBox extends AnchorPane {
 
                 Point2D p = new Point2D(
                         getLayoutX() + (getWidth() / 2.0),
-                        getLayoutY() + (getHeight() / 2.0)
+                        getLayoutY() + (middleBox.getHeight()/2) + 9
+
+ //                       getLayoutY() + (getHeight() / 2.0)
                 );
 
                 mDragLink.setStart(p);
@@ -651,6 +653,25 @@ public class FormulaBox extends AnchorPane {
         }
     }
 
+    void processAnnotationRequest(boolean add) {
+        if (add) {
+            TextField field = new TextField();
+            field.setPrefWidth(28);
+            field.setPrefHeight(15);
+            field.setFont(new Font("Noto Sans", 10));
+            field.setPadding(new Insets(0));
+            mainBox.getChildren().clear();
+            mainBox.getChildren().addAll(labelPane, centerBox, field);
+            mainBox.setMargin(field, new Insets(0,0, 14, 0));
+
+        } else {
+            mainBox.getChildren().clear();
+            mainBox.getChildren().addAll(labelPane, centerBox);
+        }
+    }
+
+
+
     void processCircleRequest(boolean add) {
         if (add) {
             RichTextArea rta = formulaBox.getRTA();
@@ -673,10 +694,9 @@ public class FormulaBox extends AnchorPane {
             linesPane.getChildren().clear();
             baseline.clear();
         }
-
-
     }
 
-
-
+    public VBox getMiddleBox() {
+        return middleBox;
+    }
 }

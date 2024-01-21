@@ -66,14 +66,20 @@ public class ClickableNodeLink extends Pane {
  //       node_link1.startXProperty().bind(add(source.layoutXProperty(), (source.widthProperty().divide(centerDivisor))));
  //       node_link1.endXProperty().bind(add(target.layoutXProperty(), (target.widthProperty().divide(centerDivisor))));
 
+        DoubleProperty sourceBoxHeightProperty = new SimpleDoubleProperty();
+        sourceBoxHeightProperty.bind(add(source.getMiddleBox().heightProperty(), 9.0));
+
+        DoubleProperty targetBoxHeightProperty = new SimpleDoubleProperty();
+        targetBoxHeightProperty.bind(add(target.getMiddleBox().heightProperty(), 9.0));
+
         if (source.getLayoutY() < target.getLayoutY()) {
-            node_link.startYProperty().bind(add(source.layoutYProperty(), (source.getHeight() - 9.0)));
+            node_link.startYProperty().bind(add(source.layoutYProperty(), sourceBoxHeightProperty));
             node_link.endYProperty().bind(add(target.layoutYProperty(), 9.0));
   //          node_link1.startYProperty().bind(add(source.layoutYProperty(), (source.getHeight() - 9.0)));
   //          node_link1.endYProperty().bind(add(target.layoutYProperty(), 9.0));
         } else {
             node_link.startYProperty().bind(add(source.layoutYProperty(), 9.0));
-            node_link.endYProperty().bind(add(target.layoutYProperty(), (target.getHeight() - 9.0)));
+            node_link.endYProperty().bind(add(target.layoutYProperty(), targetBoxHeightProperty));
  //           node_link1.startYProperty().bind(add(source.layoutYProperty(), 9.0));
  //           node_link1.endYProperty().bind(add(target.layoutYProperty(), (target.getHeight() - 9.0)));
         }

@@ -11,9 +11,13 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 
@@ -24,10 +28,12 @@ public class RootLayout extends AnchorPane {
     VBox left_pane;
     EventHandler boxClickFilter;
     EventHandler starClickFilter;
+    EventHandler annotationClickFilter;
     EventHandler circleClickFilter;
     EventHandler underlineClickFilter;
     ToggleButton boxToggle;
     ToggleButton starToggle;
+    ToggleButton annotationToggle;
     ToggleButton circleToggle;
     ToggleButton underlineToggle;
 
@@ -71,12 +77,34 @@ public class RootLayout extends AnchorPane {
         starToggle.setGraphic(starToggleIcon);
         starToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) star"));
 
-        circleToggle = new ToggleButton("O");
+        annotationToggle = new ToggleButton();
+        annotationToggle.setPrefWidth(64);
+        annotationToggle.setPrefHeight(28);
+        AnchorPane boxesPane = new AnchorPane();
+        Rectangle bigBox = new Rectangle(20,15);
+        bigBox.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
+        Rectangle littleBox = new Rectangle(10,10);
+        littleBox.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
+        boxesPane.getChildren().addAll(bigBox, littleBox);
+        boxesPane.setTopAnchor(bigBox, 7.0);
+        boxesPane.setLeftAnchor(littleBox, 20.0);
+        boxesPane.setTopAnchor(littleBox, 1.0);
+
+        HBox buttonBox = new HBox(boxesPane);
+        buttonBox.setAlignment(Pos.CENTER);
+        annotationToggle.setGraphic(buttonBox);
+        annotationToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) annotation box"));
+
+
+        circleToggle = new ToggleButton();
         circleToggle.setPrefWidth(64);
         circleToggle.setPrefHeight(28);
-  //      FontIcon circleToggleIcon = new FontIcon(LineAwesomeSolid.CIRCLE);
-    //    starToggleIcon.setIconSize(20);
-    //    circleToggle.setGraphic(circleToggleIcon);
+        HBox circlePane = new HBox();
+        Circle circleIcon = new Circle(7);
+        circleIcon.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
+        circlePane.getChildren().add(circleIcon);
+        circlePane.setAlignment(Pos.CENTER);
+        circleToggle.setGraphic(circlePane);
         circleToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) circle"));
 
         underlineToggle = new ToggleButton();
@@ -90,6 +118,7 @@ public class RootLayout extends AnchorPane {
         ToggleGroup buttonGroup = new ToggleGroup();
         boxToggle.setToggleGroup(buttonGroup);
         starToggle.setToggleGroup(buttonGroup);
+        annotationToggle.setToggleGroup(buttonGroup);
         circleToggle.setToggleGroup(buttonGroup);
         underlineToggle.setToggleGroup(buttonGroup);
 
@@ -152,6 +181,26 @@ public class RootLayout extends AnchorPane {
         starToggle.selectedProperty().addListener((ob, ov, nv) -> {
             if (nv)  right_pane.addEventFilter(MouseEvent.MOUSE_PRESSED, starClickFilter );
             else right_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, starClickFilter);
+        });
+
+        annotationClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ObservableList<Node> nodesList = right_pane.getChildren();
+                for (Node node : nodesList) {
+                    if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
+                        if (node instanceof FormulaBox) {
+                            ((FormulaBox) node).processAnnotationRequest(event.getButton() == MouseButton.PRIMARY);
+                            break;
+                        }
+                    }
+                }
+
+            }
+        };
+        annotationToggle.selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv)  right_pane.addEventFilter(MouseEvent.MOUSE_PRESSED, annotationClickFilter );
+            else right_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, annotationClickFilter);
         });
 
         circleClickFilter = new EventHandler<MouseEvent>() {
@@ -226,9 +275,10 @@ public class RootLayout extends AnchorPane {
             icn.setType(DragIconType.values()[i]);
             left_pane.getChildren().add(icn);
         }
-        left_pane.getChildren().addAll(boxToggle, starToggle, circleToggle, underlineToggle);
+        left_pane.getChildren().addAll(boxToggle, starToggle, annotationToggle, circleToggle, underlineToggle);
         left_pane.setMargin(boxToggle, new Insets(0, 0, 0, 10));
         left_pane.setMargin(starToggle, new Insets(5, 0, 0, 10));
+        left_pane.setMargin(annotationToggle, new Insets(5, 0, 0, 10));
         left_pane.setMargin(circleToggle, new Insets(5, 0, 0, 10));
         left_pane.setMargin(underlineToggle, new Insets(5, 0, 0, 10));
 
