@@ -18,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 
@@ -34,6 +35,9 @@ public class RootLayout extends AnchorPane {
     ToggleButton boxToggle;
     ToggleButton starToggle;
     ToggleButton annotationToggle;
+    Button annotationPlus;
+    Button annotationMinus;
+    HBox annotationBox;
     ToggleButton circleToggle;
     ToggleButton underlineToggle;
 
@@ -63,9 +67,13 @@ public class RootLayout extends AnchorPane {
         boxToggle = new ToggleButton();
         boxToggle.setPrefWidth(64);
         boxToggle.setPrefHeight(28);
-        FontIcon boxToggleIcon = new FontIcon(LineAwesomeSolid.STOP);
-        boxToggleIcon.setIconSize(20);
-        boxToggle.setGraphic(boxToggleIcon);
+        Rectangle rectangle = new Rectangle(20,15);
+        rectangle.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
+        HBox boxToggleGraphic = new HBox(rectangle);
+        boxToggleGraphic.setAlignment(Pos.CENTER);
+   //     FontIcon boxToggleIcon = new FontIcon(LineAwesomeSolid.STOP);
+   //     boxToggleIcon.setIconSize(20);
+        boxToggle.setGraphic(boxToggleGraphic);
         boxToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) box"));
 
 
@@ -78,22 +86,32 @@ public class RootLayout extends AnchorPane {
         starToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) star"));
 
         annotationToggle = new ToggleButton();
-        annotationToggle.setPrefWidth(64);
+        annotationToggle.setPrefWidth(44);
         annotationToggle.setPrefHeight(28);
         AnchorPane boxesPane = new AnchorPane();
-        Rectangle bigBox = new Rectangle(20,15);
+        Rectangle bigBox = new Rectangle(15,10);
         bigBox.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
-        Rectangle littleBox = new Rectangle(10,10);
+        Rectangle littleBox = new Rectangle(7,7);
         littleBox.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
         boxesPane.getChildren().addAll(bigBox, littleBox);
-        boxesPane.setTopAnchor(bigBox, 7.0);
-        boxesPane.setLeftAnchor(littleBox, 20.0);
-        boxesPane.setTopAnchor(littleBox, 1.0);
-
+        boxesPane.setTopAnchor(bigBox, 10.0);
+        boxesPane.setLeftAnchor(littleBox, 15.0);
+        boxesPane.setTopAnchor(littleBox, 5.0);
         HBox buttonBox = new HBox(boxesPane);
         buttonBox.setAlignment(Pos.CENTER);
         annotationToggle.setGraphic(buttonBox);
         annotationToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) annotation box"));
+
+        annotationPlus = new Button("+");
+        annotationPlus.setFont(new Font(10));
+        annotationPlus.setPadding(new Insets(0));
+        annotationPlus.setPrefWidth(20); annotationPlus.setPrefHeight(14);
+        annotationMinus = new Button("-");
+        annotationMinus.setFont(new Font(10));
+        annotationMinus.setPadding(new Insets(0));
+        annotationMinus.setPrefWidth(20); annotationMinus.setPrefHeight(14);
+        VBox annotationButtons = new VBox(annotationPlus, annotationMinus);
+        annotationBox = new HBox(annotationToggle, annotationButtons);
 
 
         circleToggle = new ToggleButton();
@@ -203,6 +221,26 @@ public class RootLayout extends AnchorPane {
             else right_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, annotationClickFilter);
         });
 
+        annotationPlus.setOnAction(e -> {
+            ObservableList<Node> nodesList = right_pane.getChildren();
+            for (Node node : nodesList) {
+                if (node instanceof FormulaBox) {
+                    ((FormulaBox) node).processAnnotationRequest(true);
+                }
+            }
+            annotationToggle.setSelected(false);
+        });
+
+        annotationMinus.setOnAction(e -> {
+           ObservableList<Node> nodesList = right_pane.getChildren();
+           for (Node node : nodesList) {
+               if (node instanceof FormulaBox) {
+                   ((FormulaBox) node).processAnnotationRequest(false);
+               }
+           }
+            annotationToggle.setSelected(false);
+        });
+
         circleClickFilter = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -275,10 +313,10 @@ public class RootLayout extends AnchorPane {
             icn.setType(DragIconType.values()[i]);
             left_pane.getChildren().add(icn);
         }
-        left_pane.getChildren().addAll(boxToggle, starToggle, annotationToggle, circleToggle, underlineToggle);
+        left_pane.getChildren().addAll(boxToggle, starToggle, annotationBox, circleToggle, underlineToggle);
         left_pane.setMargin(boxToggle, new Insets(0, 0, 0, 10));
         left_pane.setMargin(starToggle, new Insets(5, 0, 0, 10));
-        left_pane.setMargin(annotationToggle, new Insets(5, 0, 0, 10));
+        left_pane.setMargin(annotationBox, new Insets(5, 0, 0, 10));
         left_pane.setMargin(circleToggle, new Insets(5, 0, 0, 10));
         left_pane.setMargin(underlineToggle, new Insets(5, 0, 0, 10));
 

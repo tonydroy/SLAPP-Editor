@@ -164,16 +164,6 @@ public class FormulaBox extends AnchorPane {
         centerBox = new VBox(top_link_handle, middleBox, bottom_link_handle);
         centerBox.setAlignment(Pos.CENTER);
 
-/*
-        TextField annotationField = new TextField();
-        annotationField.setFont(new Font("Noto Sans", 9));
-        annotationField.setPadding(new Insets(0));
-        annotationField.setMaxWidth(10);
-        HBox mainBox = new HBox(labelPane, centerBox, annotationField);
- */
-
-
-
         mainBox = new HBox(labelPane, centerBox);
         mainBox.setAlignment(Pos.TOP_CENTER);
         mainBox.setMargin(labelPane, new Insets(10, 0, 0, 0));

@@ -22,6 +22,7 @@ import slapp.editor.truth_table.TruthTableModel;
 import slapp.editor.truth_table_explain.TruthTableExpCreate;
 import slapp.editor.truth_table_explain.TruthTableExpExercise;
 import slapp.editor.truth_table_explain.TruthTableExpModel;
+import slapp.editor.vertical_tree.VerticalTreeExercise;
 
 public class TypeSelectorFactories {
     private MainWindow mainWindow;
@@ -178,6 +179,11 @@ public class TypeSelectorFactories {
                 TruthTableExpCreate truthTableExpCreate = new TruthTableExpCreate(mainWindow);
                 break;
             }
+            case VERTICAL_TREE: {
+                VerticalTreeExercise vTreeExercise = new vTreeExercise()
+                break;
+            }
+
 
 
         }
