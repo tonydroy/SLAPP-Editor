@@ -198,56 +198,51 @@ public class DecoratedRTA {
 
         editToolbar = new ToolBar();
         editToolbar.setStyle("-fx-spacing: 12");
+        editToolbar.setPrefHeight(38);
         editToolbar.getItems().setAll(
+                keyboardSelector,
+                new Label("Size"),
+                fontSize,
+                wideSeparator(1)
+        );
+
+        kbdDiaToolbar = new ToolBar();
+        kbdDiaToolbar.setStyle("-fx-spacing: 5");
+        kbdDiaToolbar.getItems().setAll(
+        );
+
+        fontsToolbar = new ToolBar();
+        fontsToolbar.setStyle("-fx-spacing: 12");
+        fontsToolbar.getItems().setAll(
                 actionButton(LineAwesomeSolid.CUT, "Cut",   editor.getActionFactory().cut()),
                 actionButton(LineAwesomeSolid.COPY, "Copy",  editor.getActionFactory().copy()),
                 actionButton(LineAwesomeSolid.PASTE, "Paste", editor.getActionFactory().paste()),
                 actionButton(LineAwesomeSolid.UNDO, "Undo",  editor.getActionFactory().undo()),
                 actionButton(LineAwesomeSolid.REDO, "Redo",  editor.getActionFactory().redo()),
 
-                wideSeparator(7.5),
-                keyboardSelector,
+                wideSeparator(0),
+
                 unicodeField,
-                new Label("Size"),
-                fontSize,
-                wideSeparator(8)
-        );
+                textForeground,
+                textBackground,
 
-        kbdDiaToolbar = new ToolBar();
-        kbdDiaToolbar.setStyle("-fx-spacing: 15");
-        kbdDiaToolbar.getItems().setAll(
-                keyboardDiagramButton
-        );
+                wideSeparator(0),
 
-        fontsToolbar = new ToolBar();
-        fontsToolbar.setStyle("-fx-spacing: 12");
-        fontsToolbar.getItems().setAll(
                 createToggleButton(LineAwesomeSolid.STRIKETHROUGH, "Strikethrough", property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
                 createToggleButton(LineAwesomeSolid.UNDERLINE, "Underline", property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
                 overlineButton,
-
-                wideSeparator(4.2),
                 createToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).transSuperscript(false).transSubscript(false).build())),
                 createColoredToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
                 createToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).transSuperscript(false).transSubscript(false).build())),
-                createColoredToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build())),
-                textForeground,
-                textBackground
-        );
+                createColoredToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build()))
+                );
 
+        /*
         insertToolbar = new ToolBar();
         insertToolbar.setStyle("-fx-spacing: 12");
         insertToolbar.getItems().setAll(
-                actionImage(LineAwesomeSolid.IMAGE, "Insert Image"),
-                actionEmoji("Insert Emoji"),
-                actionHyperlink(LineAwesomeSolid.LINK, "Insert Hyperlink"),
-                actionTable(LineAwesomeSolid.TABLE, "Insert Table", td -> editor.getActionFactory().insertTable(td)),
-
-                wideSeparator(4.2),
-                presets,
-                createToggleButton(LineAwesomeSolid.BOLD, "Bold (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
-                createToggleButton(LineAwesomeSolid.ITALIC, "Italic (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build()))
         );
+         */
 
         paragraphToolbar = new ToolBar();
         paragraphToolbar.setStyle("-fx-spacing: 10");
@@ -256,18 +251,28 @@ public class DecoratedRTA {
                 createToggleButton(LineAwesomeSolid.ALIGN_CENTER, "Align Center", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.CENTER, (builder, a) -> builder.alignment(a ? TextAlignment.CENTER : TextAlignment.LEFT).build())),
                 createToggleButton(LineAwesomeSolid.ALIGN_RIGHT, "Align Right", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.RIGHT, (builder, a) -> builder.alignment(a ? TextAlignment.RIGHT : TextAlignment.LEFT).build())),
                 createToggleButton(LineAwesomeSolid.ALIGN_JUSTIFY, "Justify", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.JUSTIFY, (builder, a) -> builder.alignment(a ? TextAlignment.JUSTIFY : TextAlignment.LEFT).build())),
-                wideSeparator(2),
 
                 createJumpSpinner("Spacing", "Space for wrapped lines (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getSpacing(), (builder, a) -> builder.spacing(a).build())),
-                createJumpSpinner("Top", "Top Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getTopInset(), (builder, a) -> builder.topInset(a).build())),
-                createJumpSpinner("Bottom", "Bottom Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getBottomInset(), (builder, a) -> builder.bottomInset(a).build())),
-                createJumpSpinner("Left", "LeftMargin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getLeftInset(), (builder, a) -> builder.leftInset(a).build())),
-                createJumpSpinner("Right", "Right Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getRightInset(), (builder, a) -> builder.rightInset(a).build())),
+ //               createJumpSpinner("Top", "Top Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getTopInset(), (builder, a) -> builder.topInset(a).build())),
+ //               createJumpSpinner("Bottom", "Bottom Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getBottomInset(), (builder, a) -> builder.bottomInset(a).build())),
+ //               createJumpSpinner("Left", "LeftMargin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getLeftInset(), (builder, a) -> builder.leftInset(a).build())),
+ //               createJumpSpinner("Right", "Right Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getRightInset(), (builder, a) -> builder.rightInset(a).build())),
                 wideSeparator(2),
                 createToggleButton(LineAwesomeSolid.LIST_OL, "Numbered List", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == NUMBERED_LIST, (builder, a) -> builder.graphicType(a ? NUMBERED_LIST : NONE).build())),
                 createToggleButton(LineAwesomeSolid.LIST_UL, "Unordered List/Outline", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == BULLETED_LIST, (builder, a) -> builder.graphicType(a ? BULLETED_LIST : NONE).build())),
-                createSpinner("Indent", "Indent Level", p -> new ParagraphDecorateAction<>(editor, p, ParagraphDecoration::getIndentationLevel, (builder, a) -> builder.indentationLevel(a).build()))
+                createSpinner("Indent", "Indent Level", p -> new ParagraphDecorateAction<>(editor, p, ParagraphDecoration::getIndentationLevel, (builder, a) -> builder.indentationLevel(a).build())),
 
+                wideSeparator(3),
+
+                actionImage(LineAwesomeSolid.IMAGE, "Insert Image"),
+                actionEmoji("Insert Emoji"),
+                actionHyperlink(LineAwesomeSolid.LINK, "Insert Hyperlink"),
+                actionTable(LineAwesomeSolid.TABLE, "Insert Table", td -> editor.getActionFactory().insertTable(td)),
+
+                wideSeparator(4),
+
+                createToggleButton(LineAwesomeSolid.BOLD, "Bold (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
+                createToggleButton(LineAwesomeSolid.ITALIC, "Italic (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build()))
             );
         setRtaListeners();
     }
@@ -632,4 +637,6 @@ public class DecoratedRTA {
     public ToolBar getKbdDiaToolbar() {
         return kbdDiaToolbar;
     }
+
+
 }

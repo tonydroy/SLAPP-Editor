@@ -10,7 +10,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -26,7 +25,6 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.assignment.AssignmentHeader;
 import slapp.editor.main_window.assignment.AssignmentHeaderItem;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -44,7 +42,7 @@ public class MainWindowView {
     private VBox centerBox;
     private Spinner<Integer> zoomSpinner;
     private Label zoomLabel;
-    int minStageWidth = 950;
+    int minStageWidth = 860;
     private BorderPane borderPane = new BorderPane();
     private Scene mainScene;
     private ExerciseView currentExerciseView;
@@ -65,8 +63,12 @@ public class MainWindowView {
     private Label nodePercentageLabel = new Label("0");
     private Label pagePercentLabel = new Label("0");
     private double lastCheckedNodeHeight = 0.0;
-
-
+    private CheckBox hPageCheck;
+    private CheckBox hWindowCheck;
+    private Spinner<Integer> hCustomSpinner;
+    private CheckBox vPageCheck;
+    private CheckBox vWindowCheck;
+    private Spinner<Integer> vCustomSpinner;
     private MenuItem createNewExerciseItem = new MenuItem("Create New");
     private MenuItem createRevisedExerciseItem = new MenuItem("Create Revised");
     private MenuItem saveExerciseItem = new MenuItem("Save");
@@ -76,7 +78,6 @@ public class MainWindowView {
     private MenuItem exportToPDFExerciseItem = new MenuItem("Export to PDF");
     private MenuItem clearExerciseItem = new MenuItem("Reset");
     private MenuItem closeExerciseItem = new MenuItem("Close");
-
     private MenuItem saveAssignmentItem = new MenuItem("Save");
     private MenuItem saveAsAssignmentItem = new MenuItem("Save As");
     private MenuItem openAssignmentItem = new MenuItem("Open");
@@ -85,19 +86,17 @@ public class MainWindowView {
     private MenuItem exportAssignmentToPDFItem = new MenuItem("Export to PDF");
     private MenuItem createNewAssignmentItem = new MenuItem("Create New");
     private MenuItem createRevisedAssignmentItem = new MenuItem("Create Revised");
-
     private MenuItem exportExerciseToPDFItemPM = new MenuItem("Export Exercise");
     private MenuItem printExerciseItemPM = new MenuItem("Print Exercise");
     private MenuItem printAssignmentItemPM = new MenuItem("Print Assignment");
     private MenuItem exportAssignmentToPDFItemPM = new MenuItem("Export Assignment");
     private MenuItem pageSetupItem = new MenuItem("Page Setup");
     private MenuItem exportSetupItem = new MenuItem("Export Setup");
-
+    private CheckMenuItem fitToPageItem = new CheckMenuItem("Fit to Page");
     Menu previousExerciseMenu = new Menu();
     Menu nextExerciseMenu = new Menu();
     Menu goToExerciseMenu = new Menu();
     Menu assignmentCommentMenu = new Menu();
-
     HBox menuBox;
 
     public MainWindowView(MainWindow controller) {
@@ -107,44 +106,21 @@ public class MainWindowView {
 
     private void setupWindow() {
 
-
         Menu assignmentMenu = new Menu("Assignment");
         Menu exerciseMenu = new Menu("Exercise");
         Menu printMenu = new Menu("Print");
         Menu helpMenu = new Menu("Help");
-        menuBar = new MenuBar(assignmentMenu, exerciseMenu, previousExerciseMenu, nextExerciseMenu, goToExerciseMenu, assignmentCommentMenu, printMenu, helpMenu);
+        fitToPageItem.setStyle("-fx-text-fill: green");
 
+        menuBar = new MenuBar(assignmentMenu, exerciseMenu, previousExerciseMenu, nextExerciseMenu, goToExerciseMenu, assignmentCommentMenu, printMenu, helpMenu);
         exerciseMenu.getItems().addAll(saveExerciseItem, saveAsExerciseItem, openExerciseItem, clearExerciseItem, closeExerciseItem, printExerciseItem, exportToPDFExerciseItem, createRevisedExerciseItem, createNewExerciseItem);
         assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, closeAssignmentItem, printAssignmentItem, exportAssignmentToPDFItem, createRevisedAssignmentItem, createNewAssignmentItem);
-        printMenu.getItems().addAll(printExerciseItemPM, exportExerciseToPDFItemPM, printAssignmentItemPM, exportAssignmentToPDFItemPM, pageSetupItem, exportSetupItem);
-
-        Region spacer = new Region();
-        Label percentSignLabel1 = new Label("%");
-        Label percentSignLabel2 = new Label("%");
-        Label heightLabel = new Label("Block Height: ");
-        Label widthLabel = new Label("Page Width: ");
-        menuBox = new HBox(menuBar, spacer, widthLabel, pagePercentLabel, percentSignLabel1, heightLabel, nodePercentageLabel, percentSignLabel2);
-        menuBox.setStyle("-fx-background-color: aliceblue; fx-border-color: white;");
-        menuBox.setPadding(new Insets(0,15,0,0));
-        menuBox.setMaxWidth(minStageWidth - 10);
-        menuBox.setMargin(heightLabel, new Insets(8,1,0,10));
-        menuBox.setMargin(nodeHeightLabel, new Insets(8,0,0,0));
-        menuBox.setMargin(nodePercentageLabel, new Insets(8,0,0,0));
-        menuBox.setMargin(pagePercentLabel, new Insets(8,0,0,0));
-        menuBox.setMargin(widthLabel, new Insets(8,1,0,0));
-        menuBox.setMargin(percentSignLabel1, new Insets(8,0,0,0));
-        menuBox.setMargin(percentSignLabel2, new Insets(8,0,0,0));
-
-//        menuBox.setMargin(updateHeightButton, new Insets(6,0,0,10));
-        menuBox.setHgrow(spacer, Priority.ALWAYS);
-//        updateHeightButton.setPadding(new Insets(1,4,1,4));
+        printMenu.getItems().addAll(printExerciseItemPM, exportExerciseToPDFItemPM, printAssignmentItemPM, exportAssignmentToPDFItemPM, pageSetupItem, exportSetupItem, fitToPageItem);
 
         FontIcon heightIcon = new FontIcon(LineAwesomeSolid.ARROWS_ALT);
         heightIcon.setIconSize(20);
         updateHeightButton.setGraphic(heightIcon);
         updateHeightButton.setTooltip(new Tooltip("Update content width and height"));
-
-
 
   //      updatePageSizeValues();
 
@@ -165,13 +141,36 @@ public class MainWindowView {
         saveButton.setGraphic(saveIcon);
         saveButton.setTooltip(new Tooltip("Save assignment if open and otherwise exercise"));
 
-
-
-
-
         centerBox = new VBox();
         centerBox.setSpacing(3);
-        Group centerGroup = new Group(centerBox);  //this lets scene width scale with nodes https://stackoverflow.com/questions/67724906/javafx-scaling-does-not-resize-the-component-in-parent-container
+        HBox centerHBox = new HBox(centerBox);
+        centerHBox.setAlignment(Pos.CENTER);
+
+ //       Group centerGroup = new Group(centerBox);  //this lets scene width scale with nodes https://stackoverflow.com/questions/67724906/javafx-scaling-does-not-resize-the-component-in-parent-container
+        ScrollPane centerGroup = new ScrollPane(centerHBox);
+
+        centerGroup.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        centerGroup.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        centerGroup.setFitToWidth(true);
+        centerGroup.setFitToHeight(true);
+        centerGroup.setStyle("-fx-background-color: transparent");
+
+        hPageCheck = new CheckBox("Page");
+        hWindowCheck = new CheckBox("Win");
+        hCustomSpinner = new Spinner<>(5, 995, 100, 5);
+        hCustomSpinner.setPrefWidth(60);
+
+        vPageCheck = new CheckBox("Page");
+        vWindowCheck = new CheckBox("Win");
+        vCustomSpinner = new Spinner<>(5, 995, 100, 5);
+        vCustomSpinner.setPrefWidth(60);
+
+        HBox verticalItemsBox = new HBox(5, new Label("V Size:"), vCustomSpinner, new Label("/"), vWindowCheck);
+        verticalItemsBox.setAlignment(Pos.CENTER_LEFT);
+        HBox horizontalItemsBox = new HBox(5, new Label("H Size:"), hCustomSpinner, new Label("/"), hWindowCheck);
+        horizontalItemsBox.setAlignment(Pos.CENTER_LEFT);
+
+        kbdDiaToolBar = new ToolBar(zoomLabel, zoomSpinner, verticalItemsBox, horizontalItemsBox, saveButton );
 
         borderPane.setCenter(centerGroup);
         borderPane.setMargin(centerGroup, new Insets(10,0,0,0));
@@ -321,41 +320,36 @@ public class MainWindowView {
 
         editToolbar = decoratedRTA.getEditToolbar();
         fontsToolbar = decoratedRTA.getFontsToolbar();
-        insertToolbar = decoratedRTA.getInsertToolbar();
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
         kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
 
-        if (!kbdDiaToolBar.getItems().contains(saveButton)) {
-            kbdDiaToolBar.getItems().add(0, updateHeightButton);
-            kbdDiaToolBar.getItems().add(0, zoomSpinner);
-            kbdDiaToolBar.getItems().add(0, zoomLabel);
-            kbdDiaToolBar.getItems().add(saveButton);
+        if (kbdDiaToolBar.getItems().isEmpty()) {
 
-            switch(control) {
+            kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("    V Size:"), vCustomSpinner, new Label("/"), vWindowCheck,
+                    new Label("    H Size:"), hCustomSpinner, new Label("/"), hWindowCheck, new Label("    "), decoratedRTA.getKeyboardDiagramButton(), new Label("  "), saveButton);
+
+            switch (control) {
                 case NONE: {
                     kbdDiaToolBar.setDisable(true);
                 }
                 case STATEMENT: {
                     editToolbar.setDisable(true);
                     fontsToolbar.setDisable(true);
-                      }
+                }
                 case FIELD: {
                     paragraphToolbar.setDisable(true);
-                    insertToolbar.setDisable(true);
-                      }
-                case AREA: {}
+                }
+                case AREA: { }
             }
         }
-        HBox insertAndFontsBox = new HBox(insertToolbar, fontsToolbar);
-        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
 
-        VBox topBox = new VBox(menuBox, paragraphToolbar, insertAndFontsBox, editAndKbdBox);
+        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
+        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
+
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox);
         topBox.layout();
         borderPane.topProperty().setValue(topBox);
     }
-
-
-
 
     private void closeWindow() {
         if (mainWindow.checkCloseWindow()) {
@@ -395,11 +389,7 @@ public class MainWindowView {
         Separator separator = new Separator();
         separator.setOrientation(Orientation.HORIZONTAL);
 
-
         RichTextArea commentArea = new RichTextArea(EditorMain.mainStage);
-
-
-
 
         Scene tempScene = new Scene(commentArea);
         Stage tempStage = new Stage();
@@ -415,9 +405,6 @@ public class MainWindowView {
         commentArea.setPrefHeight(Math.max(70, commentHeight + 35.0));
         commentArea.requestFocus();
         tempStage.close();
-
-
-
 
         headerBox.getChildren().addAll(nameBox,itemsBox, separator, commentArea );
         headerBox.setPadding(new Insets(0,0,20,0));

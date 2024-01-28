@@ -80,13 +80,13 @@ public class VerticalBracket extends AnchorPane {
 
         Pane brackPane = new Pane();
         brackPane.setMinWidth(8.0); brackPane.setMaxWidth(8.0);
-        brackPane.setMinHeight(64); brackPane.setMaxHeight(64);
+        brackPane.setMinHeight(24); brackPane.setMaxHeight(24);
         brackPane.setStyle("-fx-border-width: 1.5 0.0 1.5 1.5; -fx-border-color: black; -fx-border-radius: 5 0 0 5");
 
         AnchorPane mainPane = new AnchorPane();
         mainPane.setMinWidth(24.0);
         mainPane.setPrefWidth(24.0);
-        mainPane.setPrefHeight(48);
+        mainPane.setPrefHeight(24);
 
         //       mainPane.setStyle("-fx-border-color: red; fx-border-width: 1 1 1 1");
 
@@ -202,13 +202,13 @@ public class VerticalBracket extends AnchorPane {
         Point2D localCoords = getParent().sceneToLocal(p);
 
 
-        double localY = Math.round((localCoords.getY() - 20)  / 24.0) * 24.0;
+        double localY = Math.round((localCoords.getY() - 24)  / 24.0) * 24.0;
 
         relocate (
-                (int) localCoords.getX() - 12,
+                (int) localCoords.getX() - 18,
                 //         (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
 
-                (int) localY - 20
+                (int) localY + 3
  //               (int) (localY - (getBoundsInLocal().getHeight() / 2 ))
 
 

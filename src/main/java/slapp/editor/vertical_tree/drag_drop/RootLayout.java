@@ -5,6 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -26,7 +27,9 @@ public class RootLayout extends AnchorPane {
     SplitPane base_pane;
     ScrollPane scroll_pane;
     AnchorPane right_pane;
-    VBox left_pane;
+    HBox left_pane;
+
+
     EventHandler boxClickFilter;
     EventHandler starClickFilter;
     EventHandler annotationClickFilter;
@@ -48,12 +51,17 @@ public class RootLayout extends AnchorPane {
 
     public RootLayout() {
         scroll_pane = new ScrollPane();
-        left_pane = new VBox();
+        left_pane = new HBox();
         scroll_pane.setContent(left_pane);
         right_pane = new AnchorPane();
         base_pane = new SplitPane();
-        base_pane.getItems().addAll(scroll_pane, right_pane);
+        base_pane.getItems().addAll(left_pane, right_pane);
+        base_pane.setOrientation(Orientation.VERTICAL);
+
+
         this.getChildren().add(base_pane);
+
+
 
 
 
@@ -64,6 +72,10 @@ public class RootLayout extends AnchorPane {
     }
 
     private void setupWindow() {
+        RightDragResizer.makeResizable(base_pane);
+     //   BottomDragResizer.makeResizable(base_pane);
+        left_pane.setStyle("-fx-background-color: #FCFCFC;");
+
         boxToggle = new ToggleButton();
         boxToggle.setPrefWidth(64);
         boxToggle.setPrefHeight(28);
@@ -155,8 +167,10 @@ public class RootLayout extends AnchorPane {
         scroll_pane.setPrefWidth(100); scroll_pane.setMinWidth(100); scroll_pane.setMaxWidth(100);
         scroll_pane.setPadding(new Insets(6,0,0,8));
 
-        left_pane.setSpacing(10);
-        left_pane.setAlignment(Pos.CENTER);
+        left_pane.setSpacing(20);
+        left_pane.setAlignment(Pos.CENTER_LEFT);
+        left_pane.setMinHeight(32);
+        left_pane.setMaxHeight(32);
 
         base_pane.setResizableWithParent(right_pane, true);
 
@@ -313,12 +327,12 @@ public class RootLayout extends AnchorPane {
             icn.setType(DragIconType.values()[i]);
             left_pane.getChildren().add(icn);
         }
-        left_pane.getChildren().addAll(boxToggle, starToggle, annotationBox, circleToggle, underlineToggle);
-        left_pane.setMargin(boxToggle, new Insets(0, 0, 0, 10));
-        left_pane.setMargin(starToggle, new Insets(5, 0, 0, 10));
-        left_pane.setMargin(annotationBox, new Insets(5, 0, 0, 10));
-        left_pane.setMargin(circleToggle, new Insets(5, 0, 0, 10));
-        left_pane.setMargin(underlineToggle, new Insets(5, 0, 0, 10));
+//        controlsBox.getChildren().addAll(boxToggle, starToggle, annotationBox, circleToggle, underlineToggle);
+ //       left_pane.setMargin(boxToggle, new Insets(0, 0, 0, 10));
+ //       left_pane.setMargin(starToggle, new Insets(5, 0, 0, 10));
+ //       left_pane.setMargin(annotationBox, new Insets(5, 0, 0, 10));
+ //       left_pane.setMargin(circleToggle, new Insets(5, 0, 0, 10));
+ //       left_pane.setMargin(underlineToggle, new Insets(5, 0, 0, 10));
 
 
         buildDragHandlers();
@@ -561,7 +575,29 @@ public class RootLayout extends AnchorPane {
         return right_pane;
     }
 
-    public VBox getLeft_pane() {
+    public HBox getLeft_pane() {
         return left_pane;
+    }
+
+
+
+    public ToggleButton getBoxToggle() {
+        return boxToggle;
+    }
+
+    public ToggleButton getStarToggle() {
+        return starToggle;
+    }
+
+    public HBox getAnnotationBox() {
+        return annotationBox;
+    }
+
+    public ToggleButton getCircleToggle() {
+        return circleToggle;
+    }
+
+    public ToggleButton getUnderlineToggle() {
+        return underlineToggle;
     }
 }

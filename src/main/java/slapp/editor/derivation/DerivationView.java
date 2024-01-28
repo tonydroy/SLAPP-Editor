@@ -17,6 +17,7 @@ import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
+import slapp.editor.vertical_tree.drag_drop.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +55,8 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
         blankPane.setStyle("-fx-background-color: white;");
         contentSplitPane.getItems().addAll(grid, blankPane);
         contentSplitPane.setOrientation(Orientation.HORIZONTAL);
+
+
 
         ColumnConstraints fixedCol = new ColumnConstraints();
         fixedCol.setMinWidth(10);
