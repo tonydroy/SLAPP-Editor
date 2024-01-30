@@ -243,7 +243,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
         exerciseStatement.getEditor().setPrefHeight(height);
     }
     @Override
-    public Node getExerciseContentNode() { return contentSplitPane; }
+    public Node getExerciseContentNode() { return new VBox(contentSplitPane); }
     @Override
     public DoubleProperty getContentHeightProperty() { return grid.prefHeightProperty(); }
     @Override

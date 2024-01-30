@@ -53,6 +53,7 @@ public class PrintUtilities {
                 double bottomMargin = Math.max(baseLayout.getBottomMargin(), 48);
                 pageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), bottomMargin );
                 internalPageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), 18.0);
+
             }
             job.endJob();
         }

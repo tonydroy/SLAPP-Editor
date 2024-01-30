@@ -917,6 +917,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     @Override
     public void setExerciseModified(boolean modified) { this.exerciseModified = modified; }
 
+    /*
     @Override
     public void updateContentHeight(Node focusedNode, boolean isRequired) {
         double gridHeight = derivationView.getGridHeight();
@@ -954,6 +955,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             mainWindow.getLastFocusOwner().requestFocus();
         }
     }
+
+     */
 
     @Override
     public ExerciseModel<DerivationModel> getExerciseModelFromView() {

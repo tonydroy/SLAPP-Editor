@@ -38,12 +38,15 @@ public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView
     public boolean isExerciseModified() { return false; }
     @Override
     public void setExerciseModified(boolean modified) { }
+    /*
     @Override
     public void updateContentHeight(Node focusedNode, boolean isRequired) { }
     @Override
     public void updateCommentHeight(boolean isRequired) { }
     @Override
     public void updateStatementHeight(boolean isRequired) {    }
+    *
+     */
     @Override
     public ExerciseModel<FrontPageModel> getExerciseModelFromView() { return (ExerciseModel) new FrontPageModel(); }
 

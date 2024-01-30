@@ -70,6 +70,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
 
     }
 
+    /*
     @Override
     public void updateContentHeight(Node focusedNode, boolean isRequired) {
 
@@ -84,6 +85,8 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
     public void updateStatementHeight(boolean isRequired) {
 
     }
+
+     */
 
     @Override
     public ExerciseModel<VerticalTreeModel> getExerciseModelFromView() {

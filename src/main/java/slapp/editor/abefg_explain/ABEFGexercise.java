@@ -354,6 +354,8 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
     public void setExerciseModified(boolean modified) {
         this.exerciseModified = modified;
     }
+
+    /*
     @Override
     public void updateContentHeight(Node focusedNode, boolean isRequired){
         int contentPageNum = abefgView.getContentPageIndex();
@@ -402,6 +404,8 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
             mainWindow.getLastFocusOwner().requestFocus();
         }
     }
+
+     */
     @Override
     public ExerciseModel getExerciseModelFromView() {
         return (ExerciseModel) getABEFGmodelFromView();

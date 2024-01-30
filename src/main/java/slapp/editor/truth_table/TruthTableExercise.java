@@ -371,6 +371,7 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
     @Override
     public void setExerciseModified(boolean modified) { exerciseModified = modified; }
 
+    /*
     @Override
     public void updateContentHeight(Node focusedNode, boolean isRequired) {
         if (isContainer(truthTableView.getTableGrid(), focusedNode)) {
@@ -422,6 +423,8 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
             mainWindow.getLastFocusOwner().requestFocus();
         }
     }
+
+     */
 
     @Override
     public ExerciseModel<TruthTableModel> getExerciseModelFromView() {

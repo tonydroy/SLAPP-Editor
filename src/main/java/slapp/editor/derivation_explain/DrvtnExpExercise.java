@@ -944,6 +944,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     @Override
     public void setExerciseModified(boolean modified) { this.exerciseModified = modified; }
 
+    /*
     @Override
     public void updateContentHeight(Node focusedNode, boolean isRequired) {
 
@@ -1005,6 +1006,8 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             mainWindow.getLastFocusOwner().requestFocus();
         }
     }
+
+     */
 
     @Override
     public ExerciseModel<DrvtnExpModel> getExerciseModelFromView() {

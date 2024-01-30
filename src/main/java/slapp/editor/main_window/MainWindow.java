@@ -96,9 +96,7 @@ public class MainWindow {
         mainView.getPageSetupItem().setOnAction(e -> pageSetup());
         mainView.getExportSetupItem().setOnAction(e -> exportSetup());
 
-        mainView.getUpdateHeightButton().setOnAction(e -> {
-            updateNodeContainerHeight(lastFocusOwner, true);
-        });
+
 
         Label previousExerciseLabel = new Label("Previous");
         previousExerciseLabel.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -144,6 +142,9 @@ public class MainWindow {
 
 
     public void setUpExercise(Exercise exercise) {
+        if (currentExercise != null) mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
+
+
         mainView.getMainScene().focusOwnerProperty().removeListener(focusListener);
         currentExercise = exercise;
         mainView.setupExercise();
@@ -211,7 +212,6 @@ public class MainWindow {
         }
         if (okContinue) {
             Exercise clearExercise = currentExercise.resetExercise();
-            mainView.resetPageSizeValues();
             setUpExercise(clearExercise);
         }
     }
@@ -220,7 +220,6 @@ public class MainWindow {
         //revert to empty simple edit exercise
         SimpleEditModel emptyModel = new SimpleEditModel("",false,"",80,new Document(), new Document(), new ArrayList<>());
         SimpleEditExercise emptyExercise = new SimpleEditExercise(emptyModel, mainWindow);
-        mainView.resetPageSizeValues();
         return emptyExercise;
     }
 
@@ -292,11 +291,14 @@ public class MainWindow {
         return okContinue;
     }
 
+    /*
     private void updateNodeContainerHeight(Node element, boolean isRequired) {
         if (isContainer(mainView.getContentNode(), element)) currentExercise.updateContentHeight(element, isRequired);
         else if (isContainer(mainView.getCommentNode(), element)) currentExercise.updateCommentHeight(isRequired);
         else if (isContainer(mainView.getStatementNode(), element)) currentExercise.updateStatementHeight(isRequired);
     }
+
+     */
 
     private boolean isContainer(Node container, Node element) {
         if (element == null)
@@ -314,9 +316,11 @@ public class MainWindow {
 
     private void pageSetup() {
         PrintUtilities.updatePageLayout();
-        mainView.setupExercise();
+        if (currentExercise != null) mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
+        mainView.updateExerciseHeight();
+ //      mainView.setupExercise();
         mainView.updateZoom(mainView.getZoomSpinner().getValue());
-        mainView.resetPageSizeValues();
+
     }
 
 
@@ -361,6 +365,7 @@ public class MainWindow {
                         currentAssignment = assignment;
                         TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
                         assignmentIndex = 0;
+                        if (currentExercise != null) mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
                         currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                         mainView.setupExercise();
                         mainView.setUpLowerAssignmentBar();
@@ -477,6 +482,7 @@ public class MainWindow {
 
                 assignmentIndex = prevIndex;
                 TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
+                if (currentExercise != null) mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
                 currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                 mainView.setupExercise();
                 mainView.setUpLowerAssignmentBar();
@@ -495,6 +501,7 @@ public class MainWindow {
 
                 assignmentIndex = nextIndex;
                 TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
+                if (currentExercise != null) mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
                 currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                 mainView.setupExercise();
                 mainView.setUpLowerAssignmentBar();
@@ -536,6 +543,7 @@ public class MainWindow {
 
                         assignmentIndex = exerciseList.getItems().indexOf(nv);
                         TypeSelectorFactories typeFactory = new TypeSelectorFactories(mainWindow);
+                        if (currentExercise != null) mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
                         currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                         mainView.setupExercise();
                         mainView.setUpLowerAssignmentBar();

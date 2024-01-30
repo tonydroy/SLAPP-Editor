@@ -5,7 +5,11 @@ import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -28,6 +32,8 @@ import slapp.editor.main_window.assignment.AssignmentHeaderItem;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static java.lang.Math.rint;
+
 public class MainWindowView {
     private Stage stage = EditorMain.mainStage;
     private MainWindow mainWindow;
@@ -39,6 +45,7 @@ public class MainWindowView {
     private double scale = 1.0;
     MenuBar menuBar;
     private VBox topBox = new VBox();
+    private ScrollPane centerPane;
     private VBox centerBox;
     private Spinner<Integer> zoomSpinner;
     private Label zoomLabel;
@@ -58,17 +65,13 @@ public class MainWindowView {
     private DoubleProperty centerHeightProperty;
     private DoubleProperty contentHeightProperty;
     private Button saveButton;
-    private Button updateHeightButton = new Button();
-    private Label nodeHeightLabel = new Label("0");
-    private Label nodePercentageLabel = new Label("0");
-    private Label pagePercentLabel = new Label("0");
-    private double lastCheckedNodeHeight = 0.0;
-    private CheckBox hPageCheck;
     private CheckBox hWindowCheck;
     private Spinner<Integer> hCustomSpinner;
-    private CheckBox vPageCheck;
     private CheckBox vWindowCheck;
-    private Spinner<Integer> vCustomSpinner;
+    private Spinner<Double> vCustomSpinner;
+
+    private ChangeListener verticalListener;
+
     private MenuItem createNewExerciseItem = new MenuItem("Create New");
     private MenuItem createRevisedExerciseItem = new MenuItem("Create Revised");
     private MenuItem saveExerciseItem = new MenuItem("Save");
@@ -117,16 +120,10 @@ public class MainWindowView {
         assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, closeAssignmentItem, printAssignmentItem, exportAssignmentToPDFItem, createRevisedAssignmentItem, createNewAssignmentItem);
         printMenu.getItems().addAll(printExerciseItemPM, exportExerciseToPDFItemPM, printAssignmentItemPM, exportAssignmentToPDFItemPM, pageSetupItem, exportSetupItem, fitToPageItem);
 
-        FontIcon heightIcon = new FontIcon(LineAwesomeSolid.ARROWS_ALT);
-        heightIcon.setIconSize(20);
-        updateHeightButton.setGraphic(heightIcon);
-        updateHeightButton.setTooltip(new Tooltip("Update content width and height"));
-
-  //      updatePageSizeValues();
-
         zoomLabel = new Label(" Zoom ");
         zoomSpinner = new Spinner(25, 500, 100, 5);
         zoomSpinner.setPrefSize(60,25);
+        zoomSpinner.setTooltip(new Tooltip("Window zoom as percentage of normal"));
         zoomSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = zoomSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -141,39 +138,70 @@ public class MainWindowView {
         saveButton.setGraphic(saveIcon);
         saveButton.setTooltip(new Tooltip("Save assignment if open and otherwise exercise"));
 
+
+
+
+        hWindowCheck = new CheckBox("Win");
+        hWindowCheck.setTooltip(new Tooltip("Fix width by window"));
+        hCustomSpinner = new Spinner<>(5, 995, 100, 5);
+        hCustomSpinner.setPrefWidth(60);
+        hCustomSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+
+        vWindowCheck = new CheckBox("Win");
+        vWindowCheck.setTooltip(new Tooltip("Fix height by window"));
+        vCustomSpinner = new Spinner<>(5.0, 999.0, 100.0, 1.0);
+        vCustomSpinner.setPrefWidth(60);
+        vCustomSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
+
+
+
+
+
+
         centerBox = new VBox();
         centerBox.setSpacing(3);
         HBox centerHBox = new HBox(centerBox);
         centerHBox.setAlignment(Pos.CENTER);
 
- //       Group centerGroup = new Group(centerBox);  //this lets scene width scale with nodes https://stackoverflow.com/questions/67724906/javafx-scaling-does-not-resize-the-component-in-parent-container
-        ScrollPane centerGroup = new ScrollPane(centerHBox);
+        //       Group centerPane = new Group(centerBox);  //this lets scene width scale with nodes https://stackoverflow.com/questions/67724906/javafx-scaling-does-not-resize-the-component-in-parent-container
+        centerPane = new ScrollPane(centerHBox);
 
-        centerGroup.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        centerGroup.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        centerGroup.setFitToWidth(true);
-        centerGroup.setFitToHeight(true);
-        centerGroup.setStyle("-fx-background-color: transparent");
+        centerPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        centerPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        centerPane.setStyle("-fx-background-color: transparent");
+        centerPane.setFitToHeight(true);
+        centerPane.setFitToWidth(true);
 
-        hPageCheck = new CheckBox("Page");
-        hWindowCheck = new CheckBox("Win");
-        hCustomSpinner = new Spinner<>(5, 995, 100, 5);
-        hCustomSpinner.setPrefWidth(60);
 
-        vPageCheck = new CheckBox("Page");
-        vWindowCheck = new CheckBox("Win");
-        vCustomSpinner = new Spinner<>(5, 995, 100, 5);
-        vCustomSpinner.setPrefWidth(60);
 
-        HBox verticalItemsBox = new HBox(5, new Label("V Size:"), vCustomSpinner, new Label("/"), vWindowCheck);
-        verticalItemsBox.setAlignment(Pos.CENTER_LEFT);
-        HBox horizontalItemsBox = new HBox(5, new Label("H Size:"), hCustomSpinner, new Label("/"), hWindowCheck);
-        horizontalItemsBox.setAlignment(Pos.CENTER_LEFT);
 
-        kbdDiaToolBar = new ToolBar(zoomLabel, zoomSpinner, verticalItemsBox, horizontalItemsBox, saveButton );
+        borderPane.setCenter(centerPane);
+        borderPane.setMargin(centerPane, new Insets(10,0,0,0));
 
-        borderPane.setCenter(centerGroup);
-        borderPane.setMargin(centerGroup, new Insets(10,0,0,0));
+        hWindowCheck.setOnAction(e -> {
+            if (hWindowCheck.isSelected()) {
+                hCustomSpinner.setDisable(true);
+
+
+
+            } else {
+                hCustomSpinner.setDisable(false);
+
+            }
+        });
+
+        vWindowCheck.setOnAction(e -> {
+            if (vWindowCheck.isSelected()) {
+               updateWindowV();
+            } else {
+               updateCustomV();
+            }
+
+        });
+        vWindowCheck.setSelected(true);
+        vCustomSpinner.setDisable(true);
+
 
         statusBar = new VBox(5);
         upperStatusBox = new HBox(40);
@@ -211,7 +239,11 @@ public class MainWindowView {
         stage.show();
     }
 
+
+
+
     public void setupExercise() {
+
 
         this.currentExerciseView = (ExerciseView) mainWindow.currentExercise.getExerciseView();
         this.statementNode = currentExerciseView.getExerciseStatementNode();
@@ -229,6 +261,10 @@ public class MainWindowView {
         centerBox.getChildren().clear();
         centerBox.getChildren().addAll(commentNode, statementNode, contentNode);
 
+
+
+        centerBox.setVgrow(contentNode, Priority.ALWAYS);
+
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         upperStatusBox.getChildren().clear();
         lowerStatusPane.getChildren().clear();
@@ -237,11 +273,76 @@ public class MainWindowView {
 
         borderPane.setLeft(controlNode);
 
+//        setCenterVgrow();
+
+        verticalListener = new ChangeListener<>() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                vCustomSpinner.getValueFactory().setValue(Math.rint((Double) nv / PrintUtilities.getPageHeight() * 100));
+            }
+        };
+
+
+//        vCustomSpinner.getValueFactory().setValue(Math.rint(contentHeightProperty.getValue() / PrintUtilities.getPageHeight() * 100));
+
+
+
         centerBox.layout();
 
-        setCenterVgrow();
+        contentHeightProperty.removeListener(verticalListener);
+        contentHeightProperty.unbind();
+
+        double fixedHeight = (currentExerciseView.getStatementHeight() + currentExerciseView.getCommentHeight() + currentExerciseView.getContentFixedHeight()) * scale + statusBar.getHeight() + 270;
+        contentHeightProperty.setValue((stage.getHeight() - fixedHeight)/scale );
+        updateExerciseHeight();
+        /*
+        if (vWindowCheck.isSelected()) {
+            updateWindowV();
+        }
+        else {
+            updateCustomV();
+        }
+
+         */
+
         Platform.runLater(() -> contentNode.requestFocus());
     }
+
+    public void updateExerciseHeight() {
+        if (vWindowCheck.isSelected()) {
+            updateWindowV();
+        }
+        else {
+            updateCustomV();
+        }
+    }
+
+
+    public void updateWindowV() {
+        vCustomSpinner.setDisable(true);
+        centerPane.setFitToHeight(true);
+        contentHeightProperty.unbind();
+        setCenterVgrow();
+        contentHeightProperty.addListener(verticalListener);
+    }
+    public void updateCustomV() {
+        contentHeightProperty.removeListener(verticalListener);
+        vCustomSpinner.setDisable(false);
+        contentHeightProperty.unbind();
+        centerPane.setFitToHeight(false);
+        vCustomSpinner.getValueFactory().setValue(rint((contentHeightProperty.getValue() / PrintUtilities.getPageHeight() * 100.0)));
+        contentHeightProperty.bind(Bindings.multiply(PrintUtilities.getPageHeight(), DoubleProperty.doubleProperty(vCustomSpinner.getValueFactory().valueProperty()).divide(100.0)));
+    }
+
+    public void setCenterVgrow() {
+        if (vWindowCheck.isSelected()) {
+            double fixedHeight = (currentExerciseView.getStatementHeight() + currentExerciseView.getCommentHeight() + currentExerciseView.getContentFixedHeight()) * scale + statusBar.getHeight() + 270;
+            DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
+            DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
+            contentHeightProperty.bind(Bindings.divide(stage.heightProperty().subtract(fixedValueProperty), scaleProperty));
+        }
+    }
+
 
     public void setUpLowerAssignmentBar() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -268,31 +369,14 @@ public class MainWindowView {
     }
 
     public void updatePageSizeLabels(double nodeHeight) {
+        /*
         lastCheckedNodeHeight = nodeHeight;
         double heightPercentValue = (nodeHeight / PrintUtilities.getPageHeight()) * 100;
         nodePercentageLabel.setText(Integer.toString((int) Math.round(heightPercentValue)));
         double pageWidth = statementNode.getLayoutBounds().getWidth() - 40;
         double widthPercentValue = (pageWidth / PrintUtilities.getPageWidth()) * 100;
         pagePercentLabel.setText(Integer.toString((int) Math.round(widthPercentValue)));
-    }
-
-    public void resetPageSizeValues() {
-        nodePercentageLabel.setText("0");
-        pagePercentLabel.setText("0");
-    //    updatePageSizeLabels(lastCheckedNodeHeight);
-    }
-
-    public void setCenterVgrow() {
-        // with content box enclosed in Group, the content pane does not size with window.
-        // this restores sizing (inserting height from top box manually)
-
-        double fixedHeight = (currentExerciseView.getStatementHeight() + currentExerciseView.getCommentHeight() + currentExerciseView.getContentFixedHeight())  * scale + statusBar.getHeight() + 270;
-        DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
-        DoubleProperty maximumHeightProperty = new SimpleDoubleProperty(PrintUtilities.getPageHeight() );
-        DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
-        centerHeightProperty = new SimpleDoubleProperty();
-        centerHeightProperty.bind(Bindings.min(maximumHeightProperty, (stage.heightProperty().subtract(fixedValueProperty)).divide(scaleProperty)));
-        contentHeightProperty.bind(centerHeightProperty);
+         */
     }
 
     public void updateZoom(int zoom) {
@@ -423,10 +507,6 @@ public class MainWindowView {
         return zoomSpinner;
     }
 
-    public Button getUpdateHeightButton() {
-        return updateHeightButton;
-    }
-
     public Button getSaveButton() {
         return saveButton;
     }
@@ -553,5 +633,17 @@ public class MainWindowView {
 
     public Menu getAssignmentCommentMenu() {
         return assignmentCommentMenu;
+    }
+
+    public CheckBox getvWindowCheck() {
+        return vWindowCheck;
+    }
+
+    public DoubleProperty contentHeightProperty() {
+        return contentHeightProperty;
+    }
+
+    public ChangeListener getVerticalListener() {
+        return verticalListener;
     }
 }

@@ -294,6 +294,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
     public void setExerciseModified(boolean modified) {
         this.exerciseModified = modified;
     }
+
+    /*
     @Override
     public void updateContentHeight(Node focusedNode, boolean isRequired){
         int contentPageNum = abView.getContentPageIndex();
@@ -342,6 +344,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
             mainWindow.getLastFocusOwner().requestFocus();
         }
     }
+
+     */
     @Override
     public ExerciseModel getExerciseModelFromView() {
         return (ExerciseModel) getABmodelFromView();

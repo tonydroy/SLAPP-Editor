@@ -5,6 +5,7 @@ import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
@@ -58,6 +59,8 @@ public class FrontPageView implements ExerciseView<Label> {
                 mainView.editorInFocus(exerciseComment, ControlType.NONE);
             }
         });
+
+
     }
 
     @Override

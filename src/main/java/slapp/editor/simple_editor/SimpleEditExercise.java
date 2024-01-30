@@ -252,6 +252,8 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     public void setExerciseModified(boolean modified) {
         this.exerciseModified = modified;
     }
+
+    /*
     @Override
     public void updateContentHeight(Node focusedNode, boolean isRequired){
         int contentPageNum = editView.getContentPageIndex();
@@ -300,6 +302,8 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
             mainWindow.getLastFocusOwner().requestFocus();
         }
     }
+
+     */
     @Override
     public ExerciseModel getExerciseModelFromView() {
         return (ExerciseModel) getSimpleEditModelFromView();

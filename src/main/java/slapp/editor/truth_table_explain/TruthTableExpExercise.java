@@ -420,6 +420,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
     @Override
     public void setExerciseModified(boolean modified) { exerciseModified = modified; }
 
+    /*
     @Override
     public void updateContentHeight(Node focusedNode, boolean isRequired) {
         if (isContainer(truthTableExpView.getTableGrid(), focusedNode)) {
@@ -480,6 +481,8 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
             mainWindow.getLastFocusOwner().requestFocus();
         }
     }
+
+     */
 
     @Override
     public ExerciseModel<TruthTableExpModel> getExerciseModelFromView() {
