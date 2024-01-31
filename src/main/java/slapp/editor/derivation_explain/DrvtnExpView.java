@@ -281,6 +281,8 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
     @Override
     public DoubleProperty getContentHeightProperty() { return grid.prefHeightProperty(); }
     @Override
+    public DoubleProperty getContentWidthProperty() {return null; }
+    @Override
     public double getContentFixedHeight() { return explanationDRTA.getEditor().getHeight(); }
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }

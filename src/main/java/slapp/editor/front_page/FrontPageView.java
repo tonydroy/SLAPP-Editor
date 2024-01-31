@@ -90,6 +90,8 @@ public class FrontPageView implements ExerciseView<Label> {
     @Override
     public DoubleProperty getContentHeightProperty() { return exerciseContent.prefHeightProperty(); }
     @Override
+    public DoubleProperty getContentWidthProperty() {return exerciseContent.prefWidthProperty(); }
+    @Override
     public double getContentFixedHeight() { return 0.0; }
     @Override
     public Node getExerciseControl() { return exerciseControl; }

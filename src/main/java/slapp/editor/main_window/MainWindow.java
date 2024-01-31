@@ -142,7 +142,10 @@ public class MainWindow {
 
 
     public void setUpExercise(Exercise exercise) {
-        if (currentExercise != null) mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
+        if (currentExercise != null) {
+            mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
+            mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
+        }
 
 
         mainView.getMainScene().focusOwnerProperty().removeListener(focusListener);
@@ -309,10 +312,14 @@ public class MainWindow {
 
     private void pageSetup() {
         PrintUtilities.updatePageLayout();
-        if (currentExercise != null) mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
+        if (currentExercise != null) {
+            mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
+            mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
+        }
         mainView.updateExerciseHeight();
- //      mainView.setupExercise();
-        mainView.updateZoom(mainView.getZoomSpinner().getValue());
+        mainView.updateExerciseWidth();
+
+ //       mainView.updateZoom(mainView.getZoomSpinner().getValue());
 
     }
 
@@ -358,7 +365,12 @@ public class MainWindow {
                         currentAssignment = assignment;
                         TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
                         assignmentIndex = 0;
-                        if (currentExercise != null) mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
+
+                        if (currentExercise != null) {
+                            mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
+                            mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
+                        }
+
                         currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                         mainView.setupExercise();
                         mainView.setUpLowerAssignmentBar();
@@ -475,7 +487,12 @@ public class MainWindow {
 
                 assignmentIndex = prevIndex;
                 TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
-                if (currentExercise != null) mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
+
+                if (currentExercise != null) {
+                    mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
+                    mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
+                }
+
                 currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                 mainView.setupExercise();
                 mainView.setUpLowerAssignmentBar();
@@ -494,7 +511,12 @@ public class MainWindow {
 
                 assignmentIndex = nextIndex;
                 TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
-                if (currentExercise != null) mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
+
+                if (currentExercise != null) {
+                    mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
+                    mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
+                }
+
                 currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                 mainView.setupExercise();
                 mainView.setUpLowerAssignmentBar();
@@ -536,7 +558,12 @@ public class MainWindow {
 
                         assignmentIndex = exerciseList.getItems().indexOf(nv);
                         TypeSelectorFactories typeFactory = new TypeSelectorFactories(mainWindow);
-                        if (currentExercise != null) mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
+
+                        if (currentExercise != null) {
+                            mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
+                            mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
+                        }
+
                         currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                         mainView.setupExercise();
                         mainView.setUpLowerAssignmentBar();

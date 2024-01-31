@@ -18,6 +18,7 @@ public interface ExerciseView<T> {
     void setStatementPrefHeight(double height);
     Node getExerciseContentNode();
     DoubleProperty getContentHeightProperty();
+    DoubleProperty getContentWidthProperty();
     double getContentFixedHeight();
     Node getExerciseControl();
 

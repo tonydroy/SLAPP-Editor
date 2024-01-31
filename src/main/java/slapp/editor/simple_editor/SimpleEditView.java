@@ -2,6 +2,7 @@ package slapp.editor.simple_editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -124,7 +125,10 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
     }
     @Override
     public DoubleProperty getContentHeightProperty() { return contentPageList.get(pagination.getCurrentPageIndex()).getEditor().prefHeightProperty(); }
+    @Override
     public DoubleProperty getContentWidthProperty() { return contentPageList.get(pagination.getCurrentPageIndex()).getEditor().prefWidthProperty(); }
+
+
     @Override
     public double getContentFixedHeight() { return 0.0; }
     @Override

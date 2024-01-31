@@ -14,6 +14,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -46,6 +47,7 @@ public class MainWindowView {
     MenuBar menuBar;
     private VBox topBox = new VBox();
     private ScrollPane centerPane;
+    private StackPane centerStackPane;
     private VBox centerBox;
     private Spinner<Integer> zoomSpinner;
     private Label zoomLabel;
@@ -63,9 +65,12 @@ public class MainWindowView {
     private HBox upperStatusBox;
     private FlowPane lowerStatusPane;
     private DoubleProperty contentHeightProperty;
+    private DoubleProperty contentWidthProperty;
+
+    HBox centerHBox;
     private Button saveButton;
     private CheckBox hWindowCheck;
-    private Spinner<Integer> hCustomSpinner;
+    private Spinner<Double> hCustomSpinner;
     private CheckBox vWindowCheck;
     private Spinner<Double> vCustomSpinner;
 
@@ -141,11 +146,21 @@ public class MainWindowView {
 
 
 
+
         hWindowCheck = new CheckBox("Win");
         hWindowCheck.setTooltip(new Tooltip("Fix width by window"));
-        hCustomSpinner = new Spinner<>(5, 995, 100, 5);
+        hCustomSpinner = new Spinner<>(5.0, 999.0, 100.0, 1.0);
         hCustomSpinner.setPrefWidth(60);
         hCustomSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        hCustomSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = hCustomSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = hCustomSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+
+
 
 
         vWindowCheck = new CheckBox("Win");
@@ -154,24 +169,27 @@ public class MainWindowView {
         vCustomSpinner.setPrefWidth(60);
         vCustomSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
 
-
-
-
-
-
         centerBox = new VBox();
         centerBox.setSpacing(3);
-        HBox centerHBox = new HBox(centerBox);
+
+        centerHBox = new HBox(centerBox);
         centerHBox.setAlignment(Pos.CENTER);
 
+
+
         //       Group centerPane = new Group(centerBox);  //this lets scene width scale with nodes https://stackoverflow.com/questions/67724906/javafx-scaling-does-not-resize-the-component-in-parent-container
-        centerPane = new ScrollPane(centerHBox);
+        centerPane = new ScrollPane(new Group(centerHBox));
+
+
+        centerHBox.minWidthProperty().bind(Bindings.createDoubleBinding(() -> centerPane.getViewportBounds().getWidth(), centerPane.viewportBoundsProperty()));
 
         centerPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         centerPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         centerPane.setStyle("-fx-background-color: transparent");
-        centerPane.setFitToHeight(true);
-        centerPane.setFitToWidth(true);
+//        centerPane.setFitToHeight(true);
+//        centerPane.setFitToWidth(true);
+
+
 
 
 
@@ -179,25 +197,17 @@ public class MainWindowView {
         borderPane.setCenter(centerPane);
         borderPane.setMargin(centerPane, new Insets(10,0,0,0));
 
+
         hWindowCheck.setOnAction(e -> {
-            if (hWindowCheck.isSelected()) {
-                hCustomSpinner.setDisable(true);
-
-
-
-            } else {
-                hCustomSpinner.setDisable(false);
-
-            }
+            if (hWindowCheck.isSelected()) updateWindowH();
+            else updateCustomH();
         });
+        hWindowCheck.setSelected(false);
+        hCustomSpinner.setDisable(false);
 
         vWindowCheck.setOnAction(e -> {
-            if (vWindowCheck.isSelected()) {
-               updateWindowV();
-            } else {
-               updateCustomV();
-            }
-
+            if (vWindowCheck.isSelected()) updateWindowV();
+            else updateCustomV();
         });
         vWindowCheck.setSelected(true);
         vCustomSpinner.setDisable(true);
@@ -249,6 +259,8 @@ public class MainWindowView {
         this.commentNode = commentDecoratedRTA.getEditor();
         this.controlNode = currentExerciseView.getExerciseControl();
         this.contentHeightProperty = currentExerciseView.getContentHeightProperty();
+        this.contentWidthProperty = currentExerciseView.getContentWidthProperty();
+
 
         //this seems odd: print utilities gives its value in pt.  RTA documentation says it is measured in px.
         //so I expect to set width at 16/12 * px.  But this gives a page too wide.  Is RTA measuring in pt?
@@ -272,7 +284,7 @@ public class MainWindowView {
 
         borderPane.setLeft(controlNode);
 
-//        setCenterVgrow();
+
 
         verticalListener = new ChangeListener<>() {
             @Override
@@ -281,26 +293,33 @@ public class MainWindowView {
             }
         };
 
+        horizontalListener = new ChangeListener<>() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                hCustomSpinner.getValueFactory().setValue(Math.rint((Double) nv / PrintUtilities.getPageWidth() * 100));
+            }
+        };
+
         centerBox.layout();
+
         contentHeightProperty.removeListener(verticalListener);
         contentHeightProperty.unbind();
-
         double fixedHeight = (currentExerciseView.getStatementHeight() + currentExerciseView.getCommentHeight() + currentExerciseView.getContentFixedHeight()) * scale + statusBar.getHeight() + 270;
         contentHeightProperty.setValue((stage.getHeight() - fixedHeight)/scale );
         updateExerciseHeight();
+
+        contentWidthProperty.removeListener(horizontalListener);
+        contentWidthProperty.unbind();
+        contentWidthProperty.setValue(PrintUtilities.getPageWidth() * hCustomSpinner.getValue()/100.0);
+        updateExerciseWidth();
 
         Platform.runLater(() -> contentNode.requestFocus());
     }
 
     public void updateExerciseHeight() {
-        if (vWindowCheck.isSelected()) {
-            updateWindowV();
-        }
-        else {
-            updateCustomV();
-        }
+        if (vWindowCheck.isSelected()) updateWindowV();
+        else  updateCustomV();
     }
-
 
     public void updateWindowV() {
         vCustomSpinner.setDisable(true);
@@ -318,12 +337,38 @@ public class MainWindowView {
         contentHeightProperty.bind(Bindings.multiply(PrintUtilities.getPageHeight(), DoubleProperty.doubleProperty(vCustomSpinner.getValueFactory().valueProperty()).divide(100.0)));
     }
 
+    public void updateExerciseWidth() {
+        if (hWindowCheck.isSelected()) updateWindowH();
+        else updateCustomH();
+    }
+    public void updateWindowH(){
+        hCustomSpinner.setDisable(true);
+        centerPane.setFitToWidth(true);
+        contentWidthProperty.unbind();
+        setCenterHgrow();
+        contentWidthProperty.addListener(horizontalListener);
+    }
+    public void updateCustomH(){
+        contentWidthProperty.removeListener(horizontalListener);
+        hCustomSpinner.setDisable(false);
+        contentWidthProperty.unbind();
+        centerPane.setFitToWidth(false);
+        hCustomSpinner.getValueFactory().setValue(rint((contentWidthProperty.getValue() / PrintUtilities.getPageWidth() * 100.0)));
+        contentWidthProperty.bind(Bindings.multiply(PrintUtilities.getPageWidth(), DoubleProperty.doubleProperty(hCustomSpinner.getValueFactory().valueProperty()).divide(100.0)));
+    }
+
     public void setCenterVgrow() {
         if (vWindowCheck.isSelected()) {
             double fixedHeight = (currentExerciseView.getStatementHeight() + currentExerciseView.getCommentHeight() + currentExerciseView.getContentFixedHeight()) * scale + statusBar.getHeight() + 270;
             DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
             DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
             contentHeightProperty.bind(Bindings.divide(stage.heightProperty().subtract(fixedValueProperty), scaleProperty));
+        }
+    }
+
+    public void setCenterHgrow() {
+        if (hWindowCheck.isSelected()) {
+//            contentWidthProperty.bind(Bindings.divide(stage.widthProperty().subtract(controlNode.getLayoutBounds().getWidth() + 100), scale ));
         }
     }
 
@@ -623,4 +668,7 @@ public class MainWindowView {
     public ChangeListener getVerticalListener() {
         return verticalListener;
     }
+
+    public DoubleProperty contentWidthProperty() { return contentWidthProperty; }
+    public ChangeListener getHorizontalListener() {return horizontalListener; }
 }
