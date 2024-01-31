@@ -62,7 +62,6 @@ public class MainWindowView {
     private VBox statusBar;
     private HBox upperStatusBox;
     private FlowPane lowerStatusPane;
-    private DoubleProperty centerHeightProperty;
     private DoubleProperty contentHeightProperty;
     private Button saveButton;
     private CheckBox hWindowCheck;
@@ -71,6 +70,7 @@ public class MainWindowView {
     private Spinner<Double> vCustomSpinner;
 
     private ChangeListener verticalListener;
+    private ChangeListener horizontalListener;
 
     private MenuItem createNewExerciseItem = new MenuItem("Create New");
     private MenuItem createRevisedExerciseItem = new MenuItem("Create Revised");
@@ -239,9 +239,6 @@ public class MainWindowView {
         stage.show();
     }
 
-
-
-
     public void setupExercise() {
 
 
@@ -256,8 +253,10 @@ public class MainWindowView {
         //this seems odd: print utilities gives its value in pt.  RTA documentation says it is measured in px.
         //so I expect to set width at 16/12 * px.  But this gives a page too wide.  Is RTA measuring in pt?
         //similarly for height.
-        commentDecoratedRTA.getEditor().setContentAreaWidth(PrintUtilities.getPageWidth());
-        commentDecoratedRTA.getEditor().setPrefWidth(PrintUtilities.getPageWidth() +40);
+
+ //       commentDecoratedRTA.getEditor().setContentAreaWidth(PrintUtilities.getPageWidth());
+ //       commentDecoratedRTA.getEditor().setPrefWidth(PrintUtilities.getPageWidth() +40);
+
         centerBox.getChildren().clear();
         centerBox.getChildren().addAll(commentNode, statementNode, contentNode);
 
@@ -282,28 +281,13 @@ public class MainWindowView {
             }
         };
 
-
-//        vCustomSpinner.getValueFactory().setValue(Math.rint(contentHeightProperty.getValue() / PrintUtilities.getPageHeight() * 100));
-
-
-
         centerBox.layout();
-
         contentHeightProperty.removeListener(verticalListener);
         contentHeightProperty.unbind();
 
         double fixedHeight = (currentExerciseView.getStatementHeight() + currentExerciseView.getCommentHeight() + currentExerciseView.getContentFixedHeight()) * scale + statusBar.getHeight() + 270;
         contentHeightProperty.setValue((stage.getHeight() - fixedHeight)/scale );
         updateExerciseHeight();
-        /*
-        if (vWindowCheck.isSelected()) {
-            updateWindowV();
-        }
-        else {
-            updateCustomV();
-        }
-
-         */
 
         Platform.runLater(() -> contentNode.requestFocus());
     }
@@ -368,16 +352,7 @@ public class MainWindowView {
 
     }
 
-    public void updatePageSizeLabels(double nodeHeight) {
-        /*
-        lastCheckedNodeHeight = nodeHeight;
-        double heightPercentValue = (nodeHeight / PrintUtilities.getPageHeight()) * 100;
-        nodePercentageLabel.setText(Integer.toString((int) Math.round(heightPercentValue)));
-        double pageWidth = statementNode.getLayoutBounds().getWidth() - 40;
-        double widthPercentValue = (pageWidth / PrintUtilities.getPageWidth()) * 100;
-        pagePercentLabel.setText(Integer.toString((int) Math.round(widthPercentValue)));
-         */
-    }
+
 
     public void updateZoom(int zoom) {
         scale = (double)zoom/100.0;
@@ -389,7 +364,9 @@ public class MainWindowView {
 
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
-        mainScene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth() + PrintUtilities.getPageWidth() * scale + 100));
+
+ //       mainScene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth() + PrintUtilities.getPageWidth() * scale + 100));
+
         setCenterVgrow();
     }
 

@@ -355,57 +355,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         this.exerciseModified = modified;
     }
 
-    /*
-    @Override
-    public void updateContentHeight(Node focusedNode, boolean isRequired){
-        int contentPageNum = abefgView.getContentPageIndex();
-        if (isRequired || mainWindow.getLastFocusOwner() != abefgView.getExerciseContentNode() || lastPageNum != contentPageNum) {
-            mainWindow.setLastFocusOwner(abefgView.getExerciseContentNode());
-            lastPageNum = contentPageNum;
 
-            ABEFGmodel model = getABEFGmodelFromView();
-            ABEFGexercise exercise = new ABEFGexercise(model, mainWindow);
-            ArrayList<DecoratedRTA> pageList = exercise.getExerciseView().getContentPageList();
-            RichTextArea pageRTA = pageList.get(contentPageNum).getEditor();
-            RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
-            double pageHeight = pageRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updatePageSizeLabels(pageHeight + 35);
-            mainWindow.getLastFocusOwner().requestFocus();
-        }
-    }
-    @Override
-    public void updateCommentHeight(boolean isRequired){
-        if (isRequired || mainWindow.getLastFocusOwner() != abefgView.getExerciseComment().getEditor()) {
-            mainWindow.setLastFocusOwner(abefgView.getExerciseComment().getEditor());
-            lastPageNum = -1;
-
-            ABEFGmodel model = getABEFGmodelFromView();
-            ABEFGexercise exercise = new ABEFGexercise(model, mainWindow);
-            RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
-            RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
-            double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updatePageSizeLabels(Math.max(70, commentHeight + 35));
-            mainWindow.getLastFocusOwner().requestFocus();
-        }
-    }
-    @Override
-    public void updateStatementHeight(boolean isRequired){
-        if (isRequired || mainWindow.getLastFocusOwner() != abefgView.getExerciseStatementNode()) {
-            mainWindow.setLastFocusOwner(abefgView.getExerciseStatementNode());
-            lastPageNum = -1;
-
-            abefgModel = getABEFGmodelFromView();
-            ABEFGexercise exercise = new ABEFGexercise(abefgModel, mainWindow);
-            RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
-            statementRTA.setEditable(true);
-            RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
-            double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updatePageSizeLabels(statementHeight + 35);
-            mainWindow.getLastFocusOwner().requestFocus();
-        }
-    }
-
-     */
     @Override
     public ExerciseModel getExerciseModelFromView() {
         return (ExerciseModel) getABEFGmodelFromView();

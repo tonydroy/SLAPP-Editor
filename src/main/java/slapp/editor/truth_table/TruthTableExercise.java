@@ -371,61 +371,6 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
     @Override
     public void setExerciseModified(boolean modified) { exerciseModified = modified; }
 
-    /*
-    @Override
-    public void updateContentHeight(Node focusedNode, boolean isRequired) {
-        if (isContainer(truthTableView.getTableGrid(), focusedNode)) {
-            double tableHeight = 0;
-            for (int i = 0; i < tableRows + 3; i++) tableHeight = tableHeight + truthTableView.getSizers()[i].getHeight();
-            mainWindow.getMainView().updatePageSizeLabels(tableHeight + 20);
-        }
-    }
-
-    private boolean isContainer(Node container, Node element) {
-        if (element == null)
-            return false;
-        Node current = element;
-        while (current != null) {
-            if (current == container)
-                return true;
-            current = current.getParent();
-        }
-        return false;
-    }
-
-    @Override
-    public void updateCommentHeight(boolean isRequired) {
-        if (isRequired || mainWindow.getLastFocusOwner() != truthTableView.getExerciseComment().getEditor()) {
-            mainWindow.setLastFocusOwner(truthTableView.getExerciseComment().getEditor());
-
-            TruthTableModel model = getTruthTableExpModelFromView();
-            TruthTableExercise exercise = new TruthTableExercise(model, mainWindow);
-            RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
-            RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
-            double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updatePageSizeLabels(Math.max(70, commentHeight + 35));
-            mainWindow.getLastFocusOwner().requestFocus();
-        }
-    }
-
-    @Override
-    public void updateStatementHeight(boolean isRequired) {
-        if (isRequired || mainWindow.getLastFocusOwner() != truthTableView.getExerciseStatementNode()) {
-            mainWindow.setLastFocusOwner(truthTableView.getExerciseStatementNode());
-
-            TruthTableModel model = getTruthTableExpModelFromView();
-            TruthTableExercise exercise = new TruthTableExercise(model, mainWindow);
-            RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
-            statementRTA.setEditable(true);
-            RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
-            double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updatePageSizeLabels(statementHeight + 35);
-            mainWindow.getLastFocusOwner().requestFocus();
-        }
-    }
-
-     */
-
     @Override
     public ExerciseModel<TruthTableModel> getExerciseModelFromView() {
         return (ExerciseModel) getTruthTableExpModelFromView();

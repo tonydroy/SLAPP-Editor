@@ -917,46 +917,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     @Override
     public void setExerciseModified(boolean modified) { this.exerciseModified = modified; }
 
-    /*
-    @Override
-    public void updateContentHeight(Node focusedNode, boolean isRequired) {
-        double gridHeight = derivationView.getGridHeight();
-        mainWindow.getMainView().updatePageSizeLabels(gridHeight + 20);
-        mainWindow.getLastFocusOwner().requestFocus();
-    }
-
-    @Override
-    public void updateCommentHeight(boolean isRequired) {
-        if (isRequired || mainWindow.getLastFocusOwner() != derivationView.getExerciseComment().getEditor()) {
-            mainWindow.setLastFocusOwner(derivationView.getExerciseComment().getEditor());
-
-            DerivationModel model = getDerivationModelFromView();
-            DerivationExercise exercise = new DerivationExercise(model, mainWindow);
-            RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
-            RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
-            double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updatePageSizeLabels(Math.max(70, commentHeight + 35));
-            mainWindow.getLastFocusOwner().requestFocus();
-        }
-    }
-
-    @Override
-    public void updateStatementHeight(boolean isRequired) {
-        if (isRequired || mainWindow.getLastFocusOwner() != derivationView.getExerciseStatementNode()) {
-            mainWindow.setLastFocusOwner(derivationView.getExerciseStatementNode());
-
-            derivationModel = getDerivationModelFromView();
-            DerivationExercise exercise = new DerivationExercise(derivationModel, mainWindow);
-            RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
-            statementRTA.setEditable(true);
-            RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
-            double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updatePageSizeLabels(statementHeight + 35);
-            mainWindow.getLastFocusOwner().requestFocus();
-        }
-    }
-
-     */
 
     @Override
     public ExerciseModel<DerivationModel> getExerciseModelFromView() {

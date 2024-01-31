@@ -124,6 +124,7 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
     }
     @Override
     public DoubleProperty getContentHeightProperty() { return contentPageList.get(pagination.getCurrentPageIndex()).getEditor().prefHeightProperty(); }
+    public DoubleProperty getContentWidthProperty() { return contentPageList.get(pagination.getCurrentPageIndex()).getEditor().prefWidthProperty(); }
     @Override
     public double getContentFixedHeight() { return 0.0; }
     @Override

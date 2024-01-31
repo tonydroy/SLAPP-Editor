@@ -253,57 +253,6 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         this.exerciseModified = modified;
     }
 
-    /*
-    @Override
-    public void updateContentHeight(Node focusedNode, boolean isRequired){
-        int contentPageNum = editView.getContentPageIndex();
-        if (isRequired || mainWindow.getLastFocusOwner() != editView.getExerciseContentNode() || lastPageNum != contentPageNum) {
-            mainWindow.setLastFocusOwner(editView.getExerciseContentNode());
-            lastPageNum = contentPageNum;
-
-            SimpleEditModel model = getSimpleEditModelFromView();
-            SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
-            List<DecoratedRTA> pageList = exercise.getExerciseView().getContentPageList();
-            RichTextArea pageRTA = pageList.get(contentPageNum).getEditor();
-            RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
-            double pageHeight = pageRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updatePageSizeLabels(pageHeight + 35);
-            mainWindow.getLastFocusOwner().requestFocus();
-        }
-    }
-    @Override
-    public void updateCommentHeight(boolean isRequired){
-        if (isRequired || mainWindow.getLastFocusOwner() != editView.getExerciseComment().getEditor()) {
-            mainWindow.setLastFocusOwner(editView.getExerciseComment().getEditor());
-            lastPageNum = -1;
-
-            SimpleEditModel model = getSimpleEditModelFromView();
-            SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
-            RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
-            RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
-            double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updatePageSizeLabels(Math.max(70, commentHeight + 35));
-            mainWindow.getLastFocusOwner().requestFocus();
-        }
-    }
-    @Override
-    public void updateStatementHeight(boolean isRequired){
-        if (isRequired || mainWindow.getLastFocusOwner() != editView.getExerciseStatementNode()) {
-            mainWindow.setLastFocusOwner(editView.getExerciseStatementNode());
-            lastPageNum = -1;
-
-            editModel = getSimpleEditModelFromView();
-            SimpleEditExercise exercise = new SimpleEditExercise(editModel, mainWindow);
-            RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
-            statementRTA.setEditable(true);
-            RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
-            double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-            mainWindow.getMainView().updatePageSizeLabels(statementHeight + 35);
-            mainWindow.getLastFocusOwner().requestFocus();
-        }
-    }
-
-     */
     @Override
     public ExerciseModel getExerciseModelFromView() {
         return (ExerciseModel) getSimpleEditModelFromView();

@@ -106,7 +106,7 @@ public class VerticalTreeView implements ExerciseView<DecoratedRTA> {
 
     @Override
     public Node getExerciseContentNode() {
-        return root;
+        return new VBox(root);
     }
 
     @Override

@@ -291,14 +291,7 @@ public class MainWindow {
         return okContinue;
     }
 
-    /*
-    private void updateNodeContainerHeight(Node element, boolean isRequired) {
-        if (isContainer(mainView.getContentNode(), element)) currentExercise.updateContentHeight(element, isRequired);
-        else if (isContainer(mainView.getCommentNode(), element)) currentExercise.updateCommentHeight(isRequired);
-        else if (isContainer(mainView.getStatementNode(), element)) currentExercise.updateStatementHeight(isRequired);
-    }
 
-     */
 
     private boolean isContainer(Node container, Node element) {
         if (element == null)

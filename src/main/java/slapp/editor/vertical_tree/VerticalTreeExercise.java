@@ -70,24 +70,6 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
 
     }
 
-    /*
-    @Override
-    public void updateContentHeight(Node focusedNode, boolean isRequired) {
-
-    }
-
-    @Override
-    public void updateCommentHeight(boolean isRequired) {
-
-    }
-
-    @Override
-    public void updateStatementHeight(boolean isRequired) {
-
-    }
-
-     */
-
     @Override
     public ExerciseModel<VerticalTreeModel> getExerciseModelFromView() {
         return null;

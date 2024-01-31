@@ -15,9 +15,7 @@ public interface Exercise<T,U> {
     Exercise<T,U> resetExercise();
     boolean isExerciseModified();
     void setExerciseModified(boolean modified);
-//    void updateContentHeight(Node focusedNode, boolean isRequired);
-//    void updateCommentHeight(boolean isRequired);
-//    void updateStatementHeight(boolean isRequired);
+
     ExerciseModel<T> getExerciseModelFromView();
 
 }
