@@ -106,6 +106,9 @@ public class MainWindowView {
     Menu goToExerciseMenu = new Menu();
     Menu assignmentCommentMenu = new Menu();
     HBox menuBox;
+    Group testGroup;
+
+
 
     public MainWindowView(MainWindow controller) {
         this.mainWindow = controller;
@@ -149,9 +152,10 @@ public class MainWindowView {
 
         hWindowCheck = new CheckBox("Win");
         hWindowCheck.setTooltip(new Tooltip("Fix width by window"));
-        hCustomSpinner = new Spinner<>(5.0, 999.0, 100.0, 1.0);
+        hCustomSpinner = new Spinner<>(5.0, 999.0, 100.0, 5.0);
         hCustomSpinner.setPrefWidth(60);
         hCustomSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
 
         hCustomSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = hCustomSpinner.lookup(".increment-arrow-button");
@@ -163,11 +167,20 @@ public class MainWindowView {
 
 
 
+
+
         vWindowCheck = new CheckBox("Win");
         vWindowCheck.setTooltip(new Tooltip("Fix height by window"));
-        vCustomSpinner = new Spinner<>(5.0, 999.0, 100.0, 1.0);
+        vCustomSpinner = new Spinner<>(5.0, 999.0, 100.0, 5.0);
         vCustomSpinner.setPrefWidth(60);
         vCustomSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
+
+        vCustomSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = vCustomSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = vCustomSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
 
         centerBox = new VBox();
         centerBox.setSpacing(3);
@@ -176,9 +189,23 @@ public class MainWindowView {
         centerHBox.setAlignment(Pos.CENTER);
 
 
+    /*
+        When the centerPane has the new Group(centerHBox) as member, zoom works as one would expect - the scroll pane
+        responds to the layout bounds of the scaled group.  But, in this case, RTA crashes two ways: Typing any char
+        results in ConcurrentModificationException (from ParagraphTile 352). And if the window is dragged with
+        HSize Win checked there is a NullPointerException (from ParagraphTile 202).  There are no exceptions when
+        the scroll pane has just center box -- but then zoom doesn't generate scroll bars.  Revisit this issue if and when
+        RTA gets an update.  For now, I am catching the exceptions in ParagraphTile -- don't know consequences!
+     */
+//        centerPane = new ScrollPane(new Group(centerHBox));
+        centerPane = new ScrollPane(centerHBox);
 
-        //       Group centerPane = new Group(centerBox);  //this lets scene width scale with nodes https://stackoverflow.com/questions/67724906/javafx-scaling-does-not-resize-the-component-in-parent-container
-        centerPane = new ScrollPane(new Group(centerHBox));
+
+
+
+
+
+
 
 
         centerHBox.minWidthProperty().bind(Bindings.createDoubleBinding(() -> centerPane.getViewportBounds().getWidth(), centerPane.viewportBoundsProperty()));
@@ -186,13 +213,6 @@ public class MainWindowView {
         centerPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         centerPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         centerPane.setStyle("-fx-background-color: transparent");
-//        centerPane.setFitToHeight(true);
-//        centerPane.setFitToWidth(true);
-
-
-
-
-
 
         borderPane.setCenter(centerPane);
         borderPane.setMargin(centerPane, new Insets(10,0,0,0));
@@ -231,9 +251,6 @@ public class MainWindowView {
         stage.setScene(mainScene);
         stage.setTitle("SLAPP Editor");
         stage.setMinWidth(minStageWidth);
-        // suffices for the toolbars to appear in window
-        // when topBox gets replaced, it appears that the window "looses" box dimensions both vertically and horizontally
-        // this replaces the horizontal value
 
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
         double mainWindowX = Math.max(0.0, (bounds.getMaxX() - bounds.getMinX())/8);
@@ -262,13 +279,6 @@ public class MainWindowView {
         this.contentWidthProperty = currentExerciseView.getContentWidthProperty();
 
 
-        //this seems odd: print utilities gives its value in pt.  RTA documentation says it is measured in px.
-        //so I expect to set width at 16/12 * px.  But this gives a page too wide.  Is RTA measuring in pt?
-        //similarly for height.
-
- //       commentDecoratedRTA.getEditor().setContentAreaWidth(PrintUtilities.getPageWidth());
- //       commentDecoratedRTA.getEditor().setPrefWidth(PrintUtilities.getPageWidth() +40);
-
         centerBox.getChildren().clear();
         centerBox.getChildren().addAll(commentNode, statementNode, contentNode);
 
@@ -289,14 +299,16 @@ public class MainWindowView {
         verticalListener = new ChangeListener<>() {
             @Override
             public void changed(ObservableValue ob, Object ov, Object nv) {
-                vCustomSpinner.getValueFactory().setValue(Math.rint((Double) nv / PrintUtilities.getPageHeight() * 100));
+        //        vCustomSpinner.getValueFactory().setValue(Math.rint((Double) nv / PrintUtilities.getPageHeight() * 100));
+                vCustomSpinner.getValueFactory().setValue((double) (Math.round((Double) nv / PrintUtilities.getPageHeight() * 20 ) * 5));
             }
         };
 
         horizontalListener = new ChangeListener<>() {
             @Override
             public void changed(ObservableValue ob, Object ov, Object nv) {
-                hCustomSpinner.getValueFactory().setValue(Math.rint((Double) nv / PrintUtilities.getPageWidth() * 100));
+                hCustomSpinner.getValueFactory().setValue((double) (Math.round((Double) nv / PrintUtilities.getPageWidth() * 20 ) * 5));
+   //             hCustomSpinner.getValueFactory().setValue(Math.rint((Double) nv / PrintUtilities.getPageWidth() * 100));
             }
         };
 
@@ -333,7 +345,9 @@ public class MainWindowView {
         vCustomSpinner.setDisable(false);
         contentHeightProperty.unbind();
         centerPane.setFitToHeight(false);
-        vCustomSpinner.getValueFactory().setValue(rint((contentHeightProperty.getValue() / PrintUtilities.getPageHeight() * 100.0)));
+  //      vCustomSpinner.getValueFactory().setValue(rint((contentHeightProperty.getValue() / PrintUtilities.getPageHeight() * 100.0)));
+        vCustomSpinner.getValueFactory().setValue((double) (Math.round((Double) contentHeightProperty.getValue() / PrintUtilities.getPageHeight() * 20 ) * 5));
+
         contentHeightProperty.bind(Bindings.multiply(PrintUtilities.getPageHeight(), DoubleProperty.doubleProperty(vCustomSpinner.getValueFactory().valueProperty()).divide(100.0)));
     }
 
@@ -342,6 +356,7 @@ public class MainWindowView {
         else updateCustomH();
     }
     public void updateWindowH(){
+
         hCustomSpinner.setDisable(true);
         centerPane.setFitToWidth(true);
         contentWidthProperty.unbind();
@@ -353,7 +368,8 @@ public class MainWindowView {
         hCustomSpinner.setDisable(false);
         contentWidthProperty.unbind();
         centerPane.setFitToWidth(false);
-        hCustomSpinner.getValueFactory().setValue(rint((contentWidthProperty.getValue() / PrintUtilities.getPageWidth() * 100.0)));
+        hCustomSpinner.getValueFactory().setValue((double) (Math.round((Double) contentWidthProperty.getValue() / PrintUtilities.getPageWidth() * 20 ) * 5));
+//        hCustomSpinner.getValueFactory().setValue(rint((contentWidthProperty.getValue() / PrintUtilities.getPageWidth() * 100.0)));
         contentWidthProperty.bind(Bindings.multiply(PrintUtilities.getPageWidth(), DoubleProperty.doubleProperty(hCustomSpinner.getValueFactory().valueProperty()).divide(100.0)));
     }
 
@@ -368,7 +384,7 @@ public class MainWindowView {
 
     public void setCenterHgrow() {
         if (hWindowCheck.isSelected()) {
-//            contentWidthProperty.bind(Bindings.divide(stage.widthProperty().subtract(controlNode.getLayoutBounds().getWidth() + 100), scale ));
+            contentWidthProperty.bind(Bindings.divide(stage.widthProperty().subtract(controlNode.getLayoutBounds().getWidth() + 100), scale ));
         }
     }
 
@@ -407,10 +423,14 @@ public class MainWindowView {
         keyboardDiagram.initialize(lastFocussedDRTA);
         keyboardDiagram.update();
 
+
+
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
 
- //       mainScene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth() + PrintUtilities.getPageWidth() * scale + 100));
+
+
+//        mainScene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth() + PrintUtilities.getPageWidth() * scale + 100));
 
         setCenterVgrow();
     }

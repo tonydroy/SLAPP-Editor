@@ -71,9 +71,9 @@ public class TruthTableCreate {
     private VBox upperFieldsBox;
     private ToolBar editToolbar;
     private ToolBar fontsToolbar;
-    private ToolBar insertToolbar;
+    private ToolBar insertToolBar;
     private ToolBar paragraphToolbar;
-    private ToolBar kbdDiaToolbar;
+    private ToolBar kbdDiaToolBar;
     ChangeListener nameListener;
 
 
@@ -380,7 +380,8 @@ public class TruthTableCreate {
 
         stage.setTitle("Create Truth Table Exercise:");
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
-        stage.setWidth(1000);
+        stage.setWidth(860);
+        stage.setMinWidth(860);
         stage.setHeight(800);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
@@ -662,7 +663,6 @@ public class TruthTableCreate {
 
 
     void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
-
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
         keyboardDiagram.initialize(decoratedRTA);
         if (keyboardDiagram.isShowing()) {
@@ -671,21 +671,16 @@ public class TruthTableCreate {
 
         editToolbar = decoratedRTA.getEditToolbar();
         fontsToolbar = decoratedRTA.getFontsToolbar();
-        insertToolbar = decoratedRTA.getInsertToolbar();
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
-        kbdDiaToolbar = decoratedRTA.getKbdDiaToolbar();
+        kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
 
+        if (kbdDiaToolBar.getItems().isEmpty()) {
 
-        if (!kbdDiaToolbar.getItems().contains(saveButton)) {
-            //          kbdDiaToolBar.getItems().add(0, updateHeightButton);
-            //          kbdDiaToolBar.getItems().add(0, zoomSpinner);
-            //          kbdDiaToolBar.getItems().add(0, zoomLabel);
-            //          kbdDiaToolBar.getItems().add(saveButton);
-
+            kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner,  new Label("    "), decoratedRTA.getKeyboardDiagramButton());
 
             switch (control) {
                 case NONE: {
-                    kbdDiaToolbar.setDisable(true);
+                    kbdDiaToolBar.setDisable(true);
                 }
                 case STATEMENT: {
                     editToolbar.setDisable(true);
@@ -693,34 +688,18 @@ public class TruthTableCreate {
                 }
                 case FIELD: {
                     paragraphToolbar.setDisable(true);
-                    insertToolbar.setDisable(true);
                 }
-                case AREA: {
-                }
+                case AREA: { }
             }
         }
 
-        HBox insertAndFontsBox = new HBox(insertToolbar, fontsToolbar);
+        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
+        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
 
-        //this is a kludge.  When the kbdDiaToolBar is extended (as in other cases), new elements do not appear in the window.
-        //calling .layout() results in an error from the RTA skin.  All I need are the zoom spinner and extra disabled elements
-        // -- and this try does not seem to have either the layout problems or the RTA error.
-
-        HBox dudBox = new HBox(zoomLabel, zoomSpinner, updateHeightButton);
-
-        ToolBar dudBar = new ToolBar(zoomLabel, zoomSpinner, updateHeightButton);
-        dudBar.setStyle("-fx-spacing: 12");
-
-        Pane spacer1 = new Pane();
-        spacer1.setPrefWidth(2);
-        ToolBar dudSaveBar = new ToolBar(spacer1, saveButton);
-        //
-
-        HBox editAndKbdBox = new HBox(editToolbar, dudBar, kbdDiaToolbar, dudSaveBar);
-
-        VBox topBox = new VBox(menuBar, paragraphToolbar, insertAndFontsBox, editAndKbdBox, upperFieldsBox);
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, upperFieldsBox);
 //        topBox.layout();
         borderPane.topProperty().setValue(topBox);
+
     }
 
 }

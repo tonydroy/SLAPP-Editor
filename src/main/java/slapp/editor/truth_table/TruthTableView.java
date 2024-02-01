@@ -407,7 +407,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     @Override
     public DoubleProperty getContentHeightProperty() { return tableGrid.prefHeightProperty(); }
     @Override
-    public DoubleProperty getContentWidthProperty() {return null; }
+    public DoubleProperty getContentWidthProperty() {return tableGrid.prefWidthProperty(); }
 
     @Override
     public double getContentFixedHeight() { return contentFixedHeight; }

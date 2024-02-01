@@ -162,7 +162,7 @@ public class ABview implements ExerciseView<DecoratedRTA> {
     @Override
     public DoubleProperty getContentHeightProperty() { return contentPageList.get(pagination.getCurrentPageIndex()).getEditor().prefHeightProperty(); }
     @Override
-    public DoubleProperty getContentWidthProperty() {return null; }
+    public DoubleProperty getContentWidthProperty() { return contentPageList.get(pagination.getCurrentPageIndex()).getEditor().prefWidthProperty();  }
     @Override
     public double getContentFixedHeight() { return 55; }
     @Override

@@ -247,7 +247,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
     @Override
     public DoubleProperty getContentHeightProperty() { return grid.prefHeightProperty(); }
     @Override
-    public DoubleProperty getContentWidthProperty() {return null; }
+    public DoubleProperty getContentWidthProperty() {return grid.prefWidthProperty(); }
     @Override
     public double getContentFixedHeight() { return 0.0; }
     @Override
