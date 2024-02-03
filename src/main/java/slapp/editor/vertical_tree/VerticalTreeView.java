@@ -114,7 +114,7 @@ public class VerticalTreeView implements ExerciseView<DecoratedRTA> {
         return rootLayout.prefHeightProperty();
     }
     @Override
-    public DoubleProperty getContentWidthProperty() {return null; }
+    public DoubleProperty getContentWidthProperty() {return rootLayout.prefWidthProperty(); }
 
     @Override
     public double getContentFixedHeight() {

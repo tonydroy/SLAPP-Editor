@@ -486,6 +486,7 @@ public class TruthTableExpCreate {
     private void updateMainFormulaFieldsFromModel(TruthTableExpModel model){
         mainFormulaList.clear();
         List<Document> formulasList = model.getMainFormulas();
+
         for (Document doc : formulasList) {
             BoxedDRTA bdrta = newMainFormulaBoxedDRTA();
             RichTextArea rta = bdrta.getRTA();
@@ -497,10 +498,10 @@ public class TruthTableExpCreate {
 
     private void updateMainFormulaGridFromFields(){
         mainFormulasPane.getChildren().clear();
+
         for (int i = 0; i < mainFormulaList.size(); i++) {
             BoxedDRTA bdrta = mainFormulaList.get(i);
             mainFormulasPane.add(bdrta.getBoxedRTA(), 0, i);
-            System.out.println(bdrta.getRTA().getDocument().toString());
         }
     }
 
@@ -549,7 +550,6 @@ public class TruthTableExpCreate {
                 editorInFocus(drta, ControlType.FIELD);
             }
         });
-        rta.getActionFactory().saveNow().execute(new ActionEvent());
         return bdrta;
     }
 

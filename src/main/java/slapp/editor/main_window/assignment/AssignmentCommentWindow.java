@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -105,11 +106,31 @@ public class AssignmentCommentWindow {
             setCenterVgrow();
 
         });
+
+        ToolBar editToolbar = commentDRTA.getEditToolbar();
+        ToolBar fontsToolbar = commentDRTA.getFontsToolbar();
+        ToolBar paragraphToolbar = commentDRTA.getParagraphToolbar();
+        ToolBar kbdDiaToolBar = commentDRTA.getKbdDiaToolbar();
+
+        if (kbdDiaToolBar.getItems().isEmpty()) {
+            kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner,  new Label("    "), commentDRTA.getKeyboardDiagramButton());
+        }
+
+        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
+        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
+
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox);
+//        topBox.layout();
+        borderPane.topProperty().setValue(topBox);
+
+        /*
         ToolBar fontsToolBar = commentDRTA.getFontsToolbar();
         fontsToolBar.getItems().addAll(zoomLabel, zoomSpinner);
 
         VBox topBox = new VBox(menuBar, commentDRTA.getEditToolbar(), fontsToolBar, commentDRTA.getParagraphToolbar() );
         borderPane.setTop(topBox);
+
+         */
 
         scene = new Scene(borderPane);
         scene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());

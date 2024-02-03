@@ -18,10 +18,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -314,28 +311,22 @@ public class ABEFGcreate {
         saveButton.setDisable(true);
 
 
+
         ToolBar editToolbar = statementDRTA.getEditToolbar();
         ToolBar fontsToolbar = statementDRTA.getFontsToolbar();
-        ToolBar insertToolbar = statementDRTA.getInsertToolbar();
         ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
         ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
 
-
-        if (!kbdDiaToolBar.getItems().contains(zoomSpinner)) {
-            kbdDiaToolBar.getItems().add(0, updateHeightButton);
-            kbdDiaToolBar.getItems().add(0, zoomSpinner);
-            kbdDiaToolBar.getItems().add(0, zoomLabel);
-            kbdDiaToolBar.getItems().add(saveButton);
+        if (kbdDiaToolBar.getItems().isEmpty()) {
+            kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner,  new Label("    "), statementDRTA.getKeyboardDiagramButton());
         }
 
-        HBox insertAndFontsBox = new HBox(insertToolbar, fontsToolbar);
         HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
+        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
 
-
-
-        VBox topBox = new VBox(menuBar, paragraphToolbar, insertAndFontsBox, editAndKbdBox, gridBox );
-
-
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, gridBox);
+//        topBox.layout();
+        borderPane.topProperty().setValue(topBox);
 
 
         borderPane.setTop(topBox);

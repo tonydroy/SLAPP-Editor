@@ -16,15 +16,19 @@ public class ParseDocForTTable {
     private static List<TableHeadItem> headItems = new ArrayList<>();
     private List<String> unaryOperators;
     private List<String> binaryOperators;
-    Document doc;
-    int start = 0;
-    int span = 0;
-    String formulaString;
-    int formulaLength;
+    private Document doc;
+    private int start = 0;
+    private int span = 0;
+    private String formulaString;
+    private int formulaLength;
+    private ColumnConstraints constraints;
 
     public ParseDocForTTable(List unaryOperators, List binaryOperators ) {
         this.unaryOperators = unaryOperators;
         this.binaryOperators = binaryOperators;
+        constraints = new ColumnConstraints();
+        constraints.setMinWidth(20);
+        constraints.setHalignment(HPos.CENTER);
 
     }
 
@@ -45,8 +49,8 @@ public class ParseDocForTTable {
             else if (isRelationChar(c)) relationSequence();
             else if (isCloseBracket(c)) {
                 TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
-                ColumnConstraints constraints = new ColumnConstraints();
-                constraints.setHalignment(HPos.CENTER);
+//                ColumnConstraints constraints = new ColumnConstraints();
+//                constraints.setHalignment(HPos.CENTER);
                 TableHeadItem headItem = new TableHeadItem(flow, constraints);
                 headItems.add(headItem);
                 EditorAlerts.fleetingPopup("Unexpected close bracket.");
@@ -65,8 +69,8 @@ public class ParseDocForTTable {
             flow.getChildren().add(0, new Text(" "));
             flow.getChildren().add(new Text(" "));
         }
-        ColumnConstraints constraints = new ColumnConstraints();
-        constraints.setHalignment(HPos.CENTER);
+//        ColumnConstraints constraints = new ColumnConstraints();
+//        constraints.setHalignment(HPos.CENTER);
         TableHeadItem headItem = new TableHeadItem(flow, constraints);
         headItems.add(headItem);
         start = start + span;
@@ -82,9 +86,8 @@ public class ParseDocForTTable {
             TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
             flow.setTextAlignment(TextAlignment.CENTER);
 
-            ColumnConstraints constraints = new ColumnConstraints();
- //           constraints.setHalignment(HPos.RIGHT);
-            constraints.setHalignment(HPos.CENTER);
+//            ColumnConstraints constraints = new ColumnConstraints();
+//            constraints.setHalignment(HPos.CENTER);
 
             TableHeadItem headItem = new TableHeadItem(flow, constraints);
             headItems.add(headItem);
@@ -98,9 +101,9 @@ public class ParseDocForTTable {
         TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
         flow.setTextAlignment(TextAlignment.CENTER);
 
-        ColumnConstraints constraints = new ColumnConstraints();
+ //       ColumnConstraints constraints = new ColumnConstraints();
  //       constraints.setHalignment(HPos.RIGHT);
-        constraints.setHalignment(HPos.CENTER);
+ //       constraints.setHalignment(HPos.CENTER);
         TableHeadItem headItem = new TableHeadItem(flow, constraints);
         headItems.add(headItem);
         start = start + span;
@@ -115,9 +118,9 @@ public class ParseDocForTTable {
             TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
             flow.setTextAlignment(TextAlignment.CENTER);
 
-            ColumnConstraints constraints = new ColumnConstraints();
+  //          ColumnConstraints constraints = new ColumnConstraints();
   //          constraints.setHalignment(HPos.RIGHT);
-            constraints.setHalignment(HPos.CENTER);
+  //          constraints.setHalignment(HPos.CENTER);
             TableHeadItem headItem = new TableHeadItem(flow, constraints);
             headItems.add(headItem);
             start = start + span;
@@ -129,8 +132,8 @@ public class ParseDocForTTable {
         TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
         flow.setTextAlignment(TextAlignment.CENTER);
 
-        ColumnConstraints constraints = new ColumnConstraints();
-        constraints.setHalignment(HPos.CENTER);
+ //       ColumnConstraints constraints = new ColumnConstraints();
+ //       constraints.setHalignment(HPos.CENTER);
   //      constraints.setHalignment(HPos.LEFT);
         TableHeadItem headItem = new TableHeadItem(flow, constraints);
         headItems.add(headItem);

@@ -37,7 +37,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     Button setupTableButton;
     private GridPane tableGrid;
     private VBox centerBox;
-    private double contentFixedHeight = 170;
+    private double contentFixedHeight = -50;
     private List<TableHeadItem> tableHeadItemsList;
     private TextField[][]  tableFields; //list of text field columns
     private BoxedDRTA[] rowCommentsArray;
@@ -99,7 +99,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         tableGrid = new GridPane();
         tableGrid.setPadding(new Insets(20,0,20,0));
         centerBox = new VBox(10, tableGrid);
-
+        tableGrid.setStyle("-fx-border-color: gainsboro");
     }
 
     public void updateTableGridFromTableItems() {
@@ -143,6 +143,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
                 tableGrid.add(headFlow, i, 0);
             }
         }
+
 
         for (int j = 0; j < tableRows; j++) {
             Pane pane = new Pane();
@@ -318,18 +319,15 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     void initializeViewDetails() {
         RichTextArea statementRTA = exerciseStatement.getEditor();
         statementRTA.setPrefHeight(statementPrefHeight);
+        statementRTA.setMinHeight(statementPrefHeight);
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setEditable(false);
 
         RichTextArea commentRTA = exerciseComment.getEditor();
         commentRTA.getStylesheets().add("slappTextArea.css");
         commentRTA.setPrefHeight(70.0);
+        commentRTA.setMinHeight(70.0);
         commentRTA.setPromptText("Comment:");
-
-        RichTextArea explainRTA = explainDRTA.getEditor();
-        explainRTA.getStylesheets().add("slappTextArea.css");
-        explainRTA.setPrefHeight(60.0);
-        explainRTA.setPromptText("Explain:");
     }
 
 

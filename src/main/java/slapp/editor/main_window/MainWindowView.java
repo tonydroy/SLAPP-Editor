@@ -108,6 +108,8 @@ public class MainWindowView {
     HBox menuBox;
     Group testGroup;
 
+    DoubleProperty fixedValueProperty;
+
 
 
     public MainWindowView(MainWindow controller) {
@@ -116,6 +118,8 @@ public class MainWindowView {
     }
 
     private void setupWindow() {
+
+
 
         Menu assignmentMenu = new Menu("Assignment");
         Menu exerciseMenu = new Menu("Exercise");
@@ -200,14 +204,6 @@ public class MainWindowView {
 //        centerPane = new ScrollPane(new Group(centerHBox));
         centerPane = new ScrollPane(centerHBox);
 
-
-
-
-
-
-
-
-
         centerHBox.minWidthProperty().bind(Bindings.createDoubleBinding(() -> centerPane.getViewportBounds().getWidth(), centerPane.viewportBoundsProperty()));
 
         centerPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -278,6 +274,8 @@ public class MainWindowView {
         this.contentHeightProperty = currentExerciseView.getContentHeightProperty();
         this.contentWidthProperty = currentExerciseView.getContentWidthProperty();
 
+        statementNode.minHeight(currentExerciseView.getStatementHeight());
+        commentNode.minHeight(currentExerciseView.getCommentHeight());
 
         centerBox.getChildren().clear();
         centerBox.getChildren().addAll(commentNode, statementNode, contentNode);
@@ -375,10 +373,17 @@ public class MainWindowView {
 
     public void setCenterVgrow() {
         if (vWindowCheck.isSelected()) {
+
             double fixedHeight = (currentExerciseView.getStatementHeight() + currentExerciseView.getCommentHeight() + currentExerciseView.getContentFixedHeight()) * scale + statusBar.getHeight() + 270;
-            DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
-            DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
-            contentHeightProperty.bind(Bindings.divide(stage.heightProperty().subtract(fixedValueProperty), scaleProperty));
+//            DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
+//            DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
+ //           contentHeightProperty.bind(Bindings.divide(stage.heightProperty().subtract(fixedValueProperty), scaleProperty));
+            DoubleProperty centerHeightProperty = new SimpleDoubleProperty();
+            centerHeightProperty.bind(Bindings.divide(stage.heightProperty().subtract(fixedHeight), scale));
+            contentHeightProperty.bind(centerHeightProperty);
+
+//            contentHeightProperty.bind(Bindings.divide(stage.heightProperty().subtract(fixedHeight), scale));
+
         }
     }
 

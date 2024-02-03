@@ -3,8 +3,10 @@ package slapp.editor.truth_table_explain;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -42,7 +44,9 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private VBox resultsBox;
     private HBox choiceBox;
     private VBox centerBox;
-    private double contentFixedHeight = 170;
+
+
+    private double contentFixedHeight = -50;
 
     private List<TableHeadItem> tableHeadItemsList;
     private TextField[][]  tableFields; //list of text field columns
@@ -50,6 +54,8 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private ToggleButton[] highlightButtons;
     private int tableRows = 0;
     private VBox[] sizers;
+
+
 
 
     TruthTableExpView(MainWindowView mainView) {
@@ -113,6 +119,8 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         tableGrid.setPadding(new Insets(20,0,20,0));
         centerBox = new VBox(10, tableGrid, resultsBox);
 
+        tableGrid.setStyle("-fx-border-color: gainsboro");
+
     }
 
     public void updateTableGridFromTableItems() {
@@ -157,10 +165,12 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
             }
         }
 
+        gridColConstraints.add(new ColumnConstraints(100));
+        Pane pane = new Pane();
+        pane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
+        tableGrid.add(pane, tableHeadItemsList.size(), 0);
         for (int j = 0; j < tableRows; j++) {
-            Pane pane = new Pane();
-            pane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
-            tableGrid.add(pane, tableHeadItemsList.size(), 0);
+
             tableGrid.add(rowCommentsArray[j].getBoxedRTA(), tableHeadItemsList.size(), j + 2);
         }
 
@@ -333,17 +343,21 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     void initializeViewDetails() {
         RichTextArea statementRTA = exerciseStatement.getEditor();
         statementRTA.setPrefHeight(statementPrefHeight);
+        statementRTA.setMinHeight(statementPrefHeight);
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setEditable(false);
 
         RichTextArea commentRTA = exerciseComment.getEditor();
         commentRTA.getStylesheets().add("slappTextArea.css");
         commentRTA.setPrefHeight(70.0);
+        commentRTA.setMinHeight(70.0);
         commentRTA.setPromptText("Comment:");
 
         RichTextArea explainRTA = explainDRTA.getEditor();
         explainRTA.getStylesheets().add("slappTextArea.css");
         explainRTA.setPrefHeight(60.0);
+        explainRTA.setMinHeight(60.0);
+
         explainRTA.setPromptText("Explain:");
     }
 
@@ -422,11 +436,14 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         exerciseStatement.getEditor().setPrefHeight(height);
     }
 
-    @Override
-    public Node getExerciseContentNode() { return centerBox;  }
 
     @Override
-    public DoubleProperty getContentHeightProperty() { return tableGrid.prefHeightProperty(); }
+    public Node getExerciseContentNode() {return centerBox; }
+
+
+    @Override
+    public DoubleProperty getContentHeightProperty() { return tableGrid.prefHeightProperty();  }
+
     @Override
     public DoubleProperty getContentWidthProperty() {return tableGrid.prefWidthProperty(); }
 

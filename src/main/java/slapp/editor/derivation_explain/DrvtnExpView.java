@@ -117,18 +117,21 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
     public void initializeViewDetails() {
         RichTextArea statementRTA = exerciseStatement.getEditor();
         statementRTA.setPrefHeight(statementPrefHeight);
+        statementRTA.setMinHeight(statementPrefHeight);
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setEditable(false);
 
         RichTextArea commentRTA = exerciseComment.getEditor();
         commentRTA.getStylesheets().add("slappTextArea.css");
         commentRTA.setPrefHeight(70.0);
+        commentRTA.setMinHeight(70.0);
         commentRTA.setPromptText("Comment:");
 
 
         RichTextArea explanationRTA = explanationDRTA.getEditor();
         explanationRTA.getStylesheets().add("slappTextArea.css");
         explanationRTA.setPrefHeight(150.0);
+        explanationRTA.setMinHeight(150.0);
         explanationRTA.setPromptText(contentPrompt);
 
         contentBox.getChildren().addAll(contentSplitPane, explanationDRTA.getEditor());
@@ -269,6 +272,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
     public void setStatementPrefHeight(double height) {
         statementPrefHeight = height;
         exerciseStatement.getEditor().setPrefHeight(height);
+ //       exerciseStatement.getEditor().setMinHeight(height);
     }
 
     public VBox getExerciseContent() { return contentBox; }
@@ -283,7 +287,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
     @Override
     public DoubleProperty getContentWidthProperty() {return grid.prefWidthProperty(); }
     @Override
-    public double getContentFixedHeight() { return explanationDRTA.getEditor().getHeight(); }
+    public double getContentFixedHeight() { return explanationDRTA.getEditor().getHeight() - 50; }
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
 

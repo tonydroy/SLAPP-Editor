@@ -559,17 +559,12 @@ public class DrvtnExpCreate {
 
         editToolbar = decoratedRTA.getEditToolbar();
         fontsToolbar = decoratedRTA.getFontsToolbar();
-        insertToolbar = decoratedRTA.getInsertToolbar();
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
         kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
 
+        if (kbdDiaToolBar.getItems().isEmpty()) {
 
-        if (!kbdDiaToolBar.getItems().contains(saveButton)) {
-  //          kbdDiaToolBar.getItems().add(0, updateHeightButton);
-  //          kbdDiaToolBar.getItems().add(0, zoomSpinner);
-  //          kbdDiaToolBar.getItems().add(0, zoomLabel);
-  //          kbdDiaToolBar.getItems().add(saveButton);
-
+            kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner,  new Label("    "), decoratedRTA.getKeyboardDiagramButton());
 
             switch (control) {
                 case NONE: {
@@ -581,34 +576,19 @@ public class DrvtnExpCreate {
                 }
                 case FIELD: {
                     paragraphToolbar.setDisable(true);
-                    insertToolbar.setDisable(true);
                 }
-                case AREA: {
-                }
+                case AREA: { }
             }
         }
 
-        HBox insertAndFontsBox = new HBox(insertToolbar, fontsToolbar);
+        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
+        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
 
-        //this is a kludge.  When the kbdDiaToolBar is extended (as in other cases), new elements do not appear in the window.
-        //calling .layout() results in an error from the RTA skin.  All I need are the zoom spinner and extra disabled elements
-        // -- and this try does not seem to have either the layout problems or the RTA error.
-
-        HBox dudBox = new HBox(zoomLabel, zoomSpinner, updateHeightButton);
-
-        ToolBar dudBar = new ToolBar(zoomLabel, zoomSpinner, updateHeightButton);
-        dudBar.setStyle("-fx-spacing: 12");
-
-        Pane spacer1 = new Pane();
-        spacer1.setPrefWidth(2);
-        ToolBar dudSaveBar = new ToolBar(spacer1, saveButton);
-        //
-
-        HBox editAndKbdBox = new HBox(editToolbar, dudBar, kbdDiaToolBar, dudSaveBar);
-
-        VBox topBox = new VBox(menuBar, paragraphToolbar, insertAndFontsBox, editAndKbdBox, upperFieldsBox);
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, upperFieldsBox);
 //        topBox.layout();
         borderPane.topProperty().setValue(topBox);
+
+
     }
 
 }

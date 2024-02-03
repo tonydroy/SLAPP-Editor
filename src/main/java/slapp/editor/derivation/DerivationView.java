@@ -113,12 +113,14 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
     public void initializeViewDetails() {
         RichTextArea statementRTA = exerciseStatement.getEditor();
         statementRTA.setPrefHeight(statementPrefHeight);
+        statementRTA.setMinHeight(statementPrefHeight);
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setEditable(false);
 
         RichTextArea commentRTA = exerciseComment.getEditor();
         commentRTA.getStylesheets().add("slappTextArea.css");
         commentRTA.setPrefHeight(70.0);
+        commentRTA.setMinHeight(70.0);
         commentRTA.setPromptText("Comment:");
 
     }
@@ -249,7 +251,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
     @Override
     public DoubleProperty getContentWidthProperty() {return grid.prefWidthProperty(); }
     @Override
-    public double getContentFixedHeight() { return 0.0; }
+    public double getContentFixedHeight() { return -50.0; }
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
 

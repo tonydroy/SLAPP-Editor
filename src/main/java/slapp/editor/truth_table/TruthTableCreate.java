@@ -382,7 +382,7 @@ public class TruthTableCreate {
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
         stage.setWidth(860);
         stage.setMinWidth(860);
-        stage.setHeight(800);
+        stage.setHeight(860);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.initModality(Modality.WINDOW_MODAL);
@@ -500,7 +500,6 @@ public class TruthTableCreate {
                 editorInFocus(drta, ControlType.FIELD);
             }
         });
-        rta.getActionFactory().saveNow().execute(new ActionEvent());
         return boxedDRTA;
     }
 

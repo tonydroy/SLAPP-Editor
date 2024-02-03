@@ -42,6 +42,8 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
     private ParseDocForTTable docParser;
     private int tableColumns = 0;
     private int tableRows = 0;
+    private ColumnConstraints spacerConstraint;
+
 
 
     //applies when table elements are set to model with rows != 0
@@ -78,6 +80,8 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
     }
 
     private void setTruthTableView() {
+        spacerConstraint = new ColumnConstraints(10);
+
         truthTableExpView.setExerciseName(truthTableExpModel.getExerciseName());
         truthTableExpView.setTableRows(tableRows);
 
@@ -235,16 +239,16 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         for (int i = 0; i < basicFormulas.size(); i++) {
             List<TableHeadItem> basicHeadItems = docParser.generateHeadItems(basicFormulas.get(i));
             headList.addAll(basicHeadItems);
-            TableHeadItem spaceColHead = new TableHeadItem(new TextFlow(new Text("")), new ColumnConstraints(10));
+            TableHeadItem spaceColHead = new TableHeadItem(new TextFlow(new Text("")), spacerConstraint);
             spaceColHead.setBlankColumn(true);
             headList.add(spaceColHead);
         }
         if (basicFormulas.size() == 0) {
-            TableHeadItem stubHead = new TableHeadItem(new TextFlow(new Text("  ")), new ColumnConstraints(10));
+            TableHeadItem stubHead = new TableHeadItem(new TextFlow(new Text("  ")), spacerConstraint);
             stubHead.setBlankColumn(true);
             headList.add(stubHead);
         }
-        TableHeadItem dividerHead = new TableHeadItem(new TextFlow(new Text("")), new ColumnConstraints(10));
+        TableHeadItem dividerHead = new TableHeadItem(new TextFlow(new Text("")), spacerConstraint);
         dividerHead.setDividerColumn(true); dividerHead.setBlankColumn(true);
         headList.add(dividerHead);
 
@@ -254,7 +258,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         for (int i = 0; i < mainFormulas.size() - 1; i++) {
             List<TableHeadItem> mainHeadItems = docParser.generateHeadItems(mainFormulas.get(i));
             headList.addAll(mainHeadItems);
-            TableHeadItem spaceColHead = new TableHeadItem(new TextFlow(new Text("")), new ColumnConstraints(10));
+            TableHeadItem spaceColHead = new TableHeadItem(new TextFlow(new Text("")), spacerConstraint);
             spaceColHead.setBlankColumn(true);
             headList.add(spaceColHead);
         }
@@ -269,7 +273,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
             List<TableHeadItem> finalHeadItems = docParser.generateHeadItems(mainFormulas.get(mainFormulas.size() - 1));
             headList.addAll(finalHeadItems);
         }
-        TableHeadItem spaceColHead = new TableHeadItem(new TextFlow(new Text("")), new ColumnConstraints(10));
+        TableHeadItem spaceColHead = new TableHeadItem(new TextFlow(new Text("")), spacerConstraint);
         spaceColHead.setBlankColumn(true);
         headList.add(spaceColHead);
 
