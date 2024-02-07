@@ -3,10 +3,13 @@ package slapp.editor.front_page;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.property.DoubleProperty;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.ExerciseView;
@@ -28,14 +31,21 @@ public class FrontPageView implements ExerciseView<Label> {
 
     public FrontPageView(MainWindowView mainView) {
         this.mainView = mainView;
-        this.exerciseStatement = new Label("");
-        this.exerciseContent = new Label("");
-        this.exerciseComment = new DecoratedRTA();
-        this.exerciseControl = new Region();
+        exerciseStatement = new Label("");
+        exerciseContent = new Label("");
+        exerciseComment = new DecoratedRTA();
+
         exerciseStatement.setVisible(false);
         exerciseStatement.setManaged(false);
         exerciseContent.setVisible(false);
         exerciseContent.setManaged(false);
+
+        Pane spacerPane = new Pane();
+        double centeringWidth = (mainView.getMinStageWidth() - PrintUtilities.getPageWidth()) / 2.0;
+        spacerPane.setMinWidth(centeringWidth);
+        exerciseControl = spacerPane;
+
+
 
         RichTextArea commentRTA = exerciseComment.getEditor();
         commentRTA.setDocument(new Document("Logo Here"));
@@ -59,6 +69,8 @@ public class FrontPageView implements ExerciseView<Label> {
                 mainView.editorInFocus(exerciseComment, ControlType.NONE);
             }
         });
+
+
 
 
     }

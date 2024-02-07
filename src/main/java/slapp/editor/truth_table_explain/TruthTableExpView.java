@@ -109,7 +109,7 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         setupTableButton.setPrefWidth(100);
 
         controlBox = new VBox(20, upperControlBox, basicFormulasPane, spinnerBox, setupTableButton);
-        controlBox.setPadding(new Insets(80, 0, 20, 20));
+        controlBox.setPadding(new Insets(100, 20, 20, 30));
 
         choiceBox = new HBox(20, choiceLeadLabel, aCheckBox, bCheckBox);
         resultsBox = new VBox(10, choiceBox, explainDRTA.getEditor());

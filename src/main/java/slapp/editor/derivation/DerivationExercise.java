@@ -104,7 +104,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         derivationView.getContentSplitPane().setDividerPosition(0, derivationModel.getGridWidth());
         derivationView.getContentSplitPane().getDividers().get(0).positionProperty().addListener((ob, ov, nv) -> {
             double diff = (double) nv - (double) ov;
-            if (Math.abs(diff) >= .02) exerciseModified = true;
+            if (Math.abs(diff) >= .07) exerciseModified = true;
         });
 
         setViewLinesFromModel();
@@ -902,6 +902,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             exerciseModified = true;
         }
 
+
+
         List<ViewLine> viewLines = derivationView.getViewLines();
         for (ViewLine viewLine : viewLines) {
             if (LineType.isContentLine(viewLine.getLineType())) {
@@ -911,6 +913,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                 }
             }
         }
+
         return exerciseModified;
     }
 

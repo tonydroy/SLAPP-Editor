@@ -119,7 +119,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         drvtnExpView.getSplitPane().setDividerPosition(0, drvtnExpModel.getGridWidth());
         drvtnExpView.getSplitPane().getDividers().get(0).positionProperty().addListener((ob, ov, nv) -> {
             double diff = (double) nv - (double) ov;
-            if (Math.abs(diff) >= .02) exerciseModified = true;
+            if (Math.abs(diff) >= .07) exerciseModified = true;
         });
 
         setViewLinesFromModel();

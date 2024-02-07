@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -51,7 +52,7 @@ public class MainWindowView {
     private VBox centerBox;
     private Spinner<Integer> zoomSpinner;
     private Label zoomLabel;
-    int minStageWidth = 860;
+    double minStageWidth = 860.0;
     private BorderPane borderPane = new BorderPane();
     private Scene mainScene;
     private ExerciseView currentExerciseView;
@@ -109,6 +110,7 @@ public class MainWindowView {
     Group testGroup;
 
     DoubleProperty fixedValueProperty;
+    double windowFraction;
 
 
 
@@ -189,8 +191,9 @@ public class MainWindowView {
         centerBox = new VBox();
         centerBox.setSpacing(3);
 
-        centerHBox = new HBox(centerBox);
-        centerHBox.setAlignment(Pos.CENTER);
+        //centering interacts wierdly with zoom
+ //       centerHBox = new HBox(centerBox);
+ //       centerHBox.setAlignment(Pos.CENTER);
 
 
     /*
@@ -198,13 +201,13 @@ public class MainWindowView {
         responds to the layout bounds of the scaled group.  But, in this case, RTA crashes two ways: Typing any char
         results in ConcurrentModificationException (from ParagraphTile 352). And if the window is dragged with
         HSize Win checked there is a NullPointerException (from ParagraphTile 202).  There are no exceptions when
-        the scroll pane has just center box -- but then zoom doesn't generate scroll bars.  Revisit this issue if and when
-        RTA gets an update.  For now, I am catching the exceptions in ParagraphTile -- don't know consequences!
+        the scroll pane has just center box -- but then zoom doesn't generate properly scroll bars.  Revisit this issue
+        if and whenRTA gets an update.
      */
 //        centerPane = new ScrollPane(new Group(centerHBox));
-        centerPane = new ScrollPane(centerHBox);
+        centerPane = new ScrollPane(centerBox);   //or centerHBox
 
-        centerHBox.minWidthProperty().bind(Bindings.createDoubleBinding(() -> centerPane.getViewportBounds().getWidth(), centerPane.viewportBoundsProperty()));
+//        centerHBox.minWidthProperty().bind(Bindings.createDoubleBinding(() -> centerPane.getViewportBounds().getWidth(), centerPane.viewportBoundsProperty()));
 
         centerPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         centerPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -421,6 +424,8 @@ public class MainWindowView {
 
 
     public void updateZoom(int zoom) {
+        double widthFraction = centerBox.getLayoutBounds().getWidth() * scale/mainScene.getWindow().getWidth();
+        double heightFraction = centerBox.getLayoutBounds().getHeight() * scale / mainScene.getWindow().getHeight();
         scale = (double)zoom/100.0;
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
@@ -429,13 +434,21 @@ public class MainWindowView {
         keyboardDiagram.update();
 
 
+        centerBox.getTransforms().clear();
+        centerBox.getTransforms().add(new Scale(scale, scale));
+//        centerBox.setScaleX(scale);
+//        centerBox.setScaleY(scale);
 
-        centerBox.setScaleX(scale);
-        centerBox.setScaleY(scale);
 
 
+//        mainScene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth() + PrintUtilities.getPageWidth() * scale + 100));//
+//        mainScene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth()/mainScene.getWindow().getWidth() * scale));
+//        mainScene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth() + PrintUtilities.getPageWidth() * hCustomSpinner.getValue()/100 * scale + 100));
 
-//        mainScene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth() + PrintUtilities.getPageWidth() * scale + 100));
+
+        mainScene.getWindow().setWidth(Math.max(minStageWidth, centerBox.getLayoutBounds().getWidth() * scale / widthFraction ));
+        mainScene.getWindow().setHeight(centerBox.getLayoutBounds().getHeight() * scale / heightFraction);
+
 
         setCenterVgrow();
     }
@@ -696,4 +709,8 @@ public class MainWindowView {
 
     public DoubleProperty contentWidthProperty() { return contentWidthProperty; }
     public ChangeListener getHorizontalListener() {return horizontalListener; }
+
+    public double getMinStageWidth() {
+        return minStageWidth;
+    }
 }
