@@ -169,15 +169,9 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         boolean success = DiskUtilities.saveExercise(saveAs, getABmodelFromView());
         if (success) exerciseModified = false;
     }
-    @Override
-    public void printExercise() {
-        List<Node> printNodes = getPrintNodes();
-        PrintUtilities.printExercise(printNodes, abModel.getExerciseName());
-    }
-    @Override
-    public void exportExerciseToPDF() {
-        List<Node> printNodes = getPrintNodes();
-        PrintUtilities.exportExerciseToPDF(printNodes, abModel.getExerciseName()); }
+
+
+
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();

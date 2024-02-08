@@ -26,10 +26,7 @@ public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView
     public FrontPageView getExerciseView() { return view; }
     @Override
     public void saveExercise(boolean saveAs) { }
-    @Override
-    public void printExercise() { }
-    @Override
-    public void exportExerciseToPDF(){}
+
     @Override
     public List<Node> getPrintNodes() { return null; }
     @Override

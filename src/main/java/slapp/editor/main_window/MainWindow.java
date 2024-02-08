@@ -257,18 +257,49 @@ public class MainWindow {
     }
 
     private void exportExerciseToPDF() {
-        if (currentExercise != null) {
-            if (!((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
-                currentExercise.exportExerciseToPDF();
+        if (currentExercise != null && !((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
+            boolean heightGood = true;
+            List<Node> printNodes = currentExercise.getPrintNodes();
+            PrintUtilities.resetPrintBuffer();
+            for (Node node : printNodes) {
+                if (!PrintUtilities.processPrintNode(node) && !mainView.isFitToPageSelected()) {
+                    heightGood = false;
+                }
+            }
+            if (!heightGood && !mainView.isFitToPageSelected()) {
+                String message = "Fit page not selected and exercise " + ((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName() + "includes at least on block that takes up more than a page.  Content exceeding page bounds will be cropped.\n\n Continue export?";
+                Alert confirm = EditorAlerts.confirmationAlert("Page Problem:", message);
+                Optional<ButtonType> result = confirm.showAndWait();
+                if (result.get() == OK) heightGood = true;
+            }
+            if (heightGood) {
+                if (!mainView.isFitToPageSelected()) PrintUtilities.resetScale();
+                PrintUtilities.sendBufferToPDF(null);
             }
         }
         else EditorAlerts.fleetingPopup("Cannot find exercise to export.");
+
     }
 
     private void printExercise() {
-        if (currentExercise != null) {
-            if (!((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
-                currentExercise.printExercise();
+        if (currentExercise != null && !((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
+            boolean heightGood = true;
+            List<Node> printNodes = currentExercise.getPrintNodes();
+            PrintUtilities.resetPrintBuffer();
+            for (Node node : printNodes) {
+                if (!PrintUtilities.processPrintNode(node) && !mainView.isFitToPageSelected()) {
+                    heightGood = false;
+                }
+            }
+            if (!heightGood && !mainView.isFitToPageSelected()) {
+                String message = "Fit page not selected and exercise " + ((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName() + " includes at least one block that takes up more than a page.  Content exceeding page bounds will be cropped.\n\n Continue to print?";
+                Alert confirm = EditorAlerts.confirmationAlert("Page Problem:", message);
+                Optional<ButtonType> result = confirm.showAndWait();
+                if (result.get() == OK) heightGood = true;
+            }
+            if (heightGood) {
+                if (!mainView.isFitToPageSelected()) PrintUtilities.resetScale();
+                PrintUtilities.sendBufferToPrint(null);
             }
         }
         else EditorAlerts.fleetingPopup("Cannot find exercise to print.");
@@ -398,8 +429,10 @@ public class MainWindow {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("There is no open assignment to print.");
         } else {
-            List<Node> printNodes = new ArrayList<>();
-            printNodes.add(mainView.getAssignmentHeader());
+            boolean heightGood = true;
+            List<String> badExerciseList = new ArrayList<>();
+            PrintUtilities.resetPrintBuffer();
+            PrintUtilities.setTopBox(mainView.getAssignmentHeader());
 
             if (currentExercise.isExerciseModified()) assignmentContentModified = true;
             ExerciseModel currentModel = currentExercise.getExerciseModelFromView();
@@ -411,12 +444,32 @@ public class MainWindow {
                 TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
                 Exercise exercise = typeFactory.getExerciseFromModelObject(model);
                 List<Node> exerciseNodes = exercise.getPrintNodes();
-                if (PrintUtilities.checkExerciseNodeHeights(exerciseNodes, model.getExerciseName())) {
-                    printNodes.addAll(exerciseNodes);
-                } else return;
+
+                for (Node node : exerciseNodes) {
+                    if (!PrintUtilities.processPrintNode(node) && !mainView.isFitToPageSelected()) {
+                        heightGood = false;
+                        badExerciseList.add(((ExerciseModel) exercise.getExerciseModel()).getExerciseName());
+                    }
+                }
             }
-            String infoString = currentAssignment.getHeader().getCreationID() + "-" + currentAssignment.getHeader().getWorkingID();
-            PrintUtilities.printAssignment(printNodes, infoString);
+
+            if (!badExerciseList.isEmpty()) {
+                StringBuilder sb = new StringBuilder(badExerciseList.get(0));
+                for (int i = 1; i < badExerciseList.size(); i++) {
+                    sb.append(", ");
+                    sb.append(badExerciseList.get(i));
+                }
+                String message = "Fit page not selected and " + sb.toString() + " include(s) at least one block that takes up more than a page.  Content exceeding page bounds will be cropped.\n\n Continue to print?";
+                Alert confirm = EditorAlerts.confirmationAlert("Page Problem:", message);
+                Optional<ButtonType> result = confirm.showAndWait();
+                if (result.get() == OK) heightGood = true;
+            }
+
+            if (heightGood) {
+                if (!mainView.isFitToPageSelected()) PrintUtilities.resetScale();
+                String infoString = currentAssignment.getHeader().getCreationID() + "-" + currentAssignment.getHeader().getWorkingID();
+                PrintUtilities.sendBufferToPrint(infoString);
+            }
         }
     }
 
@@ -424,10 +477,13 @@ public class MainWindow {
 
     public void exportAssignment() {
         if (currentAssignment == null) {
-            EditorAlerts.fleetingPopup("There is no open assignment to print.");
+            EditorAlerts.fleetingPopup("There is no open assignment to export.");
         } else {
-            List<Node> printNodes = new ArrayList<>();
-            printNodes.add(mainView.getAssignmentHeader());
+            boolean heightGood = true;
+            List<String> badExerciseList = new ArrayList<>();
+            PrintUtilities.resetPrintBuffer();
+            PrintUtilities.setTopBox(mainView.getAssignmentHeader());
+
 
             if (currentExercise.isExerciseModified()) assignmentContentModified = true;
             ExerciseModel currentModel = currentExercise.getExerciseModelFromView();
@@ -436,16 +492,37 @@ public class MainWindow {
             List<ExerciseModel> exerciseModelList = currentAssignment.getExerciseModels();
             for (int i = 0; i < exerciseModelList.size(); i++) {
                 ExerciseModel model = exerciseModelList.get(i);
-                TypeSelectorFactories typeFactory = new TypeSelectorFactories(mainWindow);
+                TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
                 Exercise exercise = typeFactory.getExerciseFromModelObject(model);
                 List<Node> exerciseNodes = exercise.getPrintNodes();
-                if (PrintUtilities.checkExerciseNodeHeights(exerciseNodes, model.getExerciseName())) {
-                    printNodes.addAll(exerciseNodes);
-                } else return;
+
+                for (Node node : exerciseNodes) {
+                    if (!PrintUtilities.processPrintNode(node) && !mainView.isFitToPageSelected()) {
+                        heightGood = false;
+                        badExerciseList.add(((ExerciseModel) exercise.getExerciseModel()).getExerciseName());
+                    }
+                }
             }
-            String infoString = currentAssignment.getHeader().getCreationID() + "-" + currentAssignment.getHeader().getWorkingID();
-            PrintUtilities.exportAssignmentToPDF (printNodes, infoString);
+
+            if (!badExerciseList.isEmpty()) {
+                StringBuilder sb = new StringBuilder(badExerciseList.get(0));
+                for (int i = 1; i < badExerciseList.size(); i++) {
+                    sb.append(", ");
+                    sb.append(badExerciseList.get(i));
+                }
+                String message = "Fit page not selected and " + sb.toString() + " include(s) at least one block that takes up more than a page.  Content exceeding page bounds will be cropped.\n\n Continue export?";
+                Alert confirm = EditorAlerts.confirmationAlert("Page Problem:", message);
+                Optional<ButtonType> result = confirm.showAndWait();
+                if (result.get() == OK) heightGood = true;
+            }
+
+            if (heightGood) {
+                if (!mainView.isFitToPageSelected()) PrintUtilities.resetScale();
+                String infoString = currentAssignment.getHeader().getCreationID() + "-" + currentAssignment.getHeader().getWorkingID();
+                PrintUtilities.sendBufferToPDF(infoString);
+            }
         }
+
     }
     public void createRevisedAssignment() {
         if (checkContinueAssignment("Confirm Create", "The current assignment appears to have been changed, and will be overwritten in the creation process.\n\nContinue to create assignment?")) {

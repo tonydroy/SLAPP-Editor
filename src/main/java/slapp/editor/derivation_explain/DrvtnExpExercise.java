@@ -821,11 +821,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         boolean success = DiskUtilities.saveExercise(saveAs, getDrvtnExpModelFromView());
         if (success) exerciseModified = false;
     }
-    @Override
-    public void printExercise() { PrintUtilities.printExercise(getPrintNodes(), drvtnExpModel.getExerciseName()); }
 
-    @Override
-    public void exportExerciseToPDF() { PrintUtilities.exportExerciseToPDF(getPrintNodes(), drvtnExpModel.getExerciseName()); }
 
     @Override
     public List<Node> getPrintNodes() {

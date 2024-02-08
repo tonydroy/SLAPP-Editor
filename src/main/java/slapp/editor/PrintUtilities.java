@@ -1,6 +1,7 @@
 package slapp.editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.print.*;
 import javafx.scene.Group;
@@ -9,6 +10,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Scale;
+import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,11 @@ public class PrintUtilities {
     // this is the layout with space for footer, for internal use
     private static Printer pdfPrinter = null;
     private static Region spacer = new Region();
+
+    private static double scale = 1.0;
+    private static List<Pair<Node, Double>> printBuffer = new ArrayList<>();
+
+    private static VBox topBox;
 
     static {
         spacer.setVisible(false);
@@ -91,31 +99,42 @@ public class PrintUtilities {
         return isExportSetup;
     }
 
-    public static void printNodes(List<Node> nodeList, String footerInfo, PrinterJob job) {
+    public static void printNodes(String footerInfo, PrinterJob job) {
         boolean success = true;
         int pageNum = 0;
         VBox pageBox = new VBox();
+        pageBox.getTransforms().add(new Scale(scale, scale));
         double netHeight = 0;
         int i = 0;
 
-        while (i < nodeList.size()) {
-            Node node = nodeList.get(i);
-            double newHeight = getNodeHeight(node) + netHeight;
+        if (topBox != null) {
+            topBox.setMaxWidth(getPageWidth()/scale);
+            topBox.setMinWidth(getPageWidth()/scale);
+            Pair<Double, Double> size = getNodeSize(topBox);
+            double height = size.getValue();
+            printBuffer.add(0, new Pair(topBox, height));
+        }
+
+        while (i < printBuffer.size()) {
+            Pair<Node, Double> bufferItem = printBuffer.get(i);
+            Node node = bufferItem.getKey();
+            double nodeHeight = bufferItem.getValue() * scale;
+            double newHeight = nodeHeight + netHeight;
             //if the node fits on the page add to page
             if (newHeight <= pageLayout.getPrintableHeight()) {
                 pageBox.getChildren().add(node);
                 netHeight = newHeight;
                 i++;
                 //if all the nodes have been added print page
-                if (i == nodeList.size()) {
-                    spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 16.0));
+                if (i == printBuffer.size()) {
+                    spacer.setPrefHeight((internalPageLayout.getPrintableHeight() - (netHeight + 16.0))/scale);
                     pageBox.getChildren().addAll(spacer, getFooterBox(++pageNum, footerInfo));
  //                   pageBox.getChildren().addAll(spacer, new Label(Integer.toString(++pageNum)));
                     success = (job.printPage(internalPageLayout, pageBox) && success);
                 }
                 //if the node does not fit on this page, print page and start new
             } else if (!pageBox.getChildren().isEmpty()) {
-                spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 16.0));
+                spacer.setPrefHeight((internalPageLayout.getPrintableHeight() - (netHeight + 16.0))/scale);
                 pageBox.getChildren().addAll(spacer, getFooterBox(++pageNum, footerInfo));
  //               pageBox.getChildren().addAll(spacer, new Label(Integer.toString(++pageNum)));
                 success = (job.printPage(internalPageLayout, pageBox) && success);
@@ -130,6 +149,7 @@ public class PrintUtilities {
 
 //                StackPane pane = new StackPane(node, pageLabel);
                 HBox footerBox = getFooterBox(++pageNum, footerInfo);
+                footerBox.getTransforms().add(new Scale(scale, scale));
                 StackPane pane = new StackPane(node, footerBox);
                 pane.setAlignment(footerBox, Pos.TOP_LEFT);
                 footerBox.setTranslateY(internalPageLayout.getPrintableHeight() - 16.0);
@@ -146,84 +166,66 @@ public class PrintUtilities {
         Region spacer = new Region();
         HBox footerBox = new HBox(new Label(Integer.toString(pageNum)), spacer, new Label(infoString));
         footerBox.setHgrow(spacer, Priority.ALWAYS);
+        footerBox.setMaxWidth(getPageWidth()/scale);
+        footerBox.setMinWidth(getPageWidth()/scale);
         return footerBox;
     }
 
-    public static void printExercise(List<Node> nodeList, String exerciseName) {
-        if (checkExerciseNodeHeights(nodeList, exerciseName)) {
-            PrinterJob job = PrinterJob.createPrinterJob();
-            if (job != null) {
-                boolean proceed = job.showPrintDialog(EditorMain.mainStage);
-                if (proceed) printNodes(nodeList, null, job);
-                job.endJob();
-            }
-            else  EditorAlerts.showSimpleAlert("Print Problem", "Failed to create printer job");
-        }
-    }
-
-    public static void printAssignment(List<Node> nodeList, String footerInfo) {
+    public static void sendBufferToPrint(String footerInfo) {
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null) {
             boolean proceed = job.showPrintDialog(EditorMain.mainStage);
-            if (proceed) printNodes(nodeList, footerInfo, job);
+            if (proceed) printNodes(footerInfo, job);
             job.endJob();
         }
         else  EditorAlerts.showSimpleAlert("Print Problem", "Failed to create printer job");
+
     }
 
-
-
-    public static void exportExerciseToPDF(List<Node> nodeList, String exerciseName) {
+    public static void sendBufferToPDF(String footerInfo) {
         boolean success = false;
         if (pdfPrinter != null || runExportSetup()) {
-            if (checkExerciseNodeHeights(nodeList, exerciseName)) {
-                PrinterJob job = PrinterJob.createPrinterJob(pdfPrinter);
-                if (job != null) {
-                    printNodes(nodeList, null, job);
-                    success = true;
-                    job.endJob();
-                }
+            PrinterJob job = PrinterJob.createPrinterJob(pdfPrinter);
+            if (job != null) {
+                printNodes(footerInfo, job);
+                success = true;
+                job.endJob();
             }
         }
         if (!success) EditorAlerts.showSimpleAlert("Print Problem", "Failed to create export job");
     }
 
-    public static void exportAssignmentToPDF(List<Node> nodeList, String footerInfo) {
-        boolean success = false;
-        if (pdfPrinter !=null || runExportSetup()) {
-            PrinterJob job  = PrinterJob.createPrinterJob(pdfPrinter);
-            if (job != null) {
-                printNodes(nodeList, footerInfo, job);
-                job.endJob();
-            }
-            else  EditorAlerts.showSimpleAlert("Print Problem", "Failed to create export job");
-        }
-    }
 
-    private static double getNodeHeight(Node node) {
+    private static Pair<Double, Double> getNodeSize(Node node) {
         Group root = new Group();
         Scene scene = new Scene(root);
         root.getChildren().add(node);
         root.applyCss();
         root.layout();
-        return node.getLayoutBounds().getHeight();
+        Bounds bounds = node.getLayoutBounds();
+        return new Pair(bounds.getWidth(), bounds.getHeight());
     }
 
-    public static boolean checkExerciseNodeHeights(List<Node> printNodes, String exerciseName) {
-        boolean heightGood = true;
-        for (Node node : printNodes) {
-            if (getNodeHeight(node) > PrintUtilities.getPageHeight()) {
-                heightGood = false;
-                break;
-            }
+    public static boolean processPrintNode(Node node) {
+        boolean nodeFit = true;
+        double wScale = 1.0;
+        double hScale = 1.0;
+        Pair<Double, Double> size = getNodeSize(node);
+        double width = size.getKey();
+        double height = size.getValue();
+
+        if (width > getPageWidth()) {
+            nodeFit = false;
+            wScale = getPageWidth()/width;
         }
-        if (!heightGood) {
-            String message = "Exercise " + exerciseName + " includes at least one block that takes up more than a page.  Content exceeding page bounds will be cropped.  \n\n Continue to print?";
-            Alert confirm = EditorAlerts.confirmationAlert("Page Problem:", message);
-            Optional<ButtonType> result = confirm.showAndWait();
-            if (result.get() == OK) heightGood = true;
+        if (height > getPageHeight()) {
+            nodeFit = false;
+            hScale = getPageHeight()/height;
         }
-        return heightGood;
+        scale = Math.min(Math.min(wScale, hScale), scale);
+        printBuffer.add(new Pair(node, height));
+
+        return nodeFit;
     }
 
     public static double getPageHeight() {
@@ -234,10 +236,15 @@ public class PrintUtilities {
         return pageLayout.getPrintableWidth();
     }
 
-
-
-
+    public static void resetScale() { scale = 1.0; }
+    public static void resetPrintBuffer() {
+        printBuffer.clear();
+        scale = 1.0;
+        topBox = null;
+    }
 
     //this is a stub to let the extended demo compile
         public static void printRTA(RichTextArea rta) {}
+
+    public static void setTopBox(VBox box) { topBox = box; }
 }

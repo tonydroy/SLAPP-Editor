@@ -37,18 +37,9 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
 
     @Override
     public void saveExercise(boolean saveAs) {
-
     }
 
-    @Override
-    public void printExercise() {
 
-    }
-
-    @Override
-    public void exportExerciseToPDF() {
-
-    }
 
     @Override
     public List<Node> getPrintNodes() {

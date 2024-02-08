@@ -262,11 +262,8 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         if (success) exerciseModified = false;
     }
 
-    @Override
-    public void printExercise() { PrintUtilities.printExercise(getPrintNodes(), truthTableModel.getExerciseName()); }
 
-    @Override
-    public void exportExerciseToPDF() { PrintUtilities.exportExerciseToPDF(getPrintNodes(), truthTableModel.getExerciseName());  }
+
 
     @Override
     public List<Node> getPrintNodes() {

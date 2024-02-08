@@ -805,11 +805,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         boolean success = DiskUtilities.saveExercise(saveAs, getDerivationModelFromView());
         if (success) exerciseModified = false;
     }
-    @Override
-    public void printExercise() { PrintUtilities.printExercise(getPrintNodes(), derivationModel.getExerciseName()); }
 
-    @Override
-    public void exportExerciseToPDF() { PrintUtilities.exportExerciseToPDF(getPrintNodes(), derivationModel.getExerciseName()); }
 
     @Override
     public List<Node> getPrintNodes() {

@@ -23,6 +23,7 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Pair;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 import slapp.editor.EditorMain;
@@ -713,4 +714,6 @@ public class MainWindowView {
     public double getMinStageWidth() {
         return minStageWidth;
     }
+
+    public boolean isFitToPageSelected() {return fitToPageItem.isSelected(); }
 }

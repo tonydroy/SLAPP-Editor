@@ -216,15 +216,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         boolean success = DiskUtilities.saveExercise(saveAs, getABEFGmodelFromView());
         if (success) exerciseModified = false;
     }
-    @Override
-    public void printExercise() {
-        List<Node> printNodes = getPrintNodes();
-        PrintUtilities.printExercise(printNodes, abefgModel.getExerciseName());
-    }
-    @Override
-    public void exportExerciseToPDF() {
-        List<Node> printNodes = getPrintNodes();
-        PrintUtilities.exportExerciseToPDF(printNodes, abefgModel.getExerciseName()); }
+
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();

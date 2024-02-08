@@ -146,12 +146,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         boolean success = DiskUtilities.saveExercise(saveAs, getSimpleEditModelFromView());
         if (success) exerciseModified = false;
     }
-    @Override
-    public void printExercise() {
-        PrintUtilities.printExercise(getPrintNodes(), editModel.getExerciseName());
-    }
-    @Override
-    public void exportExerciseToPDF() { PrintUtilities.exportExerciseToPDF(getPrintNodes(), editModel.getExerciseName()); }
+
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();

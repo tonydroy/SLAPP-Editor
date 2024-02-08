@@ -9,8 +9,7 @@ public interface Exercise<T,U> {
     T getExerciseModel();
     U getExerciseView();
     void saveExercise(boolean saveAs);
-    void printExercise();
-    void exportExerciseToPDF();
+
     List<Node> getPrintNodes();
     Exercise<T,U> resetExercise();
     boolean isExerciseModified();
