@@ -46,7 +46,7 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private VBox centerBox;
 
 
-    private double contentFixedHeight = -50;
+    private double contentFixedHeight = 70;
 
     private List<TableHeadItem> tableHeadItemsList;
     private TextField[][]  tableFields; //list of text field columns

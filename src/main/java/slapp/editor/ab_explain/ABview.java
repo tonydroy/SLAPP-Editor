@@ -83,10 +83,12 @@ public class ABview implements ExerciseView<DecoratedRTA> {
 
     void initializeViewDetails() {
         exerciseStatement.getEditor().setPrefHeight(statementPrefHeight);
+        exerciseStatement.getEditor().setMinHeight(statementPrefHeight);
         exerciseStatement.getEditor().setEditable(false);
         exerciseStatement.getEditor().getStylesheets().add("slappTextArea.css");
 
         exerciseComment.getEditor().setPrefHeight(70.0);
+        exerciseComment.getEditor().setMinHeight(70.0);
         exerciseComment.getEditor().setPromptText("Comment:");
         exerciseComment.getEditor().getStylesheets().add("slappTextArea.css");
         if (!contentPageList.isEmpty()) {

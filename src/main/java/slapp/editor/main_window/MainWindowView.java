@@ -110,6 +110,8 @@ public class MainWindowView {
     HBox menuBox;
     Group testGroup;
 
+
+
     DoubleProperty fixedValueProperty;
     double windowFraction;
 
@@ -316,6 +318,7 @@ public class MainWindowView {
 
         centerBox.layout();
 
+
         contentHeightProperty.removeListener(verticalListener);
         contentHeightProperty.unbind();
         double fixedHeight = (currentExerciseView.getStatementHeight() + currentExerciseView.getCommentHeight() + currentExerciseView.getContentFixedHeight()) * scale + statusBar.getHeight() + 270;
@@ -323,11 +326,23 @@ public class MainWindowView {
         updateExerciseHeight();
 
         contentWidthProperty.removeListener(horizontalListener);
-        contentWidthProperty.unbind();
-        contentWidthProperty.setValue(PrintUtilities.getPageWidth() * hCustomSpinner.getValue()/100.0);
-        updateExerciseWidth();
+//        contentWidthProperty.unbind();
+
+
+        updateContentWidthProperty();
+
+
+//        updateExerciseWidth();
+
+
 
         Platform.runLater(() -> contentNode.requestFocus());
+    }
+
+    public void updateContentWidthProperty() {
+        contentWidthProperty.unbind();
+        contentWidthProperty.setValue(Math.max(contentNode.getLayoutBounds().getWidth(), PrintUtilities.getPageWidth() * hCustomSpinner.getValue()/100.0));
+        updateExerciseWidth();
     }
 
     public void updateExerciseHeight() {
@@ -336,10 +351,12 @@ public class MainWindowView {
     }
 
     public void updateWindowV() {
+
         vCustomSpinner.setDisable(true);
-        centerPane.setFitToHeight(true);
+//        centerPane.setFitToHeight(true);
         contentHeightProperty.unbind();
         setCenterVgrow();
+        vCustomSpinner.getValueFactory().setValue((double) (Math.round((Double) contentHeightProperty().getValue() / PrintUtilities.getPageHeight() * 20 ) * 5));
         contentHeightProperty.addListener(verticalListener);
     }
     public void updateCustomV() {
@@ -360,10 +377,13 @@ public class MainWindowView {
     public void updateWindowH(){
 
         hCustomSpinner.setDisable(true);
-        centerPane.setFitToWidth(true);
+//        centerPane.setFitToWidth(true);
         contentWidthProperty.unbind();
         setCenterHgrow();
+        hCustomSpinner.getValueFactory().setValue((double) (Math.round((Double) contentWidthProperty().getValue() / PrintUtilities.getPageWidth() * 20 ) * 5));
         contentWidthProperty.addListener(horizontalListener);
+
+
     }
     public void updateCustomH(){
         contentWidthProperty.removeListener(horizontalListener);
@@ -373,10 +393,13 @@ public class MainWindowView {
         hCustomSpinner.getValueFactory().setValue((double) (Math.round((Double) contentWidthProperty.getValue() / PrintUtilities.getPageWidth() * 20 ) * 5));
 //        hCustomSpinner.getValueFactory().setValue(rint((contentWidthProperty.getValue() / PrintUtilities.getPageWidth() * 100.0)));
         contentWidthProperty.bind(Bindings.multiply(PrintUtilities.getPageWidth(), DoubleProperty.doubleProperty(hCustomSpinner.getValueFactory().valueProperty()).divide(100.0)));
+
+
     }
 
     public void setCenterVgrow() {
         if (vWindowCheck.isSelected()) {
+
 
             double fixedHeight = (currentExerciseView.getStatementHeight() + currentExerciseView.getCommentHeight() + currentExerciseView.getContentFixedHeight()) * scale + statusBar.getHeight() + 270;
 //            DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
@@ -393,7 +416,7 @@ public class MainWindowView {
 
     public void setCenterHgrow() {
         if (hWindowCheck.isSelected()) {
-            contentWidthProperty.bind(Bindings.divide(stage.widthProperty().subtract(controlNode.getLayoutBounds().getWidth() + 100), scale ));
+            contentWidthProperty.bind(Bindings.divide(stage.widthProperty().subtract(controlNode.getLayoutBounds().getWidth() + 30.0), scale ));
         }
     }
 
@@ -491,7 +514,7 @@ public class MainWindowView {
         HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
 
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox);
+        topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox);
         topBox.layout();
         borderPane.topProperty().setValue(topBox);
     }

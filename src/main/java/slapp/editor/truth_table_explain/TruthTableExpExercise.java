@@ -3,6 +3,7 @@ package slapp.editor.truth_table_explain;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -177,6 +178,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
             updateViewTableItems();
             truthTableExpView.updateTableGridFromTableItems();
             exerciseModified = true;
+            Platform.runLater(() -> mainView.updateContentWidthProperty());
         });
 
         //table contents
