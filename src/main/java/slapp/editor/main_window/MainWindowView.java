@@ -448,8 +448,6 @@ public class MainWindowView {
 
 
     public void updateZoom(int zoom) {
-        double widthFraction = centerBox.getLayoutBounds().getWidth() * scale/mainScene.getWindow().getWidth();
-        double heightFraction = centerBox.getLayoutBounds().getHeight() * scale / mainScene.getWindow().getHeight();
         scale = (double)zoom/100.0;
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
@@ -457,22 +455,8 @@ public class MainWindowView {
         keyboardDiagram.initialize(lastFocussedDRTA);
         keyboardDiagram.update();
 
-
         centerBox.getTransforms().clear();
         centerBox.getTransforms().add(new Scale(scale, scale));
-//        centerBox.setScaleX(scale);
-//        centerBox.setScaleY(scale);
-
-
-
-//        mainScene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth() + PrintUtilities.getPageWidth() * scale + 100));//
-//        mainScene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth()/mainScene.getWindow().getWidth() * scale));
-//        mainScene.getWindow().setWidth(Math.max(minStageWidth, controlNode.getLayoutBounds().getWidth() + PrintUtilities.getPageWidth() * hCustomSpinner.getValue()/100 * scale + 100));
-
-
-        mainScene.getWindow().setWidth(Math.max(minStageWidth, centerBox.getLayoutBounds().getWidth() * scale / widthFraction ));
-        mainScene.getWindow().setHeight(centerBox.getLayoutBounds().getHeight() * scale / heightFraction);
-
 
         setCenterVgrow();
     }
