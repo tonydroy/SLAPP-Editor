@@ -2,6 +2,7 @@ package slapp.editor.derivation_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -112,6 +113,8 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
         controlBox.setMargin(insertLineButton, new Insets(0,0,20, 0));
         controlBox.setPadding(new Insets(40,20,30,40));
         exerciseControlNode = controlBox;
+
+
     }
 
     public void initializeViewDetails() {
@@ -204,6 +207,9 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
 
             if (viewLine.getJustificationFlow() != null) grid.add(viewLine.getJustificationFlow(), 22, index);
         }
+        Platform.runLater(() -> {
+            mainView.updateContentHeightProperty();
+        });
     }
 
     public double getGridHeight() {
@@ -291,7 +297,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
     @Override
-    public double getContentWidth() {
-        return 0;
-    }
+    public double getContentWidth() { return 200.0; }
+    @Override
+    public double getContentHeight() { return getGridHeight(); }
 }

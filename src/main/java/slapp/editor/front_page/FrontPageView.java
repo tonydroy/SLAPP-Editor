@@ -124,4 +124,6 @@ public class FrontPageView implements ExerciseView<Label> {
     public double getContentWidth() {
         return 0;
     }
+    @Override
+    public double getContentHeight() { return 0.0; }
 }

@@ -221,15 +221,19 @@ public class MainWindowView {
 
 
         hWindowCheck.setOnAction(e -> {
-            if (hWindowCheck.isSelected()) updateWindowH();
-            else updateCustomH();
+
+            updateContentWidthProperty();
+ //           if (hWindowCheck.isSelected()) updateWindowH();
+ //           else updateCustomH();
         });
         hWindowCheck.setSelected(false);
         hCustomSpinner.setDisable(false);
 
         vWindowCheck.setOnAction(e -> {
-            if (vWindowCheck.isSelected()) updateWindowV();
-            else updateCustomV();
+
+            updateContentHeightProperty();
+//            if (vWindowCheck.isSelected()) updateupdateWindowV();
+  //          else updateCustomV();
         });
         vWindowCheck.setSelected(true);
         vCustomSpinner.setDisable(true);
@@ -326,39 +330,44 @@ public class MainWindowView {
         contentHeightProperty.unbind();
         double fixedHeight = (currentExerciseView.getStatementHeight() + currentExerciseView.getCommentHeight() + currentExerciseView.getContentFixedHeight()) * scale + statusBar.getHeight() + 270;
         contentHeightProperty.setValue((stage.getHeight() - fixedHeight)/scale );
+        vCustomSpinner.getValueFactory().setValue((double) Math.round(contentHeightProperty.getValue()/PrintUtilities.getPageHeight() * 20) * 5);
+
+
+
         updateExerciseHeight();
+
+
+
+        contentHeightProperty.removeListener(verticalListener);
+        contentHeightProperty.unbind();
+        updateContentHeightProperty();
 
         contentWidthProperty.removeListener(horizontalListener);
         contentWidthProperty.unbind();
-
-
         updateContentWidthProperty();
-
-
-//        updateExerciseWidth();
-
-
 
         Platform.runLater(() -> contentNode.requestFocus());
     }
 
 
+    public void updateContentHeightProperty() {
+        contentHeightProperty = currentExerciseView.getContentHeightProperty();
+        double contentHeight = currentExerciseView.getContentHeight();
+        double spinnerMin = Math.round(contentHeight/PrintUtilities.getPageHeight() * 20) * 5;
+        double spinnerVal = vCustomSpinner.getValue();
+        vCustomSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(spinnerMin, 999.0, Math.max(spinnerMin, spinnerVal), 5.0));
+        contentHeightProperty().unbind();
+        contentHeightProperty.setValue(Math.max(contentHeight, PrintUtilities.getPageHeight() * vCustomSpinner.getValue()/100.0));
+        updateExerciseHeight();
+    }
 
     public void updateContentWidthProperty() {
-
-
+        contentWidthProperty = currentExerciseView.getContentWidthProperty();
         double contentWidth = currentExerciseView.getContentWidth();
-//        double contentWidth = contentNode.getLayoutBounds().getWidth();
-        double spinnerMin = Math.round(contentWidth/PrintUtilities.getPageWidth() * 20.0) * 5;
-        hCustomSpinner.getValueFactory().setValue(spinnerMin);
-//        hCustomSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(spinnerMin, 999.0, spinnerMin, 5.0));
-//        hCustomSpinner = new Spinner<>(spinnerMin, 999.0, spinnerMin, 5.0);
-
-        System.out.println("content width: " + contentWidth + " node width: " + contentNode.getLayoutBounds().getWidth() + " spinner min: " + spinnerMin);
-
-
-
-
+        double spinnerMin = Math.max(100, Math.round(contentWidth/PrintUtilities.getPageWidth() * 20.0) * 5);
+        double spinnerVal = hCustomSpinner.getValue();
+//        hCustomSpinner.getValueFactory().setValue(spinnerMin);
+        hCustomSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(spinnerMin, 999.0, Math.max(spinnerMin, spinnerVal), 5.0));
         contentWidthProperty.unbind();
         contentWidthProperty.setValue(Math.max(contentWidth, PrintUtilities.getPageWidth() * hCustomSpinner.getValue()/100.0));
         updateExerciseWidth();
@@ -370,12 +379,11 @@ public class MainWindowView {
     }
 
     public void updateWindowV() {
-
         vCustomSpinner.setDisable(true);
-//        centerPane.setFitToHeight(true);
+        centerPane.setFitToHeight(true);
         contentHeightProperty.unbind();
         setCenterVgrow();
-        vCustomSpinner.getValueFactory().setValue((double) (Math.round((Double) contentHeightProperty().getValue() / PrintUtilities.getPageHeight() * 20 ) * 5));
+        vCustomSpinner.getValueFactory().setValue(Math.max(vCustomSpinner.getValue(), (double) (Math.round((Double) contentHeightProperty().getValue() / PrintUtilities.getPageHeight() * 20 ) * 5)));
         contentHeightProperty.addListener(verticalListener);
     }
     public void updateCustomV() {
@@ -394,15 +402,12 @@ public class MainWindowView {
         else updateCustomH();
     }
     public void updateWindowH(){
-
         hCustomSpinner.setDisable(true);
-//        centerPane.setFitToWidth(true);
+        centerPane.setFitToWidth(true);
         contentWidthProperty.unbind();
         setCenterHgrow();
         hCustomSpinner.getValueFactory().setValue(Math.max(hCustomSpinner.getValue(), (double) (Math.round((Double) contentWidthProperty().getValue() / PrintUtilities.getPageWidth() * 20 ) * 5)));
         contentWidthProperty.addListener(horizontalListener);
-
-
     }
     public void updateCustomH(){
         contentWidthProperty.removeListener(horizontalListener);
@@ -424,11 +429,14 @@ public class MainWindowView {
 //            DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
 //            DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
  //           contentHeightProperty.bind(Bindings.divide(stage.heightProperty().subtract(fixedValueProperty), scaleProperty));
+            /*
             DoubleProperty centerHeightProperty = new SimpleDoubleProperty();
             centerHeightProperty.bind(Bindings.divide(stage.heightProperty().subtract(fixedHeight), scale));
             contentHeightProperty.bind(centerHeightProperty);
 
-//            contentHeightProperty.bind(Bindings.divide(stage.heightProperty().subtract(fixedHeight), scale));
+             */
+
+            contentHeightProperty.bind(Bindings.divide(stage.heightProperty().subtract(fixedHeight), scale));
 
         }
     }

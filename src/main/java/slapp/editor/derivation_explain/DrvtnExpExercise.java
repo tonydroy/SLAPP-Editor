@@ -3,6 +3,7 @@ package slapp.editor.derivation_explain;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -485,6 +486,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             drvtnExpView.setGridFromViewLines();
             updateUndoRedoButtons();
             setContentFocusListeners();
+
         }
     }
 
@@ -496,6 +498,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             drvtnExpView.setGridFromViewLines();
             updateUndoRedoButtons();
             setContentFocusListeners();
+
         }
     }
 
@@ -686,6 +689,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                             drvtnExpView.setGridFromViewLines();
                             pushUndoRedo();
                             exerciseModified = true;
+
                         } else {
                             EditorAlerts.fleetingPopup("No shelf on top of shelf or gap.");
                         }
@@ -721,6 +725,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                             drvtnExpView.setGridFromViewLines();
                             pushUndoRedo();
                             exerciseModified = true;
+
 
                         } else {
                             EditorAlerts.fleetingPopup("No gap on top of shelf or gap.");
@@ -760,6 +765,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                 drvtnExpView.setGridFromViewLines();
                 pushUndoRedo();
                 exerciseModified = true;
+
 
             } else {
                 EditorAlerts.fleetingPopup("Cannot modify setup lines.");
@@ -802,6 +808,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                 drvtnExpView.setGridFromViewLines();
                 pushUndoRedo();
                 exerciseModified = true;
+
 
             } else {
                 EditorAlerts.fleetingPopup("Cannot modify setup lines.");

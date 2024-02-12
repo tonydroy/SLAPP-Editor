@@ -3,6 +3,7 @@ package slapp.editor.derivation;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -110,6 +111,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         setViewLinesFromModel();
         derivationView.setGridFromViewLines();
         setContentFocusListeners();
+
+
     }
 
     private void setViewLinesFromModel() {
@@ -459,6 +462,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         ViewLine viewLine = new ViewLine(numLabel, depth, LineType.MAIN_CONTENT_LINE, bdrta, justificationFlow, new ArrayList<Label>());
 
         derivationView.getViewLines().add(newRow, viewLine);
+
     }
 
     private void undoAction() {
@@ -469,6 +473,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             derivationView.setGridFromViewLines();
             updateUndoRedoButtons();
             setContentFocusListeners();
+
         }
     }
 
@@ -480,6 +485,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             derivationView.setGridFromViewLines();
             updateUndoRedoButtons();
             setContentFocusListeners();
+
         }
     }
 
@@ -568,6 +574,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                         break;
                     }
                 }
+
             }
             else {
                 EditorAlerts.fleetingPopup("Cannot modify setup line.");
@@ -670,6 +677,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                             derivationView.setGridFromViewLines();
                             pushUndoRedo();
                             exerciseModified = true;
+
                         } else {
                             EditorAlerts.fleetingPopup("No shelf on top of shelf or gap.");
                         }
@@ -705,6 +713,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                             derivationView.setGridFromViewLines();
                             pushUndoRedo();
                             exerciseModified = true;
+
 
                         } else {
                             EditorAlerts.fleetingPopup("No gap on top of shelf or gap.");
@@ -786,6 +795,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                 derivationView.setGridFromViewLines();
                 pushUndoRedo();
                 exerciseModified = true;
+
 
             } else {
                 EditorAlerts.fleetingPopup("Cannot modify setup lines.");

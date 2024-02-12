@@ -55,6 +55,8 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private int tableRows = 0;
     private VBox[] sizers;
 
+    private Pane endPane;
+
 
 
 
@@ -166,11 +168,10 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         }
 
         gridColConstraints.add(new ColumnConstraints(100));
-        Pane pane = new Pane();
-        pane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
-        tableGrid.add(pane, tableHeadItemsList.size(), 0);
+        endPane = new Pane();
+        endPane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
+        tableGrid.add(endPane, tableHeadItemsList.size(), 0);
         for (int j = 0; j < tableRows; j++) {
-
             tableGrid.add(rowCommentsArray[j].getBoxedRTA(), tableHeadItemsList.size(), j + 2);
         }
 
@@ -457,12 +458,17 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     public Node getExerciseControl() { return controlBox; }
 
     @Override
-    public double getContentWidth() {
-        tableGrid.prefWidthProperty().unbind();
-        tableGrid.prefHeightProperty().unbind();
-       tableGrid.setMaxSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
-       return tableGrid.getWidth();
-
-
+    public double getContentWidth() { return endPane.getBoundsInParent().getMaxX();  }
+    @Override
+    public double getContentHeight() {
+        double height = 0;
+        for (ToggleButton button : highlightButtons) {
+            if (button != null) {
+                height = button.getBoundsInParent().getMaxY();
+                break;
+            }
+        }
+        return height;
     }
+
 }

@@ -1,6 +1,7 @@
 package slapp.editor.simple_editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
@@ -9,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
+import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
@@ -40,6 +42,16 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
             mainView.setContentHeightProperty(rtaPage.prefHeightProperty());
             mainView.setCenterVgrow();
             return rtaPage;
+        });
+
+        pagination.currentPageIndexProperty().addListener(e -> {
+            Platform.runLater(() -> {
+                getContentHeightProperty().unbind();
+                getContentWidthProperty().unbind();
+                mainView.updateContentWidthProperty();
+                mainView.updateContentHeightProperty();
+            });
+
         });
 
         this.addPageButton = new Button("Insert Page");
@@ -127,15 +139,13 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
     public DoubleProperty getContentHeightProperty() { return contentPageList.get(pagination.getCurrentPageIndex()).getEditor().prefHeightProperty(); }
     @Override
     public DoubleProperty getContentWidthProperty() { return contentPageList.get(pagination.getCurrentPageIndex()).getEditor().prefWidthProperty(); }
-
-
     @Override
-    public double getContentFixedHeight() { return 0.0; }
+    public double getContentFixedHeight() { return -25.0; }
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
     @Override
-    public double getContentWidth() {
-        return 0;
-    }
+    public double getContentWidth() { return 200.0; }
+    @Override
+    public double getContentHeight() { return 300.0; }
 }
 

@@ -23,5 +23,6 @@ public interface ExerciseView<T> {
     double getContentFixedHeight();
     Node getExerciseControl();
     double getContentWidth();
+    double getContentHeight();
 
 }

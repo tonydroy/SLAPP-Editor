@@ -13,6 +13,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextFlow;
 import slapp.editor.EditorAlerts;
+import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
@@ -44,6 +45,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     private ToggleButton[] highlightButtons;
     private int tableRows = 0;
     private VBox[] sizers;
+    private Pane endPane;
 
 
     TruthTableView(MainWindowView mainView) {
@@ -145,12 +147,22 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         }
 
 
+        gridColConstraints.add(new ColumnConstraints(100));
+        endPane = new Pane();
+        endPane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
+        tableGrid.add(endPane, tableHeadItemsList.size(), 0);
         for (int j = 0; j < tableRows; j++) {
-            Pane pane = new Pane();
-            pane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
-            tableGrid.add(pane, tableHeadItemsList.size(), 0);
             tableGrid.add(rowCommentsArray[j].getBoxedRTA(), tableHeadItemsList.size(), j + 2);
         }
+        /*
+        for (int j = 0; j < tableRows; j++) {
+            endPane = new Pane();
+            endPane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
+            tableGrid.add(endPane, tableHeadItemsList.size(), 0);
+            tableGrid.add(rowCommentsArray[j].getBoxedRTA(), tableHeadItemsList.size(), j + 2);
+        }
+
+         */
 
         sizers = new VBox[tableRows + 3];
 
@@ -305,7 +317,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         rta.setMaxHeight(27);
         rta.setMinHeight(27);
         rta.setContentAreaWidth(200);
-        rta.setPrefWidth(100);
+        rta.setPrefWidth(200);
         rta.getStylesheets().add("RichTextField.css");
         rta.setPromptText("Comment");
         rta.focusedProperty().addListener((ob, ov, nv) -> {
@@ -413,7 +425,17 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     @Override
     public Node getExerciseControl() { return controlBox; }
     @Override
-    public double getContentWidth() {
-        return 0;
+    public double getContentWidth() { return endPane.getBoundsInParent().getMaxX(); }
+    @Override
+    public double getContentHeight() {
+        double height = 0;
+        for (ToggleButton button : highlightButtons) {
+            if (button != null) {
+                height = button.getBoundsInParent().getMaxY();
+                break;
+            }
+        }
+        return height;
+
     }
 }

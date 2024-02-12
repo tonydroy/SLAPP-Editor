@@ -1,6 +1,7 @@
 package slapp.editor.ab_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -65,6 +66,16 @@ public class ABview implements ExerciseView<DecoratedRTA> {
                 page = DRTApage.getEditor();
             }
             return page;
+        });
+
+        pagination.currentPageIndexProperty().addListener(e -> {
+            Platform.runLater(() -> {
+                getContentHeightProperty().unbind();
+                getContentWidthProperty().unbind();
+                mainView.updateContentWidthProperty();
+                mainView.updateContentHeightProperty();
+            });
+
         });
 
         this.addPageButton = new Button("Insert Page");
@@ -171,9 +182,9 @@ public class ABview implements ExerciseView<DecoratedRTA> {
     public Node getExerciseControl() { return exerciseControlNode; }
 
     @Override
-    public double getContentWidth() {
-        return 0;
-    }
+    public double getContentWidth() { return 200.0; }
+    @Override
+    public double getContentHeight() { return 200.0; }
 }
 
 

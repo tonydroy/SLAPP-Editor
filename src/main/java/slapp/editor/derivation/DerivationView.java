@@ -2,6 +2,7 @@ package slapp.editor.derivation;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -192,15 +193,20 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
 
             if (viewLine.getJustificationFlow() != null) grid.add(viewLine.getJustificationFlow(), 22, index);
         }
+        Platform.runLater(() -> {
+            mainView.updateContentHeightProperty();
+        });
     }
 
     public double getGridHeight() {
         double height = 0;
+
         for (ViewLine line : viewLines) {
             if (LineType.isContentLine(line.getLineType())) height = height + contentRowHeight;
             else if (LineType.isGapLine(line.getLineType())) height = height + gapRowHeight;
             else if (LineType.isShelfLine(line.getLineType())) height = height + shelfRowHeight;
         }
+        System.out.println(height);
         return height;
     }
 
@@ -255,7 +261,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
     @Override
-    public double getContentWidth() {
-        return 0;
-    }
+    public double getContentWidth() { return 200.0;  }
+    @Override
+    public double getContentHeight() { return getGridHeight();  }
 }

@@ -3,6 +3,7 @@ package slapp.editor.simple_editor;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -110,6 +111,10 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
             }
         });
         editView.addBlankContentPage(newPageIndex, drta);
+        Platform.runLater(() -> {
+            mainView.updateContentWidthProperty();
+            mainView.updateContentHeightProperty();
+        });
     }
 
     private void removePageAction() {
@@ -128,6 +133,10 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
                 editModel.getExercisePageDocs().remove(currentPageIndex);
                 editView.removeContentPage(currentPageIndex);
                 exerciseModified = true;
+                Platform.runLater(() -> {
+                    mainView.updateContentWidthProperty();
+                    mainView.updateContentHeightProperty();
+                });
             }
         }
     }

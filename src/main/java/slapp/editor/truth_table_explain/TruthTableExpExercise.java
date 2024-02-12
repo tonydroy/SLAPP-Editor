@@ -88,6 +88,8 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
+
+
         statementEditor.setDocument(truthTableExpModel.getExerciseStatement());
         truthTableExpView.setStatementPrefHeight(truthTableExpModel.getStatementPrefHeight());
         mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
@@ -178,7 +180,10 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
             updateViewTableItems();
             truthTableExpView.updateTableGridFromTableItems();
             exerciseModified = true;
-            Platform.runLater(() -> mainView.updateContentWidthProperty());
+            Platform.runLater(() -> {
+                mainView.updateContentWidthProperty();
+                mainView.updateContentHeightProperty();
+            });
         });
 
         //table contents

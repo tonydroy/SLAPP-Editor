@@ -3,6 +3,7 @@ package slapp.editor.abefg_explain;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -181,6 +182,10 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
             }
         });
         abefgView.addBlankContentPage(newPageIndex, drta);
+        Platform.runLater(() -> {
+            mainView.updateContentWidthProperty();
+            mainView.updateContentHeightProperty();
+        });
     }
 
     private void removePageAction() {
@@ -199,6 +204,10 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
                 abefgModel.getExercisePageDocs().remove(currentPageIndex);
                 abefgView.removeContentPage(currentPageIndex);
                 exerciseModified = true;
+                Platform.runLater(() -> {
+                    mainView.updateContentWidthProperty();
+                    mainView.updateContentHeightProperty();
+                });
             }
         }
     }

@@ -1,6 +1,7 @@
 package slapp.editor.abefg_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -79,6 +80,16 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
             return page;
         });
 
+        pagination.currentPageIndexProperty().addListener(e -> {
+            Platform.runLater(() -> {
+                getContentHeightProperty().unbind();
+                getContentWidthProperty().unbind();
+                mainView.updateContentWidthProperty();
+                mainView.updateContentHeightProperty();
+            });
+
+        });
+
         this.addPageButton = new Button("Insert Page");
         addPageButton.setTooltip(new Tooltip("Add after current page"));
         addPageButton.setPrefWidth(90.0);
@@ -96,12 +107,14 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
     void initializeViewDetails() {
         RichTextArea statementRTA = exerciseStatement.getEditor();
         statementRTA.setPrefHeight(statementPrefHeight);
+        statementRTA.setMinHeight(statementPrefHeight);
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setEditable(false);
 
         RichTextArea commentRTA = exerciseComment.getEditor();
         commentRTA.getStylesheets().add("slappTextArea.css");
         commentRTA.setPrefHeight(70.0);
+        commentRTA.setMinHeight(70.0);
         commentRTA.setPromptText("Comment:");
 
         if (!contentPageList.isEmpty()) {
@@ -191,9 +204,9 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
     public Node getExerciseControl() { return exerciseControlNode; }
 
     @Override
-    public double getContentWidth() {
-        return 0;
-    }
+    public double getContentWidth() { return 200.0; }
+    @Override
+    public double getContentHeight() { return 200.0; }
 }
 
 
