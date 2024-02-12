@@ -308,13 +308,16 @@ public class MainWindowView {
             }
         };
 
+
         horizontalListener = new ChangeListener<>() {
             @Override
             public void changed(ObservableValue ob, Object ov, Object nv) {
+
                 hCustomSpinner.getValueFactory().setValue((double) (Math.round((Double) nv / PrintUtilities.getPageWidth() * 20 ) * 5));
-   //             hCustomSpinner.getValueFactory().setValue(Math.rint((Double) nv / PrintUtilities.getPageWidth() * 100));
             }
         };
+
+
 
         centerBox.layout();
 
@@ -326,7 +329,7 @@ public class MainWindowView {
         updateExerciseHeight();
 
         contentWidthProperty.removeListener(horizontalListener);
-//        contentWidthProperty.unbind();
+        contentWidthProperty.unbind();
 
 
         updateContentWidthProperty();
@@ -339,9 +342,25 @@ public class MainWindowView {
         Platform.runLater(() -> contentNode.requestFocus());
     }
 
+
+
     public void updateContentWidthProperty() {
+
+
+        double contentWidth = currentExerciseView.getContentWidth();
+//        double contentWidth = contentNode.getLayoutBounds().getWidth();
+        double spinnerMin = Math.round(contentWidth/PrintUtilities.getPageWidth() * 20.0) * 5;
+        hCustomSpinner.getValueFactory().setValue(spinnerMin);
+//        hCustomSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(spinnerMin, 999.0, spinnerMin, 5.0));
+//        hCustomSpinner = new Spinner<>(spinnerMin, 999.0, spinnerMin, 5.0);
+
+        System.out.println("content width: " + contentWidth + " node width: " + contentNode.getLayoutBounds().getWidth() + " spinner min: " + spinnerMin);
+
+
+
+
         contentWidthProperty.unbind();
-        contentWidthProperty.setValue(Math.max(contentNode.getLayoutBounds().getWidth(), PrintUtilities.getPageWidth() * hCustomSpinner.getValue()/100.0));
+        contentWidthProperty.setValue(Math.max(contentWidth, PrintUtilities.getPageWidth() * hCustomSpinner.getValue()/100.0));
         updateExerciseWidth();
     }
 
@@ -380,7 +399,7 @@ public class MainWindowView {
 //        centerPane.setFitToWidth(true);
         contentWidthProperty.unbind();
         setCenterHgrow();
-        hCustomSpinner.getValueFactory().setValue((double) (Math.round((Double) contentWidthProperty().getValue() / PrintUtilities.getPageWidth() * 20 ) * 5));
+        hCustomSpinner.getValueFactory().setValue(Math.max(hCustomSpinner.getValue(), (double) (Math.round((Double) contentWidthProperty().getValue() / PrintUtilities.getPageWidth() * 20 ) * 5)));
         contentWidthProperty.addListener(horizontalListener);
 
 

@@ -447,9 +447,22 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     @Override
     public DoubleProperty getContentWidthProperty() {return tableGrid.prefWidthProperty(); }
 
+
+
+
     @Override
     public double getContentFixedHeight() { return contentFixedHeight; }
 
     @Override
     public Node getExerciseControl() { return controlBox; }
+
+    @Override
+    public double getContentWidth() {
+        tableGrid.prefWidthProperty().unbind();
+        tableGrid.prefHeightProperty().unbind();
+       tableGrid.setMaxSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+       return tableGrid.getWidth();
+
+
+    }
 }

@@ -125,4 +125,8 @@ public class VerticalTreeView implements ExerciseView<DecoratedRTA> {
     public Node getExerciseControl() {
         return exerciseControlNode;
     }
+    @Override
+    public double getContentWidth() {
+        return 0;
+    }
 }

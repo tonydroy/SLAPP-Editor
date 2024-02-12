@@ -1,6 +1,7 @@
 package slapp.editor.main_window;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.scene.Node;
 import slapp.editor.decorated_rta.DecoratedRTA;
 
@@ -21,5 +22,6 @@ public interface ExerciseView<T> {
     DoubleProperty getContentWidthProperty();
     double getContentFixedHeight();
     Node getExerciseControl();
+    double getContentWidth();
 
 }

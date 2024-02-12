@@ -170,8 +170,10 @@ public class ABview implements ExerciseView<DecoratedRTA> {
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
 
-
-
+    @Override
+    public double getContentWidth() {
+        return 0;
+    }
 }
 
 

@@ -290,5 +290,8 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
     public double getContentFixedHeight() { return explanationDRTA.getEditor().getHeight() - 50; }
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
-
+    @Override
+    public double getContentWidth() {
+        return 0;
+    }
 }

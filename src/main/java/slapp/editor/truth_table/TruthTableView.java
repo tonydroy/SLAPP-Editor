@@ -412,4 +412,8 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
     @Override
     public Node getExerciseControl() { return controlBox; }
+    @Override
+    public double getContentWidth() {
+        return 0;
+    }
 }

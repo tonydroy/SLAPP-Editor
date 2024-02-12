@@ -3,12 +3,15 @@ package slapp.editor.front_page;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
@@ -24,24 +27,34 @@ public class FrontPageView implements ExerciseView<Label> {
 
     private String name = "";
     private Label exerciseStatement;
-    private Label exerciseContent;
     private DecoratedRTA exerciseComment;
     private Node exerciseControl;
     private MainWindowView mainView;
 
+    private FrontPageAnimation frontAnimation = new FrontPageAnimation();
+
+    private VBox exerciseContent;
+
+    private boolean played = false;
+
+    private ChangeListener contentFocusListener;
+
+
+
     public FrontPageView(MainWindowView mainView) {
         this.mainView = mainView;
         exerciseStatement = new Label("");
-        exerciseContent = new Label("");
         exerciseComment = new DecoratedRTA();
 
         exerciseStatement.setVisible(false);
         exerciseStatement.setManaged(false);
-        exerciseContent.setVisible(false);
-        exerciseContent.setManaged(false);
+        exerciseComment.getEditor().setVisible(false);
+        exerciseComment.getEditor().setManaged(false);
+
+        exerciseContent = frontAnimation.getFrontPageBox();
 
         Pane spacerPane = new Pane();
-        double centeringWidth = (mainView.getMinStageWidth() - PrintUtilities.getPageWidth()) / 2.0;
+        double centeringWidth = (mainView.getMinStageWidth() - exerciseContent.getPrefWidth()) / 2.0;
         spacerPane.setMinWidth(centeringWidth);
         exerciseControl = spacerPane;
 
@@ -64,15 +77,15 @@ public class FrontPageView implements ExerciseView<Label> {
         exerciseComment.getEditToolbar().setFocusTraversable(false);
         exerciseComment.getEditToolbar().setMouseTransparent(true);
         mainView.editorInFocus(exerciseComment, ControlType.NONE);
-        exerciseComment.getEditor().focusedProperty().addListener((o, ov, nv) -> {
-            if (nv) {
-                mainView.editorInFocus(exerciseComment, ControlType.NONE);
+
+        contentFocusListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                exerciseContent.focusedProperty().removeListener(contentFocusListener);
+                frontAnimation.playFrontAnimation();
             }
-        });
-
-
-
-
+        };
+        exerciseContent.focusedProperty().addListener(contentFocusListener);
     }
 
     @Override
@@ -98,14 +111,17 @@ public class FrontPageView implements ExerciseView<Label> {
     @Override
     public Node getExerciseContentNode() { return exerciseContent; }
 
-    public void setContentPrompt(String prompt) {}
+
     @Override
     public DoubleProperty getContentHeightProperty() { return exerciseContent.prefHeightProperty(); }
     @Override
     public DoubleProperty getContentWidthProperty() {return exerciseComment.getEditor().prefWidthProperty(); }
     @Override
-    public double getContentFixedHeight() { return 0.0; }
+    public double getContentFixedHeight() { return -40.0; }
     @Override
     public Node getExerciseControl() { return exerciseControl; }
-
+    @Override
+    public double getContentWidth() {
+        return 0;
+    }
 }

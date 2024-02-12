@@ -133,6 +133,9 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
     public double getContentFixedHeight() { return 0.0; }
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
-
+    @Override
+    public double getContentWidth() {
+        return 0;
+    }
 }
 
