@@ -29,13 +29,14 @@ public class FrontPageAnimation {
         AnchorPane treePane = new AnchorPane();
         treePane.setPrefHeight(370);
 
-        Circle dot1 = new Circle(150,50,25, Paint.valueOf("58b6a6"));
-        Circle dot2 = new Circle(300, 50, 25, Paint.valueOf("58b6a6"));
-        Circle dot3 = new Circle(450, 50, 25, Paint.valueOf("58b6a6"));
-        Circle dot4 = new Circle(225, 150, 25, Paint.valueOf("daf4f0"));
-        Circle dot5 = new Circle(362.5, 250, 25, Paint.valueOf("b6dcdd"));
-        Circle dot6 = new Circle(362.5, 350, 25, Paint.valueOf("58b6a6"));
-        Circle dot7 = new Circle(450, 150, 25, Paint.valueOf("1aa780"));
+
+        Circle dot1 = new Circle(150,50,25, Paint.valueOf("2cf4e0"));
+        Circle dot2 = new Circle(300, 50, 25, Paint.valueOf("50d0c3"));
+        Circle dot3 = new Circle(450, 50, 25, Paint.valueOf("afeeee"));
+        Circle dot4 = new Circle(225, 150, 25, Paint.valueOf("00ced1"));
+        Circle dot5 = new Circle(450, 150, 25, Paint.valueOf("40e0d0"));
+        Circle dot6 = new Circle(362.5, 250, 25, Paint.valueOf("48d1cc"));
+        Circle dot7 = new Circle(362.5, 350, 25, Paint.valueOf("31b6a8"));
 
         Line line1 = new Line(150, 50, 225, 150);
         Line line2 = new Line(300,50, 225, 150);

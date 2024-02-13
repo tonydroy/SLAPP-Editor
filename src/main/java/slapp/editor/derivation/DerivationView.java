@@ -3,11 +3,14 @@ package slapp.editor.derivation;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -46,6 +49,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
     private double contentRowHeight = 19.0;
     private double shelfRowHeight = 5.0;
     private double gapRowHeight = 7.0;
+    private DoubleProperty windowHeightProperty;
 
 
     public DerivationView(MainWindowView mainView) {
@@ -56,6 +60,8 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
         blankPane.setStyle("-fx-background-color: white;");
         contentSplitPane.getItems().addAll(grid, blankPane);
         contentSplitPane.setOrientation(Orientation.HORIZONTAL);
+        contentSplitPane.setMinHeight(10.0);
+        contentSplitPane.setMinWidth(10.0);
 
 
 
@@ -71,6 +77,8 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
         grid.setPadding(new Insets(20));
         grid.setStyle("-fx-background-color: white;");
         grid.setMinWidth(350);
+        grid.setMinHeight(10);
+
 
         insertLineButton = new Button("Insert Line");
         deleteLineButton = new Button("Delete Line");
@@ -206,7 +214,6 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
             else if (LineType.isGapLine(line.getLineType())) height = height + gapRowHeight;
             else if (LineType.isShelfLine(line.getLineType())) height = height + shelfRowHeight;
         }
-        System.out.println(height);
         return height;
     }
 
@@ -263,5 +270,5 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
     @Override
     public double getContentWidth() { return 200.0;  }
     @Override
-    public double getContentHeight() { return getGridHeight();  }
+    public double getContentHeight() { return getGridHeight() + 40.0 ;  }
 }

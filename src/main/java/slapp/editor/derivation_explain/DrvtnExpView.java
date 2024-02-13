@@ -61,6 +61,8 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
         blankPane.setStyle("-fx-background-color: white;");
         contentSplitPane.getItems().addAll(grid, blankPane);
         contentSplitPane.setOrientation(Orientation.HORIZONTAL);
+        contentSplitPane.setMinHeight(10.0);
+        contentSplitPane.setMinWidth(10.0);
 
 
         ColumnConstraints fixedCol = new ColumnConstraints();
@@ -75,6 +77,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
         grid.setPadding(new Insets(20));
         grid.setStyle("-fx-background-color: white;");
         grid.setMinWidth(350);
+        grid.setMinHeight(10);
 
         insertLineButton = new Button("Insert Line");
         deleteLineButton = new Button("Delete Line");
@@ -299,5 +302,5 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
     @Override
     public double getContentWidth() { return 200.0; }
     @Override
-    public double getContentHeight() { return getGridHeight(); }
+    public double getContentHeight() { return getGridHeight() + 40; }
 }

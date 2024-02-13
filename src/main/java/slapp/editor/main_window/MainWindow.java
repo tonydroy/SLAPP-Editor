@@ -143,6 +143,8 @@ public class MainWindow {
 
     public void setUpExercise(Exercise exercise) {
         if (currentExercise != null) {
+            mainView.contentHeightProperty().unbind();
+            mainView.contentWidthProperty().unbind();
             mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
             mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
         }
@@ -244,6 +246,7 @@ public class MainWindow {
             if (checkContinueExercise("Confirm Open", "This exercise appears to have been changed, and will be overwritten by the new one.  Continue to open exercise?")) {
                 Object exerciseModelObject = DiskUtilities.openExerciseModelObject();
                 if (exerciseModelObject != null) {
+
                     TypeSelectorFactories typeFactories = new TypeSelectorFactories(this);
                     Exercise exercise = typeFactories.getExerciseFromModelObject(exerciseModelObject);
                     if (exercise != null) {
@@ -344,6 +347,8 @@ public class MainWindow {
     private void pageSetup() {
         PrintUtilities.updatePageLayout();
         if (currentExercise != null) {
+            mainView.contentHeightProperty().unbind();
+            mainView.contentWidthProperty().unbind();
             mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
             mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
         }
@@ -398,6 +403,8 @@ public class MainWindow {
                         assignmentIndex = 0;
 
                         if (currentExercise != null) {
+                            mainView.contentHeightProperty().unbind();
+                            mainView.contentWidthProperty().unbind();
                             mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
                             mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
                         }
@@ -566,6 +573,8 @@ public class MainWindow {
                 TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
 
                 if (currentExercise != null) {
+                    mainView.contentHeightProperty().unbind();
+                    mainView.contentWidthProperty().unbind();
                     mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
                     mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
                 }
@@ -590,6 +599,8 @@ public class MainWindow {
                 TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
 
                 if (currentExercise != null) {
+                    mainView.contentWidthProperty().unbind();
+                    mainView.contentWidthProperty().unbind();
                     mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
                     mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
                 }
@@ -637,6 +648,8 @@ public class MainWindow {
                         TypeSelectorFactories typeFactory = new TypeSelectorFactories(mainWindow);
 
                         if (currentExercise != null) {
+                            mainView.contentHeightProperty().unbind();
+                            mainView.contentWidthProperty().unbind();
                             mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
                             mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
                         }

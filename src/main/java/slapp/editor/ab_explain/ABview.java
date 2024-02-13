@@ -52,6 +52,8 @@ public class ABview implements ExerciseView<DecoratedRTA> {
             if (index == 0) {
                 DecoratedRTA drtaPage0 = contentPageList.get(index);
                 RichTextArea rtaPage0 = drtaPage0.getEditor();
+                rtaPage0.setMinHeight(200);
+
                 rtaPage0.getStylesheets().add("slappTextArea.css");
                 mainView.setContentHeightProperty(rtaPage0.prefHeightProperty());
                 VBox topContentPage = new VBox(3, abBbox, drtaPage0.getEditor());

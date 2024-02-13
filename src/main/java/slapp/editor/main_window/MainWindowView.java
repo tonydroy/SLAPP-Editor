@@ -397,6 +397,8 @@ public class MainWindowView {
         contentHeightProperty.bind(Bindings.multiply(PrintUtilities.getPageHeight(), DoubleProperty.doubleProperty(vCustomSpinner.getValueFactory().valueProperty()).divide(100.0)));
     }
 
+
+
     public void updateExerciseWidth() {
         if (hWindowCheck.isSelected()) updateWindowH();
         else updateCustomH();
@@ -435,6 +437,7 @@ public class MainWindowView {
             contentHeightProperty.bind(centerHeightProperty);
 
              */
+
 
             contentHeightProperty.bind(Bindings.divide(stage.heightProperty().subtract(fixedHeight), scale));
 
@@ -750,4 +753,5 @@ public class MainWindowView {
     }
 
     public boolean isFitToPageSelected() {return fitToPageItem.isSelected(); }
+
 }
