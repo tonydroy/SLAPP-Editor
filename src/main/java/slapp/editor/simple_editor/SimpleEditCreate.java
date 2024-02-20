@@ -23,8 +23,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
@@ -174,17 +172,7 @@ public class SimpleEditCreate {
             setCenterVgrow();
         });
 
-        FontIcon heightIcon = new FontIcon(LineAwesomeSolid.ARROWS_ALT);
-        heightIcon.setIconSize(20);
-        Button updateHeightButton = new Button();
-        updateHeightButton.setGraphic(heightIcon);
-        updateHeightButton.setDisable(true);
 
-        saveButton = new Button();
-        FontIcon saveIcon = new FontIcon(LineAwesomeSolid.SAVE);
-        saveIcon.setIconSize(20);
-        saveButton.setGraphic(saveIcon);
-        saveButton.setDisable(true);
 
 
         ToolBar editToolbar = statementDRTA.getEditToolbar();
@@ -212,6 +200,7 @@ public class SimpleEditCreate {
         stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
+        stage.setWidth(860);
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setOnCloseRequest(e-> {
             e.consume();

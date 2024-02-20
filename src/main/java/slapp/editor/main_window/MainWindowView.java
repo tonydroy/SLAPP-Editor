@@ -23,9 +23,6 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Pair;
-import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
@@ -53,7 +50,7 @@ public class MainWindowView {
     private VBox centerBox;
     private Spinner<Integer> zoomSpinner;
     private Label zoomLabel;
-    double minStageWidth = 860.0;
+    double minStageWidth = 870.0;
     private BorderPane borderPane = new BorderPane();
     private Scene mainScene;
     private ExerciseView currentExerciseView;
@@ -149,15 +146,9 @@ public class MainWindowView {
             updateZoom(nv);
         });
 
-        saveButton = new Button();
-        FontIcon saveIcon = new FontIcon(LineAwesomeSolid.SAVE);
-        saveIcon.setIconSize(20);
-        saveButton.setGraphic(saveIcon);
+        saveButton = new Button("\uf0c7");  //LineAwesome.SAVE
+        saveButton.getStyleClass().add("lasolid-icon");
         saveButton.setTooltip(new Tooltip("Save assignment if open and otherwise exercise"));
-
-
-
-
 
         hWindowCheck = new CheckBox("Win");
         hWindowCheck.setTooltip(new Tooltip("Fix width by window"));
@@ -505,10 +496,14 @@ public class MainWindowView {
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
         kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
 
+        editToolbar.setPrefHeight(38);
+
         if (kbdDiaToolBar.getItems().isEmpty()) {
 
             kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("    V Size:"), vCustomSpinner, new Label("/"), vWindowCheck,
-                    new Label("    H Size:"), hCustomSpinner, new Label("/"), hWindowCheck, new Label("    "), decoratedRTA.getKeyboardDiagramButton(), new Label("  "), saveButton);
+                    new Label("    H Size:"), hCustomSpinner, new Label("/"), hWindowCheck, new Label("      "), decoratedRTA.getKeyboardDiagramButton(), new Label("    "), saveButton);
+
+            kbdDiaToolBar.setPrefHeight(38);
 
             switch (control) {
                 case NONE: {

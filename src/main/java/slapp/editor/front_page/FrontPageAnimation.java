@@ -4,6 +4,7 @@ import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -45,7 +46,27 @@ public class FrontPageAnimation {
         Line line5 = new Line(362.5, 250, 362.50, 350);
         Line line6 = new Line(450, 150, 362.5, 250);
 
+        line1.setStroke(Color.DARKTURQUOISE);
+        line2.setStroke(Color.DARKTURQUOISE);
+        line3.setStroke(Color.DARKTURQUOISE);
+        line4.setStroke(Color.DARKTURQUOISE);
+        line5.setStroke(Color.DARKTURQUOISE);
+        line6.setStroke(Color.DARKTURQUOISE);
+
+        line1.setStrokeWidth(3.0);
+        line2.setStrokeWidth(3.0);
+        line3.setStrokeWidth(3.0);
+        line4.setStrokeWidth(3.0);
+        line5.setStrokeWidth(3.0);
+        line6.setStrokeWidth(3.0);
+
+
         treePane.getChildren().addAll(line1, line2, line3, line4, line5, line6, dot1, dot2, dot3, dot4, dot5, dot6, dot7);
+
+        DropShadow shadow = new DropShadow();
+        shadow.setOffsetX(3);
+        shadow.setOffsetY(3);
+        treePane.setEffect(shadow);
 
         Pane pane1 = new Pane(treePane);
 

@@ -24,8 +24,6 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
@@ -358,17 +356,7 @@ public class TruthTableCreate {
             setCenterVgrow();
         });
 
-        FontIcon heightIcon = new FontIcon(LineAwesomeSolid.ARROWS_ALT);
-        heightIcon.setIconSize(20);
-        updateHeightButton = new Button();
-        updateHeightButton.setGraphic(heightIcon);
-        updateHeightButton.setDisable(true);
 
-        FontIcon saveIcon = new FontIcon(LineAwesomeSolid.SAVE);
-        saveIcon.setIconSize(20);
-        saveButton = new Button();
-        saveButton.setGraphic(saveIcon);
-        saveButton.setDisable(true);
 
         //setup  window
         scene = new Scene(borderPane);

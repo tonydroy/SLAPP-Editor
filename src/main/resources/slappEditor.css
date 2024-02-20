@@ -48,6 +48,13 @@
     /*-fx-padding: 10;*/
 }
 
+.lasolid-icon {
+    -fx-font-family: la-solid-900;
+    -fx-font-size: 20;
+    -fx-min-width: 38;
+    -fx-min-height: 28;
+    -fx-padding: 1 1 1 1;
+}
 
 .emoji-button {
     -fx-padding: 5.5;

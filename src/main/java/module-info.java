@@ -6,11 +6,15 @@ module slapp.editor {
     requires com.gluonhq.richtextarea;
     requires com.gluonhq.emoji;
     requires java.logging;
+
+
+
+    requires org.kordamp.ikonli.lineawesome;
     requires org.kordamp.ikonli.core;
     requires org.kordamp.ikonli.javafx;
-    requires org.kordamp.ikonli.lineawesome;
     requires org.apache.commons.lang3;
 
+    requires static org.kordamp.jipsy.annotations;
 
 
 

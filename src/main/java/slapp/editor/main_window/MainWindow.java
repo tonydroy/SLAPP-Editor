@@ -352,8 +352,8 @@ public class MainWindow {
             mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
             mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
         }
-        mainView.updateExerciseHeight();
-        mainView.updateExerciseWidth();
+        mainView.updateContentHeightProperty();
+        mainView.updateContentWidthProperty();
 
  //       mainView.updateZoom(mainView.getZoomSpinner().getValue());
 

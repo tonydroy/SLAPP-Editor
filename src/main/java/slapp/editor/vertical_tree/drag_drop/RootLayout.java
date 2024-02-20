@@ -20,8 +20,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
 
 public class RootLayout extends AnchorPane {
     SplitPane base_pane;
@@ -83,18 +81,15 @@ public class RootLayout extends AnchorPane {
         rectangle.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
         HBox boxToggleGraphic = new HBox(rectangle);
         boxToggleGraphic.setAlignment(Pos.CENTER);
-   //     FontIcon boxToggleIcon = new FontIcon(LineAwesomeSolid.STOP);
-   //     boxToggleIcon.setIconSize(20);
         boxToggle.setGraphic(boxToggleGraphic);
         boxToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) box"));
 
 
-        starToggle = new ToggleButton();
+        starToggle = new ToggleButton("\uf005");  //LineAwsomeSolid.STAR
+        starToggle.getStyleClass().add("lasolid-icon");
         starToggle.setPrefWidth(64);
         starToggle.setPrefHeight(28);
-        FontIcon starToggleIcon = new FontIcon(LineAwesomeSolid.STAR);
-        starToggleIcon.setIconSize(15);
-        starToggle.setGraphic(starToggleIcon);
+        starToggle.setStyle("-fx-font-size: 20");
         starToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) star"));
 
         annotationToggle = new ToggleButton();
@@ -137,12 +132,11 @@ public class RootLayout extends AnchorPane {
         circleToggle.setGraphic(circlePane);
         circleToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) circle"));
 
-        underlineToggle = new ToggleButton();
+        underlineToggle = new ToggleButton("\uf7a4");  //LineAwesomeSolid.GRIP_LINES
+        underlineToggle.getStyleClass().add("lasolid-icon");
         underlineToggle.setPrefWidth(64);
         underlineToggle.setPrefHeight(28);
-        FontIcon underlineToggleIcon = new FontIcon(LineAwesomeSolid.GRIP_LINES);
-        underlineToggleIcon.setIconSize(20);
-        underlineToggle.setGraphic(underlineToggleIcon);
+
         underlineToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) underline"));
 
         ToggleGroup buttonGroup = new ToggleGroup();

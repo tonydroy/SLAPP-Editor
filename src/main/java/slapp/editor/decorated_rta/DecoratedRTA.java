@@ -29,7 +29,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.lineawesome.LineAwesomeSolid;
+
 import slapp.editor.EditorMain;
 
 import java.io.File;
@@ -164,11 +164,16 @@ public class DecoratedRTA {
         overlineButton.setPrefSize(34,28);
 
         //keyboardDiagramButton
-        keyboardDiagramButton = new Button();
+        keyboardDiagramButton = new Button("\uf11c");  //line awesome KEYBOARD
+        keyboardDiagramButton.getStyleClass().add("lasolid-icon");
+        /*
+        the LineAwesomeSolid package works fine for me in IntelliJ.  However, I have been unable to include it in
+        a jar file without runtime errors.  There is significant activity about this on the web -- as
+        https://github.com/kordamp/ikonli/issues/11.  However I have been unable to make their solutions work for me.
+        LineAwesomeSolid includes a font, la-solid-900 for its icons.  There is no problem about the jar when
+        characters are inserted as such.
+         */
         keyboardDiagramButton.setTooltip(new Tooltip("Show Keyboard Diagram"));
-        FontIcon icon = new FontIcon(LineAwesomeSolid.KEYBOARD);
-        icon.setIconSize(20);
-        keyboardDiagramButton.setGraphic(icon);
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
         keyboardDiagramButton.setOnAction(e -> {
             if (!keyboardDiagram.isShowing()) {
@@ -214,11 +219,11 @@ public class DecoratedRTA {
         fontsToolbar = new ToolBar();
         fontsToolbar.setStyle("-fx-spacing: 12");
         fontsToolbar.getItems().setAll(
-                actionButton(LineAwesomeSolid.CUT, "Cut",   editor.getActionFactory().cut()),
-                actionButton(LineAwesomeSolid.COPY, "Copy",  editor.getActionFactory().copy()),
-                actionButton(LineAwesomeSolid.PASTE, "Paste", editor.getActionFactory().paste()),
-                actionButton(LineAwesomeSolid.UNDO, "Undo",  editor.getActionFactory().undo()),
-                actionButton(LineAwesomeSolid.REDO, "Redo",  editor.getActionFactory().redo()),
+                actionButton("\uf0c4", "Cut",   editor.getActionFactory().cut()),  //LineAwesomeSolid.CUT
+                actionButton("\uf0c5", "Copy",  editor.getActionFactory().copy()), //LineAwesomeSolid.COPY
+                actionButton("\uf0ea", "Paste", editor.getActionFactory().paste()), //LineAwesomeSolid.PASTE
+                actionButton("\uf0e2", "Undo",  editor.getActionFactory().undo()),  //LineAwesomeSolid.UNDO
+                actionButton("\uf01e", "Redo",  editor.getActionFactory().redo()),  //LineAwesomeLolid.REDO
 
                 wideSeparator(0),
 
@@ -228,14 +233,15 @@ public class DecoratedRTA {
 
                 wideSeparator(0),
 
-                createToggleButton(LineAwesomeSolid.STRIKETHROUGH, "Strikethrough", property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
-                createToggleButton(LineAwesomeSolid.UNDERLINE, "Underline", property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
+                createToggleButton("\uf0cc", "Strikethrough", property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
+                createToggleButton("\uf0cd", "Underline", property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
                 overlineButton,
-                createToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).transSuperscript(false).transSubscript(false).build())),
-                createColoredToggleButton(LineAwesomeSolid.SUPERSCRIPT, "Superscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
-                createToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).transSuperscript(false).transSubscript(false).build())),
-                createColoredToggleButton(LineAwesomeSolid.SUBSCRIPT, "Subscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build()))
+                createToggleButton("\uf12b", "Superscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).transSuperscript(false).transSubscript(false).build())),
+                createColoredToggleButton("\uf12b", "Superscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
+                createToggleButton("\uf12c", "Subscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).transSuperscript(false).transSubscript(false).build())),
+                createColoredToggleButton("\uf12c", "Subscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build()))
                 );
+                //LineAwesomeSolid STRIKETHROUGH, UNDERLINE, SUPERSCRIPT, SUBSCRIPT
 
         /*
         insertToolbar = new ToolBar();
@@ -247,32 +253,30 @@ public class DecoratedRTA {
         paragraphToolbar = new ToolBar();
         paragraphToolbar.setStyle("-fx-spacing: 10");
         paragraphToolbar.getItems().setAll(
-                createToggleButton(LineAwesomeSolid.ALIGN_LEFT, "Align Left", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.LEFT, (builder, a) -> builder.alignment(TextAlignment.LEFT).build())),
-                createToggleButton(LineAwesomeSolid.ALIGN_CENTER, "Align Center", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.CENTER, (builder, a) -> builder.alignment(a ? TextAlignment.CENTER : TextAlignment.LEFT).build())),
-                createToggleButton(LineAwesomeSolid.ALIGN_RIGHT, "Align Right", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.RIGHT, (builder, a) -> builder.alignment(a ? TextAlignment.RIGHT : TextAlignment.LEFT).build())),
-                createToggleButton(LineAwesomeSolid.ALIGN_JUSTIFY, "Justify", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.JUSTIFY, (builder, a) -> builder.alignment(a ? TextAlignment.JUSTIFY : TextAlignment.LEFT).build())),
+                createToggleButton("\uf036", "Align Left", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.LEFT, (builder, a) -> builder.alignment(TextAlignment.LEFT).build())),
+                createToggleButton("\uf037", "Align Center", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.CENTER, (builder, a) -> builder.alignment(a ? TextAlignment.CENTER : TextAlignment.LEFT).build())),
+                createToggleButton("\uf038", "Align Right", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.RIGHT, (builder, a) -> builder.alignment(a ? TextAlignment.RIGHT : TextAlignment.LEFT).build())),
+                createToggleButton("\uf039", "Justify", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.JUSTIFY, (builder, a) -> builder.alignment(a ? TextAlignment.JUSTIFY : TextAlignment.LEFT).build())),
 
                 createJumpSpinner("Spacing", "Space for wrapped lines (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getSpacing(), (builder, a) -> builder.spacing(a).build())),
- //               createJumpSpinner("Top", "Top Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getTopInset(), (builder, a) -> builder.topInset(a).build())),
- //               createJumpSpinner("Bottom", "Bottom Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getBottomInset(), (builder, a) -> builder.bottomInset(a).build())),
- //               createJumpSpinner("Left", "LeftMargin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getLeftInset(), (builder, a) -> builder.leftInset(a).build())),
- //               createJumpSpinner("Right", "Right Margin (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getRightInset(), (builder, a) -> builder.rightInset(a).build())),
                 wideSeparator(2),
-                createToggleButton(LineAwesomeSolid.LIST_OL, "Numbered List", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == NUMBERED_LIST, (builder, a) -> builder.graphicType(a ? NUMBERED_LIST : NONE).build())),
-                createToggleButton(LineAwesomeSolid.LIST_UL, "Unordered List/Outline", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == BULLETED_LIST, (builder, a) -> builder.graphicType(a ? BULLETED_LIST : NONE).build())),
+                createToggleButton("\uf0cb", "Numbered List", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == NUMBERED_LIST, (builder, a) -> builder.graphicType(a ? NUMBERED_LIST : NONE).build())),
+                createToggleButton("\uf0ca", "Unordered List/Outline", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == BULLETED_LIST, (builder, a) -> builder.graphicType(a ? BULLETED_LIST : NONE).build())),
                 createSpinner("Indent", "Indent Level", p -> new ParagraphDecorateAction<>(editor, p, ParagraphDecoration::getIndentationLevel, (builder, a) -> builder.indentationLevel(a).build())),
 
                 wideSeparator(3),
 
-                actionImage(LineAwesomeSolid.IMAGE, "Insert Image"),
+                actionImage("\uf03e", "Insert Image"),
                 actionEmoji("Insert Emoji"),
-                actionHyperlink(LineAwesomeSolid.LINK, "Insert Hyperlink"),
-                actionTable(LineAwesomeSolid.TABLE, "Insert Table", td -> editor.getActionFactory().insertTable(td)),
+                actionHyperlink("\uf0c1", "Insert Hyperlink"),
+                actionTable("\uf0ce", "Insert Table", td -> editor.getActionFactory().insertTable(td)),
 
                 wideSeparator(4),
 
-                createToggleButton(LineAwesomeSolid.BOLD, "Bold (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
-                createToggleButton(LineAwesomeSolid.ITALIC, "Italic (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build()))
+                createToggleButton("\uf032", "Bold (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
+                createToggleButton("\uf033", "Italic (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build()))
+
+                //LineAwesomeSolid ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT, ALIGN_JUSTIFY, LIST_OL, LIST_UL, IMAGE, LINK, TABLE, BOLD, ITALIC
             );
         setRtaListeners();
     }
@@ -302,34 +306,28 @@ public class DecoratedRTA {
         return separator;
     }
 
-    private Button actionButton(Ikon ikon, String tooltip, Action action) {
-        Button button = new Button();
-        FontIcon icon = new FontIcon(ikon);
-        icon.setIconSize(20);
-        button.setGraphic(icon);
+    private Button actionButton(String ikon, String tooltip, Action action) {
+        Button button = new Button(ikon);
+        button.getStyleClass().add("lasolid-icon");
         button.setTooltip(new Tooltip(tooltip));
         button.disableProperty().bind(action.disabledProperty());
         button.setOnAction(action::execute);
         return button;
     }
 
-    private ToggleButton createToggleButton(Ikon ikon, String tooltip, Function<ObjectProperty<Boolean>, DecorateAction<Boolean>> function) {
-        final ToggleButton toggleButton = new ToggleButton();
+    private ToggleButton createToggleButton(String ikon, String tooltip, Function<ObjectProperty<Boolean>, DecorateAction<Boolean>> function) {
+        final ToggleButton toggleButton = new ToggleButton(ikon);
+        toggleButton.getStyleClass().add("lasolid-icon");
         toggleButton.setTooltip(new Tooltip(tooltip));
-        FontIcon icon = new FontIcon(ikon);
-        icon.setIconSize(20);
-        toggleButton.setGraphic(icon);
         function.apply(toggleButton.selectedProperty().asObject());
         return toggleButton;
     }
 
-    private ToggleButton createColoredToggleButton(Ikon ikon, String tooltip, Function<ObjectProperty<Boolean>, DecorateAction<Boolean>> function) {
-        final ToggleButton toggleButton = new ToggleButton();
+    private ToggleButton createColoredToggleButton(String ikon, String tooltip, Function<ObjectProperty<Boolean>, DecorateAction<Boolean>> function) {
+        final ToggleButton toggleButton = new ToggleButton(ikon);
+        toggleButton.getStyleClass().add("lasolid-icon");
         toggleButton.setTooltip(new Tooltip(tooltip));
         toggleButton.setStyle("-fx-border-color:LIGHTGREEN;-fx-border-radius:3;-fx-border-width:1;");
-        FontIcon icon = new FontIcon(ikon);
-        icon.setIconSize(20);
-        toggleButton.setGraphic(icon);
         function.apply(toggleButton.selectedProperty().asObject());
         return toggleButton;
     }
@@ -387,12 +385,10 @@ public class DecoratedRTA {
     }
     //
 
-    private Button actionImage(Ikon ikon, String tooltip) {
-        Button button = new Button();
+    private Button actionImage(String ikon, String tooltip) {
+        Button button = new Button(ikon);
+        button.getStyleClass().add("lasolid-icon");
         button.setTooltip(new Tooltip(tooltip));
-        FontIcon icon = new FontIcon(ikon);
-        icon.setIconSize(20);
-        button.setGraphic(icon);
         button.setOnAction(e -> {
             final FileChooser fileChooser = new FileChooser();
 
@@ -428,12 +424,10 @@ public class DecoratedRTA {
         return emojiButton;
     }
 
-    private Button actionHyperlink(Ikon ikon, String tooltip) {
-        Button button = new Button();
+    private Button actionHyperlink(String ikon, String tooltip) {
+        Button button = new Button(ikon);
+        button.getStyleClass().add("lasolid-icon");
         button.setTooltip(new Tooltip(tooltip));
-        FontIcon icon = new FontIcon(ikon);
-        icon.setIconSize(20);
-        button.setGraphic(icon);
         button.setOnAction(e -> {
             final Dialog<String> hyperlinkDialog = createHyperlinkDialog();
             Optional<String> result = hyperlinkDialog.showAndWait();
@@ -482,12 +476,10 @@ public class DecoratedRTA {
         return dialog;
     }
 
-    private Button actionTable(Ikon ikon, String tooltip, Function<TableDecoration, Action> actionFunction) {
-        Button button = new Button();
+    private Button actionTable(String ikon, String tooltip, Function<TableDecoration, Action> actionFunction) {
+        Button button = new Button(ikon);
+        button.getStyleClass().add("lasolid-icon");
         button.setTooltip(new Tooltip(tooltip));
-        FontIcon icon = new FontIcon(ikon);
-        icon.setIconSize(20);
-        button.setGraphic(icon);
         button.disableProperty().bind(actionFunction.apply(null).disabledProperty());
         button.setOnAction(e -> {
             final Dialog<TableDecoration> tableDialog = insertTableDialog();
