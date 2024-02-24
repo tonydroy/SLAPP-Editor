@@ -6,6 +6,7 @@ import java.io.Serializable;
 public interface ExerciseModel<T> extends Serializable {
 
     String getExerciseName();
+    ExerciseType getExerciseType();
     boolean isStarted();
     void setStarted(boolean started);
     Document getExerciseComment();

@@ -3,8 +3,7 @@
 }
 
 .cubic-icon {
-    -fx-fill:
-            rgba(80.0, 80.0, 80.0, 0.0);
+    -fx-fill: rgba(80.0, 80.0, 80.0, 0.0);
 
     -fx-stroke: black;
 }

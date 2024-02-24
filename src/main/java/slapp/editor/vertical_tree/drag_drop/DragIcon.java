@@ -52,7 +52,7 @@ public class DragIcon extends AnchorPane {
 
             case text_field:
                 Rectangle rectangle = new Rectangle(48, 20);
-                rectangle.setFill(Color.rgb(215, 236, 255));
+                rectangle.setFill(Color.rgb(230, 245, 255));
                 rectangle.setStrokeWidth(1.5);
                 rectangle.setStroke(Color.BLACK);
                 rectangle.setArcHeight(8); rectangle.setArcWidth(8);
@@ -87,7 +87,7 @@ public class DragIcon extends AnchorPane {
                 brackPane.setStyle("-fx-border-width: 1.5 0.0 1.5 1.5; -fx-border-color: black; -fx-border-radius: 5 0 0 5");
 
                 Rectangle bracketRec = new Rectangle(24, 32);
-                bracketRec.setFill(Color.rgb(215, 236, 255));
+                bracketRec.setFill(Color.rgb(230, 245, 255));
                 bracketRec.setStroke(Color.TRANSPARENT);
                 bracketRec.setArcHeight(8); bracketRec.setArcWidth(8);
 
@@ -105,7 +105,7 @@ public class DragIcon extends AnchorPane {
             case dashed_line:
 
                 Rectangle dashLineRec = new Rectangle(54, 24);
-                dashLineRec.setFill(Color.rgb(215, 236, 255));
+                dashLineRec.setFill(Color.rgb(230, 245, 255));
                 dashLineRec.setStroke(Color.TRANSPARENT);
                 dashLineRec.setArcHeight(8); dashLineRec.setArcWidth(8);
 

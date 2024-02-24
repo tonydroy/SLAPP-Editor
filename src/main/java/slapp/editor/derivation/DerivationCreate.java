@@ -283,7 +283,7 @@ public class DerivationCreate {
         stage.setScene(scene);
 
         stage.setTitle("Create Derivation Exercise:");
-        stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
+        stage.getIcons().addAll(EditorMain.icons);
         stage.setWidth(1030);
         stage.setHeight(800);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());

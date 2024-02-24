@@ -3,6 +3,7 @@ package slapp.editor.ab_explain;
 
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
+import slapp.editor.main_window.ExerciseType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
 public class ABmodel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
+    private ExerciseType type = ExerciseType.AB_EXPLAIN;
     private ABmodelExtra modelFields = new ABmodelExtra();
     private boolean started = false;
     private String prompt = "";
@@ -39,6 +41,8 @@ public class ABmodel implements ExerciseModel<Document>, Serializable {
 
     @Override
     public String getExerciseName() { return exerciseName; }
+    @Override
+    public ExerciseType getExerciseType() { return type; }
     @Override
     public boolean isStarted() { return started;    }
     @Override

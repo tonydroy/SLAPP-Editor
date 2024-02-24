@@ -54,7 +54,7 @@ public class ExerciseTypePopup {
         stage.setScene(scene);
         stage.setTitle("Exercise Type");
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
+        stage.getIcons().addAll(EditorMain.icons);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         selectButton.setOnAction(e -> {

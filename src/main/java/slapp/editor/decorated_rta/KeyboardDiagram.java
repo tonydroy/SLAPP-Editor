@@ -67,7 +67,7 @@ public class KeyboardDiagram {
         stage.setScene(scene);
         stage.setTitle("Keyboard Diagrams");
         stage.initModality(Modality.NONE);
-        stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
+        stage.getIcons().addAll(EditorMain.icons);
 
 
 

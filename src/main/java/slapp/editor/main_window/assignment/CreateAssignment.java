@@ -326,7 +326,7 @@ public class CreateAssignment {
         stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Edit Assignment:");
-        stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
+        stage.getIcons().addAll(EditorMain.icons);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.initModality(Modality.APPLICATION_MODAL);

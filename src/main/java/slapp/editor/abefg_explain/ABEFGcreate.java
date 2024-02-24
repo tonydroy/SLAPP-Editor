@@ -321,7 +321,7 @@ public class ABEFGcreate {
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
         stage.setTitle("Create AB/EFG Explain Exercise:");
-        stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
+        stage.getIcons().addAll(EditorMain.icons);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.setWidth(860);

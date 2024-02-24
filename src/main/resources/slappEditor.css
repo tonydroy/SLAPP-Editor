@@ -37,7 +37,9 @@
          }
          /* - taking this out removes the border on the RTA itself*/
 
-
+.tooltip {
+    -fx-font-size: 14;
+}
 
 .rich-text-area:readonly .paragraph-list-view {
    /* -fx-background-color: aliceblue;*/

@@ -2,10 +2,13 @@ package slapp.editor.vertical_tree;
 
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
+import slapp.editor.main_window.ExerciseType;
 
 import java.io.Serializable;
 
 public class VerticalTreeModel implements ExerciseModel<Document>, Serializable {
+
+    private ExerciseType exerciseType = ExerciseType.VERTICAL_TREE;
 
     public VerticalTreeModel(){}
 
@@ -15,6 +18,8 @@ public class VerticalTreeModel implements ExerciseModel<Document>, Serializable 
     public String getExerciseName() {
         return null;
     }
+    @Override
+    public ExerciseType getExerciseType() { return exerciseType; }
 
     @Override
     public boolean isStarted() {

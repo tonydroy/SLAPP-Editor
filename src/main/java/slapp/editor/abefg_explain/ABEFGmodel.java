@@ -3,6 +3,7 @@ package slapp.editor.abefg_explain;
 
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
+import slapp.editor.main_window.ExerciseType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 public class ABEFGmodel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
+    private ExerciseType exerciseType = ExerciseType.ABEFG_EXPLAIN;
     private ABEFGmodelExtra modelFields = new ABEFGmodelExtra();
     private boolean started = false;
     private String prompt = "";
@@ -38,6 +40,8 @@ public class ABEFGmodel implements ExerciseModel<Document>, Serializable {
 
     @Override
     public String getExerciseName() { return exerciseName; }
+    @Override
+    public ExerciseType getExerciseType() { return exerciseType; }
     @Override
     public boolean isStarted() {return started;}
     @Override

@@ -2,6 +2,7 @@ package slapp.editor.truth_table_explain;
 
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
+import slapp.editor.main_window.ExerciseType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
 public class TruthTableExpModel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
+    private ExerciseType exerciseType = ExerciseType.TRUTH_TABLE_EXPLAIN;
     private boolean started = false;
     private double statementPrefHeight = 80;
     private Document exerciseStatement = new Document();
@@ -144,6 +146,8 @@ public class TruthTableExpModel implements ExerciseModel<Document>, Serializable
     public String getExerciseName() {
         return exerciseName;
     }
+    @Override
+    public ExerciseType getExerciseType() { return exerciseType; }
 
     @Override
     public boolean isStarted() {

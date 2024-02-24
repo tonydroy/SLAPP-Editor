@@ -96,6 +96,9 @@ public class MainWindow {
         mainView.getPageSetupItem().setOnAction(e -> pageSetup());
         mainView.getExportSetupItem().setOnAction(e -> exportSetup());
 
+        mainView.getCommonElementsTextItem().setOnAction(e -> generalTextHelp());
+        mainView.getAboutItem().setOnAction(e -> aboutTextHelp());
+        mainView.getContextualTextItem().setOnAction(e -> contextualTextHelp());
 
 
         Label previousExerciseLabel = new Label("Previous");
@@ -695,6 +698,17 @@ public class MainWindow {
         }
         return continueClose;
     }
+
+    private void aboutTextHelp() {
+        TextHelpPopup.helpAbout();
+    }
+    private void generalTextHelp() {
+        TextHelpPopup.helpCommonElements();
+    }
+    private void contextualTextHelp() {
+        TextHelpPopup.helpContextual(((ExerciseModel) (currentExercise.getExerciseModel())).getExerciseType());
+    }
+
 
     public MainWindowView getMainView() { return mainView; }
     public Assignment getCurrentAssignment() { return currentAssignment; }

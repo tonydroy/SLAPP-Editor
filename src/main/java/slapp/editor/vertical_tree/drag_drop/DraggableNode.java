@@ -124,7 +124,7 @@ public class DraggableNode extends AnchorPane {
 
         });
 
-        /*  What is this for?? apears as black circle in upper left of draggable node
+        /*  What is this for?? appears as black circle in upper left of draggable node
 
         Circle c =new Circle();
         c.setRadius(5.0f);

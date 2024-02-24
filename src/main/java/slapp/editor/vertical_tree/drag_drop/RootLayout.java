@@ -56,13 +56,7 @@ public class RootLayout extends AnchorPane {
         base_pane.getItems().addAll(left_pane, right_pane);
         base_pane.setOrientation(Orientation.VERTICAL);
 
-
         this.getChildren().add(base_pane);
-
-
-
-
-
 
         setupWindow();
         initialize();

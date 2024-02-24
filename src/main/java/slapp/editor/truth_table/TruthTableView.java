@@ -319,7 +319,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         rta.setContentAreaWidth(200);
         rta.setPrefWidth(200);
         rta.getStylesheets().add("RichTextField.css");
-        rta.setPromptText("Comment");
+ //       rta.setPromptText("Comment");
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(bdrta.getDRTA(), ControlType.FIELD);

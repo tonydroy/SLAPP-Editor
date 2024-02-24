@@ -2,6 +2,8 @@ package slapp.editor.simple_editor;
 
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
+import slapp.editor.main_window.ExerciseType;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.List;
 public class SimpleEditModel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
+    private ExerciseType exerciseType = ExerciseType.SIMPLE_EDITOR;
     private boolean started = false;
     private String contentPrompt = "";
     private double statementPrefHeight = 80;
@@ -37,6 +40,8 @@ public class SimpleEditModel implements ExerciseModel<Document>, Serializable {
 
     @Override
     public String getExerciseName() {return exerciseName; }
+    @Override
+    public ExerciseType getExerciseType() { return exerciseType; }
     @Override
     public boolean isStarted() { return started;  }
     @Override

@@ -2,6 +2,7 @@ package slapp.editor.front_page;
 
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
+import slapp.editor.main_window.ExerciseType;
 
 /**
  * Dummy model to support FrontPageExercise
@@ -10,6 +11,8 @@ public class FrontPageModel implements ExerciseModel<Document> {
 
     @Override
     public String getExerciseName() { return ""; }
+    @Override
+    public ExerciseType getExerciseType() { return null; }
     @Override
     public boolean isStarted() { return false; }
     @Override

@@ -367,7 +367,7 @@ public class TruthTableCreate {
         stage.setScene(scene);
 
         stage.setTitle("Create Truth Table Exercise:");
-        stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
+        stage.getIcons().addAll(EditorMain.icons);
         stage.setWidth(860);
         stage.setMinWidth(860);
         stage.setHeight(860);

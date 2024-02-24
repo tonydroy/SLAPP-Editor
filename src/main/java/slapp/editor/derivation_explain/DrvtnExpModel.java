@@ -3,6 +3,7 @@ package slapp.editor.derivation_explain;
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.derivation.ModelLine;
 import slapp.editor.main_window.ExerciseModel;
+import slapp.editor.main_window.ExerciseType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 
 public class DrvtnExpModel implements ExerciseModel<Document>, Serializable {
     private String exerciseName = new String("");
+    private ExerciseType exerciseType  = ExerciseType.DRVTN_EXP;
     private boolean started = false;
     private double statementPrefHeight = 80;
     private double gridWidth = 0;
@@ -46,6 +48,8 @@ public class DrvtnExpModel implements ExerciseModel<Document>, Serializable {
 
     @Override
     public String getExerciseName() { return exerciseName; }
+    @Override
+    public ExerciseType getExerciseType() { return exerciseType; }
     @Override
     public boolean isStarted() { return started; }
     @Override

@@ -5,20 +5,17 @@ import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -31,8 +28,6 @@ import slapp.editor.main_window.assignment.AssignmentHeader;
 import slapp.editor.main_window.assignment.AssignmentHeaderItem;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import static java.lang.Math.rint;
 
 public class MainWindowView {
     private Stage stage = EditorMain.mainStage;
@@ -100,12 +95,22 @@ public class MainWindowView {
     private MenuItem pageSetupItem = new MenuItem("Page Setup");
     private MenuItem exportSetupItem = new MenuItem("Export Setup");
     private CheckMenuItem fitToPageItem = new CheckMenuItem("Fit to Page");
+
+    private MenuItem commonElementsTextItem;
+    private MenuItem contextualTextItem;
+    private MenuItem aboutItem;
+    private MenuItem generalIntroItem;
+    private MenuItem verticalTreeItem;
+    private MenuItem horizontalTreeItem;
+    private MenuItem truthTableItem;
+    private MenuItem derivationItem;
+    private MenuItem reportItem;
     Menu previousExerciseMenu = new Menu();
     Menu nextExerciseMenu = new Menu();
     Menu goToExerciseMenu = new Menu();
     Menu assignmentCommentMenu = new Menu();
-    HBox menuBox;
-    Group testGroup;
+
+
 
 
 
@@ -129,10 +134,44 @@ public class MainWindowView {
         Menu helpMenu = new Menu("Help");
         fitToPageItem.setStyle("-fx-text-fill: green");
 
+        Text filmItemGraphic1 = new Text("\uf008");
+        filmItemGraphic1.setStyle("-fx-font-family: la-solid-900");
+        generalIntroItem = new MenuItem("General Intro", filmItemGraphic1);
+        Text filmItemGraphic2 = new Text("\uf008");
+        filmItemGraphic2.setStyle("-fx-font-family: la-solid-900");
+        verticalTreeItem = new MenuItem("Vertical Trees", filmItemGraphic2);
+        Text filmItemGraphic3 = new Text("\uf008");
+        filmItemGraphic3.setStyle("-fx-font-family: la-solid-900");
+        horizontalTreeItem = new MenuItem("Horizontal Trees", filmItemGraphic3);
+        Text filmItemGraphic4 = new Text("\uf008");
+        filmItemGraphic4.setStyle("-fx-font-family: la-solid-900");
+        truthTableItem = new MenuItem("Truth Tables", filmItemGraphic4);
+        Text filmItemGraphic5 = new Text("\uf008");
+        filmItemGraphic5.setStyle("-fx-font-family: la-solid-900");
+        derivationItem = new MenuItem("Derivations", filmItemGraphic5);
+
+
+        Text textItemGraphic1 = new Text("\uf15c");
+        textItemGraphic1.setStyle("-fx-font-family: la-solid-900");
+        commonElementsTextItem = new MenuItem("Common", textItemGraphic1);
+        Text textItemGraphic2 = new Text("\uf15c");
+        textItemGraphic2.setStyle("-fx-font-family: la-solid-900");
+        contextualTextItem = new MenuItem("Contextual", textItemGraphic2);
+        Text textItemGraphic3 = new Text("\uf15c");
+        textItemGraphic3.setStyle("-fx-font-family: la-solid-900");
+        aboutItem = new MenuItem("About", textItemGraphic3);
+
+        Text reportItemGraphic = new Text("\uf4ad");
+        reportItemGraphic.setStyle("-fx-font-family: la-solid-900");
+        reportItem = new MenuItem("Comment/Report", reportItemGraphic);
+
+
+
         menuBar = new MenuBar(assignmentMenu, exerciseMenu, previousExerciseMenu, nextExerciseMenu, goToExerciseMenu, assignmentCommentMenu, printMenu, helpMenu);
         exerciseMenu.getItems().addAll(saveExerciseItem, saveAsExerciseItem, openExerciseItem, clearExerciseItem, closeExerciseItem, printExerciseItem, exportToPDFExerciseItem, createRevisedExerciseItem, createNewExerciseItem);
         assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, closeAssignmentItem, printAssignmentItem, exportAssignmentToPDFItem, createRevisedAssignmentItem, createNewAssignmentItem);
         printMenu.getItems().addAll(printExerciseItemPM, exportExerciseToPDFItemPM, printAssignmentItemPM, exportAssignmentToPDFItemPM, pageSetupItem, exportSetupItem, fitToPageItem);
+        helpMenu.getItems().addAll(generalIntroItem, verticalTreeItem, horizontalTreeItem, truthTableItem, derivationItem, commonElementsTextItem, contextualTextItem, aboutItem, reportItem);
 
         zoomLabel = new Label(" Zoom ");
         zoomSpinner = new Spinner(25, 500, 100, 5);
@@ -710,6 +749,42 @@ public class MainWindowView {
 
     public MenuItem getExportAssignmentToPDFItemPM() {
         return exportAssignmentToPDFItemPM;
+    }
+
+    public MenuItem getCommonElementsTextItem() {
+        return commonElementsTextItem;
+    }
+
+    public MenuItem getContextualTextItem() {
+        return contextualTextItem;
+    }
+
+    public MenuItem getAboutItem() {
+        return aboutItem;
+    }
+
+    public MenuItem getGeneralIntroItem() {
+        return generalIntroItem;
+    }
+
+    public MenuItem getVerticalTreeItem() {
+        return verticalTreeItem;
+    }
+
+    public MenuItem getHorizontalTreeItem() {
+        return horizontalTreeItem;
+    }
+
+    public MenuItem getTruthTableItem() {
+        return truthTableItem;
+    }
+
+    public MenuItem getDerivationItem() {
+        return derivationItem;
+    }
+
+    public MenuItem getReportItem() {
+        return reportItem;
     }
 
     public Menu getPreviousExerciseMenu() {

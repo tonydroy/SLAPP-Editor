@@ -84,7 +84,7 @@ public class ExtendedDemo {
         TextDecoration bold14 = TextDecoration.builder().presets().fontWeight(BOLD).fontSize(14).build();
         TextDecoration preset = TextDecoration.builder().presets().build();
         ParagraphDecoration center63 = ParagraphDecoration.builder().presets().alignment(TextAlignment.CENTER).topInset(6).bottomInset(3).build();
-        ParagraphDecoration justify22 = ParagraphDecoration.builder().presets().alignment(TextAlignment.JUSTIFY).topInset(2).bottomInset(2).build();
+        ParagraphDecoration justify22 = ParagraphDecoration.builder().presets().alignment(TextAlignment.JUSTIFY).topInset(2).bottomInset(2).graphicType(BULLETED_LIST).build();
         ParagraphDecoration right22 = ParagraphDecoration.builder().presets().alignment(TextAlignment.RIGHT).topInset(2).bottomInset(2).build();
         ParagraphDecoration left535 = ParagraphDecoration.builder().presets().alignment(TextAlignment.LEFT).topInset(5).bottomInset(3).spacing(5).build();
         ParagraphDecoration center42 = ParagraphDecoration.builder().presets().alignment(TextAlignment.CENTER).topInset(4).bottomInset(2).build();
@@ -99,7 +99,7 @@ public class ExtendedDemo {
                 new DecorationModel(1255, 764, preset, left535),
                 new DecorationModel(2019, 295, preset, center42)
         );
-    }/*
+    }
     private final Document document = new Document("What is Lorem Ipsum?\n" +
             "Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\n" +
             "Why do we use it?\n" +
@@ -108,12 +108,12 @@ public class ExtendedDemo {
             "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, \"Lorem ipsum dolor sit amet..\", comes from a line in section 1.10.32.\n" +
             "The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from \"de Finibus Bonorum et Malorum\" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.\n",
             decorations, 2314);
-            */
 
 
 
 
-    private final Document document = new Document("this is\n a test");
+
+//    private final Document document = new Document("this is\n a test");
 
 
     private final Label textLengthLabel = new Label();
@@ -314,6 +314,13 @@ public class ExtendedDemo {
             PrintUtilities.updatePageLayout();
         });
 
+        Button dumpButton = new Button("dump doc");
+        dumpButton.setOnAction(e -> {
+
+            Document doc = editor.getDocument();
+            System.out.println(doc);
+        });
+
 
         //toolbars
         ToolBar toolbar = new ToolBar();
@@ -324,6 +331,7 @@ public class ExtendedDemo {
                 actionButton(LineAwesomeSolid.SAVE, "Save Assignment",  editor.getActionFactory().save()),
                 printButton,
                 pageSetupButton,
+                dumpButton,
                 new Separator(Orientation.VERTICAL),
 
                 actionButton(LineAwesomeSolid.CUT, "Cut",   editor.getActionFactory().cut()),
@@ -396,6 +404,8 @@ public class ExtendedDemo {
         statusBar.getStyleClass().add("status-bar");
         statusBar.setAlignment(Pos.CENTER_RIGHT);
         statusBar.getChildren().setAll(textLengthLabel);
+
+
 
         Menu fileMenu = new Menu("File");
         CheckMenuItem autoSaveMenuItem = new CheckMenuItem("Auto Save");
