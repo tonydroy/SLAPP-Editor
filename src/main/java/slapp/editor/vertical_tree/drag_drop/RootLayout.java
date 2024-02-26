@@ -306,7 +306,7 @@ public class RootLayout extends AnchorPane {
         getChildren().add(mDragOverIcon);
 
         //populate left pane with multiple colored icons for testing
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
 
             DragIcon icn = new DragIcon();
 

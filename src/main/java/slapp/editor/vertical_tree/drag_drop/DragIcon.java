@@ -80,6 +80,36 @@ public class DragIcon extends AnchorPane {
   //              this.setTopAnchor(fieldPane, 20.0);
                 break;
 
+            case mapping_text_field:
+                Rectangle mrectangle = new Rectangle(48, 20);
+                mrectangle.setFill(Color.rgb(230, 255, 245));
+                mrectangle.setStrokeWidth(1.5);
+                mrectangle.setStroke(Color.BLACK);
+                mrectangle.setArcHeight(8); mrectangle.setArcWidth(8);
+
+                Line mline = new Line(0,0,0,12);
+                mline.setStrokeWidth(1.0);
+                Line mtopLine = new Line(0, 0, 8, 0);
+                Line mbottomLine = new Line(0, 12, 8, 12);
+
+                AnchorPane mfieldPane = new AnchorPane(mrectangle, mline, mtopLine, mbottomLine);
+                mfieldPane.setLeftAnchor(mline, 8.0);
+                mfieldPane.setTopAnchor(mline, 3.0);
+
+                mfieldPane.setLeftAnchor(mtopLine, 4.0);
+                mfieldPane.setTopAnchor(mtopLine, 3.0);
+
+                mfieldPane.setLeftAnchor(mbottomLine, 4.0);
+                mfieldPane.setTopAnchor(mbottomLine, 16.0);
+
+                this.setPrefHeight(24); this.setPrefWidth(64);
+                this.setMaxWidth(64); this.setMinWidth(64); this.setMaxHeight(24); this.setMinHeight(24);
+
+                getChildren().add(mfieldPane);
+                //              this.setLeftAnchor(fieldPane, 8.0);
+                //              this.setTopAnchor(fieldPane, 20.0);
+                break;
+
             case bracket:
                 Pane brackPane = new Pane();
                 brackPane.setMinWidth(8.0); brackPane.setMaxWidth(8.0);
@@ -87,7 +117,7 @@ public class DragIcon extends AnchorPane {
                 brackPane.setStyle("-fx-border-width: 1.5 0.0 1.5 1.5; -fx-border-color: black; -fx-border-radius: 5 0 0 5");
 
                 Rectangle bracketRec = new Rectangle(24, 32);
-                bracketRec.setFill(Color.rgb(230, 245, 255));
+                bracketRec.setFill(Color.rgb(235, 235, 235));
                 bracketRec.setStroke(Color.TRANSPARENT);
                 bracketRec.setArcHeight(8); bracketRec.setArcWidth(8);
 
@@ -105,7 +135,7 @@ public class DragIcon extends AnchorPane {
             case dashed_line:
 
                 Rectangle dashLineRec = new Rectangle(54, 24);
-                dashLineRec.setFill(Color.rgb(230, 245, 255));
+                dashLineRec.setFill(Color.rgb(235, 235, 235));
                 dashLineRec.setStroke(Color.TRANSPARENT);
                 dashLineRec.setArcHeight(8); dashLineRec.setArcWidth(8);
 

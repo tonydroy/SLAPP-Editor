@@ -206,34 +206,42 @@ public class FormulaBox extends AnchorPane {
                 RichTextArea rta = formulaBox.getRTA();
                 KeyCode code = e.getCode();
                 Bounds rtaBounds = self.sceneToLocal(rta.localToScene(rta.getBoundsInLocal()));
-                if (code == KeyCode.ESCAPE) {
-                    if (circleStage <= 2) {
+                if (code == KeyCode.F9) {
+                    if (circleStage < 2) {
                         Bounds caretBounds = ((RichTextAreaSkin) formulaBox.getRTA().getSkin()).getCaretPosition();
                         Bounds newCaretBounds = rta.sceneToLocal(caretBounds);
                         double xAnchor = newCaretBounds.getMaxX() + rtaBounds.getMinX() - 1.0;
-                        double yAnchor = newCaretBounds.getMaxY() + rtaBounds.getMinY();
-                        if (circleStage < 2) {
-                            Label marker = circleMarkers[circleStage];
-                            circleXAnchors[circleStage] = xAnchor;
-                            self.getChildren().add(marker);
-                            self.setLeftAnchor(marker, xAnchor);
-                            self.setTopAnchor(marker, yAnchor);
-                            circleStage++;
-                        } else {
-                            double minX = Math.min(circleXAnchors[0], circleXAnchors[1]);
-                            double maxX = Math.max(circleXAnchors[0], circleXAnchors[1]);
-                            self.getChildren().removeAll(circleMarkers);
-                            self.getChildren().add(oval);
-                            oval.setWidth(maxX - minX);
+                        double yAnchor = newCaretBounds.getMaxY() * .75 + rtaBounds.getMinY();
 
-                            oval.setHeight(rtaBounds.getHeight() - 6.0);
-                            oval.setStyle("-fx-fill: transparent; -fx-stroke: black; -fx-stroke-width: 1;");
-                            oval.setArcHeight(rtaBounds.getHeight() - 6.0);
-                            oval.setArcWidth((maxX - minX));
-                            self.setLeftAnchor(oval, minX);
-                            self.setTopAnchor(oval, rtaBounds.getMinY() + 2.0 );
-                            circleStage++;
-                        }
+                        Label marker = circleMarkers[circleStage];
+                        circleXAnchors[circleStage] = xAnchor;
+                        self.getChildren().add(marker);
+                        self.setLeftAnchor(marker, xAnchor);
+                        self.setTopAnchor(marker, yAnchor);
+                        circleStage++;
+                    } else {
+                        self.getChildren().removeAll(circleMarkers);
+                        circleStage = 0;
+                    }
+                    e.consume();
+                } else if (code == KeyCode.F10) {
+                    if (circleStage < 2) {
+                        EditorAlerts.fleetingPopup("Circle requires two markers.");
+                    }
+                    else if (circleStage == 2) {
+                        double minX = Math.min(circleXAnchors[0], circleXAnchors[1]);
+                        double maxX = Math.max(circleXAnchors[0], circleXAnchors[1]);
+                        self.getChildren().removeAll(circleMarkers);
+                        self.getChildren().add(oval);
+                        oval.setWidth(maxX - minX);
+
+                        oval.setHeight(rtaBounds.getHeight() - 6.0);
+                        oval.setStyle("-fx-fill: transparent; -fx-stroke: black; -fx-stroke-width: 1;");
+                        oval.setArcHeight(rtaBounds.getHeight() - 6.0);
+                        oval.setArcWidth((maxX - minX));
+                        self.setLeftAnchor(oval, minX);
+                        self.setTopAnchor(oval, rtaBounds.getMinY() + 2.0);
+                        circleStage++;
                     } else {
                         EditorAlerts.fleetingPopup("Text field has at most one circle annotation.");
                     }
@@ -248,28 +256,34 @@ public class FormulaBox extends AnchorPane {
                 RichTextArea rta = formulaBox.getRTA();
                 KeyCode code = e.getCode();
                 Bounds rtaBounds = self.sceneToLocal(rta.localToScene(rta.getBoundsInLocal()));
-                if (code == KeyCode.ESCAPE) {
-                    if (ulineStage <= 2) {
+                if (code == KeyCode.F9) {
+                    if (ulineStage < 2) {
                         Bounds caretBounds = ((RichTextAreaSkin) formulaBox.getRTA().getSkin()).getCaretPosition();
                         Bounds newCaretBounds = rta.sceneToLocal(caretBounds);
                         double xAnchor = newCaretBounds.getMaxX() + rtaBounds.getMinX() - 1.0;
-                        double yAnchor = newCaretBounds.getMaxY() + rtaBounds.getMinY();
-                        if (ulineStage < 2) {
-                            Label marker = ulineMarkers[ulineStage];
-                            ulineXAnchors[ulineStage] = xAnchor;
-                            self.getChildren().add(marker);
-                            self.setLeftAnchor(marker, xAnchor);
-                            self.setTopAnchor(marker, yAnchor);
-                            ulineStage++;
-                        } else {
-                            double minX = Math.min(ulineXAnchors[0], ulineXAnchors[1]);
-                            double maxX = Math.max(ulineXAnchors[0], ulineXAnchors[1]);
-                            self.getChildren().removeAll(ulineMarkers);
-                            setLine(minX - rtaBounds.getMinX(), maxX - rtaBounds.getMinX());
-                            ulineStage = 0;
-                        }
+                        double yAnchor = newCaretBounds.getMaxY() * .75 + rtaBounds.getMinY();
+
+                        Label marker = ulineMarkers[ulineStage];
+                        ulineXAnchors[ulineStage] = xAnchor;
+                        self.getChildren().add(marker);
+                        self.setLeftAnchor(marker, xAnchor);
+                        self.setTopAnchor(marker, yAnchor);
+                        ulineStage++;
                     } else {
-                        throw new IndexOutOfBoundsException("Index out of bounds: ulineKeyFilter.");
+                        self.getChildren().removeAll(ulineMarkers);
+                        ulineStage = 0;
+                    }
+                    e.consume();
+                }
+                else if (code == KeyCode.F10) {
+                    if (ulineStage == 2) {
+                        double minX = Math.min(ulineXAnchors[0], ulineXAnchors[1]);
+                        double maxX = Math.max(ulineXAnchors[0], ulineXAnchors[1]);
+                        self.getChildren().removeAll(ulineMarkers);
+                        setLine(minX - rtaBounds.getMinX(), maxX - rtaBounds.getMinX());
+                        ulineStage = 0;
+                    } else {
+                        EditorAlerts.fleetingPopup("Underline requires two markers.");
                     }
                     e.consume();
                 }
@@ -280,15 +294,14 @@ public class FormulaBox extends AnchorPane {
     }
 
     private void setLine(double startX, double endX) {
-        //make sure there is a baseline for new line
+        //make sure there is a baseline for new line by extending baseline to endX
         int intStartX = (int) Math.round(startX);
         int intEndX = (int) Math.round(endX);
-
         for (int i = baseline.size(); i <= intEndX; i++) {
             baseline.add(-((int) ulineSpace));
         }
 
-        //find base for line
+        //find base for new line
         int maxBase = 0;
         for (int i = intStartX; i <= intEndX; i++) {
             if (baseline.get(i) > maxBase) {
@@ -605,7 +618,6 @@ public class FormulaBox extends AnchorPane {
         rta.setMaxHeight(24);
         rta.setMinHeight(24);
         rta.setPrefWidth(36);
-     //   rta.getStylesheets().add("slappDerivation.css");
        rta.getStylesheets().add("formulaBox.css");
         rta.setPromptText("");
         rta.focusedProperty().addListener((ob, ov, nv) -> {
