@@ -23,6 +23,7 @@ import slapp.editor.EditorAlerts;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
+import slapp.editor.vertical_tree.VerticalTreeView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.ListIterator;
 import java.util.UUID;
 
 public class FormulaBox extends AnchorPane {
+    private VerticalTreeView verticalTreeView;
 
     private AnchorPane top_link_handle;
     private AnchorPane bottom_link_handle;
@@ -82,7 +84,8 @@ public class FormulaBox extends AnchorPane {
 
 
 
-    FormulaBox() {
+    FormulaBox(VerticalTreeView verticalTreeView) {
+        this.verticalTreeView = verticalTreeView;
         self = this;
         circleMarkers = new Label[]{new Label("|"), new Label("|")};
         ulineMarkers = new Label[]{new Label("|"), new Label("|")};
@@ -618,11 +621,11 @@ public class FormulaBox extends AnchorPane {
         rta.setMaxHeight(24);
         rta.setMinHeight(24);
         rta.setPrefWidth(36);
-       rta.getStylesheets().add("formulaBox.css");
+       rta.getStylesheets().add("blueFormulaBox.css");
         rta.setPromptText("");
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
-//                editorInFocus(drta, ControlType.FIELD);             **needs to be revived once integrated into SLAPP**
+                verticalTreeView.getMainView().editorInFocus(drta, ControlType.FIELD);
             }
         });
         rta.getActionFactory().saveNow().execute(new ActionEvent());
@@ -636,7 +639,7 @@ public class FormulaBox extends AnchorPane {
             middleBox.setStyle("-fx-border-color: black; -fx-border-width: 1 1 1 1");
         } else {
 //            formulaBox.getRTA().getStylesheets().clear();
-//            formulaBox.getRTA().getStylesheets().add("formulaBox.css");
+//            formulaBox.getRTA().getStylesheets().add("blueFormulaBox.css");
             middleBox.setStyle("-fx-border-width: 0 0 0 0");
 
         }
@@ -680,10 +683,15 @@ public class FormulaBox extends AnchorPane {
             rta.requestFocus();
             self.addEventFilter(KeyEvent.KEY_PRESSED, circleKeyFilter);
         } else {
-            self.removeEventFilter(KeyEvent.KEY_PRESSED, circleKeyFilter);
-            self.getChildren().removeAll(circleMarkers[0], circleMarkers[1], oval);
-            circleStage = 0;
+            undoCircleRequest();
+            self.getChildren().remove(oval);
         }
+    }
+
+    void undoCircleRequest() {
+        self.removeEventFilter(KeyEvent.KEY_PRESSED, circleKeyFilter);
+        self.getChildren().removeAll(circleMarkers[0], circleMarkers[1]);
+        circleStage = 0;
     }
     void processUnderlineRequest(boolean add) {
         if (add) {
@@ -691,11 +699,16 @@ public class FormulaBox extends AnchorPane {
             rta.requestFocus();
             self.addEventFilter(KeyEvent.KEY_PRESSED, ulineKeyFilter);
         } else {
-            self.removeEventFilter(KeyEvent.KEY_PRESSED, ulineKeyFilter);
-            self.getChildren().removeAll(ulineMarkers[0], ulineMarkers[1]);
+            undoUnderlineRequest();
             linesPane.getChildren().clear();
             baseline.clear();
         }
+    }
+
+    void undoUnderlineRequest() {
+        self.removeEventFilter(KeyEvent.KEY_PRESSED, ulineKeyFilter);
+        self.getChildren().removeAll(ulineMarkers[0], ulineMarkers[1]);
+        ulineStage = 0;
     }
 
     public VBox getMiddleBox() {

@@ -526,6 +526,7 @@ public class TruthTableExpCreate {
         DecoratedRTA drta = bdrta.getDRTA();
         drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
         RichTextArea rta = bdrta.getRTA();
+        rta.getActionFactory().saveNow().execute(new ActionEvent());
         rta.setMaxHeight(27);
         rta.setMinHeight(27);
         rta.setPrefWidth(300);

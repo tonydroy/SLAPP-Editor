@@ -15,6 +15,7 @@ import slapp.editor.vertical_tree.drag_drop.RootLayout;
 
 public class VerticalTreeView implements ExerciseView<DecoratedRTA> {
 
+    MainWindowView mainView;
     BorderPane root;
     RootLayout rootLayout;
     DecoratedRTA exerciseComment = new DecoratedRTA();
@@ -24,11 +25,12 @@ public class VerticalTreeView implements ExerciseView<DecoratedRTA> {
     Node exerciseControlNode;
 
     VerticalTreeView(MainWindowView mainView) {
+        this.mainView = mainView;
         root = new BorderPane();
-        rootLayout = new RootLayout();
+        rootLayout = new RootLayout(this);
 
         root.setCenter(rootLayout);
-        VBox controlBox = new VBox(20, rootLayout.getBoxToggle(), rootLayout.getCircleToggle(), rootLayout.getUnderlineToggle(),rootLayout.getStarToggle(), rootLayout.getAnnotationBox());
+        VBox controlBox = new VBox(20, rootLayout.getBoxToggle(), rootLayout.getCircleToggle(), rootLayout.getUnderlineToggle(),rootLayout.getStarToggle(), rootLayout.getAnnotationBox(), rootLayout.getMappingToggle());
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
         controlBox.setMargin(rootLayout.getAnnotationBox(), new Insets(10, 0, 0, 0));
  //       controlBox.setMargin(insertLineButton, new Insets(0,0,20, 0));
@@ -52,7 +54,9 @@ public class VerticalTreeView implements ExerciseView<DecoratedRTA> {
 
     }
 
-
+    public MainWindowView getMainView() {
+        return mainView;
+    }
 
     @Override
     public String getExerciseName() {

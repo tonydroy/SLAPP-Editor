@@ -478,6 +478,7 @@ public class TruthTableCreate {
         DecoratedRTA drta = boxedDRTA.getDRTA();
         drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
         RichTextArea rta = boxedDRTA.getRTA();
+        rta.getActionFactory().saveNow().execute(new ActionEvent());
         rta.setMaxHeight(27);
         rta.setMinHeight(27);
         rta.setPrefWidth(300);
@@ -550,20 +551,25 @@ public class TruthTableCreate {
 
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
+//        System.out.println("1: " + fieldModified);
 
         for (BoxedDRTA bdrta : unaryOperatorList) {
             if (bdrta.getRTA().isModified()) {fieldModified = true; }
         }
+//        System.out.println("2: " + fieldModified);
 
         for (BoxedDRTA bdrta : binaryOperatorList) {
             if (bdrta.getRTA().isModified()) {fieldModified = true; }
         }
+ //       System.out.println("3: " + fieldModified);
 
         for (BoxedDRTA bdrta : mainFormulaList) {
             if (bdrta.getRTA().isModified()) {fieldModified = true; }
         }
+ //       System.out.println("4: " + fieldModified);
 
         if (statementRTA.isModified()) {fieldModified = true;  }
+ //       System.out.println("5: " + fieldModified);
 
         if (fieldModified) {
             Alert confirm = EditorAlerts.confirmationAlert(title, content);
