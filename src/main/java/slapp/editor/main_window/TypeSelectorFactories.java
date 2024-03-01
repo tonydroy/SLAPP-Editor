@@ -65,6 +65,10 @@ public class TypeSelectorFactories {
                 TruthTableExpModel truthTableExpModel = (TruthTableExpModel) objectModel;
                 return new TruthTableExpExercise(truthTableExpModel, mainWindow);
             }
+            case "VerticalTreeModel": {
+                VerticalTreeModel verticalTreeModel = (VerticalTreeModel) objectModel;
+                return new VerticalTreeExercise(verticalTreeModel, mainWindow);
+            }
 
             default: {
                 EditorAlerts.showSimpleAlert("Cannot Open", "I do not recognize this as a SLAPP exercise file");
@@ -181,7 +185,10 @@ public class TypeSelectorFactories {
                 break;
             }
             case VERTICAL_TREE: {
-                VerticalTreeExercise vTreeExercise = new VerticalTreeExercise(new VerticalTreeModel(), mainWindow);
+                VerticalTreeExercise vTreeExercise = new VerticalTreeExercise(new VerticalTreeModel(true), mainWindow);
+
+ //               System.out.println(vTreeExercise.getExerciseView().getExerciseStatement().getEditor().getDocument());
+
                 mainWindow.setUpExercise(vTreeExercise);
                 break;
             }

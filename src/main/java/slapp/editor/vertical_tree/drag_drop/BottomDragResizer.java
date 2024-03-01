@@ -8,7 +8,7 @@ import javafx.scene.layout.Region;
 public class BottomDragResizer {
 
 
-    private static final int RESIZE_MARGIN = 5;
+    private static final int RESIZE_MARGIN = 8;
 
     private final Region region;
 

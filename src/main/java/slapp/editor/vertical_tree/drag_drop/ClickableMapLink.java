@@ -6,6 +6,7 @@ import javafx.scene.Cursor;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
@@ -25,9 +26,12 @@ public class ClickableMapLink extends Pane {
     public ClickableMapLink() {
         this.getStylesheets().add("/drag_drop.css");
 
+        this.setPickOnBounds(false);
+        this.setStyle("-fx-background-color: null");
+
         node_link = new Line();
         node_link1 = new Line();
-        this.getChildren().addAll(node_link, node_link1);
+
 
         //provide a universally unique identifier for this object
         setId(UUID.randomUUID().toString());
@@ -36,12 +40,16 @@ public class ClickableMapLink extends Pane {
         node_link1.setStroke(Color.TRANSPARENT);
         node_link1.setOnMouseEntered(e -> setCursor(Cursor.HAND));
         node_link1.setOnMouseExited(e -> setCursor(Cursor.DEFAULT));
+
         node_link1.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 AnchorPane parent = (AnchorPane) this.getParent();
                 parent.getChildren().remove(this);
             }
         });
+
+        this.getChildren().addAll(node_link, node_link1);
+
     }
 
     public void bindEnds (MapFormulaBox box1, MapFormulaBox box2) {
@@ -58,7 +66,6 @@ public class ClickableMapLink extends Pane {
         }
 
 
-        DoubleProperty centerDivisor = new SimpleDoubleProperty(2.0);
         DoubleProperty startFraction = new SimpleDoubleProperty(0.25);
         DoubleProperty endFraction = new SimpleDoubleProperty(0.75);
         DoubleProperty deltaXProperty = new SimpleDoubleProperty();
@@ -73,7 +80,7 @@ public class ClickableMapLink extends Pane {
 
 
         if (source.getMapStage() == 1) {
-            sourceOffsetXProperty.bind(add(source.layoutXProperty(), 3.0 ));
+            sourceOffsetXProperty.bind(add(source.layoutXProperty(), 3.0));
             node_link.startXProperty().bind(add(sourceOffsetXProperty, source.getMapXAnchors()[0]));
             sourceBoxHeightProperty.bind(add(source.getCenterBox().heightProperty(), -4.0));
             node_link.startYProperty().bind(add(source.layoutYProperty(), sourceBoxHeightProperty));
@@ -83,17 +90,17 @@ public class ClickableMapLink extends Pane {
             double temp = source.getMapXAnchors()[0];
             source.getMapXAnchors()[0] = source.getMapXAnchors()[1];
             source.getMapXAnchors()[1] = temp;
-            }
+        }
 
             double bracketWidth = source.getMapXAnchors()[1] - source.getMapXAnchors()[0];
             Pane brackPane = getUpBracket(bracketWidth);
             this.getChildren().add(brackPane);
             brackPane.layoutXProperty().bind(add(source.layoutXProperty(), source.getMapXAnchors()[0]));
-            sourceBoxHeightProperty.bind(add(source.getCenterBox().heightProperty(), -4.0));
+            sourceBoxHeightProperty.bind(add(source.getCenterBox().heightProperty(), 0.0));
             brackPane.layoutYProperty().bind(add(source.layoutYProperty(), sourceBoxHeightProperty));
 
             node_link.startXProperty().bind(add(source.layoutXProperty(), source.getMapXAnchors()[0] + bracketWidth/2.0));
-            sourceBrackHeightProperty.bind(add(source.getCenterBox().heightProperty(), 0.0));
+            sourceBrackHeightProperty.bind(add(source.getCenterBox().heightProperty(), 4.0));
             node_link.startYProperty().bind(add(source.layoutYProperty(), sourceBrackHeightProperty));
 
         }
@@ -114,12 +121,10 @@ public class ClickableMapLink extends Pane {
             Pane brackPane = getDownBracket(bracketWidth);
             this.getChildren().add(brackPane);
             brackPane.layoutXProperty().bind(add(target.layoutXProperty(), target.getMapXAnchors()[0]));
-            brackPane.layoutYProperty().bind(add(target.layoutYProperty(), 0.0));
+            brackPane.layoutYProperty().bind(add(target.layoutYProperty(), -4.0));
 
             node_link.endXProperty().bind(add(target.layoutXProperty(), target.getMapXAnchors()[0] + bracketWidth/2.0));
-            node_link.endYProperty().bind(add(target.layoutYProperty(), 0.0));
-
-
+            node_link.endYProperty().bind(add(target.layoutYProperty(), -4.0));
         }
 
         deltaXProperty.bind(subtract(node_link.endXProperty(), node_link.startXProperty()));

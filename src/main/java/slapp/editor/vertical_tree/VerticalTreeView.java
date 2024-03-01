@@ -15,12 +15,16 @@ import slapp.editor.vertical_tree.drag_drop.RootLayout;
 
 public class VerticalTreeView implements ExerciseView<DecoratedRTA> {
 
-    MainWindowView mainView;
-    BorderPane root;
-    RootLayout rootLayout;
-    DecoratedRTA exerciseComment = new DecoratedRTA();
-    DecoratedRTA exerciseStatement = new DecoratedRTA();
+    private MainWindowView mainView;
+    private String exerciseName = new String("");
+
+    private BorderPane root;
+    private RootLayout rootLayout;
+    private DecoratedRTA exerciseComment = new DecoratedRTA();
+    private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
+
+    private VBox controlBox = new VBox(25);
 
     Node exerciseControlNode;
 
@@ -30,43 +34,48 @@ public class VerticalTreeView implements ExerciseView<DecoratedRTA> {
         rootLayout = new RootLayout(this);
 
         root.setCenter(rootLayout);
-        VBox controlBox = new VBox(20, rootLayout.getBoxToggle(), rootLayout.getCircleToggle(), rootLayout.getUnderlineToggle(),rootLayout.getStarToggle(), rootLayout.getAnnotationBox(), rootLayout.getMappingToggle());
+//        VBox controlBox = new VBox(20, rootLayout.getBoxToggle(), rootLayout.getCircleToggle(), rootLayout.getUnderlineToggle(),rootLayout.getStarToggle(), rootLayout.getAnnotationBox(), rootLayout.getMappingToggle());
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
-        controlBox.setMargin(rootLayout.getAnnotationBox(), new Insets(10, 0, 0, 0));
+ //       controlBox.setMargin(rootLayout.getAnnotationBox(), new Insets(10, 0, 0, 0));
  //       controlBox.setMargin(insertLineButton, new Insets(0,0,20, 0));
-        controlBox.setPadding(new Insets(200,10,30,80));
+        controlBox.setPadding(new Insets(200,10,0,80));
         exerciseControlNode = controlBox;
 
-        initializeViewDetails();
+
     }
 
     void initializeViewDetails() {
         RichTextArea statementRTA = exerciseStatement.getEditor();
         statementRTA.setPrefHeight(statementPrefHeight);
+        statementRTA.setMinHeight(statementPrefHeight);
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setEditable(false);
 
         RichTextArea commentRTA = exerciseComment.getEditor();
         commentRTA.getStylesheets().add("slappTextArea.css");
         commentRTA.setPrefHeight(70.0);
+        commentRTA.setMinHeight(70.0);
         commentRTA.setPromptText("Comment:");
 
 
     }
 
+
+
+
     public MainWindowView getMainView() {
         return mainView;
     }
 
-    @Override
-    public String getExerciseName() {
-        return null;
-    }
+    public RootLayout getRootLayout() {return rootLayout;}
+
+    public VBox getControlBox() {  return controlBox;  }
 
     @Override
-    public void setExerciseName(String name) {
+    public String getExerciseName() { return exerciseName; }
 
-    }
+    @Override
+    public void setExerciseName(String name) {exerciseName = name; }
 
     @Override
     public DecoratedRTA getExerciseComment() {
@@ -74,9 +83,7 @@ public class VerticalTreeView implements ExerciseView<DecoratedRTA> {
     }
 
     @Override
-    public void setExerciseComment(DecoratedRTA exerciseComment) {
-
-    }
+    public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment;  }
 
     @Override
     public double getCommentHeight() {
@@ -89,14 +96,10 @@ public class VerticalTreeView implements ExerciseView<DecoratedRTA> {
     }
 
     @Override
-    public void setExerciseStatement(DecoratedRTA exerciseStatement) {
-
-    }
+    public void setExerciseStatement(DecoratedRTA exerciseStatement) { this.exerciseStatement = exerciseStatement; }
 
     @Override
-    public Node getExerciseStatementNode() {
-        return exerciseStatement.getEditor();
-    }
+    public Node getExerciseStatementNode() { return exerciseStatement.getEditor();   }
 
     @Override
     public double getStatementHeight() {
@@ -105,7 +108,8 @@ public class VerticalTreeView implements ExerciseView<DecoratedRTA> {
 
     @Override
     public void setStatementPrefHeight(double height) {
-
+        statementPrefHeight = height;
+        exerciseStatement.getEditor().setPrefHeight(height);
     }
 
     @Override

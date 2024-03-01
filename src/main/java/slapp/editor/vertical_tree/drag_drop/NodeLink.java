@@ -44,7 +44,7 @@ public class NodeLink extends Pane {
     }
 
 
-    public void bindEnds (FormulaBox source, FormulaBox target) {
+    public void bindEnds (TreeFormulaBox source, TreeFormulaBox target) {
 
         DoubleProperty constantProp = new SimpleDoubleProperty(2.0);
 

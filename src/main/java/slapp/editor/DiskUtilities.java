@@ -92,7 +92,7 @@ public class DiskUtilities {
             os.writeObject(assignment);
 
             String locationString = ".";
-            if (fileToSave.getParent() != null) locationString = "\n\nin " + fileToSave.getParent() +".";
+            if (fileToSave.getParent() != null) locationString = "in\n\n" + fileToSave.getParent() +".";
             EditorAlerts.fleetingPopup(fileToSave.getName() + " saved" + locationString);
             success = true;
         }

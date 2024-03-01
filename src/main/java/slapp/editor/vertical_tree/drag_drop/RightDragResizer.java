@@ -23,7 +23,7 @@ public class RightDragResizer {
      * The margin around the control that a user can click in to start resizing
      * the region.
      */
-    private static final int RESIZE_MARGIN = 5;
+    private static final int RESIZE_MARGIN = 8;
 
     private final Region region;
 
@@ -108,6 +108,8 @@ public class RightDragResizer {
         // setting a min height that is smaller than the current height will
         // have no effect
         if (!initMinWidth) {
+
+
             region.setMinWidth(region.getWidth());
             initMinWidth = true;
         }

@@ -1,7 +1,6 @@
 package slapp.editor.vertical_tree.drag_drop;
 
 
-import com.gluonhq.richtextarea.RichTextArea;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -49,6 +48,7 @@ public class RootLayout extends AnchorPane {
     ToggleButton circleToggle;
     ToggleButton underlineToggle;
     ToggleButton mappingToggle;
+    ToggleGroup buttonGroup;
 
     private DragIcon mDragOverIcon = null;
     private EventHandler<DragEvent> mIconDragOverRoot = null;
@@ -76,10 +76,13 @@ public class RootLayout extends AnchorPane {
         RightDragResizer.makeResizable(base_pane);
      //   BottomDragResizer.makeResizable(base_pane);
         top_pane.setStyle("-fx-background-color: #FCFCFC;");
+        top_pane.setPadding(new Insets(0, 0, 0, 20));
 
         boxToggle = new ToggleButton();
         boxToggle.setPrefWidth(64);
         boxToggle.setPrefHeight(28);
+        boxToggle.setMinHeight(28);
+        boxToggle.setMaxHeight(28);
         Rectangle rectangle = new Rectangle(20,15);
         rectangle.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
         HBox boxToggleGraphic = new HBox(rectangle);
@@ -97,16 +100,19 @@ public class RootLayout extends AnchorPane {
 
         annotationToggle = new ToggleButton();
         annotationToggle.setPrefWidth(44);
-        annotationToggle.setPrefHeight(28);
+        annotationToggle.setPrefHeight(30);
+        annotationToggle.setMinHeight(30);
+        annotationToggle.setMaxHeight(30);
         AnchorPane boxesPane = new AnchorPane();
+        boxesPane.setPadding(new Insets(0));
         Rectangle bigBox = new Rectangle(15,10);
         bigBox.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
         Rectangle littleBox = new Rectangle(7,7);
         littleBox.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
         boxesPane.getChildren().addAll(bigBox, littleBox);
-        boxesPane.setTopAnchor(bigBox, 10.0);
+        boxesPane.setTopAnchor(bigBox, 8.0);
         boxesPane.setLeftAnchor(littleBox, 15.0);
-        boxesPane.setTopAnchor(littleBox, 5.0);
+        boxesPane.setTopAnchor(littleBox, 3.0);
         HBox buttonBox = new HBox(boxesPane);
         buttonBox.setAlignment(Pos.CENTER);
         annotationToggle.setGraphic(buttonBox);
@@ -115,18 +121,21 @@ public class RootLayout extends AnchorPane {
         annotationPlus = new Button("+");
         annotationPlus.setFont(new Font(10));
         annotationPlus.setPadding(new Insets(0));
-        annotationPlus.setPrefWidth(20); annotationPlus.setPrefHeight(14);
+        annotationPlus.setPrefWidth(20); annotationPlus.setPrefHeight(12);
         annotationMinus = new Button("-");
         annotationMinus.setFont(new Font(10));
         annotationMinus.setPadding(new Insets(0));
-        annotationMinus.setPrefWidth(20); annotationMinus.setPrefHeight(14);
+        annotationMinus.setPrefWidth(20); annotationMinus.setPrefHeight(12);
         VBox annotationButtons = new VBox(annotationPlus, annotationMinus);
         annotationBox = new HBox(annotationToggle, annotationButtons);
+        annotationBox.setMaxHeight(30);
 
 
         circleToggle = new ToggleButton();
         circleToggle.setPrefWidth(64);
         circleToggle.setPrefHeight(28);
+        circleToggle.setMinHeight(28);
+        circleToggle.setMaxHeight(28);
         HBox circlePane = new HBox();
         Circle circleIcon = new Circle(7);
         circleIcon.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
@@ -144,7 +153,7 @@ public class RootLayout extends AnchorPane {
         mappingToggle = new ToggleButton();
         mappingToggle.setGraphic(new Text("\u21a7"));
         mappingToggle.setPadding(new Insets(0,0,3,0));
-        mappingToggle.setStyle("-fx-font-family: Noto Serif Combo; -fx-font-size: 32");
+        mappingToggle.setStyle("-fx-font-family: Noto Serif Combo; -fx-font-size: 30");
         mappingToggle.setPrefWidth(64);
         mappingToggle.setPrefHeight(28);
         mappingToggle.setMinHeight(28);
@@ -153,13 +162,8 @@ public class RootLayout extends AnchorPane {
 
 
 
-        ToggleGroup buttonGroup = new ToggleGroup();
-        boxToggle.setToggleGroup(buttonGroup);
-        starToggle.setToggleGroup(buttonGroup);
-        annotationToggle.setToggleGroup(buttonGroup);
-        circleToggle.setToggleGroup(buttonGroup);
-        underlineToggle.setToggleGroup(buttonGroup);
-        mappingToggle.setToggleGroup(buttonGroup);
+        buttonGroup = new ToggleGroup();
+
 
 
         this.getStylesheets().add("/drag_drop.css");
@@ -190,8 +194,8 @@ public class RootLayout extends AnchorPane {
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
-                        if (node instanceof FormulaBox) {
-                            ((FormulaBox) node).processBoxRequest(event.getButton() == MouseButton.PRIMARY);
+                        if (node instanceof TreeFormulaBox) {
+                            ((TreeFormulaBox) node).processBoxRequest(event.getButton() == MouseButton.PRIMARY);
                             break;
                         }
                     }
@@ -210,8 +214,8 @@ public class RootLayout extends AnchorPane {
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
-                        if (node instanceof FormulaBox) {
-                            ((FormulaBox) node).processStarRequest(event.getButton() == MouseButton.PRIMARY);
+                        if (node instanceof TreeFormulaBox) {
+                            ((TreeFormulaBox) node).processStarRequest(event.getButton() == MouseButton.PRIMARY);
                             break;
                         }
                     }
@@ -230,8 +234,8 @@ public class RootLayout extends AnchorPane {
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
-                        if (node instanceof FormulaBox) {
-                            ((FormulaBox) node).processAnnotationRequest(event.getButton() == MouseButton.PRIMARY);
+                        if (node instanceof TreeFormulaBox) {
+                            ((TreeFormulaBox) node).processAnnotationRequest(event.getButton() == MouseButton.PRIMARY);
                             break;
                         }
                     }
@@ -247,8 +251,8 @@ public class RootLayout extends AnchorPane {
         annotationPlus.setOnAction(e -> {
             ObservableList<Node> nodesList = main_pane.getChildren();
             for (Node node : nodesList) {
-                if (node instanceof FormulaBox) {
-                    ((FormulaBox) node).processAnnotationRequest(true);
+                if (node instanceof TreeFormulaBox) {
+                    ((TreeFormulaBox) node).processAnnotationRequest(true);
                 }
             }
             annotationToggle.setSelected(false);
@@ -257,8 +261,8 @@ public class RootLayout extends AnchorPane {
         annotationMinus.setOnAction(e -> {
            ObservableList<Node> nodesList = main_pane.getChildren();
            for (Node node : nodesList) {
-               if (node instanceof FormulaBox) {
-                   ((FormulaBox) node).processAnnotationRequest(false);
+               if (node instanceof TreeFormulaBox) {
+                   ((TreeFormulaBox) node).processAnnotationRequest(false);
                }
            }
             annotationToggle.setSelected(false);
@@ -270,8 +274,8 @@ public class RootLayout extends AnchorPane {
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
-                        if (node instanceof FormulaBox) {
-                            ((FormulaBox) node).processCircleRequest(event.getButton() == MouseButton.PRIMARY);
+                        if (node instanceof TreeFormulaBox) {
+                            ((TreeFormulaBox) node).processCircleRequest(event.getButton() == MouseButton.PRIMARY);
                             break;
                         }
                     }
@@ -285,8 +289,8 @@ public class RootLayout extends AnchorPane {
                 main_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, circleClickFilter);
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
-                    if (node instanceof FormulaBox) {
-                        ((FormulaBox) node).undoCircleRequest();
+                    if (node instanceof TreeFormulaBox) {
+                        ((TreeFormulaBox) node).undoCircleRequest();
                     }
                 }
             }
@@ -298,8 +302,8 @@ public class RootLayout extends AnchorPane {
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
-                        if (node instanceof FormulaBox) {
-                            ((FormulaBox) node).processUnderlineRequest(event.getButton() == MouseButton.PRIMARY);
+                        if (node instanceof TreeFormulaBox) {
+                            ((TreeFormulaBox) node).processUnderlineRequest(event.getButton() == MouseButton.PRIMARY);
                             break;
                         }
                     }
@@ -313,8 +317,8 @@ public class RootLayout extends AnchorPane {
                 main_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, underlineClickFilter);
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
-                    if (node instanceof FormulaBox) {
-                        ((FormulaBox) node).undoUnderlineRequest();
+                    if (node instanceof TreeFormulaBox) {
+                        ((TreeFormulaBox) node).undoUnderlineRequest();
                     }
                 }
             }
@@ -361,11 +365,30 @@ public class RootLayout extends AnchorPane {
                     }
                     e.consume();
                 } else if (code == KeyCode.F11) {
+                    ObservableList<Node> nodesList = main_pane.getChildren();
+                    for (Node node : nodesList) {
+                        if (inHierarchy(verticalTreeView.getMainView().getMainScene().focusOwnerProperty().get(), node)) {
+                            if (node instanceof MapFormulaBox) {
+                                MapFormulaBox mapFormulaBox = (MapFormulaBox) node;
+                                if (mapFormulaBox.getMapStage() > 0) {
 
+                                    MapQuestionMarker mapQuestionMarker = new MapQuestionMarker();
+                                    main_pane.getChildren().add(0, mapQuestionMarker);
+                                    mapQuestionMarker.bindQuestionLabel(mapFormulaBox);
+
+                                    mapFormulaBox.undoMappingRequest();
+                                } else {
+                                    EditorAlerts.fleetingPopup("Question requires marker(s).");
+                                }
+                                break;
+                            }
+                        }
+                    }
                     e.consume();
                 }
             }
         };
+
         mappingToggle.selectedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 main_pane.addEventFilter(MouseEvent.MOUSE_PRESSED, mappingClickFilter);
@@ -382,16 +405,7 @@ public class RootLayout extends AnchorPane {
                 }
             }
         });
-
-
-
-
-
-
-
     }
-
-
 
     public void initialize() {
 
@@ -405,20 +419,14 @@ public class RootLayout extends AnchorPane {
         mDragOverIcon.setOpacity(0.65);
         getChildren().add(mDragOverIcon);
 
-        //populate top pane
-        for (int i = 0; i < 5; i++) {
-
-            DragIcon icn = new DragIcon();
-
-            addDragDetection(icn);
-
-            icn.setType(DragIconType.values()[i]);
-            top_pane.getChildren().add(icn);
-        }
-
-
-
         buildDragHandlers();
+    }
+
+    public void addDragIcon(DragIconType type) {
+        DragIcon icn = new DragIcon();
+        addDragDetection(icn);
+        icn.setType(type);
+        top_pane.getChildren().add(icn);
     }
 
     public static boolean inHierarchy(Node node, Node potentialHierarchyElement) {
@@ -555,10 +563,10 @@ public class RootLayout extends AnchorPane {
                         }
 
                         else if (container.getValue("type").equals(DragIconType.text_field.toString())) {
-                            FormulaBox formulaBox = new FormulaBox(verticalTreeView);
-                            main_pane.getChildren().add(formulaBox);
+                            TreeFormulaBox treeFormulaBox = new TreeFormulaBox(verticalTreeView);
+                            main_pane.getChildren().add(treeFormulaBox);
                             Point2D cursorPoint = container.getValue("scene_coords");
-                            formulaBox.relocateToGridPoint(new Point2D(cursorPoint.getX(), cursorPoint.getY()));
+                            treeFormulaBox.relocateToGridPoint(new Point2D(cursorPoint.getX(), cursorPoint.getY()));
                         }
 
                         else if (container.getValue("type").equals(DragIconType.mapping_text_field.toString())) {
@@ -569,17 +577,6 @@ public class RootLayout extends AnchorPane {
                         }
 
 
-                        else if (container.getValue("type").equals(DragIconType.cubic_curve.toString())) {
-                            CubicCurveDemo curve = new CubicCurveDemo();
-
-                            main_pane.getChildren().add(curve);
-
-                            Point2D cursorPoint = container.getValue("scene_coords");
-
-                            curve.relocateToPoint(
-                                    new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32)
-                            );
-                        }
 
 
                         else {
@@ -630,8 +627,8 @@ public class RootLayout extends AnchorPane {
                         //add our link at the top of the rendering order so it's rendered first
                         main_pane.getChildren().add(0,link);
 
-                        FormulaBox source = null;
-                        FormulaBox target = null;
+                        TreeFormulaBox source = null;
+                        TreeFormulaBox target = null;
 
                         for (Node n: main_pane.getChildren()) {
 
@@ -639,10 +636,10 @@ public class RootLayout extends AnchorPane {
                                 continue;
 
                             if (n.getId().equals(sourceId))
-                                source = (FormulaBox) n;
+                                source = (TreeFormulaBox) n;
 
                             if (n.getId().equals(targetId))
-                                target = (FormulaBox) n;
+                                target = (TreeFormulaBox) n;
 
                         }
 
@@ -683,6 +680,10 @@ public class RootLayout extends AnchorPane {
         return annotationBox;
     }
 
+    public ToggleButton getAnnotationToggle() {
+        return annotationToggle;
+    }
+
     public ToggleButton getCircleToggle() {
         return circleToggle;
     }
@@ -693,5 +694,9 @@ public class RootLayout extends AnchorPane {
 
     public ToggleButton getMappingToggle() {
         return mappingToggle;
+    }
+
+    public ToggleGroup getButtonGroup() {
+        return buttonGroup;
     }
 }

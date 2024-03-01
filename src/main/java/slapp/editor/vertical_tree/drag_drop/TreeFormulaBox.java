@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
 
-public class FormulaBox extends AnchorPane {
+public class TreeFormulaBox extends AnchorPane {
     private VerticalTreeView verticalTreeView;
 
     private AnchorPane top_link_handle;
@@ -48,13 +48,13 @@ public class FormulaBox extends AnchorPane {
 //    private ClickableNodeLink mDragLink = null;
     private NodeLink mDragLink = null;
     private AnchorPane right_pane = null;
-    private final List<String> mLinkIds = new ArrayList<>();
+    private List<String> mLinkIds = new ArrayList<>();
 
-    private DragIconType mType = DragIconType.dashed_line;
+    private DragIconType mType = DragIconType.text_field;
 
     private Point2D mDragOffset = new Point2D (0.0, 0.0);
 
-    private final FormulaBox self;
+    private final TreeFormulaBox self;
 
     private BoxedDRTA formulaBox;
 
@@ -63,6 +63,8 @@ public class FormulaBox extends AnchorPane {
     private VBox centerBox;
     private VBox middleBox;
     private AnchorPane linesPane = new AnchorPane();
+
+    private String idString;
 
 
 
@@ -84,7 +86,7 @@ public class FormulaBox extends AnchorPane {
 
 
 
-    FormulaBox(VerticalTreeView verticalTreeView) {
+    public TreeFormulaBox(VerticalTreeView verticalTreeView) {
         this.verticalTreeView = verticalTreeView;
         self = this;
         circleMarkers = new Label[]{new Label("|"), new Label("|")};
@@ -179,6 +181,7 @@ public class FormulaBox extends AnchorPane {
  //       self.setRightAnchor(mainBox, 0.0);
 
         setId(UUID.randomUUID().toString());
+        idString = getId();
         initialize();
     }
 
@@ -628,7 +631,6 @@ public class FormulaBox extends AnchorPane {
                 verticalTreeView.getMainView().editorInFocus(drta, ControlType.FIELD);
             }
         });
-        rta.getActionFactory().saveNow().execute(new ActionEvent());
         return boxedDRTA;
     }
 
@@ -713,5 +715,25 @@ public class FormulaBox extends AnchorPane {
 
     public VBox getMiddleBox() {
         return middleBox;
+    }
+
+    public List<String> getmLinkIds() {
+        return mLinkIds;
+    }
+
+    public void setmLinkIds(List<String> mLinkIds) {
+        this.mLinkIds = mLinkIds;
+    }
+
+    public String getIdString() {
+        return idString;
+    }
+
+    public void setIdString(String idString) {
+        this.idString = idString;
+    }
+
+    public BoxedDRTA getFormulaBox() {
+        return formulaBox;
     }
 }

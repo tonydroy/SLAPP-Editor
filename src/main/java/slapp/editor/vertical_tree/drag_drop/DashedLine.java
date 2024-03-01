@@ -28,7 +28,7 @@ public class DashedLine extends AnchorPane {
 
 
 
-    DashedLine() {
+    public DashedLine() {
         self = this;
 
         leftDragLabel = new Label("");
@@ -203,14 +203,14 @@ public class DashedLine extends AnchorPane {
     public void relocateToGridPoint (Point2D p) {
 
         //relocates the object to a point that has been converted to
-        //scene coordinates
+        //scene coordinates used for initial drop
         Point2D localCoords = getParent().sceneToLocal(p);
 
 
         double localY = Math.round(localCoords.getY() / 24.0) * 24.0 - 4;
 
         relocate (
-                (int) localCoords.getX() - 6,
+                (int) localCoords.getX() - 16,
        //         (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
                 (int) (localY - (getBoundsInLocal().getHeight() / 2 ))
 
@@ -224,7 +224,7 @@ public class DashedLine extends AnchorPane {
     public void relocateToGridPoint2 (Point2D p) {
 
         //relocates the object to a point that has been converted to
-        //scene coordinates
+        //scene coordinates  used for moving in pane
         Point2D localCoords = getParent().sceneToLocal(p);
 
 

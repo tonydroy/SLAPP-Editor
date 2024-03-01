@@ -2,7 +2,6 @@ package slapp.editor.vertical_tree.drag_drop;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
@@ -24,6 +23,9 @@ public class ClickableNodeLink extends Pane {
 
     public ClickableNodeLink() {
         this.getStylesheets().add("/drag_drop.css");
+
+        this.setPickOnBounds(false);
+        this.setStyle("-fx-background-color: null");
 
         node_link = new Line(); node_link1 = new Line();
         this.getChildren().addAll(node_link, node_link1);
@@ -48,7 +50,7 @@ public class ClickableNodeLink extends Pane {
     //Sometimes (when there are too many lines to the same FormulaBox) the mouse listeners do not function.
     //On the theory that the problem had to do with line overlap, this node_link1 covers just the center part of node_link.
     //Problem not solved.  Revert to whole line?
-    public void bindEnds (FormulaBox source, FormulaBox target) {
+    public void bindEnds (TreeFormulaBox source, TreeFormulaBox target) {
 
         DoubleProperty centerDivisor = new SimpleDoubleProperty(2.0);
         DoubleProperty startFraction = new SimpleDoubleProperty(0.25);

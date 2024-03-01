@@ -38,9 +38,9 @@ public class MapFormulaBox extends AnchorPane {
     private EventHandler <DragEvent> mContextDragDropped;
 
     private AnchorPane right_pane = null;
-    private final List<String> mLinkIds = new ArrayList<>();
+    private List<String> mLinkIds = new ArrayList<>();
 
-    private DragIconType mType = DragIconType.dashed_line;
+    private DragIconType mType = DragIconType.mapping_text_field;
 
     private Point2D mDragOffset = new Point2D (0.0, 0.0);
 
@@ -52,6 +52,8 @@ public class MapFormulaBox extends AnchorPane {
     private GridPane labelPane;
     private VBox centerBox;
 
+    private String idString = "";
+
 
 
 
@@ -62,7 +64,7 @@ public class MapFormulaBox extends AnchorPane {
     Label[] mapMarkers;
     Double[] mapXAnchors = new Double[2];
 
-    MapFormulaBox(VerticalTreeView verticalTreeView) {
+    public MapFormulaBox(VerticalTreeView verticalTreeView) {
         this.verticalTreeView = verticalTreeView;
         self = this;
         mapMarkers = new Label[]{new Label("|"), new Label("|")};
@@ -122,13 +124,14 @@ public class MapFormulaBox extends AnchorPane {
 
         mainBox = new HBox(labelPane, centerBox);
         mainBox.setAlignment(Pos.TOP_CENTER);
-        mainBox.setMargin(labelPane, new Insets(10, 0, 0, 0));
+        mainBox.setMargin(labelPane, new Insets(2, 0, 0, 0));
 
         self.getChildren().addAll(mainBox);
         self.setLeftAnchor(mainBox, 0.0);
         self.setTopAnchor(mainBox, 0.0);
 
         setId(UUID.randomUUID().toString());
+        idString = getId();
         initialize();
     }
 
@@ -300,8 +303,8 @@ public class MapFormulaBox extends AnchorPane {
         double localY = Math.round((localCoords.getY() - 16) / 24.0) * 24.0;
 
         relocate (
-                (int) localCoords.getX() - 36,
-                (int) (localY - 2 )
+                (int) localCoords.getX() - 44,
+                (int) (localY )
         );
     }
 
@@ -316,7 +319,7 @@ public class MapFormulaBox extends AnchorPane {
 
         relocate (
                 (int) localCoords.getX(),
-                (int) (localY -2)
+                (int) (localY )
         );
     }
 
@@ -354,7 +357,6 @@ public class MapFormulaBox extends AnchorPane {
                 verticalTreeView.getMainView().editorInFocus(drta, ControlType.FIELD);
             }
         });
-        rta.getActionFactory().saveNow().execute(new ActionEvent());
         return boxedDRTA;
     }
 
@@ -393,4 +395,26 @@ public class MapFormulaBox extends AnchorPane {
     public int getMapStage() {
         return mapStage;
     }
+
+    public String getIdString() {
+        return idString;
+    }
+
+    public void setIdString(String idString) {
+        this.idString = idString;
+    }
+
+    public List<String> getmLinkIds() {
+        return mLinkIds;
+    }
+
+    public void setmLinkIds(List<String> mLinkIds) {
+        this.mLinkIds = mLinkIds;
+    }
+
+    public BoxedDRTA getFormulaBox() {
+        return formulaBox;
+    }
+
+
 }

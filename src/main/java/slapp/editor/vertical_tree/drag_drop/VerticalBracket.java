@@ -26,7 +26,7 @@ public class VerticalBracket extends AnchorPane {
 
 
 
-    VerticalBracket() {
+    public VerticalBracket() {
         self = this;
 
         topDragLabel = new Label("");
