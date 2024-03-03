@@ -8,7 +8,7 @@ import javafx.scene.layout.Region;
 public class BottomDragResizer {
 
 
-    private static final int RESIZE_MARGIN = 8;
+    private static final int RESIZE_MARGIN = 12;
 
     private final Region region;
 
@@ -72,9 +72,11 @@ public class BottomDragResizer {
 
         double mousey = event.getY();
 
-        double newHeight = region.getMinHeight() + (mousey - y);
+ //       double newHeight = region.getMinHeight() + (mousey - y);
+  //      region.setMinHeight(newHeight);
 
-        region.setMinHeight(newHeight);
+        double newHeight = region.getPrefHeight() + (mousey - y);
+        region.setPrefHeight(newHeight);
 
         y = mousey;
     }
@@ -92,7 +94,8 @@ public class BottomDragResizer {
         // setting a min height that is smaller than the current height will
         // have no effect
         if (!initMinHeight) {
-            region.setMinHeight(region.getHeight());
+     //       region.setMinHeight(region.getHeight());
+            region.setPrefHeight(region.getHeight());
             initMinHeight = true;
         }
 

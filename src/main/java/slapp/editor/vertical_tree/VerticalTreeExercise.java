@@ -1,7 +1,6 @@
 package slapp.editor.vertical_tree;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.model.Document;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -10,6 +9,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
 import slapp.editor.DiskUtilities;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
@@ -92,7 +92,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
             mainPane.getChildren().add(bracket);
             bracket.setLayoutX(bracketMod.getLayoutX());
             bracket.setLayoutY(bracketMod.getLayoutY());
-            bracket.setPrefHeight(bracketMod.getHeight());
+            bracket.getMainPane().setPrefHeight(bracketMod.getHeight());
         }
 
         for (DashedLineMod dlMod : verticalTreeModel.getDashedLineMods()) {
@@ -100,7 +100,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
             mainPane.getChildren().add(dashedLine);
             dashedLine.setLayoutX(dlMod.getLayoutX());
             dashedLine.setLayoutY(dlMod.getLayoutY());
-            dashedLine.setPrefWidth(dlMod.getWidth());
+            dashedLine.getMainPane().setPrefWidth(dlMod.getWidth());
         }
 
         for (MapFormulaBoxMod mapBoxMod : verticalTreeModel.getMapFormulaBoxes()) {
@@ -125,18 +125,95 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
             treeFormulaBox.setLayoutY(treeBoxMod.getLayoutY());
             treeFormulaBox.setIdString(treeBoxMod.getIdString());
             treeFormulaBox.setmLinkIds(treeBoxMod.getLinkIdStrings());
-
             BoxedDRTA treeFormulaDRTA = treeFormulaBox.getFormulaBox();
             RichTextArea treeBoxRTA = treeFormulaDRTA.getRTA();
             treeBoxRTA.setPrefWidth(treeBoxMod.getWidth());
             treeBoxRTA.setDocument(treeBoxMod.getText());
             treeBoxRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
+            treeFormulaBox.processBoxRequest(treeBoxMod.isBoxed());
+            treeFormulaBox.processStarRequest(treeBoxMod.isStarred());
+            treeFormulaBox.processAnnotationRequest(treeBoxMod.isAnnotation());
+            if (treeFormulaBox.isAnnotation()) treeFormulaBox.setAnnotationText(treeBoxMod.getAnnotationText());
 
+            treeFormulaBox.setCircleXAnchors(treeBoxMod.getCircleXAnchors());
+            treeFormulaBox.setRtaBoundsHeight(treeBoxMod.getRtaBoundsHeight());
+            treeFormulaBox.setRtaBoundsMinY(treeBoxMod.getRtaBoundsMinY());
+            if (treeBoxMod.isCircled()) {
+                treeFormulaBox.setCircled(treeBoxMod.isCircled());
+                treeFormulaBox.setCircle();
+            }
 
+            for (UnderlineMod underlineMod : treeBoxMod.getUnderlineList()) {
+                treeFormulaBox.addLineToPane(underlineMod.getStartX(), underlineMod.getLength(), underlineMod.getyPos());
+            }
+            treeFormulaBox.setBaseline(treeBoxMod.getBaseline());
         }
 
+        ObservableList<Node> nodesList = mainPane.getChildren();
+        for (ClickableNodeLinkMod nodeLinkMod : verticalTreeModel.getClickableNodeLinks()) {
+            ClickableNodeLink nodeLink = new ClickableNodeLink();
+            mainPane.getChildren().add(nodeLink);
+            nodeLink.setId(nodeLinkMod.getIdString());
+            TreeFormulaBox source = null;
+            TreeFormulaBox target = null;
+            for (Node node : nodesList) {
+                if (node instanceof TreeFormulaBox) {
+                    TreeFormulaBox treeBox = (TreeFormulaBox) node;
+                    if (treeBox.getIdString().equals(nodeLinkMod.getSourceId())) source = treeBox;
+                    if (treeBox.getIdString().equals(nodeLinkMod.getTargetId())) target = treeBox;
+                }
+            }
+            if (source != null && target != null) nodeLink.bindEnds(source, target);
+        }
 
+        for (MapQuestionMarkerMod mapQuestMod : verticalTreeModel.getMapQuestionMarkers()) {
+            MapQuestionMarker mapQuestion = new MapQuestionMarker();
+            mainPane.getChildren().add(mapQuestion);
+            mapQuestion.setId(mapQuestMod.getIdString());
+
+            for (Node node : nodesList) {
+                if (node instanceof MapFormulaBox) {
+                    MapFormulaBox mapBox = (MapFormulaBox) node;
+                    if (mapBox.getIdString().equals(mapQuestMod.getTargetId())) {
+                        mapBox.setMapStage(mapQuestMod.getTargetMapStage());
+                        mapBox.setMapXAnchors(mapQuestMod.getTargetXAnchors());
+                        mapQuestion.bindQuestionLabel(mapBox);
+                        mapBox.undoMappingRequest();
+                        break;
+                    }
+                }
+            }
+        }
+
+        for (ClickableMapLinkMod mapLinkMod : verticalTreeModel.getClickableMapLinks()) {
+            ClickableMapLink mapLink = new ClickableMapLink();
+            mainPane.getChildren().add(0, mapLink);
+            mapLink.setId(mapLinkMod.getIdString());
+
+            MapFormulaBox source = null;
+            MapFormulaBox target = null;
+            for (Node node : nodesList) {
+                if (node instanceof MapFormulaBox) {
+                    MapFormulaBox mapFormulaBox = (MapFormulaBox) node;
+                    if (mapFormulaBox.getIdString().equals(mapLinkMod.getSourceId())) {
+                        source = mapFormulaBox;
+                        source.setMapStage(mapLinkMod.getSourceMapStage());
+                        source.setMapXAnchors(mapLinkMod.getSourceXAnchors());
+                    }
+                    if (mapFormulaBox.getIdString().equals(mapLinkMod.getTargetId())) {
+                        target = mapFormulaBox;
+                        target.setMapStage(mapLinkMod.getTargetMapStage());
+                        target.setMapXAnchors(mapLinkMod.getTargetXAnchors());
+                    }
+                }
+            }
+            if (source != null && target != null) {
+                mapLink.bindEnds(source, target);
+                source.undoMappingRequest();
+                target.undoMappingRequest();
+            }
+        }
 
     }
 
@@ -263,9 +340,25 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
                 treeRTA.getActionFactory().saveNow().execute(new ActionEvent());
                 newTreeMod.setText(treeRTA.getDocument());
 
+                newTreeMod.setBoxed(originalTreeBox.isBoxed());
+                newTreeMod.setStarred(originalTreeBox.isStarred());
+                newTreeMod.setAnnotation(originalTreeBox.isAnnotation());
+                newTreeMod.setAnnotationText(originalTreeBox.getAnnotationText());
+                newTreeMod.setCircled(originalTreeBox.isCircled());
+                newTreeMod.setCircleXAnchors(originalTreeBox.getCircleXAnchors());
+                newTreeMod.setRtaBoundsHeight(originalTreeBox.getRtaBoundsHeight());
+                newTreeMod.setRtaBoundsMinY(originalTreeBox.getRtaBoundsMinY());
 
-
-
+                ObservableList<Node> linesList = originalTreeBox.getLinesPane().getChildren();
+                for (Node lineNode : linesList) {
+                    if (lineNode instanceof Line) {
+                        Line line = (Line) lineNode;
+                        AnchorPane linesPane = originalTreeBox.getLinesPane();
+                        UnderlineMod underlineModel = new UnderlineMod(linesPane.getLeftAnchor(line), line.getEndX(), linesPane.getBottomAnchor(line)  );
+                        newTreeMod.getUnderlineList().add(underlineModel);
+                    }
+                }
+                newTreeMod.setBaseline(originalTreeBox.getBaseline());
                 model.getTreeFormulaBoxes().add(newTreeMod);
 
             } else if (node instanceof MapFormulaBox) {
@@ -285,24 +378,33 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
                 model.getMapFormulaBoxes().add(newMapMod);
 
             } else if (node instanceof VerticalBracket) {
-                VerticalBracketMod brack = new VerticalBracketMod(node.getLayoutX(), node.getLayoutY(), node.getLayoutBounds().getHeight());
+                VerticalBracket vBrack = (VerticalBracket) node;
+                VerticalBracketMod brack = new VerticalBracketMod(node.getLayoutX(), node.getLayoutY(), vBrack.getMainPane().getHeight());
                 model.getVerticalBrackets().add(brack);
 
             } else if (node instanceof DashedLine) {
-                DashedLineMod dlMod = new DashedLineMod(node.getLayoutX(), node.getLayoutY(), node.getLayoutBounds().getWidth());
+                DashedLine dLine = (DashedLine) node;
+                DashedLineMod dlMod = new DashedLineMod(node.getLayoutX(), node.getLayoutY(), dLine.getMainPane().getWidth());
                 model.getDashedLineMods().add(dlMod);
 
             } else if (node instanceof ClickableNodeLink) {
-
-
+                ClickableNodeLink cLink = (ClickableNodeLink) node;
+                ClickableNodeLinkMod cMod = new ClickableNodeLinkMod(cLink.getIdString(), cLink.getTargetId(), cLink.getSourceId());
+                model.getClickableNodeLinks().add(cMod);
 
             } else if (node instanceof ClickableMapLink) {
-
-
+                ClickableMapLink mapLink = (ClickableMapLink) node;
+                ClickableMapLinkMod mapLinkMod = new ClickableMapLinkMod();
+                mapLinkMod.setIdString(mapLink.getIdString());
+                mapLinkMod.setSourceId(mapLink.getSourceId()); mapLinkMod.setTargetId(mapLink.getTargetId());
+                mapLinkMod.setSourceMapStage(mapLink.getSourceMapStage()); mapLinkMod.setTargetMapStage(mapLink.getTargetMapStage());
+                mapLinkMod.setSourceXAnchors(mapLink.getSourceXAnchors()); mapLinkMod.setTargetXAnchors(mapLink.getTargetXAnchors());
+                model.getClickableMapLinks().add(mapLinkMod);
 
             } else if (node instanceof MapQuestionMarker) {
-
-
+                MapQuestionMarker mapQuest = (MapQuestionMarker) node;
+                MapQuestionMarkerMod qMod = new MapQuestionMarkerMod(mapQuest.getIdString(), mapQuest.getTargetId(), mapQuest.getTargetMapStage(), mapQuest.getTargetXAnchors());
+                model.getMapQuestionMarkers().add(qMod);
             }  
         }
 

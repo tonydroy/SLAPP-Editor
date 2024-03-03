@@ -4,7 +4,6 @@ import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -65,6 +64,10 @@ public class TreeFormulaBox extends AnchorPane {
     private AnchorPane linesPane = new AnchorPane();
 
     private String idString;
+    private boolean boxed = false;
+    private boolean starred = false;
+    private boolean annotation = false;
+    private TextField annotationField;
 
 
 
@@ -73,6 +76,9 @@ public class TreeFormulaBox extends AnchorPane {
     int circleStage = 0;
     Label[] circleMarkers;
     Double[] circleXAnchors = new Double[2];
+    double rtaBoundsHeight;
+    double rtaBoundsMinY;
+    boolean circled = false;
     EventHandler ulineKeyFilter;
     int ulineStage = 0;
     Label[] ulineMarkers;
@@ -212,6 +218,9 @@ public class TreeFormulaBox extends AnchorPane {
                 RichTextArea rta = formulaBox.getRTA();
                 KeyCode code = e.getCode();
                 Bounds rtaBounds = self.sceneToLocal(rta.localToScene(rta.getBoundsInLocal()));
+                rtaBoundsHeight = rtaBounds.getHeight();
+                rtaBoundsMinY = rtaBounds.getMinY();
+
                 if (code == KeyCode.F9) {
                     if (circleStage < 2) {
                         Bounds caretBounds = ((RichTextAreaSkin) formulaBox.getRTA().getSkin()).getCaretPosition();
@@ -235,19 +244,9 @@ public class TreeFormulaBox extends AnchorPane {
                         EditorAlerts.fleetingPopup("Circle requires two markers.");
                     }
                     else if (circleStage == 2) {
-                        double minX = Math.min(circleXAnchors[0], circleXAnchors[1]);
-                        double maxX = Math.max(circleXAnchors[0], circleXAnchors[1]);
-                        self.getChildren().removeAll(circleMarkers);
-                        self.getChildren().add(oval);
-                        oval.setWidth(maxX - minX);
-
-                        oval.setHeight(rtaBounds.getHeight() - 6.0);
-                        oval.setStyle("-fx-fill: transparent; -fx-stroke: black; -fx-stroke-width: 1;");
-                        oval.setArcHeight(rtaBounds.getHeight() - 6.0);
-                        oval.setArcWidth((maxX - minX));
-                        self.setLeftAnchor(oval, minX);
-                        self.setTopAnchor(oval, rtaBounds.getMinY() + 2.0);
+                        setCircle();
                         circleStage++;
+                        circled = true;
                     } else {
                         EditorAlerts.fleetingPopup("Text field has at most one circle annotation.");
                     }
@@ -255,6 +254,7 @@ public class TreeFormulaBox extends AnchorPane {
                 }
             }
         };
+
 
         ulineKeyFilter = new EventHandler<KeyEvent>() {
             @Override
@@ -299,6 +299,22 @@ public class TreeFormulaBox extends AnchorPane {
 
     }
 
+    public void setCircle() {
+
+        double minX = Math.min(circleXAnchors[0], circleXAnchors[1]);
+        double maxX = Math.max(circleXAnchors[0], circleXAnchors[1]);
+        self.getChildren().removeAll(circleMarkers);
+        self.getChildren().add(oval);
+        oval.setWidth(maxX - minX);
+
+        oval.setHeight(rtaBoundsHeight - 6.0);
+        oval.setStyle("-fx-fill: transparent; -fx-stroke: black; -fx-stroke-width: 1;");
+        oval.setArcHeight(rtaBoundsHeight - 6.0);
+        oval.setArcWidth((maxX - minX));
+        self.setLeftAnchor(oval, minX);
+        self.setTopAnchor(oval, rtaBoundsMinY + 2.0);
+    }
+
     private void setLine(double startX, double endX) {
         //make sure there is a baseline for new line by extending baseline to endX
         int intStartX = (int) Math.round(startX);
@@ -322,7 +338,11 @@ public class TreeFormulaBox extends AnchorPane {
         }
 
         //add line to linesPane
-        Line line = new Line(0, 0, endX - startX, 0);
+        addLineToPane(startX, endX - startX, yPos);
+    }
+
+    public void addLineToPane(double startX, double length, double yPos) {
+        Line line = new Line(0, 0, length, 0);
         linesPane.getChildren().add(line);
         linesPane.setLeftAnchor(line, startX);
         linesPane.setBottomAnchor(line, yPos);
@@ -634,46 +654,62 @@ public class TreeFormulaBox extends AnchorPane {
         return boxedDRTA;
     }
 
-    void processBoxRequest(boolean add) {
+    public void processBoxRequest(boolean add) {
         if (add) {
-//            formulaBox.getRTA().getStylesheets().clear();
-//            formulaBox.getRTA().getStylesheets().add("boldFormulaBox.css");
             middleBox.setStyle("-fx-border-color: black; -fx-border-width: 1 1 1 1");
+            boxed = true;
         } else {
-//            formulaBox.getRTA().getStylesheets().clear();
-//            formulaBox.getRTA().getStylesheets().add("blueFormulaBox.css");
             middleBox.setStyle("-fx-border-width: 0 0 0 0");
+            boxed = false;
 
         }
     }
 
-    void processStarRequest(boolean add) {
+    public void processStarRequest(boolean add) {
         if (add) {
             Label star = new Label("\u2605");
             mainBox.getChildren().clear();
             mainBox.getChildren().addAll(labelPane, centerBox, star);
             mainBox.setMargin(star, new Insets(0,0, 14, 0));
+            starred = true;
 
         } else {
             mainBox.getChildren().clear();
             mainBox.getChildren().addAll(labelPane, centerBox);
+            starred = false;
         }
     }
 
-    void processAnnotationRequest(boolean add) {
+    public void processAnnotationRequest(boolean add) {
         if (add) {
-            TextField field = new TextField();
-            field.setPrefWidth(28);
-            field.setPrefHeight(15);
-            field.setFont(new Font("Noto Sans", 10));
-            field.setPadding(new Insets(0));
+            annotationField = new TextField();
+            annotationField.setPrefWidth(28);
+            annotationField.setPrefHeight(15);
+            annotationField.setFont(new Font("Noto Sans", 10));
+            annotationField.setPadding(new Insets(0));
             mainBox.getChildren().clear();
-            mainBox.getChildren().addAll(labelPane, centerBox, field);
-            mainBox.setMargin(field, new Insets(0,0, 14, 0));
+            mainBox.getChildren().addAll(labelPane, centerBox, annotationField);
+            mainBox.setMargin(annotationField, new Insets(0,0, 14, 0));
+            annotation = true;
 
         } else {
             mainBox.getChildren().clear();
             mainBox.getChildren().addAll(labelPane, centerBox);
+            annotation = false;
+        }
+    }
+
+    public void setAnnotationText(String text) {
+        if (annotationField != null) {
+            annotationField.setText(text);
+        }
+    }
+
+    public String getAnnotationText() {
+        if (annotationField != null) {
+            return annotationField.getText();
+        } else {
+            return "";
         }
     }
 
@@ -687,6 +723,7 @@ public class TreeFormulaBox extends AnchorPane {
         } else {
             undoCircleRequest();
             self.getChildren().remove(oval);
+            circled = false;
         }
     }
 
@@ -735,5 +772,60 @@ public class TreeFormulaBox extends AnchorPane {
 
     public BoxedDRTA getFormulaBox() {
         return formulaBox;
+    }
+
+    public boolean isBoxed() {
+        return boxed;
+    }
+
+    public boolean isStarred() {
+        return starred;
+    }
+
+    public boolean isAnnotation() {
+        return annotation;
+    }
+
+    public boolean isCircled() {
+        return circled;
+    }
+
+    public void setCircled(boolean circled) {
+        this.circled = circled;
+    }
+
+    public Double[] getCircleXAnchors() {
+        return circleXAnchors;
+    }
+
+    public void setCircleXAnchors(Double[] circleXAnchors) {
+        this.circleXAnchors = circleXAnchors;
+    }
+
+    public double getRtaBoundsHeight() {
+        return rtaBoundsHeight;
+    }
+
+    public void setRtaBoundsHeight(double rtaBoundsHeight) {
+        this.rtaBoundsHeight = rtaBoundsHeight;
+    }
+    public double getRtaBoundsMinY() {
+        return rtaBoundsMinY;
+    }
+
+    public void setRtaBoundsMinY(double rtaBoundsMinY) {
+        this.rtaBoundsMinY = rtaBoundsMinY;
+    }
+
+    public AnchorPane getLinesPane() {
+        return linesPane;
+    }
+
+    public List<Integer> getBaseline() {
+        return baseline;
+    }
+
+    public void setBaseline(List<Integer> baseline) {
+        this.baseline = baseline;
     }
 }

@@ -20,6 +20,10 @@ public class ClickableNodeLink extends Pane {
     Line node_link;
     Line node_link1;
 
+    String idString;
+    String sourceId;
+    String targetId;
+
 
     public ClickableNodeLink() {
         this.getStylesheets().add("/drag_drop.css");
@@ -32,6 +36,7 @@ public class ClickableNodeLink extends Pane {
 
         //provide a universally unique identifier for this object
         setId(UUID.randomUUID().toString());
+        idString = getId();
 
         node_link1.setStrokeWidth(7);
         node_link1.setStroke(Color.TRANSPARENT);
@@ -51,6 +56,8 @@ public class ClickableNodeLink extends Pane {
     //On the theory that the problem had to do with line overlap, this node_link1 covers just the center part of node_link.
     //Problem not solved.  Revert to whole line?
     public void bindEnds (TreeFormulaBox source, TreeFormulaBox target) {
+        sourceId = source.getId();
+        targetId = target.getId();
 
         DoubleProperty centerDivisor = new SimpleDoubleProperty(2.0);
         DoubleProperty startFraction = new SimpleDoubleProperty(0.25);
@@ -93,4 +100,15 @@ public class ClickableNodeLink extends Pane {
         target.registerLink (getId());
     }
 
+    public String getIdString() {
+        return idString;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public String getTargetId() {
+        return targetId;
+    }
 }

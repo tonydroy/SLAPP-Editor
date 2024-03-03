@@ -372,12 +372,10 @@ public class MapFormulaBox extends AnchorPane {
             self.addEventFilter(KeyEvent.KEY_PRESSED, mappingKeyFilter);
         } else {
             undoMappingRequest();
-
-            //todo: remove map links
         }
     }
 
-    void undoMappingRequest() {
+    public void undoMappingRequest() {
         self.removeEventFilter(KeyEvent.KEY_PRESSED, mappingKeyFilter);
         self.getChildren().removeAll(mapMarkers[0], mapMarkers[1]);
         mapStage = 0;
@@ -392,8 +390,16 @@ public class MapFormulaBox extends AnchorPane {
         return mapXAnchors;
     }
 
+    public void setMapXAnchors(Double[] mapXAnchors) {
+        this.mapXAnchors = mapXAnchors;
+    }
+
     public int getMapStage() {
         return mapStage;
+    }
+
+    public void setMapStage(int mapStage) {
+        this.mapStage = mapStage;
     }
 
     public String getIdString() {

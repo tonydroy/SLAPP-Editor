@@ -23,7 +23,7 @@ public class RightDragResizer {
      * The margin around the control that a user can click in to start resizing
      * the region.
      */
-    private static final int RESIZE_MARGIN = 8;
+    private static final int RESIZE_MARGIN = 12;
 
     private final Region region;
 
@@ -88,9 +88,11 @@ public class RightDragResizer {
 
         double mousex = event.getX();
 
-        double newWidth = region.getMinWidth() + (mousex - x);
+//        double newWidth = region.getMinWidth() + (mousex - x);
+//        region.setMinWidth(newWidth);
 
-        region.setMinWidth(newWidth);
+        double newWidth = region.getPrefWidth() + (mousex - x);
+        region.setPrefWidth(newWidth);
 
         x = mousex;
     }
@@ -110,7 +112,8 @@ public class RightDragResizer {
         if (!initMinWidth) {
 
 
-            region.setMinWidth(region.getWidth());
+//            region.setMinWidth(region.getWidth());
+            region.setPrefWidth(region.getWidth());
             initMinWidth = true;
         }
 

@@ -26,6 +26,8 @@ public class DashedLine extends AnchorPane {
 
     private final DashedLine self;
 
+    private AnchorPane mainPane;
+
 
 
     public DashedLine() {
@@ -81,20 +83,15 @@ public class DashedLine extends AnchorPane {
         });
 
 
-
-
-
         Line line = new Line(4, 12, 48, 12);
         line.getStrokeDashArray().addAll(5.0, 5.0);
 
-        AnchorPane mainPane = new AnchorPane();
+        mainPane = new AnchorPane();
         mainPane.setMinHeight(24.0);
         mainPane.setPrefWidth(52);
-
- //       mainPane.setStyle("-fx-border-color: red; fx-border-width: 1 1 1 1");
+        mainPane.setMinWidth(20);
 
         mainPane.getChildren().add(line);
-        //       linesBox.setStyle("-fx-border-color: blue; -fx-border-width: 2 2 2 2;");
         line.endXProperty().bind(mainPane.widthProperty().subtract(4.0));
         RightDragResizer.makeResizable(mainPane);
 
@@ -102,8 +99,6 @@ public class DashedLine extends AnchorPane {
         self.getChildren().addAll(mainBox);
         mainBox.setHgrow(mainPane, Priority.ALWAYS);
         self.setBottomAnchor(mainBox, 0.0); self.setLeftAnchor(mainBox, 0.0); self.setTopAnchor(mainBox, 0.0); self.setRightAnchor(mainBox, 0.0);
-
-
 
         initialize();
     }
@@ -259,4 +254,7 @@ public class DashedLine extends AnchorPane {
         );
     }
 
+    public AnchorPane getMainPane() {
+        return mainPane;
+    }
 }

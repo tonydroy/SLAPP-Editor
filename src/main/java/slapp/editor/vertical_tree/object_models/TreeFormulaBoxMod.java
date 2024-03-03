@@ -1,9 +1,10 @@
 package slapp.editor.vertical_tree.object_models;
 
 import com.gluonhq.richtextarea.model.Document;
-import javafx.util.Pair;
+import javafx.geometry.Bounds;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TreeFormulaBoxMod implements Serializable {
@@ -14,12 +15,15 @@ public class TreeFormulaBoxMod implements Serializable {
     private double width;
     private Document text;
     private List<String> linkIdStrings;
-    boolean box;
-    boolean star;
+    boolean boxed;
+    boolean starred;
     boolean annotation;
     String annotationText;
     Double[] circleXAnchors;
-    List<UnderlineMod> underlineList;
+    boolean circled;
+    double rtaBoundsHeight;
+    double rtaBoundsMinY;
+    List<UnderlineMod> underlineList = new ArrayList<>();
     List<Integer> baseline;
 
 
@@ -71,20 +75,20 @@ public class TreeFormulaBoxMod implements Serializable {
         this.linkIdStrings = linkIdStrings;
     }
 
-    public boolean isBox() {
-        return box;
+    public boolean isBoxed() {
+        return boxed;
     }
 
-    public void setBox(boolean box) {
-        this.box = box;
+    public void setBoxed(boolean boxed) {
+        this.boxed = boxed;
     }
 
-    public boolean isStar() {
-        return star;
+    public boolean isStarred() {
+        return starred;
     }
 
-    public void setStar(boolean star) {
-        this.star = star;
+    public void setStarred(boolean starred) {
+        this.starred = starred;
     }
 
     public boolean isAnnotation() {
@@ -111,6 +115,14 @@ public class TreeFormulaBoxMod implements Serializable {
         this.circleXAnchors = circleXAnchors;
     }
 
+    public boolean isCircled() {
+        return circled;
+    }
+
+    public void setCircled(boolean circled) {
+        this.circled = circled;
+    }
+
     public List<UnderlineMod> getUnderlineList() {
         return underlineList;
     }
@@ -125,5 +137,21 @@ public class TreeFormulaBoxMod implements Serializable {
 
     public void setBaseline(List<Integer> baseline) {
         this.baseline = baseline;
+    }
+
+    public double getRtaBoundsHeight() {
+        return rtaBoundsHeight;
+    }
+
+    public void setRtaBoundsHeight(double rtaBoundsHeight) {
+        this.rtaBoundsHeight = rtaBoundsHeight;
+    }
+
+    public double getRtaBoundsMinY() {
+        return rtaBoundsMinY;
+    }
+
+    public void setRtaBoundsMinY(double rtaBoundsMinY) {
+        this.rtaBoundsMinY = rtaBoundsMinY;
     }
 }

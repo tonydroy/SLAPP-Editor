@@ -10,6 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 import static javafx.beans.binding.Bindings.add;
@@ -18,6 +19,11 @@ import static javafx.beans.binding.Bindings.subtract;
 public class MapQuestionMarker extends Pane {
 
     Label questionLabel;
+
+    String idString;
+    String targetId;
+    int targetMapStage;
+    Double[] targetXAnchors;
 
 
 
@@ -32,6 +38,7 @@ public class MapQuestionMarker extends Pane {
         this.getChildren().add(questionLabel);
 
         setId(UUID.randomUUID().toString());
+        idString = getId();
 
 
         questionLabel.setOnMouseEntered(e -> setCursor(Cursor.HAND));
@@ -45,6 +52,10 @@ public class MapQuestionMarker extends Pane {
     }
 
     public void bindQuestionLabel (MapFormulaBox formulaBox) {
+        targetMapStage = formulaBox.getMapStage();
+        targetXAnchors = Arrays.copyOf(formulaBox.getMapXAnchors(), 2);
+        targetId = formulaBox.getIdString();
+
 
 
         DoubleProperty offsetXProperty = new SimpleDoubleProperty();
@@ -94,4 +105,19 @@ public class MapQuestionMarker extends Pane {
         return brackPane;
     }
 
+    public String getIdString() {
+        return idString;
+    }
+
+    public String getTargetId() {
+        return targetId;
+    }
+
+    public int getTargetMapStage() {
+        return targetMapStage;
+    }
+
+    public Double[] getTargetXAnchors() {
+        return targetXAnchors;
+    }
 }

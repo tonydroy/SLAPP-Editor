@@ -10,6 +10,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +22,15 @@ public class ClickableMapLink extends Pane {
 
     Line node_link;
     Line node_link1;
+
+    String idString;
+    String sourceId;
+    String targetId;
+
+    int sourceMapStage;
+    int targetMapStage;
+    Double[] sourceXAnchors;
+    Double[] targetXAnchors;
 
 
     public ClickableMapLink() {
@@ -35,6 +45,7 @@ public class ClickableMapLink extends Pane {
 
         //provide a universally unique identifier for this object
         setId(UUID.randomUUID().toString());
+        idString = getId();
 
         node_link1.setStrokeWidth(7);
         node_link1.setStroke(Color.TRANSPARENT);
@@ -64,6 +75,13 @@ public class ClickableMapLink extends Pane {
             source = box2;
             target = box1;
         }
+
+        sourceId = source.getIdString();
+        targetId = target.getIdString();
+        sourceMapStage = source.getMapStage();
+        targetMapStage = target.getMapStage();
+        sourceXAnchors = Arrays.copyOf(source.getMapXAnchors(), 2);
+        targetXAnchors = Arrays.copyOf(target.getMapXAnchors(), 2);
 
 
         DoubleProperty startFraction = new SimpleDoubleProperty(0.25);
@@ -154,4 +172,31 @@ public class ClickableMapLink extends Pane {
         return brackPane;
     }
 
+    public String getIdString() {
+        return idString;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public String getTargetId() {
+        return targetId;
+    }
+
+    public int getSourceMapStage() {
+        return sourceMapStage;
+    }
+
+    public int getTargetMapStage() {
+        return targetMapStage;
+    }
+
+    public Double[] getSourceXAnchors() {
+        return sourceXAnchors;
+    }
+
+    public Double[] getTargetXAnchors() {
+        return targetXAnchors;
+    }
 }

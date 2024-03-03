@@ -1,19 +1,20 @@
 package slapp.editor.vertical_tree.object_models;
 
-public class UnderlineMod {
+import java.io.Serializable;
+
+public class UnderlineMod implements Serializable {
+
     double startX;
-    double endX;
+    double length;
     double yPos;
 
-    UnderlineMod(double startX, double endX, double yPos) {
+    public UnderlineMod(double startX, double length, double yPos) {
         this.startX = startX;
-        this.endX = endX;
+        this.length = length;
         this.yPos = yPos;
     }
 
-    public double getStartX() { return startX;  }
-
-    public double getEndX() { return endX;  }
-
+    public double getStartX() {return startX; }
+    public double getLength() { return length;  }
     public double getyPos() { return yPos; }
 }

@@ -24,6 +24,8 @@ public class VerticalBracket extends AnchorPane {
 
     private final VerticalBracket self;
 
+    private VBox mainPane;
+
 
 
     public VerticalBracket() {
@@ -80,23 +82,18 @@ public class VerticalBracket extends AnchorPane {
 
         Pane brackPane = new Pane();
         brackPane.setMinWidth(8.0); brackPane.setMaxWidth(8.0);
-        brackPane.setMinHeight(24); brackPane.setMaxHeight(24);
+//        brackPane.setMinHeight(24); brackPane.setMaxHeight(24);
         brackPane.setStyle("-fx-border-width: 1.5 0.0 1.5 1.5; -fx-border-color: black; -fx-border-radius: 5 0 0 5");
 
-        AnchorPane mainPane = new AnchorPane();
+        mainPane = new VBox();
         mainPane.setMinWidth(24.0);
         mainPane.setPrefWidth(24.0);
         mainPane.setPrefHeight(24);
-
-        //       mainPane.setStyle("-fx-border-color: red; fx-border-width: 1 1 1 1");
+        mainPane.setPadding(new Insets(0, 0, 0, 8));
 
         mainPane.getChildren().add(brackPane);
-        //       linesBox.setStyle("-fx-border-color: blue; -fx-border-width: 2 2 2 2;");
-        mainPane.setLeftAnchor(brackPane, 8.0);
-
-
+        mainPane.setVgrow(brackPane, Priority.ALWAYS);
         BottomDragResizer.makeResizable(mainPane);
-        brackPane.minHeightProperty().bind(mainPane.heightProperty());
 
         VBox mainBox = new VBox(labelPane, mainPane);
         self.getChildren().addAll(mainBox);
@@ -258,6 +255,7 @@ public class VerticalBracket extends AnchorPane {
         );
     }
 
-
-
+    public VBox getMainPane() {
+        return mainPane;
+    }
 }
