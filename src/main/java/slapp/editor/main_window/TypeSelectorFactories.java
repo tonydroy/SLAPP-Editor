@@ -22,6 +22,7 @@ import slapp.editor.truth_table.TruthTableModel;
 import slapp.editor.truth_table_explain.TruthTableExpCreate;
 import slapp.editor.truth_table_explain.TruthTableExpExercise;
 import slapp.editor.truth_table_explain.TruthTableExpModel;
+import slapp.editor.vertical_tree.VerticalTreeCreate;
 import slapp.editor.vertical_tree.VerticalTreeExercise;
 import slapp.editor.vertical_tree.VerticalTreeModel;
 
@@ -144,6 +145,15 @@ public class TypeSelectorFactories {
                 TruthTableExpCreate truthTableExpCreate = new TruthTableExpCreate(mainWindow, truthTableExpModel);
                 break;
             }
+            case "VerticalTreeModel": {
+                VerticalTreeModel verticalTreeModel = (VerticalTreeModel) objectModel;
+                if (verticalTreeModel.isStarted()) {
+                    EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
+                    break;
+                }
+                VerticalTreeCreate verticalTreeCreate = new VerticalTreeCreate(mainWindow, verticalTreeModel);
+                break;
+            }
 
             default: {
                 EditorAlerts.showSimpleAlert("Cannot Open", "I do not recognize this as a SLAPP exercise file.");
@@ -185,11 +195,10 @@ public class TypeSelectorFactories {
                 break;
             }
             case VERTICAL_TREE: {
-                VerticalTreeExercise vTreeExercise = new VerticalTreeExercise(new VerticalTreeModel(true), mainWindow);
+                VerticalTreeCreate verticalTreeCreate = new VerticalTreeCreate(mainWindow);
 
- //               System.out.println(vTreeExercise.getExerciseView().getExerciseStatement().getEditor().getDocument());
-
-                mainWindow.setUpExercise(vTreeExercise);
+//                VerticalTreeExercise vTreeExercise = new VerticalTreeExercise(new VerticalTreeModel(true), mainWindow);
+       //         mainWindow.setUpExercise(vTreeExercise);
                 break;
             }
 

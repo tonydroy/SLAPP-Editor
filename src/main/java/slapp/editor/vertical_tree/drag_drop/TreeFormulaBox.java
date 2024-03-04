@@ -49,7 +49,7 @@ public class TreeFormulaBox extends AnchorPane {
     private AnchorPane right_pane = null;
     private List<String> mLinkIds = new ArrayList<>();
 
-    private DragIconType mType = DragIconType.text_field;
+    private DragIconType mType = DragIconType.tree_field;
 
     private Point2D mDragOffset = new Point2D (0.0, 0.0);
 

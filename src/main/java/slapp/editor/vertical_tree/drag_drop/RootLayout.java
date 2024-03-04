@@ -562,14 +562,14 @@ public class RootLayout extends AnchorPane {
                             bracket.relocateToGridPoint(new Point2D(cursorPoint.getX(), cursorPoint.getY()));
                         }
 
-                        else if (container.getValue("type").equals(DragIconType.text_field.toString())) {
+                        else if (container.getValue("type").equals(DragIconType.tree_field.toString())) {
                             TreeFormulaBox treeFormulaBox = new TreeFormulaBox(verticalTreeView);
                             main_pane.getChildren().add(treeFormulaBox);
                             Point2D cursorPoint = container.getValue("scene_coords");
                             treeFormulaBox.relocateToGridPoint(new Point2D(cursorPoint.getX(), cursorPoint.getY()));
                         }
 
-                        else if (container.getValue("type").equals(DragIconType.mapping_text_field.toString())) {
+                        else if (container.getValue("type").equals(DragIconType.map_field.toString())) {
                             MapFormulaBox mapFormulaBox = new MapFormulaBox(verticalTreeView);
                             main_pane.getChildren().add(mapFormulaBox);
                             Point2D cursorPoint = container.getValue("scene_coords");

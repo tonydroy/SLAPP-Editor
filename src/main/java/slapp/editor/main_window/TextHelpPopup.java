@@ -38,7 +38,9 @@ public class TextHelpPopup {
     private static String derivations;
 
 static {
-    about = "<h2><p style=\"text-align: center;\">Symbolic Logic Application (SLAPP)</p></h2>" +
+
+    about = "<body style=\"margin-left:10; margin-right: 20\">"+
+            "<h2><p style=\"text-align: center;\">Symbolic Logic Application (SLAPP)</p></h2>" +
             "<p style = \"text-align: center;\">Version 1.0&#x03b1</p>" +
             "<p style=\"text-align: center;\">Copyright (c) 2024, Tony Roy</p>" +
             "<p>This program (SLAPP) is free software.  An executable install package may be downloaded from <a href=\"https://tonyroyphilosophy.net\">tonyroyphilosophy.net/xxx</a>.  Source code is available at <a href=\"https://github.com\">github.com/xxx</a>.  You may redistribute the software and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.  For the license, see <a href=\"https://www.gnu.org/licenses/licenses.html\">www.gnu.org/licenses.html</a>.</p>" +
@@ -46,7 +48,8 @@ static {
             "In this preliminary version, every user becomes an evaluator and tester.  All comments are much appreciated.  You may submit comments and error reports through the SLAPP help menu item.  Reviews and other items that deserve public discussion may be submitted through the <a href=\"https://tonyroyphilosophy.net/textbook-blog/\">Symbolic Logic Blog</a>.</p>"
             ;
 
-    commonElements = "<p><h3>Common Functions</h3></p>"+
+    commonElements = "<body style=\"margin-left:10; margin-right: 20\">"+
+            "<p><h3>Common Functions</h3></p>"+
             "<p>The SLAPP file structure consists of exercises, and then assignments made up of exercises.  You can open and work an exercise as such.  However, in the usual case, you will begin with an assignment.</p>"+
             "<ol><li><h4>Top Menu Bar:</li>"+
             "<ul><li>The assignment dropdown has the usual operations: save, save as, open, close, print, and export to PDF.  The latter works by a 'PDF printer', and the export option is a convenience to setup both physical and PDF printers.  (Recent versions of the Mac OS block PDF printers as such -- to generate a PDF, select the regular SLAPP print option and then the PDF dropdown from the Mac printer window.)  The 'create' options are of special interest to instructors.<br><br></li>"+
@@ -72,16 +75,21 @@ static {
             "The 'Help' menu item includes help videos on different exercise types.  In addition, the 'Contextual' help item pops up help relevant to the exercise that is currently open.</li></ol>"
             ;
 
-    simpleEdit = "<p><h3>Edit Exercises</h3></p>"+
+    simpleEdit = "<body style=\"margin-left:10; margin-right: 20\">"+
+            "<p><h3>Edit Exercises</h3></p>"+
             "<p>Beyond information from the 'Common' help item, there is very little to say about exercises in this category.  Beyond the common controls, commands for edit exercises are straightforward:</p>"+
             "<ul><li>In case of an extended response, add and delete pages by the buttons on the left.  'Insert' adds a page after the current page.  'Remove' deletes the current page.  You will not be able to have less than one page.<br><br></li>"+
             "<li>Some edit exercises begin with simple choice checkboxes that are followed by the main edit field. <br><br></li></ul>"
             ;
 
-    verticalTrees = "VerticalTrees";
-    horizontalTrees = "HorizontalTrees";
+    verticalTrees = "<body style=\"margin-left:10; margin-right: 20\">"+
+            "<p><h3>VerticalTrees</h3></p>";
 
-    truthTables = "<p><h3>Truth Table Exercises</h3></p>"+
+    horizontalTrees = "<body style=\"margin-left:10; margin-right: 20\">"+
+            "<p><h3>HorizontalTrees</h3></p>";
+
+    truthTables = "<body style=\"margin-left:10; margin-right: 20\">"+
+            "<p><h3>Truth Table Exercises</h3></p>"+
             "<p>Constructing truth tables is straightforward:</p>"+
             "<ul><li>To start, enter the setup information on the right:  '+' and '-' add and remove fields for basic sentences.  Enter the basic sentences, and then the number of table rows.  Press 'setup'.  This creates the table.<br><br></li>"+
             "<li>Then it is a straightforward matter to enter table values. A given cell holds a single character (usually 'T' or 'F').  Automatic cursor movement is down.<br><br></li>"+
@@ -90,8 +98,10 @@ static {
             "<li>Though there is no problem in most cases, some truth table exercises overrun a standard page size.  The problem is usually solved by modifying page settings.<br><br></li></ul>"
             ;
 
-    derivations = "<p><h3>Derivation Exercises</h3></p>"+
-            "<p>A derivation exercise typically begins with premise(s) at the top, and a conclusion at the bottom.  You will not be able to modify the concluding formula and, in the ordinary case, you will not be able to modify either a premise or its justification.  There is a slider bar to adjust the length of formula fields.  After that, buttons on the left are reasonably straightforward:</p>"+
+    derivations = "<body style=\"margin-left:10; margin-right: 20\">"+
+            "<p><h3>Derivation Exercises</h3></p>"+
+            "<p>A derivation exercise typically begins with premise(s) at the top, and a conclusion at the bottom.  You will not be able to modify the concluding formula and, in the ordinary case, you will not be able to modify either a premise or its justification.</p>" +
+            "<p>There is a slider bar to adjust the width of formula fields.  Move within a derivation by the mouse and/or Ctrl-up, -down, -right, -left (Ctrl optional for -up, -down).  After that, buttons on the left are reasonably straightforward:</p>"+
             "<ul><li>The 'undo' and 'redo' buttons apply to actions taken on the derivation as a whole -- actions by commands on the left, and the entry of formulas or justifications.  This contrasts with the undo/redo edit controls, whose application is always to characters typed in the current formula field.<br><br></li>"+
             "<li>The 'insert line' button inserts a line above the current line (at current scope depth), and 'delete line' removes the current line.<br><br></li>"+
             "<li>The 'insert subder' button adds lines for a new subderivation just above the current line, and 'insert subders' adds lines for a pair of subderivations above the current line (as for &#x2194;I or &#x2228;E)." +

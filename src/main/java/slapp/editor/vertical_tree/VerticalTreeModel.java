@@ -42,7 +42,7 @@ public class VerticalTreeModel implements ExerciseModel<Document>, Serializable 
         exerciseComment = new Document("my comment");
 
 
-        dragIconList.addAll(Arrays.asList(DragIconType.text_field, DragIconType.bracket, DragIconType.dashed_line, DragIconType.mapping_text_field));
+        dragIconList.addAll(Arrays.asList(DragIconType.tree_field, DragIconType.bracket, DragIconType.dashed_line, DragIconType.map_field));
         objectControlList.addAll(Arrays.asList(ObjectControlType.FORMULA_BOX, ObjectControlType.OPERATOR_CIRCLE, ObjectControlType.STAR, ObjectControlType.ANNOTATION, ObjectControlType.UNDERLINE, ObjectControlType.MAPPING));
     }
 

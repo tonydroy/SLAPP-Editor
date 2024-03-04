@@ -50,7 +50,7 @@ public class DragIcon extends AnchorPane {
 
         switch (mType) {
 
-            case text_field:
+            case tree_field:
                 Rectangle rectangle = new Rectangle(48, 20);
                 rectangle.setFill(Color.rgb(230, 245, 255));
                 rectangle.setStrokeWidth(1.5);
@@ -80,7 +80,7 @@ public class DragIcon extends AnchorPane {
   //              this.setTopAnchor(fieldPane, 20.0);
                 break;
 
-            case mapping_text_field:
+            case map_field:
                 Rectangle mrectangle = new Rectangle(48, 20);
                 mrectangle.setFill(Color.rgb(230, 255, 245));
                 mrectangle.setStrokeWidth(1.5);

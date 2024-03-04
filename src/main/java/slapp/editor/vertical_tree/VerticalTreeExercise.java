@@ -56,6 +56,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
 
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
+        commentEditor.setPromptText("Comment: ");
         commentEditor.setDocument(verticalTreeModel.getExerciseComment());
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
