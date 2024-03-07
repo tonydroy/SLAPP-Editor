@@ -347,7 +347,7 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         Document commentDocument = commentRTA.getDocument();
         TruthTableModel originalModel = (TruthTableModel) (truthTableModel.getOriginalModel());
         originalModel.setExerciseComment(commentDocument);
-        TruthTableExercise clearExercise = new TruthTableExercise(originalModel, mainWindow);
+        TruthTableExercise clearExercise = new TruthTableExercise(originalModel, mainWindow, true);
         return clearExercise;
     }
 

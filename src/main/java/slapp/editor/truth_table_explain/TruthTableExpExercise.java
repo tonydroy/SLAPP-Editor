@@ -29,6 +29,8 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
 import slapp.editor.truth_table.ParseDocForTTable;
 import slapp.editor.truth_table.TableHeadItem;
+import slapp.editor.truth_table.TruthTableExercise;
+import slapp.editor.truth_table.TruthTableModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +38,6 @@ import java.util.List;
 public class TruthTableExpExercise implements Exercise<TruthTableExpModel, TruthTableExpView> {
     private MainWindow mainWindow;
     private TruthTableExpModel truthTableExpModel;
-    private TruthTableExpModel originalModel;
     private TruthTableExpView truthTableExpView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
@@ -48,30 +49,27 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
 
 
     //applies when table elements are set to model with rows != 0
-    public TruthTableExpExercise(TruthTableExpModel truthTableExpModel, MainWindow mainWindow) {
+    public TruthTableExpExercise(TruthTableExpModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
-        this.truthTableExpModel = truthTableExpModel;
+        this.truthTableExpModel = model;
+        if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
         this.mainView = mainWindow.getMainView();
         this.truthTableExpView = new TruthTableExpView(mainView);
         docParser = new ParseDocForTTable(truthTableExpModel.getUnaryOperators(), truthTableExpModel.getBinaryOperators());
         tableRows = truthTableExpModel.getTableRows();
-        this.originalModel = truthTableExpModel;
-
-
         setTruthTableView();
     }
 
     //applies when table elements need to be set to empty table
-    public TruthTableExpExercise(TruthTableExpModel truthTableExpModel, MainWindow mainWindow, boolean create) {
+    public TruthTableExpExercise(TruthTableExpModel model, MainWindow mainWindow, boolean create) {
         this.mainWindow = mainWindow;
-        this.truthTableExpModel = truthTableExpModel;
+        this.truthTableExpModel = model;
+        if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
         this.mainView = mainWindow.getMainView();
         this.truthTableExpView = new TruthTableExpView(mainView);
         docParser = new ParseDocForTTable(truthTableExpModel.getUnaryOperators(), truthTableExpModel.getBinaryOperators());
         tableRows = truthTableExpModel.getTableRows();
-        generateEmptyTableModel();                                  //** the difference
-        this.originalModel = truthTableExpModel;
-
+        generateEmptyTableModel();                                 //** the difference
         setTruthTableView();
     }
 
@@ -401,8 +399,9 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         RichTextArea commentRTA = truthTableExpView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
+        TruthTableExpModel originalModel = (TruthTableExpModel) (truthTableExpModel.getOriginalModel());
         originalModel.setExerciseComment(commentDocument);
-        TruthTableExpExercise clearExercise = new TruthTableExpExercise(originalModel, mainWindow);
+        TruthTableExpExercise clearExercise = new TruthTableExpExercise(originalModel, mainWindow, true);
         return clearExercise;
     }
 
@@ -435,6 +434,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
     private TruthTableExpModel getTruthTableExpModelFromView() {
         TruthTableExpModel model = new TruthTableExpModel();
         model.setExerciseName(truthTableExpView.getExerciseName());
+        model.setOriginalModel(truthTableExpModel.getOriginalModel());
         model.setStarted(truthTableExpModel.isStarted() || exerciseModified);
         model.setStatementPrefHeight(truthTableExpView.getExerciseStatement().getEditor().getPrefHeight());
         model.setExerciseStatement(truthTableExpModel.getExerciseStatement());

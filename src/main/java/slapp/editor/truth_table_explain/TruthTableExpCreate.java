@@ -417,7 +417,7 @@ public class TruthTableExpCreate {
         stage.getIcons().addAll(EditorMain.icons);
         stage.setWidth(860);
         stage.setMinWidth(860);
-        stage.setHeight(800);
+        stage.setHeight(860);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.initModality(Modality.WINDOW_MODAL);
