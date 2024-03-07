@@ -12,6 +12,7 @@ public class ABEFGmodel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.ABEFG_EXPLAIN;
+    private ExerciseModel<Document> originalModel = null;
     private ABEFGmodelExtra modelFields = new ABEFGmodelExtra();
     private boolean started = false;
     private String prompt = "";
@@ -57,9 +58,14 @@ public class ABEFGmodel implements ExerciseModel<Document>, Serializable {
     @Override
     public void setStatementPrefHeight(double statementPrefHeight) { this.statementPrefHeight = statementPrefHeight; }
 
-    public ArrayList<Document> getExercisePageDocs() {
-        return exercisePageDocs;
-    }
+    public ArrayList<Document> getExercisePageDocs() { return exercisePageDocs;  }
+
+    @Override
+    public ExerciseModel<Document> getOriginalModel() {  return originalModel;  }
+
+    @Override
+    public void setOriginalModel(ExerciseModel<Document> originalModel) { this.originalModel = originalModel;  }
+
     @Override
     public String toString() {
         String name = getExerciseName();

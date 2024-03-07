@@ -33,6 +33,8 @@ import slapp.editor.derivation.LineType;
 import slapp.editor.derivation.ModelLine;
 import slapp.editor.derivation.ViewLine;
 import slapp.editor.main_window.*;
+import slapp.editor.vertical_tree.VerticalTreeExercise;
+import slapp.editor.vertical_tree.VerticalTreeModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +43,6 @@ import java.util.List;
 public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     private MainWindow mainWindow;
     private DrvtnExpModel drvtnExpModel;
-    private DrvtnExpModel originalModel;
     private DrvtnExpView drvtnExpView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
@@ -57,7 +58,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     public DrvtnExpExercise(DrvtnExpModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.drvtnExpModel = model;
-        this.originalModel = model;
+        if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
         this.mainView = mainWindow.getMainView();
         this.drvtnExpView = new DrvtnExpView(mainView);
         setDrvtnExpView();
@@ -915,8 +916,8 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         RichTextArea commentRTA = drvtnExpView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
+        DrvtnExpModel originalModel = (DrvtnExpModel) (drvtnExpModel.getOriginalModel());
         originalModel.setExerciseComment(commentDocument);
-
         DrvtnExpExercise clearExercise = new DrvtnExpExercise(originalModel, mainWindow);
         return clearExercise;
     }
@@ -1005,6 +1006,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
 
         DrvtnExpModel model = new DrvtnExpModel(name, started, statementHeight, gridWidth, prompt, leftmostScopeLine, defaultShelf, statementDocument, commentDocument, explanationDocument, modelLines);
+        model.setOriginalModel(drvtnExpModel.getOriginalModel());
 
         return model;
     }

@@ -12,6 +12,7 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.TRUTH_TABLE;
+    private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
     private double statementPrefHeight = 80;
     private Document exerciseStatement = new Document();
@@ -145,6 +146,11 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
 
     @Override
     public void setStatementPrefHeight(double height) { statementPrefHeight = height;  }
+
+    @Override
+    public ExerciseModel<Document> getOriginalModel() { return originalModel; }
+
+    public void setOriginalModel(ExerciseModel<Document> originalModel) { this.originalModel = originalModel;  }
 
     @Override
     public String toString() {

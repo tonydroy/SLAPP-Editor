@@ -9,6 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import slapp.editor.vertical_tree.VerticalTreeView;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import static javafx.beans.binding.Bindings.subtract;
 
 public class MapQuestionMarker extends Pane {
 
+    VerticalTreeView verticalTreeView;
     Label questionLabel;
 
     String idString;
@@ -27,7 +29,8 @@ public class MapQuestionMarker extends Pane {
 
 
 
-    public MapQuestionMarker() {
+    public MapQuestionMarker(VerticalTreeView verticalTreeView) {
+        this.verticalTreeView = verticalTreeView;
         this.getStylesheets().add("/drag_drop.css");
         this.setPickOnBounds(false);
         this.setStyle("-fx-background-color: null");
@@ -47,6 +50,8 @@ public class MapQuestionMarker extends Pane {
             if (e.getButton() == MouseButton.SECONDARY) {
                 AnchorPane parent = (AnchorPane) this.getParent();
                 parent.getChildren().remove(this);
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
             }
         });
     }
@@ -83,10 +88,7 @@ public class MapQuestionMarker extends Pane {
 
         }
 
-
-
         formulaBox.registerLink (getId());
-
     }
 
     private Pane getUpBracket(double width) {

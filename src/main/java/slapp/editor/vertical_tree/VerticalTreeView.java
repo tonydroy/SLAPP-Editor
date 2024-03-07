@@ -1,11 +1,14 @@
 package slapp.editor.vertical_tree;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import slapp.editor.decorated_rta.DecoratedRTA;
@@ -23,25 +26,29 @@ public class VerticalTreeView implements ExerciseView<DecoratedRTA> {
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
-
     private VBox controlBox = new VBox(25);
-
+    private Button undoButton;
+    private Button redoButton;
+    public BooleanProperty undoRedoFlag = new SimpleBooleanProperty();
     Node exerciseControlNode;
 
     VerticalTreeView(MainWindowView mainView) {
         this.mainView = mainView;
         root = new BorderPane();
         rootLayout = new RootLayout(this);
-
         root.setCenter(rootLayout);
-//        VBox controlBox = new VBox(20, rootLayout.getBoxToggle(), rootLayout.getCircleToggle(), rootLayout.getUnderlineToggle(),rootLayout.getStarToggle(), rootLayout.getAnnotationBox(), rootLayout.getMappingToggle());
+
+        undoButton = new Button("Undo");
+        redoButton = new Button("Redo");
+        undoButton.setPrefWidth(64);
+        redoButton.setPrefWidth(64);
+        undoButton.setPrefHeight(28);
+        redoButton.setPrefHeight(28);
+
+        controlBox.getChildren().addAll(undoButton, redoButton);
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
- //       controlBox.setMargin(rootLayout.getAnnotationBox(), new Insets(10, 0, 0, 0));
- //       controlBox.setMargin(insertLineButton, new Insets(0,0,20, 0));
-        controlBox.setPadding(new Insets(200,10,0,80));
+        controlBox.setPadding(new Insets(100,10,0,80));
         exerciseControlNode = controlBox;
-
-
     }
 
     void initializeViewDetails() {
@@ -56,12 +63,7 @@ public class VerticalTreeView implements ExerciseView<DecoratedRTA> {
         commentRTA.setPrefHeight(70.0);
         commentRTA.setMinHeight(70.0);
         commentRTA.setPromptText("Comment:");
-
-
     }
-
-
-
 
     public MainWindowView getMainView() {
         return mainView;
@@ -70,6 +72,16 @@ public class VerticalTreeView implements ExerciseView<DecoratedRTA> {
     public RootLayout getRootLayout() {return rootLayout;}
 
     public VBox getControlBox() {  return controlBox;  }
+
+    public Button getUndoButton() { return undoButton;   }
+
+    public Button getRedoButton() { return redoButton;   }
+
+    public boolean isUndoRedoFlag() {    return undoRedoFlag.get();    }
+
+    public BooleanProperty undoRedoFlagProperty() {    return undoRedoFlag;    }
+
+    public void setUndoRedoFlag(boolean undoRedoFlag) {    this.undoRedoFlag.set(undoRedoFlag);    }
 
     @Override
     public String getExerciseName() { return exerciseName; }
@@ -134,9 +146,7 @@ public class VerticalTreeView implements ExerciseView<DecoratedRTA> {
         return exerciseControlNode;
     }
     @Override
-    public double getContentWidth() {
-        return 0;
-    }
+    public double getContentWidth() {    return rootLayout.getMain_pane().getWidth(); }
     @Override
-    public double getContentHeight() { return 0.0; }
+    public double getContentHeight() { return rootLayout.getMain_pane().getHeight(); }
 }

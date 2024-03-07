@@ -4,13 +4,14 @@ import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import slapp.editor.vertical_tree.VerticalTreeView;
 
 public class BottomDragResizer {
 
-
+    private VerticalTreeView verticalTreeView;
     private static final int RESIZE_MARGIN = 12;
 
-    private final Region region;
+    private Region region;
 
     private double y;
 
@@ -18,38 +19,40 @@ public class BottomDragResizer {
 
     private boolean dragging;
 
-    private BottomDragResizer(Region aRegion) {
-        region = aRegion;
+    public BottomDragResizer(VerticalTreeView verticalTreeView)  {
+        this.verticalTreeView = verticalTreeView;
     }
 
-    public static void makeResizable(Region region) {
-        final BottomDragResizer resizer = new BottomDragResizer(region);
+    public void makeResizable(Region region) {
+        this.region = region;
 
         region.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                resizer.mousePressed(event);
+                mousePressed(event);
             }});
         region.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                resizer.mouseDragged(event);
+                mouseDragged(event);
             }});
         region.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                resizer.mouseOver(event);
+                mouseOver(event);
             }});
         region.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                resizer.mouseReleased(event);
+                mouseReleased(event);
             }});
     }
 
     protected void mouseReleased(MouseEvent event) {
         dragging = false;
         region.setCursor(Cursor.DEFAULT);
+        verticalTreeView.setUndoRedoFlag(true);
+        verticalTreeView.setUndoRedoFlag(false);
     }
 
     protected void mouseOver(MouseEvent event) {

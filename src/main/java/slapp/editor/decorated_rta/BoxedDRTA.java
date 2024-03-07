@@ -13,6 +13,7 @@ public class BoxedDRTA {
     public BoxedDRTA() {
         drta = new DecoratedRTA();
         RichTextArea rta = drta.getEditor();
+        rta.setContentAreaWidth(1000);
         boxedRTA = new HBox(rta);
 
 

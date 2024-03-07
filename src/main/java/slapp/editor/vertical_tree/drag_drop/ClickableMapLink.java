@@ -9,6 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import slapp.editor.vertical_tree.VerticalTreeView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +20,7 @@ import static javafx.beans.binding.Bindings.subtract;
 
 public class ClickableMapLink extends Pane {
 
-
+    VerticalTreeView verticalTreeView;
     Line node_link;
     Line node_link1;
 
@@ -33,7 +34,8 @@ public class ClickableMapLink extends Pane {
     Double[] targetXAnchors;
 
 
-    public ClickableMapLink() {
+    public ClickableMapLink(VerticalTreeView verticalTreeView) {
+        this.verticalTreeView = verticalTreeView;
         this.getStylesheets().add("/drag_drop.css");
 
         this.setPickOnBounds(false);
@@ -56,6 +58,8 @@ public class ClickableMapLink extends Pane {
             if (e.getButton() == MouseButton.SECONDARY) {
                 AnchorPane parent = (AnchorPane) this.getParent();
                 parent.getChildren().remove(this);
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
             }
         });
 
@@ -154,6 +158,7 @@ public class ClickableMapLink extends Pane {
 
         source.registerLink (getId());
         target.registerLink (getId());
+
     }
 
     private Pane getUpBracket(double width) {

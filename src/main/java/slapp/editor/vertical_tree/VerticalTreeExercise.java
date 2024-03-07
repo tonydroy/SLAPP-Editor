@@ -1,22 +1,37 @@
 package slapp.editor.vertical_tree;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.RichTextAreaSkin;
+import com.gluonhq.richtextarea.model.Document;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.event.ActionEvent;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
+import org.apache.commons.lang3.SerializationUtils;
 import slapp.editor.DiskUtilities;
+import slapp.editor.EditorAlerts;
+import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
+import slapp.editor.derivation.DerivationExercise;
+import slapp.editor.derivation.DerivationModel;
 import slapp.editor.main_window.*;
 import slapp.editor.vertical_tree.drag_drop.*;
 import slapp.editor.vertical_tree.object_models.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VerticalTreeExercise implements Exercise<VerticalTreeModel, VerticalTreeView> {
@@ -24,20 +39,28 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
     MainWindow mainWindow;
     MainWindowView mainView;
     VerticalTreeModel verticalTreeModel;
-    VerticalTreeModel originalModel;
     VerticalTreeView verticalTreeView;
     private boolean exerciseModified = false;
-
+    private UndoRedoList<VerticalTreeModel> undoRedoList = new UndoRedoList<>(50);
+    public BooleanProperty undoRedoFlag = new SimpleBooleanProperty();
 
 
     public VerticalTreeExercise(VerticalTreeModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.verticalTreeModel = model;
-        this.originalModel = model;
+        if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
         this.mainView = mainWindow.getMainView();
         this.verticalTreeView = new VerticalTreeView(mainView);
-
         setVerticalTreeView();
+        undoRedoFlag.set(false);
+        undoRedoFlag.bind(verticalTreeView.undoRedoFlagProperty());
+        undoRedoFlag.addListener((ob, ov, nv) -> {
+            if (nv) {
+                exerciseModified = true;
+                pushUndoRedo();
+            }
+        });
+        pushUndoRedo();
     }
 
     private void setVerticalTreeView() {
@@ -65,31 +88,23 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         });
         verticalTreeView.setExerciseComment(commentDRTA);
 
+        verticalTreeView.getUndoButton().setOnAction(e -> undoAction());
+        verticalTreeView.getRedoButton().setOnAction(e -> redoAction());
 
         populateControlBox();
         for (DragIconType type : verticalTreeModel.getDragIconList()) {
             verticalTreeView.getRootLayout().addDragIcon(type);
         }
-
-
-
         populateMainPaneNodes();
-
-
-
         verticalTreeView.initializeViewDetails();
-
-
     }
-
 
     private void populateMainPaneNodes() {
         AnchorPane mainPane = verticalTreeView.getRootLayout().getMain_pane();
-
-
+        mainPane.getChildren().clear();
 
         for (VerticalBracketMod bracketMod : verticalTreeModel.getVerticalBrackets()) {
-            VerticalBracket bracket = new VerticalBracket();
+            VerticalBracket bracket = new VerticalBracket(verticalTreeView);
             mainPane.getChildren().add(bracket);
             bracket.setLayoutX(bracketMod.getLayoutX());
             bracket.setLayoutY(bracketMod.getLayoutY());
@@ -97,7 +112,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         }
 
         for (DashedLineMod dlMod : verticalTreeModel.getDashedLineMods()) {
-            DashedLine dashedLine = new DashedLine();
+            DashedLine dashedLine = new DashedLine(verticalTreeView);
             mainPane.getChildren().add(dashedLine);
             dashedLine.setLayoutX(dlMod.getLayoutX());
             dashedLine.setLayoutY(dlMod.getLayoutY());
@@ -126,17 +141,21 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
             treeFormulaBox.setLayoutY(treeBoxMod.getLayoutY());
             treeFormulaBox.setIdString(treeBoxMod.getIdString());
             treeFormulaBox.setmLinkIds(treeBoxMod.getLinkIdStrings());
+
             BoxedDRTA treeFormulaDRTA = treeFormulaBox.getFormulaBox();
             RichTextArea treeBoxRTA = treeFormulaDRTA.getRTA();
             treeBoxRTA.setPrefWidth(treeBoxMod.getWidth());
             treeBoxRTA.setDocument(treeBoxMod.getText());
             treeBoxRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
-            treeFormulaBox.processBoxRequest(treeBoxMod.isBoxed());
-            treeFormulaBox.processStarRequest(treeBoxMod.isStarred());
-            treeFormulaBox.processAnnotationRequest(treeBoxMod.isAnnotation());
-            if (treeFormulaBox.isAnnotation()) treeFormulaBox.setAnnotationText(treeBoxMod.getAnnotationText());
 
+            if (treeBoxMod.isBoxed()) treeFormulaBox.addBox();
+            if (treeBoxMod.isStarred()) treeFormulaBox.addStar();
+            if (treeBoxMod.isAnnotation()) {
+                treeFormulaBox.addAnnotation();
+                treeFormulaBox.setAnnotationText(treeBoxMod.getAnnotationText());
+                treeFormulaBox.setAnnotationTextListener();
+            }
             treeFormulaBox.setCircleXAnchors(treeBoxMod.getCircleXAnchors());
             treeFormulaBox.setRtaBoundsHeight(treeBoxMod.getRtaBoundsHeight());
             treeFormulaBox.setRtaBoundsMinY(treeBoxMod.getRtaBoundsMinY());
@@ -153,7 +172,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
 
         ObservableList<Node> nodesList = mainPane.getChildren();
         for (ClickableNodeLinkMod nodeLinkMod : verticalTreeModel.getClickableNodeLinks()) {
-            ClickableNodeLink nodeLink = new ClickableNodeLink();
+            ClickableNodeLink nodeLink = new ClickableNodeLink(verticalTreeView);
             mainPane.getChildren().add(nodeLink);
             nodeLink.setId(nodeLinkMod.getIdString());
             TreeFormulaBox source = null;
@@ -165,11 +184,12 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
                     if (treeBox.getIdString().equals(nodeLinkMod.getTargetId())) target = treeBox;
                 }
             }
-            if (source != null && target != null) nodeLink.bindEnds(source, target);
+            if (source != null && target != null) {nodeLink.bindEnds(source, target); }
+
         }
 
         for (MapQuestionMarkerMod mapQuestMod : verticalTreeModel.getMapQuestionMarkers()) {
-            MapQuestionMarker mapQuestion = new MapQuestionMarker();
+            MapQuestionMarker mapQuestion = new MapQuestionMarker(verticalTreeView);
             mainPane.getChildren().add(mapQuestion);
             mapQuestion.setId(mapQuestMod.getIdString());
 
@@ -188,7 +208,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         }
 
         for (ClickableMapLinkMod mapLinkMod : verticalTreeModel.getClickableMapLinks()) {
-            ClickableMapLink mapLink = new ClickableMapLink();
+            ClickableMapLink mapLink = new ClickableMapLink(verticalTreeView);
             mainPane.getChildren().add(0, mapLink);
             mapLink.setId(mapLinkMod.getIdString());
 
@@ -266,32 +286,146 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         }
     }
 
-    @Override
-    public VerticalTreeModel getExerciseModel() {
-        return verticalTreeModel;
+
+    private void undoAction() {
+        VerticalTreeModel undoElement = undoRedoList.getUndoElement();
+        if (undoElement != null) {
+            verticalTreeModel = (VerticalTreeModel) SerializationUtils.clone(undoElement);
+            populateMainPaneNodes();
+            updateUndoRedoButtons();
+        }
     }
-    @Override
-    public VerticalTreeView getExerciseView() {
-        return verticalTreeView;
+
+    private void redoAction() {
+        VerticalTreeModel redoElement = undoRedoList.getRedoElement();
+        if (redoElement != null) {
+            verticalTreeModel = (VerticalTreeModel) SerializationUtils.clone(redoElement);
+            populateMainPaneNodes();
+            updateUndoRedoButtons();
+        }
     }
+
+    private void updateUndoRedoButtons() {
+        verticalTreeView.getUndoButton().setDisable(!undoRedoList.canUndo());
+        verticalTreeView.getRedoButton().setDisable(!undoRedoList.canRedo());
+    }
+
+    private void pushUndoRedo() {
+        VerticalTreeModel model = getVerticalTreeModelFromView();
+        VerticalTreeModel deepCopy = (VerticalTreeModel) SerializationUtils.clone(model);
+        undoRedoList.push(deepCopy);
+        updateUndoRedoButtons();
+    }
+
+
+    @Override
+    public VerticalTreeModel getExerciseModel() {  return verticalTreeModel;    }
+    @Override
+    public VerticalTreeView getExerciseView() {  return verticalTreeView;    }
 
     @Override
     public void saveExercise(boolean saveAs) {
-
         boolean success = DiskUtilities.saveExercise(saveAs, getVerticalTreeModelFromView());
-
-
         if (success) exerciseModified = false;
     }
 
     @Override
     public List<Node> getPrintNodes() {
-        return null;
+        List<Node> nodeList = new ArrayList<>();
+        verticalTreeModel = getVerticalTreeModelFromView();
+        VerticalTreeExercise exercise = new VerticalTreeExercise(verticalTreeModel, mainWindow);
+        double nodeWidth = PrintUtilities.getPageWidth();
+
+        //header node
+        Label exerciseName = new Label(verticalTreeModel.getExerciseName());
+        exerciseName.setStyle("-fx-font-weight: bold;");
+        HBox hbox = new HBox(exerciseName);
+        hbox.setPadding(new Insets(0,0,10,0));
+
+        Group headerRoot = new Group();
+        Scene headerScene = new Scene(headerRoot);
+        headerRoot.getChildren().add(hbox);
+        headerRoot.applyCss();
+        headerRoot.layout();
+        double boxHeight = hbox.getHeight();
+        hbox.setPrefHeight(boxHeight);
+        nodeList.add(hbox);
+        nodeList.add(new Separator(Orientation.HORIZONTAL));
+
+        //statement node
+        RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
+        statementRTA.setEditable(true);
+        RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
+        double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+        statementRTA.setPrefHeight(statementHeight + 35.0);
+        statementRTA.setContentAreaWidth(nodeWidth);
+        statementRTA.setPrefWidth(nodeWidth);
+        statementRTA.getStylesheets().clear(); statementRTA.getStylesheets().add("richTextAreaPrinter.css");
+        nodeList.add(statementRTA);
+
+        Separator statementSeparator = new Separator(Orientation.HORIZONTAL);
+        statementSeparator.setPrefWidth(100);
+        HBox statementSepBox = new HBox(statementSeparator);
+        statementSepBox.setAlignment(Pos.CENTER);
+        nodeList.add(statementSepBox);
+
+        //content node
+        AnchorPane mainPane = exercise.getExerciseView().getRootLayout().getMain_pane();
+        mainPane.setStyle("-fx-background-color: transparent");
+        ObservableList<Node> nodes = mainPane.getChildren();
+
+        for (Node node : nodes) {
+            if (node instanceof TreeFormulaBox) {
+                TreeFormulaBox treeBox = (TreeFormulaBox) node;
+                treeBox.getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");
+                if (treeBox.getAnnotationField() != null) treeBox.getAnnotationField().setStyle("-fx-background-color: transparent");
+            }
+            if (node instanceof MapFormulaBox) {
+                ((MapFormulaBox) node).getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");
+            }
+        }
+
+
+
+
+
+        HBox contentHBox = new HBox(mainPane);
+        contentHBox.setAlignment(Pos.CENTER);
+        contentHBox.setPadding(new Insets(0,0,20, 0));
+
+
+
+        nodeList.add(contentHBox);
+
+        Separator contentSeparator = new Separator(Orientation.HORIZONTAL);
+        contentSeparator.setStyle("-fx-stroke-dash-array:0.1 5.0");
+        contentSeparator.setPrefWidth(100);
+        HBox contentSepBox = new HBox(contentSeparator);
+        contentSepBox.setAlignment(Pos.CENTER);
+        nodeList.add(contentSepBox);
+
+        //comment node
+        RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
+        double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+        commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
+        commentRTA.setContentAreaWidth(nodeWidth);
+        commentRTA.setPrefWidth(nodeWidth);
+        commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
+        nodeList.add(commentRTA);
+
+        return nodeList;
     }
 
     @Override
     public Exercise<VerticalTreeModel, VerticalTreeView> resetExercise() {
-        return null;
+        RichTextArea commentRTA = verticalTreeView.getExerciseComment().getEditor();
+        commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        Document commentDocument = commentRTA.getDocument();
+        VerticalTreeModel originalModel = (VerticalTreeModel) (verticalTreeModel.getOriginalModel());
+        originalModel.setExerciseComment(commentDocument);
+        VerticalTreeExercise clearExercise = new VerticalTreeExercise(originalModel, mainWindow);
+        return clearExercise;
     }
 
     @Override
@@ -311,6 +445,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         VerticalTreeModel model = new VerticalTreeModel();
 
         model.setExerciseName(verticalTreeModel.getExerciseName());
+        model.setOriginalModel(verticalTreeModel.getOriginalModel());
         model.setDragIconList(verticalTreeModel.getDragIconList());
         model.setObjectControlList(verticalTreeModel.getObjectControlList());
         model.setStarted(verticalTreeModel.isStarted() || exerciseModified);
@@ -336,7 +471,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
                 newTreeMod.setLinkIdStrings(originalTreeBox.getmLinkIds());
 
                 BoxedDRTA treeFormulaBox = originalTreeBox.getFormulaBox();
-                newTreeMod.setWidth(treeFormulaBox.getRTA().getWidth());
+                newTreeMod.setWidth(treeFormulaBox.getRTA().getPrefWidth());
                 RichTextArea treeRTA = treeFormulaBox.getRTA();
                 treeRTA.getActionFactory().saveNow().execute(new ActionEvent());
                 newTreeMod.setText(treeRTA.getDocument());
@@ -371,7 +506,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
                 newMapMod.setLinkIdStrings(originalMapBox.getmLinkIds());
 
                 BoxedDRTA formulaBox = originalMapBox.getFormulaBox();
-                newMapMod.setWidth(formulaBox.getRTA().getWidth());
+                newMapMod.setWidth(formulaBox.getRTA().getPrefWidth());
                 RichTextArea mapRTA = formulaBox.getRTA();
                 mapRTA.getActionFactory().saveNow().execute(new ActionEvent());
                 newMapMod.setText(mapRTA.getDocument());
@@ -380,12 +515,12 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
 
             } else if (node instanceof VerticalBracket) {
                 VerticalBracket vBrack = (VerticalBracket) node;
-                VerticalBracketMod brack = new VerticalBracketMod(node.getLayoutX(), node.getLayoutY(), vBrack.getMainPane().getHeight());
+                VerticalBracketMod brack = new VerticalBracketMod(node.getLayoutX(), node.getLayoutY(), vBrack.getMainPane().getPrefHeight());
                 model.getVerticalBrackets().add(brack);
 
             } else if (node instanceof DashedLine) {
                 DashedLine dLine = (DashedLine) node;
-                DashedLineMod dlMod = new DashedLineMod(node.getLayoutX(), node.getLayoutY(), dLine.getMainPane().getWidth());
+                DashedLineMod dlMod = new DashedLineMod(node.getLayoutX(), node.getLayoutY(), dLine.getMainPane().getPrefWidth());
                 model.getDashedLineMods().add(dlMod);
 
             } else if (node instanceof ClickableNodeLink) {

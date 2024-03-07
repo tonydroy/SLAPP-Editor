@@ -4,6 +4,7 @@ import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -67,6 +68,7 @@ public class TreeFormulaBox extends AnchorPane {
     private boolean boxed = false;
     private boolean starred = false;
     private boolean annotation = false;
+    private boolean annotationChanged = false;
     private TextField annotationField;
 
 
@@ -167,7 +169,8 @@ public class TreeFormulaBox extends AnchorPane {
 
 
         formulaBox = newFormulaBoxedDRTA();
-        RightDragResizer.makeResizable(formulaBox.getRTA());
+        RightDragResizer resizer = new RightDragResizer(verticalTreeView);
+        resizer.makeResizable(formulaBox.getRTA());
 
         middleBox = new VBox(formulaBox.getBoxedRTA(), linesPane);
 
@@ -266,7 +269,7 @@ public class TreeFormulaBox extends AnchorPane {
                     if (ulineStage < 2) {
                         Bounds caretBounds = ((RichTextAreaSkin) formulaBox.getRTA().getSkin()).getCaretPosition();
                         Bounds newCaretBounds = rta.sceneToLocal(caretBounds);
-                        double xAnchor = newCaretBounds.getMaxX() + rtaBounds.getMinX() - 1.0;
+                        double xAnchor = newCaretBounds.getMaxX() + rtaBounds.getMinX() - 2.0;
                         double yAnchor = newCaretBounds.getMaxY() * .75 + rtaBounds.getMinY();
 
                         Label marker = ulineMarkers[ulineStage];
@@ -313,6 +316,8 @@ public class TreeFormulaBox extends AnchorPane {
         oval.setArcWidth((maxX - minX));
         self.setLeftAnchor(oval, minX);
         self.setTopAnchor(oval, rtaBoundsMinY + 2.0);
+        verticalTreeView.setUndoRedoFlag(true);
+        verticalTreeView.setUndoRedoFlag(false);
     }
 
     private void setLine(double startX, double endX) {
@@ -339,6 +344,8 @@ public class TreeFormulaBox extends AnchorPane {
 
         //add line to linesPane
         addLineToPane(startX, endX - startX, yPos);
+        verticalTreeView.setUndoRedoFlag(true);
+        verticalTreeView.setUndoRedoFlag(false);
     }
 
     public void addLineToPane(double startX, double length, double yPos) {
@@ -384,12 +391,10 @@ public class TreeFormulaBox extends AnchorPane {
                 getParent().setOnDragDropped(null);
                 event.setDropCompleted(true);
 
-                relocateToGridPoint2(
-                        new Point2D(event.getSceneX(), event.getSceneY())
-                );
+                relocateToGridPoint2( new Point2D(event.getSceneX(), event.getSceneY())  );
                 self.setCursor(Cursor.DEFAULT);
-
-
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
             }
         };
 
@@ -426,10 +431,9 @@ public class TreeFormulaBox extends AnchorPane {
 
                     iterId.remove();
                 }
-
-
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
             }
-
         });
 
 
@@ -644,11 +648,20 @@ public class TreeFormulaBox extends AnchorPane {
         rta.setMaxHeight(24);
         rta.setMinHeight(24);
         rta.setPrefWidth(36);
+//        rta.setContentAreaWidth(500);
        rta.getStylesheets().add("blueFormulaBox.css");
         rta.setPromptText("");
+ //       rta.getActionFactory().saveNow().execute(new ActionEvent());   ---------- this blanks text on open exercise.
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 verticalTreeView.getMainView().editorInFocus(drta, ControlType.FIELD);
+            } else {
+                if (rta.isModified()) {
+                    verticalTreeView.setUndoRedoFlag(true);
+                    verticalTreeView.setUndoRedoFlag(false);
+                    rta.getActionFactory().saveNow().execute(new ActionEvent());
+                }
+
             }
         });
         return boxedDRTA;
@@ -656,48 +669,96 @@ public class TreeFormulaBox extends AnchorPane {
 
     public void processBoxRequest(boolean add) {
         if (add) {
-            middleBox.setStyle("-fx-border-color: black; -fx-border-width: 1 1 1 1");
-            boxed = true;
+            if (!boxed) {
+                middleBox.setStyle("-fx-border-color: black; -fx-border-width: 1 1 1 1");
+                boxed = true;
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
+            }
         } else {
-            middleBox.setStyle("-fx-border-width: 0 0 0 0");
-            boxed = false;
-
+            if (boxed) {
+                middleBox.setStyle("-fx-border-width: 0 0 0 0");
+                boxed = false;
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
+            }
         }
+    }
+
+    //for repopulating window (when we do not desire undo/redo push
+    public void addBox() {
+        middleBox.setStyle("-fx-border-color: black; -fx-border-width: 1 1 1 1");
+        boxed = true;
     }
 
     public void processStarRequest(boolean add) {
         if (add) {
-            Label star = new Label("\u2605");
-            mainBox.getChildren().clear();
-            mainBox.getChildren().addAll(labelPane, centerBox, star);
-            mainBox.setMargin(star, new Insets(0,0, 14, 0));
-            starred = true;
-
+            if (!starred) {
+                addStar();
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
+            }
         } else {
-            mainBox.getChildren().clear();
-            mainBox.getChildren().addAll(labelPane, centerBox);
-            starred = false;
+            if (starred) {
+                mainBox.getChildren().clear();
+                mainBox.getChildren().addAll(labelPane, centerBox);
+                starred = false;
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
+            }
         }
+    }
+
+    public void addStar() {
+        Label star = new Label("\u2605");
+        mainBox.getChildren().clear();
+        mainBox.getChildren().addAll(labelPane, centerBox, star);
+        mainBox.setMargin(star, new Insets(6,0, 0, 0));
+        starred = true;
     }
 
     public void processAnnotationRequest(boolean add) {
         if (add) {
-            annotationField = new TextField();
-            annotationField.setPrefWidth(28);
-            annotationField.setPrefHeight(15);
-            annotationField.setFont(new Font("Noto Sans", 10));
-            annotationField.setPadding(new Insets(0));
-            mainBox.getChildren().clear();
-            mainBox.getChildren().addAll(labelPane, centerBox, annotationField);
-            mainBox.setMargin(annotationField, new Insets(0,0, 14, 0));
-            annotation = true;
+            if (!annotation) {
+                addAnnotation();
+                setAnnotationTextListener();
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
+            }
 
         } else {
-            mainBox.getChildren().clear();
-            mainBox.getChildren().addAll(labelPane, centerBox);
-            annotation = false;
+            if (annotation) {
+                mainBox.getChildren().clear();
+                mainBox.getChildren().addAll(labelPane, centerBox);
+                annotation = false;
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
+            }
         }
     }
+
+    public void addAnnotation() {
+        annotationField = new TextField();
+        annotationField.setPrefWidth(28);
+        annotationField.setPrefHeight(15);
+        annotationField.setFont(new Font("Noto Sans", 10));
+        annotationField.setPadding(new Insets(0));
+
+        mainBox.getChildren().clear();
+        mainBox.getChildren().addAll(labelPane, centerBox, annotationField);
+        mainBox.setMargin(annotationField, new Insets(8, 0, 0, 0));
+
+        annotation = true;
+    }
+
+    public void setAnnotationTextListener() {
+        annotationField.textProperty().addListener((ob, ov, nv) -> {
+            verticalTreeView.setUndoRedoFlag(true);
+            verticalTreeView.setUndoRedoFlag(false);
+        });
+    }
+
+
 
     public void setAnnotationText(String text) {
         if (annotationField != null) {
@@ -724,6 +785,8 @@ public class TreeFormulaBox extends AnchorPane {
             undoCircleRequest();
             self.getChildren().remove(oval);
             circled = false;
+            verticalTreeView.setUndoRedoFlag(true);
+            verticalTreeView.setUndoRedoFlag(false);
         }
     }
 
@@ -741,6 +804,8 @@ public class TreeFormulaBox extends AnchorPane {
             undoUnderlineRequest();
             linesPane.getChildren().clear();
             baseline.clear();
+            verticalTreeView.setUndoRedoFlag(true);
+            verticalTreeView.setUndoRedoFlag(false);
         }
     }
 
@@ -768,6 +833,8 @@ public class TreeFormulaBox extends AnchorPane {
 
     public void setIdString(String idString) {
         this.idString = idString;
+        setId(idString);
+
     }
 
     public BoxedDRTA getFormulaBox() {
@@ -785,6 +852,8 @@ public class TreeFormulaBox extends AnchorPane {
     public boolean isAnnotation() {
         return annotation;
     }
+
+    public TextField getAnnotationField() {return annotationField; }
 
     public boolean isCircled() {
         return circled;

@@ -12,6 +12,8 @@ import java.util.List;
 public class ABmodel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
+
+    private ExerciseModel<Document> originalModel = null;
     private ExerciseType type = ExerciseType.AB_EXPLAIN;
     private ABmodelExtra modelFields = new ABmodelExtra();
     private boolean started = false;
@@ -59,6 +61,11 @@ public class ABmodel implements ExerciseModel<Document>, Serializable {
     public void setStatementPrefHeight(double statementPrefHeight) { this.statementPrefHeight = statementPrefHeight; }
 
     public List<Document> getExercisePageDocs() {  return exercisePageDocs; }
+
+    public ExerciseModel<Document> getOriginalModel() { return originalModel;  }
+
+    public void setOriginalModel(ExerciseModel<Document> originalModel) { this.originalModel = originalModel; }
+
     @Override
     public String toString() {
         String name = getExerciseName();

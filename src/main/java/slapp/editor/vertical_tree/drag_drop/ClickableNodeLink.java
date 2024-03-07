@@ -8,6 +8,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import slapp.editor.vertical_tree.VerticalTreeView;
 
 import java.util.UUID;
 
@@ -16,7 +17,7 @@ import static javafx.beans.binding.Bindings.subtract;
 
 public class ClickableNodeLink extends Pane {
 
-
+    VerticalTreeView verticalTreeView;
     Line node_link;
     Line node_link1;
 
@@ -25,7 +26,8 @@ public class ClickableNodeLink extends Pane {
     String targetId;
 
 
-    public ClickableNodeLink() {
+    public ClickableNodeLink(VerticalTreeView verticalTreeView) {
+        this.verticalTreeView = verticalTreeView;
         this.getStylesheets().add("/drag_drop.css");
 
         this.setPickOnBounds(false);
@@ -46,15 +48,16 @@ public class ClickableNodeLink extends Pane {
             if (e.getButton() == MouseButton.SECONDARY) {
                 AnchorPane parent = (AnchorPane) this.getParent();
                 parent.getChildren().remove(this);
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
+                System.out.println("node link, remove");
             }
         });
     }
 
 
 
-    //Sometimes (when there are too many lines to the same FormulaBox) the mouse listeners do not function.
-    //On the theory that the problem had to do with line overlap, this node_link1 covers just the center part of node_link.
-    //Problem not solved.  Revert to whole line?
+    //This makes the live part of the line just the center - revert to whole line?
     public void bindEnds (TreeFormulaBox source, TreeFormulaBox target) {
         sourceId = source.getId();
         targetId = target.getId();

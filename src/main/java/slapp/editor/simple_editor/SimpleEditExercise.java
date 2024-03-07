@@ -24,12 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import slapp.editor.DiskUtilities;
+import slapp.editor.vertical_tree.VerticalTreeExercise;
+import slapp.editor.vertical_tree.VerticalTreeModel;
+
 import static javafx.scene.control.ButtonType.OK;
 
 public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditView> {
     private MainWindow mainWindow;
     private SimpleEditModel editModel;
-    private SimpleEditModel originalModel;
     private SimpleEditView editView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
@@ -38,7 +40,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     public SimpleEditExercise(SimpleEditModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.editModel = model;
-        this.originalModel = model;
+        if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
         this.mainView = mainWindow.getMainView();
         this.editView = new SimpleEditView(mainView);
 
@@ -233,6 +235,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         RichTextArea commentRTA = editView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
+        SimpleEditModel originalModel = (SimpleEditModel) (editModel.getOriginalModel());
         originalModel.setExerciseComment(commentDocument);
         SimpleEditExercise clearExercise = new SimpleEditExercise(originalModel, mainWindow);
         return clearExercise;
@@ -282,6 +285,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         double statementHeight = editView.getExerciseStatement().getEditor().getPrefHeight();
         Document statementDocument = editModel.getExerciseStatement();
         SimpleEditModel newModel = new SimpleEditModel(name, started, prompt, statementHeight, statementDocument, commentDocument, contentList);
+        newModel.setOriginalModel(editModel.getOriginalModel());
         return newModel;
     }
 

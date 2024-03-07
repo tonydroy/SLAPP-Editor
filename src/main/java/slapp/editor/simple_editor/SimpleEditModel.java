@@ -12,6 +12,7 @@ public class SimpleEditModel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.SIMPLE_EDITOR;
+    private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
     private String contentPrompt = "";
     private double statementPrefHeight = 80;
@@ -56,6 +57,12 @@ public class SimpleEditModel implements ExerciseModel<Document>, Serializable {
     public double getStatementPrefHeight() {return statementPrefHeight;  }
     @Override
     public void setStatementPrefHeight(double statementPrefHeight) {this.statementPrefHeight = statementPrefHeight; }
+
+    @Override
+    public ExerciseModel<Document> getOriginalModel() { return (ExerciseModel) originalModel; }
+
+    public void setOriginalModel(ExerciseModel<Document> originalModel) { this.originalModel = originalModel; }
+
     @Override
     public String toString() { return exerciseName; }
 

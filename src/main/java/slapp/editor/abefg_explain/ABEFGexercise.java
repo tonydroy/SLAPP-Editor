@@ -22,6 +22,8 @@ import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
+import slapp.editor.vertical_tree.VerticalTreeExercise;
+import slapp.editor.vertical_tree.VerticalTreeModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +34,6 @@ import static javafx.scene.control.ButtonType.OK;
 public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
     private MainWindow mainWindow;
     private ABEFGmodel abefgModel;
-    private ABEFGmodel originalModel;
     private ABEFGview abefgView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
@@ -42,7 +43,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
     public ABEFGexercise(ABEFGmodel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.abefgModel = model;
-        this.originalModel = model;
+        if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
         this.mainView = mainWindow.getMainView();
         this.abefgView = new ABEFGview(mainView);
 
@@ -331,10 +332,10 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         RichTextArea commentRTA = abefgView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
+        ABEFGmodel originalModel = (ABEFGmodel) (abefgModel.getOriginalModel());
         originalModel.setExerciseComment(commentDocument);
         ABEFGexercise clearExercise = new ABEFGexercise(originalModel, mainWindow);
         return clearExercise;
-
     }
 
     @Override
@@ -401,6 +402,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         double statementHeight = abefgView.getExerciseStatement().getEditor().getPrefHeight();
         Document statementDocument = abefgModel.getExerciseStatement();
         ABEFGmodel newModel = new ABEFGmodel(name, extra, started, prompt, statementHeight, statementDocument, commentDocument, contentList);
+        newModel.setOriginalModel(abefgModel.getOriginalModel());
 
         return newModel;
     }

@@ -24,13 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import slapp.editor.DiskUtilities;
+import slapp.editor.vertical_tree.VerticalTreeExercise;
+import slapp.editor.vertical_tree.VerticalTreeModel;
 
 import static javafx.scene.control.ButtonType.OK;
 
 public class ABexercise implements Exercise<ABmodel, ABview> {
     private MainWindow mainWindow;
     private ABmodel abModel;
-    private ABmodel originalModel;
     private ABview abView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
@@ -40,7 +41,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
     public ABexercise(ABmodel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.abModel = model;
-        this.originalModel = model;
+        if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
         this.mainView = mainWindow.getMainView();
         this.abView = new ABview(mainView);
 
@@ -274,6 +275,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         RichTextArea commentRTA = abView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
+        ABmodel originalModel = (ABmodel) (abModel.getOriginalModel());
         originalModel.setExerciseComment(commentDocument);
         ABexercise clearExercise = new ABexercise(originalModel, mainWindow);
         return clearExercise;
@@ -332,6 +334,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         double statementHeight = abView.getExerciseStatement().getEditor().getPrefHeight();
         Document statementDocument = abModel.getExerciseStatement();
         ABmodel newModel = new ABmodel(name, extra, started, prompt, statementHeight, statementDocument, commentDocument, contentList);
+        newModel.setOriginalModel(abModel.getOriginalModel());
 
         return newModel;
     }

@@ -4,6 +4,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import slapp.editor.vertical_tree.VerticalTreeView;
 
 /**
  * {@link RightDragResizer} can be used to add mouse listeners to a {@link Region}
@@ -23,9 +24,11 @@ public class RightDragResizer {
      * The margin around the control that a user can click in to start resizing
      * the region.
      */
+
+    VerticalTreeView verticalTreeView;
     private static final int RESIZE_MARGIN = 12;
 
-    private final Region region;
+    private Region region;
 
     private double x;
 
@@ -33,38 +36,39 @@ public class RightDragResizer {
 
     private boolean dragging;
 
-    private RightDragResizer(Region aRegion) {
-        region = aRegion;
+
+    public RightDragResizer(VerticalTreeView verticalTreeView) {
+        this.verticalTreeView = verticalTreeView;
     }
 
-    public static void makeResizable(Region region) {
-        final RightDragResizer resizer = new RightDragResizer(region);
+    public void makeResizable(Region region) {
+        this.region = region;
 
         region.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                resizer.mousePressed(event);
+                mousePressed(event);
             }});
         region.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                resizer.mouseDragged(event);
+                mouseDragged(event);
             }});
         region.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(MouseEvent event) {
-                resizer.mouseOver(event);
-            }});
+            public void handle(MouseEvent event) {mouseOver(event);  }});
         region.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                resizer.mouseReleased(event);
+                mouseReleased(event);
             }});
     }
 
     protected void mouseReleased(MouseEvent event) {
         dragging = false;
         region.setCursor(Cursor.DEFAULT);
+        verticalTreeView.setUndoRedoFlag(true);
+        verticalTreeView.setUndoRedoFlag(false);
     }
 
     protected void mouseOver(MouseEvent event) {

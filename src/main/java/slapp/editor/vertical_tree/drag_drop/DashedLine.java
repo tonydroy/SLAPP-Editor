@@ -11,9 +11,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
+import slapp.editor.vertical_tree.VerticalTreeView;
 
 public class DashedLine extends AnchorPane {
 
+    VerticalTreeView verticalTreeView;
     private Label leftDragLabel;
     private Label closeLabel;
 
@@ -30,8 +32,9 @@ public class DashedLine extends AnchorPane {
 
 
 
-    public DashedLine() {
+    public DashedLine(VerticalTreeView verticalTreeView) {
         self = this;
+        this.verticalTreeView = verticalTreeView;
 
         leftDragLabel = new Label("");
         leftDragLabel.setMaxWidth(10);
@@ -93,7 +96,8 @@ public class DashedLine extends AnchorPane {
 
         mainPane.getChildren().add(line);
         line.endXProperty().bind(mainPane.widthProperty().subtract(4.0));
-        RightDragResizer.makeResizable(mainPane);
+        RightDragResizer resizer = new RightDragResizer(verticalTreeView);
+        resizer.makeResizable(mainPane);
 
         HBox mainBox = new HBox(labelPane, mainPane);
         self.getChildren().addAll(mainBox);
@@ -139,12 +143,10 @@ public class DashedLine extends AnchorPane {
                 getParent().setOnDragDropped(null);
                 event.setDropCompleted(true);
 
-                relocateToGridPoint2(
-                        new Point2D(event.getSceneX(), event.getSceneY())
-                );
+                relocateToGridPoint2( new Point2D(event.getSceneX(), event.getSceneY()) );
                 self.setCursor(Cursor.DEFAULT);
-
-
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
             }
         };
 
@@ -155,6 +157,8 @@ public class DashedLine extends AnchorPane {
             public void handle(MouseEvent event) {
                 AnchorPane parent  = (AnchorPane) self.getParent();
                 parent.getChildren().remove(self);
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
             }
 
         });

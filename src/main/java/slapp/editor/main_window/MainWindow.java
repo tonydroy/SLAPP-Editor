@@ -212,13 +212,9 @@ public class MainWindow {
         else EditorAlerts.fleetingPopup("No named exercise to save.");
     }
     private void resetExercise() {
-        boolean okContinue = true;
-        if (currentExercise.isExerciseModified()) {
-            Alert confirm = EditorAlerts.confirmationAlert("Confirm Reset", "This exercise appears to have been modified.  Continue to reset content?");
-            Optional<ButtonType> result = confirm.showAndWait();
-            if (result.get() != OK) okContinue = false;
-        }
-        if (okContinue) {
+        Alert confirm = EditorAlerts.confirmationAlert("Confirm Reset", "This will undo all your work on this exercise.  Continue to reset?");
+        Optional<ButtonType> result = confirm.showAndWait();
+        if (result.get() == OK) {
             Exercise clearExercise = currentExercise.resetExercise();
             setUpExercise(clearExercise);
         }

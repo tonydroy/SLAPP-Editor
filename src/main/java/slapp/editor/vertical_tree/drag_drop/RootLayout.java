@@ -73,7 +73,7 @@ public class RootLayout extends AnchorPane {
     }
 
     private void setupWindow() {
-        RightDragResizer.makeResizable(base_pane);
+ //       RightDragResizer.makeResizable(base_pane);
      //   BottomDragResizer.makeResizable(base_pane);
         top_pane.setStyle("-fx-background-color: #FCFCFC;");
         top_pane.setPadding(new Insets(0, 0, 0, 20));
@@ -200,7 +200,7 @@ public class RootLayout extends AnchorPane {
                         }
                     }
                 }
-
+ //               event.consume();
             }
         };
         boxToggle.selectedProperty().addListener((ob, ov, nv) -> {
@@ -220,7 +220,7 @@ public class RootLayout extends AnchorPane {
                         }
                     }
                 }
-
+ //               event.consume();
             }
         };
         starToggle.selectedProperty().addListener((ob, ov, nv) -> {
@@ -240,7 +240,7 @@ public class RootLayout extends AnchorPane {
                         }
                     }
                 }
-
+  //              event.consume();
             }
         };
         annotationToggle.selectedProperty().addListener((ob, ov, nv) -> {
@@ -280,7 +280,7 @@ public class RootLayout extends AnchorPane {
                         }
                     }
                 }
-
+ //               event.consume();
             }
         };
         circleToggle.selectedProperty().addListener((ob, ov, nv) -> {
@@ -308,7 +308,7 @@ public class RootLayout extends AnchorPane {
                         }
                     }
                 }
-
+//               event.consume();
             }
         };
         underlineToggle.selectedProperty().addListener((ob, ov, nv) -> {
@@ -336,7 +336,7 @@ public class RootLayout extends AnchorPane {
                         }
                     }
                 }
-
+ //               event.consume();
             }
         };
         mappingKeyFilter = new EventHandler<KeyEvent>() {
@@ -355,9 +355,11 @@ public class RootLayout extends AnchorPane {
                         }
                     }
                     if (formulaBoxes.size() == 2) {
-                        ClickableMapLink mapLink = new ClickableMapLink();
+                        ClickableMapLink mapLink = new ClickableMapLink(verticalTreeView);
                         main_pane.getChildren().add(0, mapLink);
                         mapLink.bindEnds(formulaBoxes.get(0), formulaBoxes.get(1));
+                        verticalTreeView.setUndoRedoFlag(true);
+                        verticalTreeView.setUndoRedoFlag(false);
                         formulaBoxes.get(0).undoMappingRequest();
                         formulaBoxes.get(1).undoMappingRequest();
                     } else {
@@ -372,9 +374,11 @@ public class RootLayout extends AnchorPane {
                                 MapFormulaBox mapFormulaBox = (MapFormulaBox) node;
                                 if (mapFormulaBox.getMapStage() > 0) {
 
-                                    MapQuestionMarker mapQuestionMarker = new MapQuestionMarker();
+                                    MapQuestionMarker mapQuestionMarker = new MapQuestionMarker(verticalTreeView);
                                     main_pane.getChildren().add(0, mapQuestionMarker);
                                     mapQuestionMarker.bindQuestionLabel(mapFormulaBox);
+                                    verticalTreeView.setUndoRedoFlag(true);
+                                    verticalTreeView.setUndoRedoFlag(false);
 
                                     mapFormulaBox.undoMappingRequest();
                                 } else {
@@ -549,17 +553,21 @@ public class RootLayout extends AnchorPane {
                     if (container.getValue("scene_coords") != null) {
 
                         if (container.getValue("type").equals(DragIconType.dashed_line.toString())) {
-                            DashedLine line = new DashedLine();
+                            DashedLine line = new DashedLine(verticalTreeView);
                             main_pane.getChildren().add(line);
                             Point2D cursorPoint = container.getValue("scene_coords");
                             line.relocateToGridPoint(new Point2D(cursorPoint.getX() - 28, cursorPoint.getY()));
+                            verticalTreeView.setUndoRedoFlag(true);
+                            verticalTreeView.setUndoRedoFlag(false);
                         }
 
                         else if (container.getValue("type").equals(DragIconType.bracket.toString())) {
-                            VerticalBracket bracket = new VerticalBracket();
+                            VerticalBracket bracket = new VerticalBracket(verticalTreeView);
                             main_pane.getChildren().add(bracket);
                             Point2D cursorPoint = container.getValue("scene_coords");
                             bracket.relocateToGridPoint(new Point2D(cursorPoint.getX(), cursorPoint.getY()));
+                            verticalTreeView.setUndoRedoFlag(true);
+                            verticalTreeView.setUndoRedoFlag(false);
                         }
 
                         else if (container.getValue("type").equals(DragIconType.tree_field.toString())) {
@@ -567,6 +575,8 @@ public class RootLayout extends AnchorPane {
                             main_pane.getChildren().add(treeFormulaBox);
                             Point2D cursorPoint = container.getValue("scene_coords");
                             treeFormulaBox.relocateToGridPoint(new Point2D(cursorPoint.getX(), cursorPoint.getY()));
+                            verticalTreeView.setUndoRedoFlag(true);
+                            verticalTreeView.setUndoRedoFlag(false);
                         }
 
                         else if (container.getValue("type").equals(DragIconType.map_field.toString())) {
@@ -574,6 +584,8 @@ public class RootLayout extends AnchorPane {
                             main_pane.getChildren().add(mapFormulaBox);
                             Point2D cursorPoint = container.getValue("scene_coords");
                             mapFormulaBox.relocateToGridPoint(new Point2D(cursorPoint.getX(), cursorPoint.getY()));
+                            verticalTreeView.setUndoRedoFlag(true);
+                            verticalTreeView.setUndoRedoFlag(false);
                         }
 
 
@@ -621,7 +633,7 @@ public class RootLayout extends AnchorPane {
 
      //                   //	System.out.println(container.getData());
      //                  NodeLink link = new NodeLink();
-                        ClickableNodeLink link = new ClickableNodeLink();
+                        ClickableNodeLink link = new ClickableNodeLink(verticalTreeView);
 
 
                         //add our link at the top of the rendering order so it's rendered first
@@ -645,6 +657,8 @@ public class RootLayout extends AnchorPane {
 
                         if (source != null && target != null)
                             link.bindEnds(source, target);
+                            verticalTreeView.setUndoRedoFlag(true);
+                            verticalTreeView.setUndoRedoFlag(false);
                     }
 
                 }
@@ -699,4 +713,6 @@ public class RootLayout extends AnchorPane {
     public ToggleGroup getButtonGroup() {
         return buttonGroup;
     }
+
+
 }

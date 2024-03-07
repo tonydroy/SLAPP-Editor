@@ -30,6 +30,9 @@ import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
+import slapp.editor.vertical_tree.VerticalTreeExercise;
+import slapp.editor.vertical_tree.VerticalTreeModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +40,6 @@ import java.util.List;
 public class DerivationExercise implements Exercise<DerivationModel, DerivationView> {
     private MainWindow mainWindow;
     private DerivationModel derivationModel;
-    private DerivationModel originalModel;
     private DerivationView derivationView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
@@ -52,12 +54,11 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     public DerivationExercise(DerivationModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.derivationModel = model;
-        this.originalModel = model;
+        if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
         this.mainView = mainWindow.getMainView();
         this.derivationView = new DerivationView(mainView);
         setDerivationView();
         pushUndoRedo();
-
     }
 
     private void setDerivationView() {
@@ -894,6 +895,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         RichTextArea commentRTA = derivationView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
+        DerivationModel originalModel = (DerivationModel) (derivationModel.getOriginalModel());
         originalModel.setExerciseComment(commentDocument);
         DerivationExercise clearExercise = new DerivationExercise(originalModel, mainWindow);
         return clearExercise;
@@ -978,6 +980,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             modelLines.add(modelLine);
         }
         DerivationModel model = new DerivationModel(name, started, statementHeight,gridWidth, leftmostScopeLine, defaultShelf, statementDocument, commentDocument, modelLines);
+        model.setOriginalModel(derivationModel.getOriginalModel());
 
         return model;
     }

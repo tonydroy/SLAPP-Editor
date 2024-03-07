@@ -15,6 +15,8 @@ public class VerticalTreeModel implements ExerciseModel<Document>, Serializable 
 
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.VERTICAL_TREE;
+    private ExerciseModel<Document> originalModel = null;
+
     private boolean started = false;
     private double statementPrefHeight = 80;
     private Document exerciseStatement = new Document();
@@ -35,131 +37,55 @@ public class VerticalTreeModel implements ExerciseModel<Document>, Serializable 
 
     public VerticalTreeModel(){}
 
-    public VerticalTreeModel(boolean test) {
-        this();
-        exerciseName = "VTexer";
-        exerciseStatement = new Document("test exercise");
-        exerciseComment = new Document("my comment");
 
+    public void setExerciseName(String exerciseName) { this.exerciseName = exerciseName;    }
 
-        dragIconList.addAll(Arrays.asList(DragIconType.tree_field, DragIconType.bracket, DragIconType.dashed_line, DragIconType.map_field));
-        objectControlList.addAll(Arrays.asList(ObjectControlType.FORMULA_BOX, ObjectControlType.OPERATOR_CIRCLE, ObjectControlType.STAR, ObjectControlType.ANNOTATION, ObjectControlType.UNDERLINE, ObjectControlType.MAPPING));
-    }
+    public void setExerciseStatement(Document exerciseStatement) { this.exerciseStatement = exerciseStatement;    }
 
+    public List<DragIconType> getDragIconList() { return dragIconList;    }
 
+    public void setDragIconList(List<DragIconType> dragIconList) { this.dragIconList = dragIconList;    }
 
+    public List<ObjectControlType> getObjectControlList() {  return objectControlList;    }
 
-    public void setExerciseName(String exerciseName) {
-        this.exerciseName = exerciseName;
-    }
+    public void setObjectControlList(List<ObjectControlType> objectControlList) { this.objectControlList = objectControlList;    }
 
-    public void setExerciseType(ExerciseType exerciseType) {
-        this.exerciseType = exerciseType;
-    }
+    public List<TreeFormulaBoxMod> getTreeFormulaBoxes() {  return treeFormulaBoxes;   }
 
-    public void setExerciseStatement(Document exerciseStatement) {
-        this.exerciseStatement = exerciseStatement;
-    }
+    public List<MapFormulaBoxMod> getMapFormulaBoxes() {  return mapFormulaBoxes;    }
 
-    public List<DragIconType> getDragIconList() {
-        return dragIconList;
-    }
+    public List<VerticalBracketMod> getVerticalBrackets() {  return verticalBrackets;    }
 
-    public void setDragIconList(List<DragIconType> dragIconList) {
-        this.dragIconList = dragIconList;
-    }
+    public List<DashedLineMod> getDashedLineMods() {  return dashedLineMods;   }
 
-    public List<ObjectControlType> getObjectControlList() {
-        return objectControlList;
-    }
+    public List<ClickableNodeLinkMod> getClickableNodeLinks() {  return clickableNodeLinks;    }
 
-    public void setObjectControlList(List<ObjectControlType> objectControlList) {
-        this.objectControlList = objectControlList;
-    }
+    public List<ClickableMapLinkMod> getClickableMapLinks() {  return clickableMapLinks;   }
 
-    public List<TreeFormulaBoxMod> getTreeFormulaBoxes() {
-        return treeFormulaBoxes;
-    }
-
-    public void setTreeFormulaBoxes(List<TreeFormulaBoxMod> treeFormulaBoxes) {
-        this.treeFormulaBoxes = treeFormulaBoxes;
-    }
-
-    public List<MapFormulaBoxMod> getMapFormulaBoxes() {
-        return mapFormulaBoxes;
-    }
-
-    public void setMapFormulaBoxes(List<MapFormulaBoxMod> mapFormulaBoxes) {
-        this.mapFormulaBoxes = mapFormulaBoxes;
-    }
-
-    public List<VerticalBracketMod> getVerticalBrackets() {
-        return verticalBrackets;
-    }
-
-    public void setVerticalBrackets(List<VerticalBracketMod> verticalBrackets) {
-        this.verticalBrackets = verticalBrackets;
-    }
-
-    public List<DashedLineMod> getDashedLineMods() {
-        return dashedLineMods;
-    }
-
-    public void setDashedLineMods(List<DashedLineMod> dashedLineMods) {
-        this.dashedLineMods = dashedLineMods;
-    }
-
-    public List<ClickableNodeLinkMod> getClickableNodeLinks() {
-        return clickableNodeLinks;
-    }
-
-    public void setClickableNodeLinks(List<ClickableNodeLinkMod> clickableNodeLinks) {
-        this.clickableNodeLinks = clickableNodeLinks;
-    }
-
-    public List<ClickableMapLinkMod> getClickableMapLinks() {
-        return clickableMapLinks;
-    }
-
-    public void setClickableMapLinks(List<ClickableMapLinkMod> clickableMapLinks) {
-        this.clickableMapLinks = clickableMapLinks;
-    }
-
-    public List<MapQuestionMarkerMod> getMapQuestionMarkers() {
-        return mapQuestionMarkers;
-    }
-
-    public void setMapQuestionMarkers(List<MapQuestionMarkerMod> mapQuestionMarkers) {
-        this.mapQuestionMarkers = mapQuestionMarkers;
-    }
+    public List<MapQuestionMarkerMod> getMapQuestionMarkers() {  return mapQuestionMarkers;    }
 
     @Override
-    public String getExerciseName() {
-        return exerciseName;
-    }
+    public String getExerciseName() { return exerciseName;    }
     @Override
     public ExerciseType getExerciseType() { return exerciseType; }
     @Override
-    public boolean isStarted() {
-        return started;
-    }
+    public boolean isStarted() {  return started;    }
     @Override
-    public void setStarted(boolean started) { }
+    public void setStarted(boolean started) {this.started = started; }
     @Override
-    public Document getExerciseComment() {
-        return exerciseComment;
-    }
+    public Document getExerciseComment() { return exerciseComment;    }
     @Override
-    public Document getExerciseStatement() {
-        return exerciseStatement;
-    }
+    public Document getExerciseStatement() {  return exerciseStatement;    }
     @Override
     public void setExerciseComment(Document document) { this.exerciseComment = document;   }
     @Override
-    public double getStatementPrefHeight() {
-        return statementPrefHeight;
-    }
+    public double getStatementPrefHeight() {    return statementPrefHeight;  }
     @Override
     public void setStatementPrefHeight(double height) { this.statementPrefHeight = height; }
+
+    @Override
+    public ExerciseModel<Document> getOriginalModel() {  return originalModel;  }
+
+    public void setOriginalModel(ExerciseModel<Document> originalModel) {  this.originalModel = originalModel; }
 
 }

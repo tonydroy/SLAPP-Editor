@@ -10,8 +10,10 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
+import slapp.editor.vertical_tree.VerticalTreeView;
 
 public class VerticalBracket extends AnchorPane {
+    private VerticalTreeView verticalTreeView;
     private Label topDragLabel;
     private Label closeLabel;
 
@@ -28,8 +30,9 @@ public class VerticalBracket extends AnchorPane {
 
 
 
-    public VerticalBracket() {
+    public VerticalBracket(VerticalTreeView verticalTreeView) {
         self = this;
+        this.verticalTreeView = verticalTreeView;
 
         topDragLabel = new Label("");
         topDragLabel.setMaxHeight(10);
@@ -93,7 +96,8 @@ public class VerticalBracket extends AnchorPane {
 
         mainPane.getChildren().add(brackPane);
         mainPane.setVgrow(brackPane, Priority.ALWAYS);
-        BottomDragResizer.makeResizable(mainPane);
+        BottomDragResizer resizer = new BottomDragResizer(verticalTreeView);
+        resizer.makeResizable(mainPane);
 
         VBox mainBox = new VBox(labelPane, mainPane);
         self.getChildren().addAll(mainBox);
@@ -138,10 +142,10 @@ public class VerticalBracket extends AnchorPane {
                 getParent().setOnDragDropped(null);
                 event.setDropCompleted(true);
 
-                relocateToGridPoint2(
-                        new Point2D(event.getSceneX(), event.getSceneY())
-                );
+                relocateToGridPoint2( new Point2D(event.getSceneX(), event.getSceneY())   );
                 self.setCursor(Cursor.DEFAULT);
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
             }
         };
 
@@ -152,6 +156,8 @@ public class VerticalBracket extends AnchorPane {
             public void handle(MouseEvent event) {
                 AnchorPane parent  = (AnchorPane) self.getParent();
                 parent.getChildren().remove(self);
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
             }
 
         });

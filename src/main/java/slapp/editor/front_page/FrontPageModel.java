@@ -27,6 +27,14 @@ public class FrontPageModel implements ExerciseModel<Document> {
     public double getStatementPrefHeight() { return 0; }
     @Override
     public void setStatementPrefHeight(double height) { }
+
+    @Override
+    public ExerciseModel<Document> getOriginalModel() { return null;  }
+
+    @Override
+    public void setOriginalModel(ExerciseModel<Document> exerciseModel) {  }
+
     @Override
     public String toString() { return ""; }
+
 }

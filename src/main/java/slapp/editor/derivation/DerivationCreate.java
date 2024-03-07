@@ -221,9 +221,9 @@ public class DerivationCreate {
         upperFieldsBox.setPadding(new Insets(20,0,20,20));
 
         String helpText = "Derivation Exercise is appropriate for any exercise that calls for a derivation as response.\n\n" +
-                "For the derivation exercise, provide the exercise statement, exercise name, and select whether there is to be a leftmost scope line, and/or a \"shelf\" beneath the top line of automatically an generated subderivation. "  +
+                "For the derivation exercise, provide the exercise statement, exercise name, and select whether there is to be a leftmost scope line, and/or a \"shelf\" beneath the top line of an automatically generated subderivation. "  +
                 "A typical natural derivation system (as chapter 6 of Symbolic Logic) selects both.  The width is the (default) percentage of the window's width allocated to this derivation.\n\n" +
-                "After that, insert setup derivation lines as appropriate.  In the ordinary case, there will be some premise lines with justification 'P' (the last sitting on a shelf), a couple of blank lines, and a conclusion line (without justification), all at scope depth 1. " +
+                "After that, insert setup derivation lines as appropriate.  In the ordinary case, there will be some premise lines with justification 'P' (the last sitting on a shelf), a blank line, and a conclusion line (without justification), all at scope depth 1. " +
                 "A line identified as a premise cannot have either its formula or justification modified; one identified as a conclusion cannot have its formula modified.  Different arrangements (as, e.g. \"fill in the justification\" exercises) are possible.";
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
@@ -285,7 +285,7 @@ public class DerivationCreate {
         stage.setTitle("Create Derivation Exercise:");
         stage.getIcons().addAll(EditorMain.icons);
         stage.setWidth(1030);
-        stage.setHeight(800);
+        stage.setHeight(840);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.initModality(Modality.WINDOW_MODAL);

@@ -308,7 +308,7 @@ public class DrvtnExpCreate {
         stage.setTitle("Create Derivation Exercise:");
         stage.getIcons().addAll(EditorMain.icons);
         stage.setWidth(1030);
-        stage.setHeight(800);
+        stage.setHeight(850);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.initModality(Modality.WINDOW_MODAL);

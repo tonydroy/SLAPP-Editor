@@ -24,6 +24,8 @@ import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
+import slapp.editor.vertical_tree.VerticalTreeExercise;
+import slapp.editor.vertical_tree.VerticalTreeModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +33,6 @@ import java.util.List;
 public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableView> {
     private MainWindow mainWindow;
     private TruthTableModel truthTableModel;
-    private TruthTableModel originalModel;
     private TruthTableView truthTableView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
@@ -41,30 +42,27 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
 
 
     //applies when table elements are set to model with rows != 0
-    public TruthTableExercise(TruthTableModel truthTableModel, MainWindow mainWindow) {
+    public TruthTableExercise(TruthTableModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
-        this.truthTableModel = truthTableModel;
+        this.truthTableModel = model;
+        if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
         this.mainView = mainWindow.getMainView();
         this.truthTableView = new TruthTableView(mainView);
         docParser = new ParseDocForTTable(truthTableModel.getUnaryOperators(), truthTableModel.getBinaryOperators());
         tableRows = truthTableModel.getTableRows();
-        this.originalModel = truthTableModel;
-
-
         setTruthTableView();
     }
 
     //applies when table elements need to be set to empty table
-    public TruthTableExercise(TruthTableModel truthTableModel, MainWindow mainWindow, boolean create) {
+    public TruthTableExercise(TruthTableModel model, MainWindow mainWindow, boolean create) {
         this.mainWindow = mainWindow;
-        this.truthTableModel = truthTableModel;
+        this.truthTableModel = model;
+        if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
         this.mainView = mainWindow.getMainView();
         this.truthTableView = new TruthTableView(mainView);
         docParser = new ParseDocForTTable(truthTableModel.getUnaryOperators(), truthTableModel.getBinaryOperators());
         tableRows = truthTableModel.getTableRows();
-        generateEmptyTableModel();                                  //** the difference
-        this.originalModel = truthTableModel;
-
+        generateEmptyTableModel();                                 //** the difference
         setTruthTableView();
     }
 
@@ -347,6 +345,7 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         RichTextArea commentRTA = truthTableView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
+        TruthTableModel originalModel = (TruthTableModel) (truthTableModel.getOriginalModel());
         originalModel.setExerciseComment(commentDocument);
         TruthTableExercise clearExercise = new TruthTableExercise(originalModel, mainWindow);
         return clearExercise;
@@ -381,6 +380,7 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
     private TruthTableModel getTruthTableExpModelFromView() {
         TruthTableModel model = new TruthTableModel();
         model.setExerciseName(truthTableView.getExerciseName());
+        model.setOriginalModel(truthTableModel.getOriginalModel());
         model.setStarted(truthTableModel.isStarted() || exerciseModified);
         model.setStatementPrefHeight(truthTableView.getExerciseStatement().getEditor().getPrefHeight());
         model.setExerciseStatement(truthTableModel.getExerciseStatement());

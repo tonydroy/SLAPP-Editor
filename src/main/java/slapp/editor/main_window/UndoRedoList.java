@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 
 public class UndoRedoList<T> extends LinkedList<T> {
-    private int maxSize = 10;
+    private int maxSize;
     private int currentIndex = 0;
 
     public UndoRedoList(int size) {

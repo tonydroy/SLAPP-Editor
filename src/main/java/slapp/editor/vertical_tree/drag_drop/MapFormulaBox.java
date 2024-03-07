@@ -4,6 +4,7 @@ import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -113,7 +114,8 @@ public class MapFormulaBox extends AnchorPane {
 
 
         formulaBox = newFormulaBoxedDRTA();
-        RightDragResizer.makeResizable(formulaBox.getRTA());
+        RightDragResizer resizer = new RightDragResizer(verticalTreeView);
+        resizer.makeResizable(formulaBox.getRTA());
 
         centerBox = new VBox(formulaBox.getBoxedRTA());
         centerBox.setAlignment(Pos.CENTER);
@@ -206,12 +208,10 @@ public class MapFormulaBox extends AnchorPane {
                 getParent().setOnDragDropped(null);
                 event.setDropCompleted(true);
 
-                relocateToGridPoint2(
-                        new Point2D(event.getSceneX(), event.getSceneY())
-                );
+                relocateToGridPoint2( new Point2D(event.getSceneX(), event.getSceneY()) );
                 self.setCursor(Cursor.DEFAULT);
-
-
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
             }
         };
 
@@ -245,11 +245,10 @@ public class MapFormulaBox extends AnchorPane {
                         if (node.getId().equals(id))
                             iterNode.remove();
                     }
-
                     iterId.remove();
                 }
-
-
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
             }
 
         });
@@ -293,30 +292,22 @@ public class MapFormulaBox extends AnchorPane {
 
     public void relocateToGridPoint (Point2D p) {
 
-        //relocates the object to a point that has been converted to
-        //scene coordinates
+        //for object dropped onto pane
         Point2D localCoords = getParent().sceneToLocal(p);
         double localY = Math.round((localCoords.getY() - 16) / 24.0) * 24.0;
 
-        relocate (
-                (int) localCoords.getX() - 44,
-                (int) (localY )
-        );
+        relocate ((int) localCoords.getX() - 44,  (int) (localY ) );
     }
 
 
     // I don't understand why both this and the following method are required to drop on line - should be same w/o offset localY??
     public void relocateToGridPoint2 (Point2D p) {
 
-        //relocates the object to a point that has been converted to
-        //scene coordinates
+        //for object moved in pane
         Point2D localCoords = getParent().sceneToLocal(p);
         double localY = Math.round((localCoords.getY() - 16) / 24.0) * 24.0 ;
 
-        relocate (
-                (int) localCoords.getX(),
-                (int) (localY )
-        );
+        relocate (  (int) localCoords.getX(), (int) (localY )    );
     }
 
 
@@ -346,11 +337,19 @@ public class MapFormulaBox extends AnchorPane {
         rta.setMaxHeight(24);
         rta.setMinHeight(24);
         rta.setPrefWidth(36);
+ //       rta.setContentAreaWidth(500);
        rta.getStylesheets().add("greenFormulaBox.css");
         rta.setPromptText("");
+ //       rta.getActionFactory().saveNow().execute(new ActionEvent());  messes up rta on reopen
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 verticalTreeView.getMainView().editorInFocus(drta, ControlType.FIELD);
+            } else {
+                if (rta.isModified()) {
+                    verticalTreeView.setUndoRedoFlag(true);
+                    verticalTreeView.setUndoRedoFlag(false);
+                    rta.getActionFactory().saveNow().execute(new ActionEvent());
+                }
             }
         });
         return boxedDRTA;
@@ -404,6 +403,7 @@ public class MapFormulaBox extends AnchorPane {
 
     public void setIdString(String idString) {
         this.idString = idString;
+        setId(idString);
     }
 
     public List<String> getmLinkIds() {

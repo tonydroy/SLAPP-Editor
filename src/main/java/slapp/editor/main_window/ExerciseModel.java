@@ -15,6 +15,8 @@ public interface ExerciseModel<T> extends Serializable {
     double getStatementPrefHeight();
     void setStatementPrefHeight(double height);
     String toString();
+    ExerciseModel<T> getOriginalModel();
+    void setOriginalModel(ExerciseModel<T> exerciseModel);
 
 }
 
