@@ -1,4 +1,4 @@
-package slapp.editor.vertical_tree;
+package slapp.editor.vert_tree_explain;
 
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
@@ -8,10 +8,9 @@ import slapp.editor.vertical_tree.object_models.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class VerticalTreeModel implements ExerciseModel<Document>, Serializable {
+public class VerticalTreeExpModel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.VERTICAL_TREE;
@@ -32,7 +31,7 @@ public class VerticalTreeModel implements ExerciseModel<Document>, Serializable 
     private List <MapQuestionMarkerMod> mapQuestionMarkers = new ArrayList<>();
 
 
-    public VerticalTreeModel(){}
+    public VerticalTreeExpModel(){}
 
 
     public void setExerciseName(String exerciseName) { this.exerciseName = exerciseName;    }

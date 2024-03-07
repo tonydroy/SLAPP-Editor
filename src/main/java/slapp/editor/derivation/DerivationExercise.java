@@ -910,8 +910,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             exerciseModified = true;
         }
 
-
-
         List<ViewLine> viewLines = derivationView.getViewLines();
         for (ViewLine viewLine : viewLines) {
             if (LineType.isContentLine(viewLine.getLineType())) {

@@ -1,4 +1,4 @@
-package slapp.editor.vertical_tree.drag_drop;
+package slapp.editor.vert_tree_explain;
 
 
 import javafx.collections.ObservableList;
@@ -18,15 +18,18 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import slapp.editor.EditorAlerts;
-import slapp.editor.vertical_tree.VTreeView;
-import slapp.editor.vertical_tree.VerticalTreeView;
+//import slapp.editor.vertical_tree.drag_drop.*;
+import slapp.editor.vertical_tree.drag_drop.DragIcon;
+import slapp.editor.vertical_tree.drag_drop.DragIconType;
+import slapp.editor.vertical_tree.drag_drop.DragContainer;
+import slapp.editor.vertical_tree.drag_drop.DraggableNode;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RootLayout extends AnchorPane {
+public class ExpRootLayout extends AnchorPane {
 
-    VerticalTreeView verticalTreeView;
+    VerticalTreeExpView verticalTreeView;
     SplitPane base_pane;
     ScrollPane scroll_pane;
     AnchorPane main_pane;
@@ -56,7 +59,7 @@ public class RootLayout extends AnchorPane {
     private EventHandler<DragEvent> mIconDragDropped = null;
     private EventHandler<DragEvent> mIconDragOverRightPane = null;
 
-    public RootLayout(VerticalTreeView verticalTreeView) {
+    public ExpRootLayout(VerticalTreeExpView verticalTreeView) {
         this.verticalTreeView = verticalTreeView;
         scroll_pane = new ScrollPane();
         top_pane = new HBox();
@@ -195,8 +198,8 @@ public class RootLayout extends AnchorPane {
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
-                        if (node instanceof TreeFormulaBox) {
-                            ((TreeFormulaBox) node).processBoxRequest(event.getButton() == MouseButton.PRIMARY);
+                        if (node instanceof ExpTreeFormulaBox) {
+                            ((ExpTreeFormulaBox) node).processBoxRequest(event.getButton() == MouseButton.PRIMARY);
                             break;
                         }
                     }
@@ -215,8 +218,8 @@ public class RootLayout extends AnchorPane {
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
-                        if (node instanceof TreeFormulaBox) {
-                            ((TreeFormulaBox) node).processStarRequest(event.getButton() == MouseButton.PRIMARY);
+                        if (node instanceof ExpTreeFormulaBox) {
+                            ((ExpTreeFormulaBox) node).processStarRequest(event.getButton() == MouseButton.PRIMARY);
                             break;
                         }
                     }
@@ -235,8 +238,8 @@ public class RootLayout extends AnchorPane {
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
-                        if (node instanceof TreeFormulaBox) {
-                            ((TreeFormulaBox) node).processAnnotationRequest(event.getButton() == MouseButton.PRIMARY);
+                        if (node instanceof ExpTreeFormulaBox) {
+                            ((ExpTreeFormulaBox) node).processAnnotationRequest(event.getButton() == MouseButton.PRIMARY);
                             break;
                         }
                     }
@@ -252,8 +255,8 @@ public class RootLayout extends AnchorPane {
         annotationPlus.setOnAction(e -> {
             ObservableList<Node> nodesList = main_pane.getChildren();
             for (Node node : nodesList) {
-                if (node instanceof TreeFormulaBox) {
-                    ((TreeFormulaBox) node).processAnnotationRequest(true);
+                if (node instanceof ExpTreeFormulaBox) {
+                    ((ExpTreeFormulaBox) node).processAnnotationRequest(true);
                 }
             }
             annotationToggle.setSelected(false);
@@ -262,8 +265,8 @@ public class RootLayout extends AnchorPane {
         annotationMinus.setOnAction(e -> {
            ObservableList<Node> nodesList = main_pane.getChildren();
            for (Node node : nodesList) {
-               if (node instanceof TreeFormulaBox) {
-                   ((TreeFormulaBox) node).processAnnotationRequest(false);
+               if (node instanceof ExpTreeFormulaBox) {
+                   ((ExpTreeFormulaBox) node).processAnnotationRequest(false);
                }
            }
             annotationToggle.setSelected(false);
@@ -275,8 +278,8 @@ public class RootLayout extends AnchorPane {
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
-                        if (node instanceof TreeFormulaBox) {
-                            ((TreeFormulaBox) node).processCircleRequest(event.getButton() == MouseButton.PRIMARY);
+                        if (node instanceof ExpTreeFormulaBox) {
+                            ((ExpTreeFormulaBox) node).processCircleRequest(event.getButton() == MouseButton.PRIMARY);
                             break;
                         }
                     }
@@ -290,8 +293,8 @@ public class RootLayout extends AnchorPane {
                 main_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, circleClickFilter);
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
-                    if (node instanceof TreeFormulaBox) {
-                        ((TreeFormulaBox) node).undoCircleRequest();
+                    if (node instanceof ExpTreeFormulaBox) {
+                        ((ExpTreeFormulaBox) node).undoCircleRequest();
                     }
                 }
             }
@@ -303,8 +306,8 @@ public class RootLayout extends AnchorPane {
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
-                        if (node instanceof TreeFormulaBox) {
-                            ((TreeFormulaBox) node).processUnderlineRequest(event.getButton() == MouseButton.PRIMARY);
+                        if (node instanceof ExpTreeFormulaBox) {
+                            ((ExpTreeFormulaBox) node).processUnderlineRequest(event.getButton() == MouseButton.PRIMARY);
                             break;
                         }
                     }
@@ -318,8 +321,8 @@ public class RootLayout extends AnchorPane {
                 main_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, underlineClickFilter);
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
-                    if (node instanceof TreeFormulaBox) {
-                        ((TreeFormulaBox) node).undoUnderlineRequest();
+                    if (node instanceof ExpTreeFormulaBox) {
+                        ((ExpTreeFormulaBox) node).undoUnderlineRequest();
                     }
                 }
             }
@@ -331,8 +334,8 @@ public class RootLayout extends AnchorPane {
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
-                        if (node instanceof MapFormulaBox) {
-                            ((MapFormulaBox) node).processMappingRequest(event.getButton() == MouseButton.PRIMARY);
+                        if (node instanceof ExpMapFormulaBox) {
+                            ((ExpMapFormulaBox) node).processMappingRequest(event.getButton() == MouseButton.PRIMARY);
                             break;
                         }
                     }
@@ -346,17 +349,17 @@ public class RootLayout extends AnchorPane {
                 KeyCode code = e.getCode();
                 if (code == KeyCode.F10) {
                     ObservableList<Node> nodesList = main_pane.getChildren();
-                    List<MapFormulaBox> formulaBoxes = new ArrayList<>();
+                    List<ExpMapFormulaBox> formulaBoxes = new ArrayList<>();
                     for (Node node : nodesList) {
-                        if (node instanceof MapFormulaBox) {
-                            MapFormulaBox mapFormulaBox = (MapFormulaBox) node;
+                        if (node instanceof ExpMapFormulaBox) {
+                            ExpMapFormulaBox mapFormulaBox = (ExpMapFormulaBox) node;
                             if (mapFormulaBox.getMapStage() > 0) {
                                 formulaBoxes.add(mapFormulaBox);
                             }
                         }
                     }
                     if (formulaBoxes.size() == 2) {
-                        ClickableMapLink mapLink = new ClickableMapLink(verticalTreeView);
+                        ExpClickableMapLink mapLink = new ExpClickableMapLink(verticalTreeView);
                         main_pane.getChildren().add(0, mapLink);
                         mapLink.bindEnds(formulaBoxes.get(0), formulaBoxes.get(1));
                         verticalTreeView.setUndoRedoFlag(true);
@@ -371,11 +374,11 @@ public class RootLayout extends AnchorPane {
                     ObservableList<Node> nodesList = main_pane.getChildren();
                     for (Node node : nodesList) {
                         if (inHierarchy(verticalTreeView.getMainView().getMainScene().focusOwnerProperty().get(), node)) {
-                            if (node instanceof MapFormulaBox) {
-                                MapFormulaBox mapFormulaBox = (MapFormulaBox) node;
+                            if (node instanceof ExpMapFormulaBox) {
+                                ExpMapFormulaBox mapFormulaBox = (ExpMapFormulaBox) node;
                                 if (mapFormulaBox.getMapStage() > 0) {
 
-                                    MapQuestionMarker mapQuestionMarker = new MapQuestionMarker(verticalTreeView);
+                                    ExpMapQuestionMarker mapQuestionMarker = new ExpMapQuestionMarker(verticalTreeView);
                                     main_pane.getChildren().add(0, mapQuestionMarker);
                                     mapQuestionMarker.bindQuestionLabel(mapFormulaBox);
                                     verticalTreeView.setUndoRedoFlag(true);
@@ -404,8 +407,8 @@ public class RootLayout extends AnchorPane {
                 main_pane.removeEventFilter(KeyEvent.KEY_PRESSED, mappingKeyFilter);
                 ObservableList<Node> nodesList = main_pane.getChildren();
                 for (Node node : nodesList) {
-                    if (node instanceof MapFormulaBox) {
-                        ((MapFormulaBox) node).undoMappingRequest();
+                    if (node instanceof ExpMapFormulaBox) {
+                        ((ExpMapFormulaBox) node).undoMappingRequest();
                     }
                 }
             }
@@ -554,7 +557,7 @@ public class RootLayout extends AnchorPane {
                     if (container.getValue("scene_coords") != null) {
 
                         if (container.getValue("type").equals(DragIconType.dashed_line.toString())) {
-                            DashedLine line = new DashedLine(verticalTreeView);
+                            ExpDashedLine line = new ExpDashedLine(verticalTreeView);
                             main_pane.getChildren().add(line);
                             Point2D cursorPoint = container.getValue("scene_coords");
                             line.relocateToGridPoint(new Point2D(cursorPoint.getX() - 28, cursorPoint.getY()));
@@ -563,7 +566,7 @@ public class RootLayout extends AnchorPane {
                         }
 
                         else if (container.getValue("type").equals(DragIconType.bracket.toString())) {
-                            VerticalBracket bracket = new VerticalBracket(verticalTreeView);
+                            ExpVerticalBracket bracket = new ExpVerticalBracket(verticalTreeView);
                             main_pane.getChildren().add(bracket);
                             Point2D cursorPoint = container.getValue("scene_coords");
                             bracket.relocateToGridPoint(new Point2D(cursorPoint.getX(), cursorPoint.getY()));
@@ -572,7 +575,7 @@ public class RootLayout extends AnchorPane {
                         }
 
                         else if (container.getValue("type").equals(DragIconType.tree_field.toString())) {
-                            TreeFormulaBox treeFormulaBox = new TreeFormulaBox(verticalTreeView);
+                            ExpTreeFormulaBox treeFormulaBox = new ExpTreeFormulaBox(verticalTreeView);
                             main_pane.getChildren().add(treeFormulaBox);
                             Point2D cursorPoint = container.getValue("scene_coords");
                             treeFormulaBox.relocateToGridPoint(new Point2D(cursorPoint.getX(), cursorPoint.getY()));
@@ -581,7 +584,7 @@ public class RootLayout extends AnchorPane {
                         }
 
                         else if (container.getValue("type").equals(DragIconType.map_field.toString())) {
-                            MapFormulaBox mapFormulaBox = new MapFormulaBox(verticalTreeView);
+                            ExpMapFormulaBox mapFormulaBox = new ExpMapFormulaBox(verticalTreeView);
                             main_pane.getChildren().add(mapFormulaBox);
                             Point2D cursorPoint = container.getValue("scene_coords");
                             mapFormulaBox.relocateToGridPoint(new Point2D(cursorPoint.getX(), cursorPoint.getY()));
@@ -634,14 +637,14 @@ public class RootLayout extends AnchorPane {
 
      //                   //	System.out.println(container.getData());
      //                  NodeLink link = new NodeLink();
-                        ClickableNodeLink link = new ClickableNodeLink(verticalTreeView);
+                        ExpClickableNodeLink link = new ExpClickableNodeLink(verticalTreeView);
 
 
                         //add our link at the top of the rendering order so it's rendered first
                         main_pane.getChildren().add(0,link);
 
-                        TreeFormulaBox source = null;
-                        TreeFormulaBox target = null;
+                        ExpTreeFormulaBox source = null;
+                        ExpTreeFormulaBox target = null;
 
                         for (Node n: main_pane.getChildren()) {
 
@@ -649,10 +652,10 @@ public class RootLayout extends AnchorPane {
                                 continue;
 
                             if (n.getId().equals(sourceId))
-                                source = (TreeFormulaBox) n;
+                                source = (ExpTreeFormulaBox) n;
 
                             if (n.getId().equals(targetId))
-                                target = (TreeFormulaBox) n;
+                                target = (ExpTreeFormulaBox) n;
 
                         }
 

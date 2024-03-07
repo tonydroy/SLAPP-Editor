@@ -22,6 +22,9 @@ import slapp.editor.truth_table.TruthTableModel;
 import slapp.editor.truth_table_explain.TruthTableExpCreate;
 import slapp.editor.truth_table_explain.TruthTableExpExercise;
 import slapp.editor.truth_table_explain.TruthTableExpModel;
+import slapp.editor.vert_tree_explain.VerticalTreeExpCreate;
+import slapp.editor.vert_tree_explain.VerticalTreeExpExercise;
+import slapp.editor.vert_tree_explain.VerticalTreeExpModel;
 import slapp.editor.vertical_tree.VerticalTreeCreate;
 import slapp.editor.vertical_tree.VerticalTreeExercise;
 import slapp.editor.vertical_tree.VerticalTreeModel;
@@ -69,6 +72,10 @@ public class TypeSelectorFactories {
             case "VerticalTreeModel": {
                 VerticalTreeModel verticalTreeModel = (VerticalTreeModel) objectModel;
                 return new VerticalTreeExercise(verticalTreeModel, mainWindow);
+            }
+            case "VerticalTreeExpModel": {
+                VerticalTreeExpModel verticalTreeExpModel = (VerticalTreeExpModel) objectModel;
+                return new VerticalTreeExpExercise(verticalTreeExpModel, mainWindow);
             }
 
             default: {
@@ -154,6 +161,15 @@ public class TypeSelectorFactories {
                 VerticalTreeCreate verticalTreeCreate = new VerticalTreeCreate(mainWindow, verticalTreeModel);
                 break;
             }
+            case "VerticalTreeExpModel": {
+                VerticalTreeExpModel verticalTreeExpModel = (VerticalTreeExpModel) objectModel;
+                if (verticalTreeExpModel.isStarted()) {
+                    EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
+                    break;
+                }
+                VerticalTreeExpCreate verticalTreeExpCreate = new VerticalTreeExpCreate(mainWindow, verticalTreeExpModel);
+                break;
+            }
 
             default: {
                 EditorAlerts.showSimpleAlert("Cannot Open", "I do not recognize this as a SLAPP exercise file.");
@@ -196,13 +212,12 @@ public class TypeSelectorFactories {
             }
             case VERTICAL_TREE: {
                 VerticalTreeCreate verticalTreeCreate = new VerticalTreeCreate(mainWindow);
-
-//                VerticalTreeExercise vTreeExercise = new VerticalTreeExercise(new VerticalTreeModel(true), mainWindow);
-       //         mainWindow.setUpExercise(vTreeExercise);
                 break;
             }
-
-
+            case VERTICAL_TREE_EXP: {
+                VerticalTreeExpCreate verticalTreeExpCreate = new VerticalTreeExpCreate(mainWindow);
+                break;
+            }
 
         }
     }

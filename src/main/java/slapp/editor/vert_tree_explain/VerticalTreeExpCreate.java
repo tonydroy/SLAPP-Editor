@@ -1,4 +1,4 @@
-package slapp.editor.vertical_tree;
+package slapp.editor.vert_tree_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
@@ -25,7 +25,6 @@ import javafx.stage.Stage;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
-import slapp.editor.ab_explain.ABexercise;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.MainWindow;
@@ -39,7 +38,7 @@ import static javafx.scene.control.ButtonType.OK;
 import static slapp.editor.vertical_tree.drag_drop.DragIconType.*;
 import static slapp.editor.vertical_tree.object_models.ObjectControlType.*;
 
-public class VerticalTreeCreate {
+public class VerticalTreeExpCreate {
     private MainWindow mainWindow;
     private TextField nameField;
     private DecoratedRTA statementDRTA;
@@ -65,12 +64,12 @@ public class VerticalTreeCreate {
 
 
 
-    public VerticalTreeCreate(MainWindow mainWindow) {
+    public VerticalTreeExpCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
-    public VerticalTreeCreate(MainWindow mainWindow, VerticalTreeModel originalModel) {
+    public VerticalTreeExpCreate(MainWindow mainWindow, VerticalTreeExpModel originalModel) {
         this(mainWindow);
 
         statementRTA.setDocument(originalModel.getExerciseStatement());
@@ -324,7 +323,7 @@ public class VerticalTreeCreate {
         }
     }
     private void viewExercise() {
-        VerticalTreeExercise exercise = new VerticalTreeExercise(extractModelFromWindow(), mainWindow);
+        VerticalTreeExpExercise exercise = new VerticalTreeExpExercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
@@ -336,7 +335,7 @@ public class VerticalTreeCreate {
     }
     private void saveExercise(boolean saveAs) {
         nameField.textProperty().addListener(nameListener);
-        VerticalTreeExercise exercise = new VerticalTreeExercise(extractModelFromWindow(), mainWindow);
+        VerticalTreeExpExercise exercise = new VerticalTreeExpExercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
@@ -348,8 +347,8 @@ public class VerticalTreeCreate {
         modified = false;
     }
 
-    private VerticalTreeModel extractModelFromWindow() {
-        VerticalTreeModel model = new VerticalTreeModel();
+    private VerticalTreeExpModel extractModelFromWindow() {
+        VerticalTreeExpModel model = new VerticalTreeExpModel();
         model.setExerciseName(nameField.getText());
 
         List<DragIconType> dragList = model.getDragIconList();

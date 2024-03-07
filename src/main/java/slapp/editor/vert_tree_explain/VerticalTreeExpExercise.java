@@ -1,4 +1,4 @@
-package slapp.editor.vertical_tree;
+package slapp.editor.vert_tree_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
@@ -6,14 +6,17 @@ import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.event.ActionEvent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -26,29 +29,30 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
 import slapp.editor.vertical_tree.drag_drop.*;
 import slapp.editor.vertical_tree.object_models.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class VerticalTreeExercise implements Exercise<VerticalTreeModel, VerticalTreeView> {
+public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, VerticalTreeExpView> {
 
     MainWindow mainWindow;
     MainWindowView mainView;
-    VerticalTreeModel verticalTreeModel;
-    VerticalTreeView verticalTreeView;
+    VerticalTreeExpModel verticalTreeExpModel;
+    VerticalTreeExpView verticalTreeExpView;
     private boolean exerciseModified = false;
-    private UndoRedoList<VerticalTreeModel> undoRedoList = new UndoRedoList<>(50);
+    private UndoRedoList<VerticalTreeExpModel> undoRedoList = new UndoRedoList<>(50);
     public BooleanProperty undoRedoFlag = new SimpleBooleanProperty();
 
 
-    public VerticalTreeExercise(VerticalTreeModel model, MainWindow mainWindow) {
+    public VerticalTreeExpExercise(VerticalTreeExpModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
-        this.verticalTreeModel = model;
+        this.verticalTreeExpModel = model;
         if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
         this.mainView = mainWindow.getMainView();
-        this.verticalTreeView = new VerticalTreeView(mainView);
+        this.verticalTreeExpView = new VerticalTreeExpView(mainView);
         setVerticalTreeView();
         undoRedoFlag.set(false);
-        undoRedoFlag.bind(verticalTreeView.undoRedoFlagProperty());
+        undoRedoFlag.bind(verticalTreeExpView.undoRedoFlagProperty());
         undoRedoFlag.addListener((ob, ov, nv) -> {
             if (nv) {
                 exerciseModified = true;
@@ -59,63 +63,63 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
     }
 
     private void setVerticalTreeView() {
-        verticalTreeView.setExerciseName(verticalTreeModel.getExerciseName());
+        verticalTreeExpView.setExerciseName(verticalTreeExpModel.getExerciseName());
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
-        statementEditor.setDocument(verticalTreeModel.getExerciseStatement());
-        verticalTreeView.setStatementPrefHeight(verticalTreeModel.getStatementPrefHeight());
+        statementEditor.setDocument(verticalTreeExpModel.getExerciseStatement());
+        verticalTreeExpView.setStatementPrefHeight(verticalTreeExpModel.getStatementPrefHeight());
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
             }
         });
-        verticalTreeView.setExerciseStatement(statementDRTA);
+        verticalTreeExpView.setExerciseStatement(statementDRTA);
 
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.setPromptText("Comment: ");
-        commentEditor.setDocument(verticalTreeModel.getExerciseComment());
+        commentEditor.setDocument(verticalTreeExpModel.getExerciseComment());
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
             }
         });
-        verticalTreeView.setExerciseComment(commentDRTA);
+        verticalTreeExpView.setExerciseComment(commentDRTA);
 
-        verticalTreeView.getUndoButton().setOnAction(e -> undoAction());
-        verticalTreeView.getRedoButton().setOnAction(e -> redoAction());
+        verticalTreeExpView.getUndoButton().setOnAction(e -> undoAction());
+        verticalTreeExpView.getRedoButton().setOnAction(e -> redoAction());
 
         populateControlBox();
-        for (DragIconType type : verticalTreeModel.getDragIconList()) {
-            verticalTreeView.getRootLayout().addDragIcon(type);
+        for (DragIconType type : verticalTreeExpModel.getDragIconList()) {
+            verticalTreeExpView.getRootLayout().addDragIcon(type);
         }
         populateMainPaneNodes();
-        verticalTreeView.initializeViewDetails();
+        verticalTreeExpView.initializeViewDetails();
     }
 
     private void populateMainPaneNodes() {
-        AnchorPane mainPane = verticalTreeView.getRootLayout().getMain_pane();
+        AnchorPane mainPane = verticalTreeExpView.getRootLayout().getMain_pane();
         mainPane.getChildren().clear();
 
-        for (VerticalBracketMod bracketMod : verticalTreeModel.getVerticalBrackets()) {
-            VerticalBracket bracket = new VerticalBracket(verticalTreeView);
+        for (VerticalBracketMod bracketMod : verticalTreeExpModel.getVerticalBrackets()) {
+            ExpVerticalBracket bracket = new ExpVerticalBracket(verticalTreeExpView);
             mainPane.getChildren().add(bracket);
             bracket.setLayoutX(bracketMod.getLayoutX());
             bracket.setLayoutY(bracketMod.getLayoutY());
             bracket.getMainPane().setPrefHeight(bracketMod.getHeight());
         }
 
-        for (DashedLineMod dlMod : verticalTreeModel.getDashedLineMods()) {
-            DashedLine dashedLine = new DashedLine(verticalTreeView);
+        for (DashedLineMod dlMod : verticalTreeExpModel.getDashedLineMods()) {
+            ExpDashedLine dashedLine = new ExpDashedLine(verticalTreeExpView);
             mainPane.getChildren().add(dashedLine);
             dashedLine.setLayoutX(dlMod.getLayoutX());
             dashedLine.setLayoutY(dlMod.getLayoutY());
             dashedLine.getMainPane().setPrefWidth(dlMod.getWidth());
         }
 
-        for (MapFormulaBoxMod mapBoxMod : verticalTreeModel.getMapFormulaBoxes()) {
-            MapFormulaBox mapFormulaBox = new MapFormulaBox(verticalTreeView);
+        for (MapFormulaBoxMod mapBoxMod : verticalTreeExpModel.getMapFormulaBoxes()) {
+            ExpMapFormulaBox mapFormulaBox = new ExpMapFormulaBox(verticalTreeExpView);
             mainPane.getChildren().add(mapFormulaBox);
             mapFormulaBox.setLayoutX(mapBoxMod.getLayoutX());
             mapFormulaBox.setLayoutY(mapBoxMod.getLayoutY());
@@ -129,8 +133,8 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
             mapBoxRTA.getActionFactory().saveNow().execute(new ActionEvent());
         }
 
-        for (TreeFormulaBoxMod treeBoxMod : verticalTreeModel.getTreeFormulaBoxes()) {
-            TreeFormulaBox treeFormulaBox = new TreeFormulaBox(verticalTreeView);
+        for (TreeFormulaBoxMod treeBoxMod : verticalTreeExpModel.getTreeFormulaBoxes()) {
+            ExpTreeFormulaBox treeFormulaBox = new ExpTreeFormulaBox(verticalTreeExpView);
             mainPane.getChildren().add(treeFormulaBox);
             treeFormulaBox.setLayoutX(treeBoxMod.getLayoutX());
             treeFormulaBox.setLayoutY(treeBoxMod.getLayoutY());
@@ -166,15 +170,15 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         }
 
         ObservableList<Node> nodesList = mainPane.getChildren();
-        for (ClickableNodeLinkMod nodeLinkMod : verticalTreeModel.getClickableNodeLinks()) {
-            ClickableNodeLink nodeLink = new ClickableNodeLink(verticalTreeView);
+        for (ClickableNodeLinkMod nodeLinkMod : verticalTreeExpModel.getClickableNodeLinks()) {
+            ExpClickableNodeLink nodeLink = new ExpClickableNodeLink(verticalTreeExpView);
             mainPane.getChildren().add(nodeLink);
             nodeLink.setId(nodeLinkMod.getIdString());
-            TreeFormulaBox source = null;
-            TreeFormulaBox target = null;
+            ExpTreeFormulaBox source = null;
+            ExpTreeFormulaBox target = null;
             for (Node node : nodesList) {
-                if (node instanceof TreeFormulaBox) {
-                    TreeFormulaBox treeBox = (TreeFormulaBox) node;
+                if (node instanceof ExpTreeFormulaBox) {
+                    ExpTreeFormulaBox treeBox = (ExpTreeFormulaBox) node;
                     if (treeBox.getIdString().equals(nodeLinkMod.getSourceId())) source = treeBox;
                     if (treeBox.getIdString().equals(nodeLinkMod.getTargetId())) target = treeBox;
                 }
@@ -183,14 +187,14 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
 
         }
 
-        for (MapQuestionMarkerMod mapQuestMod : verticalTreeModel.getMapQuestionMarkers()) {
-            MapQuestionMarker mapQuestion = new MapQuestionMarker(verticalTreeView);
+        for (MapQuestionMarkerMod mapQuestMod : verticalTreeExpModel.getMapQuestionMarkers()) {
+            ExpMapQuestionMarker mapQuestion = new ExpMapQuestionMarker(verticalTreeExpView);
             mainPane.getChildren().add(mapQuestion);
             mapQuestion.setId(mapQuestMod.getIdString());
 
             for (Node node : nodesList) {
-                if (node instanceof MapFormulaBox) {
-                    MapFormulaBox mapBox = (MapFormulaBox) node;
+                if (node instanceof ExpMapFormulaBox) {
+                    ExpMapFormulaBox mapBox = (ExpMapFormulaBox) node;
                     if (mapBox.getIdString().equals(mapQuestMod.getTargetId())) {
                         mapBox.setMapStage(mapQuestMod.getTargetMapStage());
                         mapBox.setMapXAnchors(mapQuestMod.getTargetXAnchors());
@@ -202,16 +206,16 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
             }
         }
 
-        for (ClickableMapLinkMod mapLinkMod : verticalTreeModel.getClickableMapLinks()) {
-            ClickableMapLink mapLink = new ClickableMapLink(verticalTreeView);
+        for (ClickableMapLinkMod mapLinkMod : verticalTreeExpModel.getClickableMapLinks()) {
+            ExpClickableMapLink mapLink = new ExpClickableMapLink(verticalTreeExpView);
             mainPane.getChildren().add(0, mapLink);
             mapLink.setId(mapLinkMod.getIdString());
 
-            MapFormulaBox source = null;
-            MapFormulaBox target = null;
+            ExpMapFormulaBox source = null;
+            ExpMapFormulaBox target = null;
             for (Node node : nodesList) {
-                if (node instanceof MapFormulaBox) {
-                    MapFormulaBox mapFormulaBox = (MapFormulaBox) node;
+                if (node instanceof ExpMapFormulaBox) {
+                    ExpMapFormulaBox mapFormulaBox = (ExpMapFormulaBox) node;
                     if (mapFormulaBox.getIdString().equals(mapLinkMod.getSourceId())) {
                         source = mapFormulaBox;
                         source.setMapStage(mapLinkMod.getSourceMapStage());
@@ -234,11 +238,11 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
     }
 
     private void populateControlBox() {
-        VBox controlBox = verticalTreeView.getControlBox();
-        RootLayout layout = verticalTreeView.getRootLayout();
-        ToggleGroup buttonGroup = verticalTreeView.getRootLayout().getButtonGroup();
+        VBox controlBox = verticalTreeExpView.getControlBox();
+        ExpRootLayout layout = verticalTreeExpView.getRootLayout();
+        ToggleGroup buttonGroup = verticalTreeExpView.getRootLayout().getButtonGroup();
 
-        for (ObjectControlType type : verticalTreeModel.getObjectControlList()) {
+        for (ObjectControlType type : verticalTreeExpModel.getObjectControlList()) {
             switch(type) {
 
                 case FORMULA_BOX: {
@@ -283,40 +287,40 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
 
 
     private void undoAction() {
-        VerticalTreeModel undoElement = undoRedoList.getUndoElement();
+        VerticalTreeExpModel undoElement = undoRedoList.getUndoElement();
         if (undoElement != null) {
-            verticalTreeModel = (VerticalTreeModel) SerializationUtils.clone(undoElement);
+            verticalTreeExpModel = (VerticalTreeExpModel) SerializationUtils.clone(undoElement);
             populateMainPaneNodes();
             updateUndoRedoButtons();
         }
     }
 
     private void redoAction() {
-        VerticalTreeModel redoElement = undoRedoList.getRedoElement();
+        VerticalTreeExpModel redoElement = undoRedoList.getRedoElement();
         if (redoElement != null) {
-            verticalTreeModel = (VerticalTreeModel) SerializationUtils.clone(redoElement);
+            verticalTreeExpModel = (VerticalTreeExpModel) SerializationUtils.clone(redoElement);
             populateMainPaneNodes();
             updateUndoRedoButtons();
         }
     }
 
     private void updateUndoRedoButtons() {
-        verticalTreeView.getUndoButton().setDisable(!undoRedoList.canUndo());
-        verticalTreeView.getRedoButton().setDisable(!undoRedoList.canRedo());
+        verticalTreeExpView.getUndoButton().setDisable(!undoRedoList.canUndo());
+        verticalTreeExpView.getRedoButton().setDisable(!undoRedoList.canRedo());
     }
 
     private void pushUndoRedo() {
-        VerticalTreeModel model = getVerticalTreeModelFromView();
-        VerticalTreeModel deepCopy = (VerticalTreeModel) SerializationUtils.clone(model);
+        VerticalTreeExpModel model = getVerticalTreeModelFromView();
+        VerticalTreeExpModel deepCopy = (VerticalTreeExpModel) SerializationUtils.clone(model);
         undoRedoList.push(deepCopy);
         updateUndoRedoButtons();
     }
 
 
     @Override
-    public VerticalTreeModel getExerciseModel() {  return verticalTreeModel;    }
+    public VerticalTreeExpModel getExerciseModel() {  return verticalTreeExpModel;    }
     @Override
-    public VerticalTreeView getExerciseView() {  return verticalTreeView;    }
+    public VerticalTreeExpView getExerciseView() {  return verticalTreeExpView;    }
 
     @Override
     public void saveExercise(boolean saveAs) {
@@ -327,12 +331,12 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        verticalTreeModel = getVerticalTreeModelFromView();
-        VerticalTreeExercise exercise = new VerticalTreeExercise(verticalTreeModel, mainWindow);
+        verticalTreeExpModel = getVerticalTreeModelFromView();
+        VerticalTreeExpExercise exercise = new VerticalTreeExpExercise(verticalTreeExpModel, mainWindow);
         double nodeWidth = PrintUtilities.getPageWidth();
 
         //header node
-        Label exerciseName = new Label(verticalTreeModel.getExerciseName());
+        Label exerciseName = new Label(verticalTreeExpModel.getExerciseName());
         exerciseName.setStyle("-fx-font-weight: bold;");
         HBox hbox = new HBox(exerciseName);
         hbox.setPadding(new Insets(0,0,10,0));
@@ -370,13 +374,13 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         ObservableList<Node> nodes = mainPane.getChildren();
 
         for (Node node : nodes) {
-            if (node instanceof TreeFormulaBox) {
-                TreeFormulaBox treeBox = (TreeFormulaBox) node;
+            if (node instanceof ExpTreeFormulaBox) {
+                ExpTreeFormulaBox treeBox = (ExpTreeFormulaBox) node;
                 treeBox.getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");
                 if (treeBox.getAnnotationField() != null) treeBox.getAnnotationField().setStyle("-fx-background-color: transparent");
             }
-            if (node instanceof MapFormulaBox) {
-                ((MapFormulaBox) node).getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");
+            if (node instanceof ExpMapFormulaBox) {
+                ((ExpMapFormulaBox) node).getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");
             }
         }
 
@@ -407,30 +411,30 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
     }
 
     @Override
-    public Exercise<VerticalTreeModel, VerticalTreeView> resetExercise() {
-        RichTextArea commentRTA = verticalTreeView.getExerciseComment().getEditor();
+    public Exercise<VerticalTreeExpModel, VerticalTreeExpView> resetExercise() {
+        RichTextArea commentRTA = verticalTreeExpView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
-        VerticalTreeModel originalModel = (VerticalTreeModel) (verticalTreeModel.getOriginalModel());
+        VerticalTreeExpModel originalModel = (VerticalTreeExpModel) (verticalTreeExpModel.getOriginalModel());
         originalModel.setExerciseComment(commentDocument);
-        VerticalTreeExercise clearExercise = new VerticalTreeExercise(originalModel, mainWindow);
+        VerticalTreeExpExercise clearExercise = new VerticalTreeExpExercise(originalModel, mainWindow);
         return clearExercise;
     }
 
     @Override
     public boolean isExerciseModified() {
-        RichTextArea commentEditor = verticalTreeView.getExerciseComment().getEditor();
+        RichTextArea commentEditor = verticalTreeExpView.getExerciseComment().getEditor();
         if (commentEditor.isModified()) {
             exerciseModified = true;
         }
-        ObservableList<Node> nodes = verticalTreeView.getRootLayout().getMain_pane().getChildren();
+        ObservableList<Node> nodes = verticalTreeExpView.getRootLayout().getMain_pane().getChildren();
         for (Node node : nodes) {
-            if (node instanceof TreeFormulaBox) {
-                TreeFormulaBox treeBox = (TreeFormulaBox) node;
+            if (node instanceof ExpTreeFormulaBox) {
+                ExpTreeFormulaBox treeBox = (ExpTreeFormulaBox) node;
                 if (treeBox.getFormulaBox().getRTA().isModified()) exerciseModified = true;
             }
-            if (node instanceof MapFormulaBox) {
-                MapFormulaBox mapBox = (MapFormulaBox) node;
+            if (node instanceof ExpMapFormulaBox) {
+                ExpMapFormulaBox mapBox = (ExpMapFormulaBox) node;
                 if (mapBox.getFormulaBox().getRTA().isModified()) exerciseModified = true;
             }
         }
@@ -441,33 +445,33 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
     public void setExerciseModified(boolean modified) { exerciseModified = modified; }
 
     @Override
-    public ExerciseModel<VerticalTreeModel> getExerciseModelFromView() {
+    public ExerciseModel<VerticalTreeExpModel> getExerciseModelFromView() {
         return (ExerciseModel) getVerticalTreeModelFromView();
     }
 
-    private VerticalTreeModel getVerticalTreeModelFromView() {
-        VerticalTreeModel model = new VerticalTreeModel();
+    private VerticalTreeExpModel getVerticalTreeModelFromView() {
+        VerticalTreeExpModel model = new VerticalTreeExpModel();
 
-        model.setExerciseName(verticalTreeModel.getExerciseName());
-        model.setOriginalModel(verticalTreeModel.getOriginalModel());
-        model.setDragIconList(verticalTreeModel.getDragIconList());
-        model.setObjectControlList(verticalTreeModel.getObjectControlList());
-        model.setStarted(verticalTreeModel.isStarted() || exerciseModified);
-        model.setStatementPrefHeight(verticalTreeView.getExerciseStatement().getEditor().getPrefHeight());
-        model.setExerciseStatement(verticalTreeModel.getExerciseStatement());
+        model.setExerciseName(verticalTreeExpModel.getExerciseName());
+        model.setOriginalModel(verticalTreeExpModel.getOriginalModel());
+        model.setDragIconList(verticalTreeExpModel.getDragIconList());
+        model.setObjectControlList(verticalTreeExpModel.getObjectControlList());
+        model.setStarted(verticalTreeExpModel.isStarted() || exerciseModified);
+        model.setStatementPrefHeight(verticalTreeExpView.getExerciseStatement().getEditor().getPrefHeight());
+        model.setExerciseStatement(verticalTreeExpModel.getExerciseStatement());
 
-        RichTextArea commentRTA = verticalTreeView.getExerciseComment().getEditor();
+        RichTextArea commentRTA = verticalTreeExpView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setExerciseComment(commentRTA.getDocument());
 
-        RootLayout rootLayout = verticalTreeView.getRootLayout();
+        ExpRootLayout rootLayout = verticalTreeExpView.getRootLayout();
         AnchorPane mainPane = rootLayout.getMain_pane();
         ObservableList<Node> nodesList = mainPane.getChildren();
 
         for (Node node : nodesList) {
 
-            if (node instanceof TreeFormulaBox) {
-                TreeFormulaBox originalTreeBox = (TreeFormulaBox) node;
+            if (node instanceof ExpTreeFormulaBox) {
+                ExpTreeFormulaBox originalTreeBox = (ExpTreeFormulaBox) node;
                 TreeFormulaBoxMod newTreeMod = new TreeFormulaBoxMod();
                 newTreeMod.setIdString(originalTreeBox.getIdString());
                 newTreeMod.setLayoutX(originalTreeBox.getLayoutX());
@@ -501,8 +505,8 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
                 newTreeMod.setBaseline(originalTreeBox.getBaseline());
                 model.getTreeFormulaBoxes().add(newTreeMod);
 
-            } else if (node instanceof MapFormulaBox) {
-                MapFormulaBox originalMapBox = (MapFormulaBox) node;
+            } else if (node instanceof ExpMapFormulaBox) {
+                ExpMapFormulaBox originalMapBox = (ExpMapFormulaBox) node;
                 MapFormulaBoxMod newMapMod = new MapFormulaBoxMod();
                 newMapMod.setIdString(originalMapBox.getIdString());
                 newMapMod.setLayoutX(originalMapBox.getLayoutX());
@@ -517,23 +521,23 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
 
                 model.getMapFormulaBoxes().add(newMapMod);
 
-            } else if (node instanceof VerticalBracket) {
-                VerticalBracket vBrack = (VerticalBracket) node;
+            } else if (node instanceof ExpVerticalBracket) {
+                ExpVerticalBracket vBrack = (ExpVerticalBracket) node;
                 VerticalBracketMod brack = new VerticalBracketMod(node.getLayoutX(), node.getLayoutY(), vBrack.getMainPane().getPrefHeight());
                 model.getVerticalBrackets().add(brack);
 
-            } else if (node instanceof DashedLine) {
-                DashedLine dLine = (DashedLine) node;
+            } else if (node instanceof ExpDashedLine) {
+                ExpDashedLine dLine = (ExpDashedLine) node;
                 DashedLineMod dlMod = new DashedLineMod(node.getLayoutX(), node.getLayoutY(), dLine.getMainPane().getPrefWidth());
                 model.getDashedLineMods().add(dlMod);
 
-            } else if (node instanceof ClickableNodeLink) {
-                ClickableNodeLink cLink = (ClickableNodeLink) node;
+            } else if (node instanceof ExpClickableNodeLink) {
+                ExpClickableNodeLink cLink = (ExpClickableNodeLink) node;
                 ClickableNodeLinkMod cMod = new ClickableNodeLinkMod(cLink.getIdString(), cLink.getTargetId(), cLink.getSourceId());
                 model.getClickableNodeLinks().add(cMod);
 
-            } else if (node instanceof ClickableMapLink) {
-                ClickableMapLink mapLink = (ClickableMapLink) node;
+            } else if (node instanceof ExpClickableMapLink) {
+                ExpClickableMapLink mapLink = (ExpClickableMapLink) node;
                 ClickableMapLinkMod mapLinkMod = new ClickableMapLinkMod();
                 mapLinkMod.setIdString(mapLink.getIdString());
                 mapLinkMod.setSourceId(mapLink.getSourceId()); mapLinkMod.setTargetId(mapLink.getTargetId());
@@ -541,8 +545,8 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
                 mapLinkMod.setSourceXAnchors(mapLink.getSourceXAnchors()); mapLinkMod.setTargetXAnchors(mapLink.getTargetXAnchors());
                 model.getClickableMapLinks().add(mapLinkMod);
 
-            } else if (node instanceof MapQuestionMarker) {
-                MapQuestionMarker mapQuest = (MapQuestionMarker) node;
+            } else if (node instanceof ExpMapQuestionMarker) {
+                ExpMapQuestionMarker mapQuest = (ExpMapQuestionMarker) node;
                 MapQuestionMarkerMod qMod = new MapQuestionMarkerMod(mapQuest.getIdString(), mapQuest.getTargetId(), mapQuest.getTargetMapStage(), mapQuest.getTargetXAnchors());
                 model.getMapQuestionMarkers().add(qMod);
             }  

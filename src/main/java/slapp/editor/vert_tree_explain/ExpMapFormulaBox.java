@@ -1,4 +1,4 @@
-package slapp.editor.vertical_tree.drag_drop;
+package slapp.editor.vert_tree_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
@@ -19,15 +19,18 @@ import javafx.scene.shape.Rectangle;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
-import slapp.editor.vertical_tree.VerticalTreeView;
+import slapp.editor.vertical_tree.drag_drop.DragContainer;
+import slapp.editor.vertical_tree.drag_drop.DragIconType;
+import slapp.editor.vertical_tree.drag_drop.Point2dSerial;
+import slapp.editor.vertical_tree.drag_drop.RightDragResizer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
 
-public class MapFormulaBox extends AnchorPane {
-    private VerticalTreeView verticalTreeView;
+public class ExpMapFormulaBox extends AnchorPane {
+    private VerticalTreeExpView verticalTreeView;
 
     private Label leftDragLabel;
     private Label closeLabel;
@@ -41,7 +44,7 @@ public class MapFormulaBox extends AnchorPane {
 
     private Point2D mDragOffset = new Point2D (0.0, 0.0);
 
-    private final MapFormulaBox self;
+    private final ExpMapFormulaBox self;
 
     private BoxedDRTA formulaBox;
 
@@ -61,7 +64,7 @@ public class MapFormulaBox extends AnchorPane {
     Label[] mapMarkers;
     Double[] mapXAnchors = new Double[2];
 
-    public MapFormulaBox(VerticalTreeView verticalTreeView) {
+    public ExpMapFormulaBox(VerticalTreeExpView verticalTreeView) {
         this.verticalTreeView = verticalTreeView;
         self = this;
         mapMarkers = new Label[]{new Label("|"), new Label("|")};
@@ -114,7 +117,7 @@ public class MapFormulaBox extends AnchorPane {
 
 
         formulaBox = newFormulaBoxedDRTA();
-        RightDragResizer resizer = new RightDragResizer(verticalTreeView);
+        ExpRightDragResizer resizer = new ExpRightDragResizer(verticalTreeView);
         resizer.makeResizable(formulaBox.getRTA());
 
         centerBox = new VBox(formulaBox.getBoxedRTA());

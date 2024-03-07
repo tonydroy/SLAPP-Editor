@@ -1,4 +1,4 @@
-package slapp.editor.vertical_tree;
+package slapp.editor.vert_tree_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import javafx.beans.property.BooleanProperty;
@@ -13,14 +13,13 @@ import javafx.scene.layout.VBox;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
-import slapp.editor.vertical_tree.drag_drop.RootLayout;
 
-public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
+public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
 
     private MainWindowView mainView;
     private String exerciseName = new String("");
     private BorderPane root;
-    private RootLayout rootLayout;
+    private ExpRootLayout rootLayout;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
@@ -30,10 +29,10 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
     public BooleanProperty undoRedoFlag = new SimpleBooleanProperty();
     Node exerciseControlNode;
 
-    VerticalTreeView(MainWindowView mainView) {
+    VerticalTreeExpView(MainWindowView mainView) {
         this.mainView = mainView;
         root = new BorderPane();
-        rootLayout = new RootLayout(this);
+        rootLayout = new ExpRootLayout(this);
         root.setCenter(rootLayout);
 
         undoButton = new Button("Undo");
@@ -67,7 +66,7 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
         return mainView;
     }
 
-    public RootLayout getRootLayout() {return rootLayout;}
+    public ExpRootLayout getRootLayout() {return rootLayout;}
 
     public VBox getControlBox() {  return controlBox;  }
 

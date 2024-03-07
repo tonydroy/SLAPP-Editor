@@ -9,7 +9,8 @@ public enum ExerciseType {
     SIMPLE_EDITOR("Simple editor"),
     TRUTH_TABLE("Truth table"),
     TRUTH_TABLE_EXPLAIN("Truth table explain"),
-    VERTICAL_TREE("Vertical Tree");
+    VERTICAL_TREE("Vertical Tree"),
+    VERTICAL_TREE_EXP ("Vertical Tree Explain");
 
 
     public final String label;

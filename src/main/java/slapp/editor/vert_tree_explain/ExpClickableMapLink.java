@@ -1,5 +1,4 @@
-package slapp.editor.vertical_tree.drag_drop;
-
+package slapp.editor.vert_tree_explain;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -9,7 +8,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import slapp.editor.vertical_tree.VerticalTreeView;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -17,10 +15,9 @@ import java.util.UUID;
 import static javafx.beans.binding.Bindings.add;
 import static javafx.beans.binding.Bindings.subtract;
 
+public class ExpClickableMapLink extends Pane {
 
-public class ClickableMapLink extends Pane {
-
-    VerticalTreeView verticalTreeView;
+    VerticalTreeExpView verticalTreeView;
     Line node_link;
     Line node_link1;
 
@@ -34,7 +31,7 @@ public class ClickableMapLink extends Pane {
     Double[] targetXAnchors;
 
 
-    public ClickableMapLink(VerticalTreeView verticalTreeView) {
+    public ExpClickableMapLink(VerticalTreeExpView verticalTreeView) {
         this.verticalTreeView = verticalTreeView;
         this.getStylesheets().add("/drag_drop.css");
 
@@ -67,9 +64,9 @@ public class ClickableMapLink extends Pane {
 
     }
 
-    public void bindEnds (MapFormulaBox box1, MapFormulaBox box2) {
-        MapFormulaBox source;
-        MapFormulaBox target;
+    public void bindEnds (ExpMapFormulaBox box1, ExpMapFormulaBox box2) {
+        ExpMapFormulaBox source;
+        ExpMapFormulaBox target;
 
 
         if (box1.getLayoutY() < box2.getLayoutY()) {

@@ -1,4 +1,4 @@
-package slapp.editor.vertical_tree.drag_drop;
+package slapp.editor.vert_tree_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
@@ -23,15 +23,15 @@ import slapp.editor.EditorAlerts;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
-import slapp.editor.vertical_tree.VerticalTreeView;
+import slapp.editor.vertical_tree.drag_drop.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
 
-public class TreeFormulaBox extends AnchorPane {
-    private VerticalTreeView verticalTreeView;
+public class ExpTreeFormulaBox extends AnchorPane {
+    private VerticalTreeExpView verticalTreeView;
 
     private AnchorPane top_link_handle;
     private AnchorPane bottom_link_handle;
@@ -54,7 +54,7 @@ public class TreeFormulaBox extends AnchorPane {
 
     private Point2D mDragOffset = new Point2D (0.0, 0.0);
 
-    private final TreeFormulaBox self;
+    private final ExpTreeFormulaBox self;
 
     private BoxedDRTA formulaBox;
 
@@ -94,7 +94,7 @@ public class TreeFormulaBox extends AnchorPane {
 
 
 
-    public TreeFormulaBox(VerticalTreeView verticalTreeView) {
+    public ExpTreeFormulaBox(VerticalTreeExpView verticalTreeView) {
         this.verticalTreeView = verticalTreeView;
         self = this;
         circleMarkers = new Label[]{new Label("|"), new Label("|")};
@@ -169,7 +169,7 @@ public class TreeFormulaBox extends AnchorPane {
 
 
         formulaBox = newFormulaBoxedDRTA();
-        RightDragResizer resizer = new RightDragResizer(verticalTreeView);
+        ExpRightDragResizer resizer = new ExpRightDragResizer(verticalTreeView);
         resizer.makeResizable(formulaBox.getRTA());
 
         middleBox = new VBox(formulaBox.getBoxedRTA(), linesPane);
