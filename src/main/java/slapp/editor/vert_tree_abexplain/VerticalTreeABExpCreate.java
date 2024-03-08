@@ -1,4 +1,4 @@
-package slapp.editor.vert_tree_explain;
+package slapp.editor.vert_tree_abexplain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
@@ -28,6 +28,8 @@ import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.MainWindow;
+import slapp.editor.vert_tree_abexplain.VerticalTreeABExpExercise;
+import slapp.editor.vert_tree_abexplain.VerticalTreeABExpModel;
 import slapp.editor.vertical_tree.drag_drop.DragIconType;
 import slapp.editor.vertical_tree.object_models.ObjectControlType;
 
@@ -38,13 +40,19 @@ import static javafx.scene.control.ButtonType.OK;
 import static slapp.editor.vertical_tree.drag_drop.DragIconType.*;
 import static slapp.editor.vertical_tree.object_models.ObjectControlType.*;
 
-public class VerticalTreeExpCreate {
+public class VerticalTreeABExpCreate {
     private MainWindow mainWindow;
     private TextField nameField;
     private DecoratedRTA statementDRTA;
     private RichTextArea statementRTA;
     private TextArea helpArea;
+    private TextField choiceLeadField;
+    private TextField aPromptField;
+    private TextField bPromptField;
     private ChangeListener nameListener;
+    ChangeListener choiceLeadListener;
+    ChangeListener aPromptListener;
+    ChangeListener bPromptListener;
     private boolean modified = false;
     private CheckBox treeFormulaBoxCheck;
     private CheckBox verticalBracketCheck;
@@ -64,17 +72,21 @@ public class VerticalTreeExpCreate {
 
 
 
-    public VerticalTreeExpCreate(MainWindow mainWindow) {
+    public VerticalTreeABExpCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
-    public VerticalTreeExpCreate(MainWindow mainWindow, VerticalTreeExpModel originalModel) {
+    public VerticalTreeABExpCreate(MainWindow mainWindow, VerticalTreeABExpModel originalModel) {
         this(mainWindow);
 
         statementRTA.setDocument(originalModel.getExerciseStatement());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         nameField.setText(originalModel.getExerciseName());
+        choiceLeadField.setText(originalModel.getChoiceLead());
+        aPromptField.setText(originalModel.getaPrompt());
+        bPromptField.setText(originalModel.getbPrompt());
+
         List<DragIconType> dragIconList = originalModel.getDragIconList();
         treeFormulaBoxCheck.setSelected(dragIconList.contains(tree_field));
         verticalBracketCheck.setSelected(dragIconList.contains(bracket));
@@ -122,6 +134,48 @@ public class VerticalTreeExpCreate {
         HBox nameBox = new HBox(nameLabel, nameField);
         nameBox.setAlignment(Pos.BASELINE_LEFT);
 
+        //choice fields
+        Label choiceLeadLabel = new Label("Checkbox lead: ");
+        choiceLeadLabel.setPrefWidth(95);
+        choiceLeadField  = new TextField();
+        choiceLeadField.setPromptText("(plain text)");
+        choiceLeadListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                modified = true;
+                choiceLeadField.textProperty().removeListener(choiceLeadListener);
+            }
+        };
+        choiceLeadField.textProperty().addListener(choiceLeadListener);
+
+        Label aPromptLabel = new Label("A prompt: ");
+        aPromptField  = new TextField();
+        aPromptField.setPromptText("(plain text)");
+        aPromptListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                modified = true;
+                aPromptField.textProperty().removeListener(aPromptListener);
+            }
+        };
+        aPromptField.textProperty().addListener(aPromptListener);
+
+        Label bPromptLabel = new Label("B prompt: ");
+        bPromptField  = new TextField();
+        bPromptField.setPromptText("(plain text)");
+        bPromptListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                modified = true;
+                bPromptField.textProperty().removeListener(bPromptListener);
+            }
+        };
+        bPromptField.textProperty().addListener(bPromptListener);
+
+        HBox choicesBox = new HBox(10, choiceLeadLabel, choiceLeadField, aPromptLabel, aPromptField, bPromptLabel, bPromptField);
+        choicesBox.setAlignment(Pos.CENTER_LEFT);
+
+
         //drag bar
         Label dragLabel = new Label("Drag Bar: ");
         dragLabel.setPrefWidth(100);
@@ -166,18 +220,18 @@ public class VerticalTreeExpCreate {
         HBox controlBox = new HBox(20,controlLabel, boxingFormulaCheck, circleCheck, starCheck, annotationCheck, underlineCheck, mappingCheck);
         controlBox.setAlignment(Pos.BASELINE_LEFT);
 
-        VBox fieldsBox = new VBox(15, nameBox, dragBox, controlBox);
+        VBox fieldsBox = new VBox(15, nameBox, choicesBox, dragBox, controlBox);
         fieldsBox.setPadding(new Insets(20,0, 0, 20));
 
         //center
-        String helpText = "Vertical Tree Explain Exercise is like Vertical Tree Exercise except that an explanation area is included after the tree space.  It is appropriate for any exercise that builds tree or map diagrams and requires an explanation of some sort.  As in the simple case, it is unlikely that any one exercise will include all the drag and control options -- but the different options make it possible to accommodate a wide variety of exercises.\n\n"+
-                "For this exercise, you supply the exercise name and statement.  Use checkboxes to select items that may be dragged into the work area, and then buttons for functions applied to the formula boxes."
+        String helpText = "Vertical Tree AB/Explain Exercise is like Vertical Tree Explain Exercise except that it requires a binary choice.  It is appropriate for any exercise that builds tree or map diagrams and requires a choice together with an explanation of the choice.  As in the simple cases, it is unlikely that any one exercise will include all the drag and control options -- but the different options make it possible to accommodate a wide variety of exercises.\n\n"+
+                "For this exercise, you supply the exercise name and statement.  The checkbox lead introduces the choice, and the A/B prompts label the choices.  Use checkboxes to select items that may be dragged into the work area, and then buttons for functions applied to the formula boxes."
                 ;
 
 
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(160);
+        helpArea.setPrefHeight(180);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
@@ -250,7 +304,7 @@ public class VerticalTreeExpCreate {
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
-        stage.setTitle("Create Vertical Tree Explain Exercise:");
+        stage.setTitle("Create Vertical Tree AB/Explain Exercise:");
         stage.getIcons().addAll(EditorMain.icons);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
@@ -315,6 +369,12 @@ public class VerticalTreeExpCreate {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
+            choiceLeadField.clear();
+            choiceLeadField.textProperty().addListener(choiceLeadListener);
+            aPromptField.clear();
+            aPromptField.textProperty().addListener(aPromptListener);
+            bPromptField.clear();
+            bPromptField.textProperty().addListener(bPromptListener);
             statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
             statementRTA.setDocument(new Document());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
@@ -323,7 +383,7 @@ public class VerticalTreeExpCreate {
         }
     }
     private void viewExercise() {
-        VerticalTreeExpExercise exercise = new VerticalTreeExpExercise(extractModelFromWindow(), mainWindow);
+        VerticalTreeABExpExercise exercise = new VerticalTreeABExpExercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
@@ -335,7 +395,10 @@ public class VerticalTreeExpCreate {
     }
     private void saveExercise(boolean saveAs) {
         nameField.textProperty().addListener(nameListener);
-        VerticalTreeExpExercise exercise = new VerticalTreeExpExercise(extractModelFromWindow(), mainWindow);
+        choiceLeadField.textProperty().addListener(choiceLeadListener);
+        aPromptField.textProperty().addListener(aPromptListener);
+        bPromptField.textProperty().addListener(bPromptListener);
+        VerticalTreeABExpExercise exercise = new VerticalTreeABExpExercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
@@ -347,9 +410,12 @@ public class VerticalTreeExpCreate {
         modified = false;
     }
 
-    private VerticalTreeExpModel extractModelFromWindow() {
-        VerticalTreeExpModel model = new VerticalTreeExpModel();
+    private VerticalTreeABExpModel extractModelFromWindow() {
+        VerticalTreeABExpModel model = new VerticalTreeABExpModel();
         model.setExerciseName(nameField.getText());
+        model.setChoiceLead(choiceLeadField.getText());
+        model.setaPrompt(aPromptField.getText());
+        model.setbPrompt(bPromptField.getText());
 
         List<DragIconType> dragList = model.getDragIconList();
         if (treeFormulaBoxCheck.isSelected()) dragList.add(tree_field);

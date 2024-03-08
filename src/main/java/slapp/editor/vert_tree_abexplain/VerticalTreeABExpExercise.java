@@ -1,10 +1,12 @@
-package slapp.editor.vert_tree_explain;
+package slapp.editor.vert_tree_abexplain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -13,46 +15,45 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
 import org.apache.commons.lang3.SerializationUtils;
 import slapp.editor.DiskUtilities;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
-import slapp.editor.vertical_tree.drag_drop.*;
+import slapp.editor.vert_tree_abexplain.*;
+import slapp.editor.vertical_tree.drag_drop.DragIconType;
 import slapp.editor.vertical_tree.object_models.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, VerticalTreeExpView> {
+public class VerticalTreeABExpExercise implements Exercise<VerticalTreeABExpModel, VerticalTreeABExpView> {
 
     MainWindow mainWindow;
     MainWindowView mainView;
-    VerticalTreeExpModel verticalTreeExpModel;
-    VerticalTreeExpView verticalTreeExpView;
+    VerticalTreeABExpModel verticalTreeABExpModel;
+    VerticalTreeABExpView verticalTreeABExpView;
     private boolean exerciseModified = false;
-    private UndoRedoList<VerticalTreeExpModel> undoRedoList = new UndoRedoList<>(50);
+    private UndoRedoList<VerticalTreeABExpModel> undoRedoList = new UndoRedoList<>(50);
     public BooleanProperty undoRedoFlag = new SimpleBooleanProperty();
 
 
-    public VerticalTreeExpExercise(VerticalTreeExpModel model, MainWindow mainWindow) {
+    public VerticalTreeABExpExercise(VerticalTreeABExpModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
-        this.verticalTreeExpModel = model;
+        this.verticalTreeABExpModel = model;
         if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
         this.mainView = mainWindow.getMainView();
-        this.verticalTreeExpView = new VerticalTreeExpView(mainView);
+        this.verticalTreeABExpView = new VerticalTreeABExpView(mainView);
         setVerticalTreeView();
         undoRedoFlag.set(false);
-        undoRedoFlag.bind(verticalTreeExpView.undoRedoFlagProperty());
+        undoRedoFlag.bind(verticalTreeABExpView.undoRedoFlagProperty());
         undoRedoFlag.addListener((ob, ov, nv) -> {
             if (nv) {
                 exerciseModified = true;
@@ -63,33 +64,57 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
     }
 
     private void setVerticalTreeView() {
-        verticalTreeExpView.setExerciseName(verticalTreeExpModel.getExerciseName());
+        verticalTreeABExpView.setExerciseName(verticalTreeABExpModel.getExerciseName());
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
-        statementEditor.setDocument(verticalTreeExpModel.getExerciseStatement());
-        verticalTreeExpView.setStatementPrefHeight(verticalTreeExpModel.getStatementPrefHeight());
+        statementEditor.setDocument(verticalTreeABExpModel.getExerciseStatement());
+        verticalTreeABExpView.setStatementPrefHeight(verticalTreeABExpModel.getStatementPrefHeight());
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
             }
         });
-        verticalTreeExpView.setExerciseStatement(statementDRTA);
+        verticalTreeABExpView.setExerciseStatement(statementDRTA);
 
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.setPromptText("Comment: ");
-        commentEditor.setDocument(verticalTreeExpModel.getExerciseComment());
+        commentEditor.setDocument(verticalTreeABExpModel.getExerciseComment());
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
             }
         });
-        verticalTreeExpView.setExerciseComment(commentDRTA);
+        verticalTreeABExpView.setExerciseComment(commentDRTA);
 
-        DecoratedRTA explainDRTA = verticalTreeExpView.getExplainDRTA();
+
+        verticalTreeABExpView.getChoiceLeadLabel().setText(verticalTreeABExpModel.getChoiceLead());
+        CheckBox aCheckBox = verticalTreeABExpView.getaCheckBox();
+        CheckBox bCheckBox = verticalTreeABExpView.getbCheckBox();
+        aCheckBox.setText(verticalTreeABExpModel.getaPrompt());
+        aCheckBox.setSelected(verticalTreeABExpModel.isaSelected());
+        aCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ob, Boolean ov, Boolean nv) {
+                if (nv == true) bCheckBox.setSelected(false);
+                exerciseModified = true;
+            }
+        });
+        bCheckBox.setText(verticalTreeABExpModel.getbPrompt());
+        bCheckBox.setSelected(verticalTreeABExpModel.isbSelected());
+        bCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ob, Boolean ov, Boolean nv) {
+                if (nv == true) aCheckBox.setSelected(false);
+                exerciseModified = true;
+            }
+        });
+
+
+        DecoratedRTA explainDRTA = verticalTreeABExpView.getExplainDRTA();
         RichTextArea explainEditor = explainDRTA.getEditor();
-        explainEditor.setDocument(verticalTreeExpModel.getExplainDocument());
+        explainEditor.setDocument(verticalTreeABExpModel.getExplainDocument());
         explainEditor.setPromptText("Explain:");
         explainEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(explainDRTA, ControlType.AREA);
@@ -101,39 +126,39 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
 
 
 
-        verticalTreeExpView.getUndoButton().setOnAction(e -> undoAction());
-        verticalTreeExpView.getRedoButton().setOnAction(e -> redoAction());
+        verticalTreeABExpView.getUndoButton().setOnAction(e -> undoAction());
+        verticalTreeABExpView.getRedoButton().setOnAction(e -> redoAction());
 
         populateControlBox();
-        for (DragIconType type : verticalTreeExpModel.getDragIconList()) {
-            verticalTreeExpView.getRootLayout().addDragIcon(type);
+        for (DragIconType type : verticalTreeABExpModel.getDragIconList()) {
+            verticalTreeABExpView.getRootLayout().addDragIcon(type);
         }
         populateMainPaneNodes();
-        verticalTreeExpView.initializeViewDetails();
+        verticalTreeABExpView.initializeViewDetails();
     }
 
     private void populateMainPaneNodes() {
-        AnchorPane mainPane = verticalTreeExpView.getRootLayout().getMain_pane();
+        AnchorPane mainPane = verticalTreeABExpView.getRootLayout().getMain_pane();
         mainPane.getChildren().clear();
 
-        for (VerticalBracketMod bracketMod : verticalTreeExpModel.getVerticalBrackets()) {
-            ExpVerticalBracket bracket = new ExpVerticalBracket(verticalTreeExpView);
+        for (VerticalBracketMod bracketMod : verticalTreeABExpModel.getVerticalBrackets()) {
+            ABExpVerticalBracket bracket = new ABExpVerticalBracket(verticalTreeABExpView);
             mainPane.getChildren().add(bracket);
             bracket.setLayoutX(bracketMod.getLayoutX());
             bracket.setLayoutY(bracketMod.getLayoutY());
             bracket.getMainPane().setPrefHeight(bracketMod.getHeight());
         }
 
-        for (DashedLineMod dlMod : verticalTreeExpModel.getDashedLineMods()) {
-            ExpDashedLine dashedLine = new ExpDashedLine(verticalTreeExpView);
+        for (DashedLineMod dlMod : verticalTreeABExpModel.getDashedLineMods()) {
+            ABExpDashedLine dashedLine = new ABExpDashedLine(verticalTreeABExpView);
             mainPane.getChildren().add(dashedLine);
             dashedLine.setLayoutX(dlMod.getLayoutX());
             dashedLine.setLayoutY(dlMod.getLayoutY());
             dashedLine.getMainPane().setPrefWidth(dlMod.getWidth());
         }
 
-        for (MapFormulaBoxMod mapBoxMod : verticalTreeExpModel.getMapFormulaBoxes()) {
-            ExpMapFormulaBox mapFormulaBox = new ExpMapFormulaBox(verticalTreeExpView);
+        for (MapFormulaBoxMod mapBoxMod : verticalTreeABExpModel.getMapFormulaBoxes()) {
+            ABExpMapFormulaBox mapFormulaBox = new ABExpMapFormulaBox(verticalTreeABExpView);
             mainPane.getChildren().add(mapFormulaBox);
             mapFormulaBox.setLayoutX(mapBoxMod.getLayoutX());
             mapFormulaBox.setLayoutY(mapBoxMod.getLayoutY());
@@ -147,8 +172,8 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
             mapBoxRTA.getActionFactory().saveNow().execute(new ActionEvent());
         }
 
-        for (TreeFormulaBoxMod treeBoxMod : verticalTreeExpModel.getTreeFormulaBoxes()) {
-            ExpTreeFormulaBox treeFormulaBox = new ExpTreeFormulaBox(verticalTreeExpView);
+        for (TreeFormulaBoxMod treeBoxMod : verticalTreeABExpModel.getTreeFormulaBoxes()) {
+            ABExpTreeFormulaBox treeFormulaBox = new ABExpTreeFormulaBox(verticalTreeABExpView);
             mainPane.getChildren().add(treeFormulaBox);
             treeFormulaBox.setLayoutX(treeBoxMod.getLayoutX());
             treeFormulaBox.setLayoutY(treeBoxMod.getLayoutY());
@@ -184,15 +209,15 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
         }
 
         ObservableList<Node> nodesList = mainPane.getChildren();
-        for (ClickableNodeLinkMod nodeLinkMod : verticalTreeExpModel.getClickableNodeLinks()) {
-            ExpClickableNodeLink nodeLink = new ExpClickableNodeLink(verticalTreeExpView);
+        for (ClickableNodeLinkMod nodeLinkMod : verticalTreeABExpModel.getClickableNodeLinks()) {
+            ABExpClickableNodeLink nodeLink = new ABExpClickableNodeLink(verticalTreeABExpView);
             mainPane.getChildren().add(nodeLink);
             nodeLink.setId(nodeLinkMod.getIdString());
-            ExpTreeFormulaBox source = null;
-            ExpTreeFormulaBox target = null;
+            ABExpTreeFormulaBox source = null;
+            ABExpTreeFormulaBox target = null;
             for (Node node : nodesList) {
-                if (node instanceof ExpTreeFormulaBox) {
-                    ExpTreeFormulaBox treeBox = (ExpTreeFormulaBox) node;
+                if (node instanceof ABExpTreeFormulaBox) {
+                    ABExpTreeFormulaBox treeBox = (ABExpTreeFormulaBox) node;
                     if (treeBox.getIdString().equals(nodeLinkMod.getSourceId())) source = treeBox;
                     if (treeBox.getIdString().equals(nodeLinkMod.getTargetId())) target = treeBox;
                 }
@@ -201,14 +226,14 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
 
         }
 
-        for (MapQuestionMarkerMod mapQuestMod : verticalTreeExpModel.getMapQuestionMarkers()) {
-            ExpMapQuestionMarker mapQuestion = new ExpMapQuestionMarker(verticalTreeExpView);
+        for (MapQuestionMarkerMod mapQuestMod : verticalTreeABExpModel.getMapQuestionMarkers()) {
+            ABExpMapQuestionMarker mapQuestion = new ABExpMapQuestionMarker(verticalTreeABExpView);
             mainPane.getChildren().add(mapQuestion);
             mapQuestion.setId(mapQuestMod.getIdString());
 
             for (Node node : nodesList) {
-                if (node instanceof ExpMapFormulaBox) {
-                    ExpMapFormulaBox mapBox = (ExpMapFormulaBox) node;
+                if (node instanceof ABExpMapFormulaBox) {
+                    ABExpMapFormulaBox mapBox = (ABExpMapFormulaBox) node;
                     if (mapBox.getIdString().equals(mapQuestMod.getTargetId())) {
                         mapBox.setMapStage(mapQuestMod.getTargetMapStage());
                         mapBox.setMapXAnchors(mapQuestMod.getTargetXAnchors());
@@ -220,16 +245,16 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
             }
         }
 
-        for (ClickableMapLinkMod mapLinkMod : verticalTreeExpModel.getClickableMapLinks()) {
-            ExpClickableMapLink mapLink = new ExpClickableMapLink(verticalTreeExpView);
+        for (ClickableMapLinkMod mapLinkMod : verticalTreeABExpModel.getClickableMapLinks()) {
+            ABExpClickableMapLink mapLink = new ABExpClickableMapLink(verticalTreeABExpView);
             mainPane.getChildren().add(0, mapLink);
             mapLink.setId(mapLinkMod.getIdString());
 
-            ExpMapFormulaBox source = null;
-            ExpMapFormulaBox target = null;
+            ABExpMapFormulaBox source = null;
+            ABExpMapFormulaBox target = null;
             for (Node node : nodesList) {
-                if (node instanceof ExpMapFormulaBox) {
-                    ExpMapFormulaBox mapFormulaBox = (ExpMapFormulaBox) node;
+                if (node instanceof ABExpMapFormulaBox) {
+                    ABExpMapFormulaBox mapFormulaBox = (ABExpMapFormulaBox) node;
                     if (mapFormulaBox.getIdString().equals(mapLinkMod.getSourceId())) {
                         source = mapFormulaBox;
                         source.setMapStage(mapLinkMod.getSourceMapStage());
@@ -252,11 +277,11 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
     }
 
     private void populateControlBox() {
-        VBox controlBox = verticalTreeExpView.getControlBox();
-        ExpRootLayout layout = verticalTreeExpView.getRootLayout();
-        ToggleGroup buttonGroup = verticalTreeExpView.getRootLayout().getButtonGroup();
+        VBox controlBox = verticalTreeABExpView.getControlBox();
+        ABExpRootLayout layout = verticalTreeABExpView.getRootLayout();
+        ToggleGroup buttonGroup = verticalTreeABExpView.getRootLayout().getButtonGroup();
 
-        for (ObjectControlType type : verticalTreeExpModel.getObjectControlList()) {
+        for (ObjectControlType type : verticalTreeABExpModel.getObjectControlList()) {
             switch(type) {
 
                 case FORMULA_BOX: {
@@ -301,40 +326,40 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
 
 
     private void undoAction() {
-        VerticalTreeExpModel undoElement = undoRedoList.getUndoElement();
+        VerticalTreeABExpModel undoElement = undoRedoList.getUndoElement();
         if (undoElement != null) {
-            verticalTreeExpModel = (VerticalTreeExpModel) SerializationUtils.clone(undoElement);
+            verticalTreeABExpModel = (VerticalTreeABExpModel) SerializationUtils.clone(undoElement);
             populateMainPaneNodes();
             updateUndoRedoButtons();
         }
     }
 
     private void redoAction() {
-        VerticalTreeExpModel redoElement = undoRedoList.getRedoElement();
+        VerticalTreeABExpModel redoElement = undoRedoList.getRedoElement();
         if (redoElement != null) {
-            verticalTreeExpModel = (VerticalTreeExpModel) SerializationUtils.clone(redoElement);
+            verticalTreeABExpModel = (VerticalTreeABExpModel) SerializationUtils.clone(redoElement);
             populateMainPaneNodes();
             updateUndoRedoButtons();
         }
     }
 
     private void updateUndoRedoButtons() {
-        verticalTreeExpView.getUndoButton().setDisable(!undoRedoList.canUndo());
-        verticalTreeExpView.getRedoButton().setDisable(!undoRedoList.canRedo());
+        verticalTreeABExpView.getUndoButton().setDisable(!undoRedoList.canUndo());
+        verticalTreeABExpView.getRedoButton().setDisable(!undoRedoList.canRedo());
     }
 
     private void pushUndoRedo() {
-        VerticalTreeExpModel model = getVerticalTreeModelFromView();
-        VerticalTreeExpModel deepCopy = (VerticalTreeExpModel) SerializationUtils.clone(model);
+        VerticalTreeABExpModel model = getVerticalTreeModelFromView();
+        VerticalTreeABExpModel deepCopy = (VerticalTreeABExpModel) SerializationUtils.clone(model);
         undoRedoList.push(deepCopy);
         updateUndoRedoButtons();
     }
 
 
     @Override
-    public VerticalTreeExpModel getExerciseModel() {  return verticalTreeExpModel;    }
+    public VerticalTreeABExpModel getExerciseModel() {  return verticalTreeABExpModel;    }
     @Override
-    public VerticalTreeExpView getExerciseView() {  return verticalTreeExpView;    }
+    public VerticalTreeABExpView getExerciseView() {  return verticalTreeABExpView;    }
 
     @Override
     public void saveExercise(boolean saveAs) {
@@ -345,12 +370,12 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        verticalTreeExpModel = getVerticalTreeModelFromView();
-        VerticalTreeExpExercise exercise = new VerticalTreeExpExercise(verticalTreeExpModel, mainWindow);
+        verticalTreeABExpModel = getVerticalTreeModelFromView();
+        VerticalTreeABExpExercise exercise = new VerticalTreeABExpExercise(verticalTreeABExpModel, mainWindow);
         double nodeWidth = PrintUtilities.getPageWidth();
 
         //header node
-        Label exerciseName = new Label(verticalTreeExpModel.getExerciseName());
+        Label exerciseName = new Label(verticalTreeABExpModel.getExerciseName());
         exerciseName.setStyle("-fx-font-weight: bold;");
         HBox hbox = new HBox(exerciseName);
         hbox.setPadding(new Insets(0,0,10,0));
@@ -388,21 +413,34 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
         ObservableList<Node> nodes = mainPane.getChildren();
 
         for (Node node : nodes) {
-            if (node instanceof ExpTreeFormulaBox) {
-                ExpTreeFormulaBox treeBox = (ExpTreeFormulaBox) node;
+            if (node instanceof ABExpTreeFormulaBox) {
+                ABExpTreeFormulaBox treeBox = (ABExpTreeFormulaBox) node;
                 treeBox.getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");
                 if (treeBox.getAnnotationField() != null) treeBox.getAnnotationField().setStyle("-fx-background-color: transparent");
             }
-            if (node instanceof ExpMapFormulaBox) {
-                ((ExpMapFormulaBox) node).getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");
+            if (node instanceof ABExpMapFormulaBox) {
+                ((ABExpMapFormulaBox) node).getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");
             }
         }
 
         HBox contentHBox = new HBox(mainPane);
         contentHBox.setAlignment(Pos.CENTER);
         contentHBox.setPadding(new Insets(0,0,20, 0));
-
         nodeList.add(contentHBox);
+
+        Label leaderLabel = new Label(verticalTreeABExpModel.getChoiceLead());
+        CheckBox boxA = new CheckBox(verticalTreeABExpModel.getaPrompt());
+        boxA.setSelected(verticalTreeABExpModel.isaSelected());
+        CheckBox boxB = new CheckBox(verticalTreeABExpModel.getbPrompt());
+        boxB.setSelected(verticalTreeABExpModel.isbSelected());
+        Font labelFont = new Font("Noto Serif Combo", 11);
+        leaderLabel.setFont(labelFont); boxA.setFont(labelFont); boxB.setFont(labelFont);
+
+        HBox abBox = new HBox(20);
+        abBox.setPadding(new Insets(10,10,10,0));
+        abBox.getChildren().addAll(leaderLabel, boxA, boxB);
+        nodeList.add(abBox);
+
 
         RichTextArea explanationRTA = exercise.getExerciseView().getExplainDRTA().getEditor();
         RichTextAreaSkin explanationRTASkin = ((RichTextAreaSkin) explanationRTA.getSkin());
@@ -434,32 +472,32 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
     }
 
     @Override
-    public Exercise<VerticalTreeExpModel, VerticalTreeExpView> resetExercise() {
-        RichTextArea commentRTA = verticalTreeExpView.getExerciseComment().getEditor();
+    public Exercise<VerticalTreeABExpModel, VerticalTreeABExpView> resetExercise() {
+        RichTextArea commentRTA = verticalTreeABExpView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
-        VerticalTreeExpModel originalModel = (VerticalTreeExpModel) (verticalTreeExpModel.getOriginalModel());
+        VerticalTreeABExpModel originalModel = (VerticalTreeABExpModel) (verticalTreeABExpModel.getOriginalModel());
         originalModel.setExerciseComment(commentDocument);
-        VerticalTreeExpExercise clearExercise = new VerticalTreeExpExercise(originalModel, mainWindow);
+        VerticalTreeABExpExercise clearExercise = new VerticalTreeABExpExercise(originalModel, mainWindow);
         return clearExercise;
     }
 
     @Override
     public boolean isExerciseModified() {
-        RichTextArea commentEditor = verticalTreeExpView.getExerciseComment().getEditor();
+        RichTextArea commentEditor = verticalTreeABExpView.getExerciseComment().getEditor();
         if (commentEditor.isModified()) {   exerciseModified = true;      }
 
-        RichTextArea explanationEditor = verticalTreeExpView.getExplainDRTA().getEditor();
+        RichTextArea explanationEditor = verticalTreeABExpView.getExplainDRTA().getEditor();
         if (explanationEditor.isModified()) exerciseModified = true;
 
-        ObservableList<Node> nodes = verticalTreeExpView.getRootLayout().getMain_pane().getChildren();
+        ObservableList<Node> nodes = verticalTreeABExpView.getRootLayout().getMain_pane().getChildren();
         for (Node node : nodes) {
-            if (node instanceof ExpTreeFormulaBox) {
-                ExpTreeFormulaBox treeBox = (ExpTreeFormulaBox) node;
+            if (node instanceof ABExpTreeFormulaBox) {
+                ABExpTreeFormulaBox treeBox = (ABExpTreeFormulaBox) node;
                 if (treeBox.getFormulaBox().getRTA().isModified()) exerciseModified = true;
             }
-            if (node instanceof ExpMapFormulaBox) {
-                ExpMapFormulaBox mapBox = (ExpMapFormulaBox) node;
+            if (node instanceof ABExpMapFormulaBox) {
+                ABExpMapFormulaBox mapBox = (ABExpMapFormulaBox) node;
                 if (mapBox.getFormulaBox().getRTA().isModified()) exerciseModified = true;
             }
         }
@@ -470,37 +508,43 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
     public void setExerciseModified(boolean modified) { exerciseModified = modified; }
 
     @Override
-    public ExerciseModel<VerticalTreeExpModel> getExerciseModelFromView() {
+    public ExerciseModel<VerticalTreeABExpModel> getExerciseModelFromView() {
         return (ExerciseModel) getVerticalTreeModelFromView();
     }
 
-    private VerticalTreeExpModel getVerticalTreeModelFromView() {
-        VerticalTreeExpModel model = new VerticalTreeExpModel();
+    private VerticalTreeABExpModel getVerticalTreeModelFromView() {
+        VerticalTreeABExpModel model = new VerticalTreeABExpModel();
 
-        model.setExerciseName(verticalTreeExpModel.getExerciseName());
-        model.setOriginalModel(verticalTreeExpModel.getOriginalModel());
-        model.setDragIconList(verticalTreeExpModel.getDragIconList());
-        model.setObjectControlList(verticalTreeExpModel.getObjectControlList());
-        model.setStarted(verticalTreeExpModel.isStarted() || exerciseModified);
-        model.setStatementPrefHeight(verticalTreeExpView.getExerciseStatement().getEditor().getPrefHeight());
-        model.setExerciseStatement(verticalTreeExpModel.getExerciseStatement());
+        model.setExerciseName(verticalTreeABExpModel.getExerciseName());
+        model.setOriginalModel(verticalTreeABExpModel.getOriginalModel());
+        model.setChoiceLead(verticalTreeABExpModel.getChoiceLead());
+        model.setaPrompt(verticalTreeABExpModel.getaPrompt());
+        model.setaSelected(verticalTreeABExpView.getaCheckBox().isSelected());
+        model.setbPrompt(verticalTreeABExpModel.getbPrompt());
+        model.setbSelected(verticalTreeABExpView.getbCheckBox().isSelected());
 
-        RichTextArea commentRTA = verticalTreeExpView.getExerciseComment().getEditor();
+        model.setDragIconList(verticalTreeABExpModel.getDragIconList());
+        model.setObjectControlList(verticalTreeABExpModel.getObjectControlList());
+        model.setStarted(verticalTreeABExpModel.isStarted() || exerciseModified);
+        model.setStatementPrefHeight(verticalTreeABExpView.getExerciseStatement().getEditor().getPrefHeight());
+        model.setExerciseStatement(verticalTreeABExpModel.getExerciseStatement());
+
+        RichTextArea commentRTA = verticalTreeABExpView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setExerciseComment(commentRTA.getDocument());
 
-        RichTextArea explainRTA = verticalTreeExpView.getExplainDRTA().getEditor();
+        RichTextArea explainRTA = verticalTreeABExpView.getExplainDRTA().getEditor();
         explainRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setExplainDocument(explainRTA.getDocument());
 
-        ExpRootLayout rootLayout = verticalTreeExpView.getRootLayout();
+        ABExpRootLayout rootLayout = verticalTreeABExpView.getRootLayout();
         AnchorPane mainPane = rootLayout.getMain_pane();
         ObservableList<Node> nodesList = mainPane.getChildren();
 
         for (Node node : nodesList) {
 
-            if (node instanceof ExpTreeFormulaBox) {
-                ExpTreeFormulaBox originalTreeBox = (ExpTreeFormulaBox) node;
+            if (node instanceof ABExpTreeFormulaBox) {
+                ABExpTreeFormulaBox originalTreeBox = (ABExpTreeFormulaBox) node;
                 TreeFormulaBoxMod newTreeMod = new TreeFormulaBoxMod();
                 newTreeMod.setIdString(originalTreeBox.getIdString());
                 newTreeMod.setLayoutX(originalTreeBox.getLayoutX());
@@ -534,8 +578,8 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
                 newTreeMod.setBaseline(originalTreeBox.getBaseline());
                 model.getTreeFormulaBoxes().add(newTreeMod);
 
-            } else if (node instanceof ExpMapFormulaBox) {
-                ExpMapFormulaBox originalMapBox = (ExpMapFormulaBox) node;
+            } else if (node instanceof ABExpMapFormulaBox) {
+                ABExpMapFormulaBox originalMapBox = (ABExpMapFormulaBox) node;
                 MapFormulaBoxMod newMapMod = new MapFormulaBoxMod();
                 newMapMod.setIdString(originalMapBox.getIdString());
                 newMapMod.setLayoutX(originalMapBox.getLayoutX());
@@ -550,23 +594,23 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
 
                 model.getMapFormulaBoxes().add(newMapMod);
 
-            } else if (node instanceof ExpVerticalBracket) {
-                ExpVerticalBracket vBrack = (ExpVerticalBracket) node;
+            } else if (node instanceof ABExpVerticalBracket) {
+                ABExpVerticalBracket vBrack = (ABExpVerticalBracket) node;
                 VerticalBracketMod brack = new VerticalBracketMod(node.getLayoutX(), node.getLayoutY(), vBrack.getMainPane().getPrefHeight());
                 model.getVerticalBrackets().add(brack);
 
-            } else if (node instanceof ExpDashedLine) {
-                ExpDashedLine dLine = (ExpDashedLine) node;
+            } else if (node instanceof ABExpDashedLine) {
+                ABExpDashedLine dLine = (ABExpDashedLine) node;
                 DashedLineMod dlMod = new DashedLineMod(node.getLayoutX(), node.getLayoutY(), dLine.getMainPane().getPrefWidth());
                 model.getDashedLineMods().add(dlMod);
 
-            } else if (node instanceof ExpClickableNodeLink) {
-                ExpClickableNodeLink cLink = (ExpClickableNodeLink) node;
+            } else if (node instanceof ABExpClickableNodeLink) {
+                ABExpClickableNodeLink cLink = (ABExpClickableNodeLink) node;
                 ClickableNodeLinkMod cMod = new ClickableNodeLinkMod(cLink.getIdString(), cLink.getTargetId(), cLink.getSourceId());
                 model.getClickableNodeLinks().add(cMod);
 
-            } else if (node instanceof ExpClickableMapLink) {
-                ExpClickableMapLink mapLink = (ExpClickableMapLink) node;
+            } else if (node instanceof ABExpClickableMapLink) {
+                ABExpClickableMapLink mapLink = (ABExpClickableMapLink) node;
                 ClickableMapLinkMod mapLinkMod = new ClickableMapLinkMod();
                 mapLinkMod.setIdString(mapLink.getIdString());
                 mapLinkMod.setSourceId(mapLink.getSourceId()); mapLinkMod.setTargetId(mapLink.getTargetId());
@@ -574,8 +618,8 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
                 mapLinkMod.setSourceXAnchors(mapLink.getSourceXAnchors()); mapLinkMod.setTargetXAnchors(mapLink.getTargetXAnchors());
                 model.getClickableMapLinks().add(mapLinkMod);
 
-            } else if (node instanceof ExpMapQuestionMarker) {
-                ExpMapQuestionMarker mapQuest = (ExpMapQuestionMarker) node;
+            } else if (node instanceof ABExpMapQuestionMarker) {
+                ABExpMapQuestionMarker mapQuest = (ABExpMapQuestionMarker) node;
                 MapQuestionMarkerMod qMod = new MapQuestionMarkerMod(mapQuest.getIdString(), mapQuest.getTargetId(), mapQuest.getTargetMapStage(), mapQuest.getTargetXAnchors());
                 model.getMapQuestionMarkers().add(qMod);
             }  

@@ -1,4 +1,4 @@
-package slapp.editor.vert_tree_explain;
+package slapp.editor.vert_tree_abexplain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import javafx.beans.property.BooleanProperty;
@@ -6,24 +6,29 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
+import slapp.editor.vert_tree_abexplain.ABExpRootLayout;
 
-public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
+public class VerticalTreeABExpView implements ExerciseView<DecoratedRTA> {
 
     private MainWindowView mainView;
     private String exerciseName = new String("");
+    private Label choiceLeadLabel = new Label();
+    private CheckBox aCheckBox = new CheckBox();
+    private CheckBox bCheckBox = new CheckBox();
+    private HBox choiceBox;
     private BorderPane root;
-    private ExpRootLayout rootLayout;
+    private ABExpRootLayout rootLayout;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
@@ -34,12 +39,19 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
     public BooleanProperty undoRedoFlag = new SimpleBooleanProperty();
     Node exerciseControlNode;
 
-    VerticalTreeExpView(MainWindowView mainView) {
+    VerticalTreeABExpView(MainWindowView mainView) {
         this.mainView = mainView;
-        root = new BorderPane();
-        rootLayout = new ExpRootLayout(this);
 
-        VBox contentBox = new VBox(10, rootLayout, explainDRTA.getEditor());
+        Font labelFont = new Font("Noto Serif Combo", 11);
+        choiceLeadLabel.setFont(labelFont); aCheckBox.setFont(labelFont); bCheckBox.setFont(labelFont);
+        choiceBox = new HBox(20, choiceLeadLabel, aCheckBox, bCheckBox);
+        choiceBox.setPadding(new Insets(7,7,7,10));
+        choiceBox.setStyle("-fx-border-color: lightgrey; -fx-background-color: white;");
+
+        root = new BorderPane();
+        rootLayout = new ABExpRootLayout(this);
+
+        VBox contentBox = new VBox(10, rootLayout, choiceBox, explainDRTA.getEditor());
         root.setCenter(contentBox);
 
         undoButton = new Button("Undo");
@@ -79,7 +91,7 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
         return mainView;
     }
 
-    public ExpRootLayout getRootLayout() {return rootLayout;}
+    public ABExpRootLayout getRootLayout() {return rootLayout;}
 
     public VBox getControlBox() {  return controlBox;  }
 
@@ -94,6 +106,12 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
     public void setUndoRedoFlag(boolean undoRedoFlag) {    this.undoRedoFlag.set(undoRedoFlag);    }
 
     public DecoratedRTA getExplainDRTA() { return explainDRTA; }
+
+    public Label getChoiceLeadLabel() { return choiceLeadLabel;  }
+
+    public CheckBox getaCheckBox() {  return aCheckBox;  }
+
+    public CheckBox getbCheckBox() {  return bCheckBox;  }
 
     @Override
     public String getExerciseName() { return exerciseName; }
@@ -150,7 +168,7 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
 
     @Override
     public double getContentFixedHeight() {
-        return 50;
+        return 70;
     }
 
     @Override

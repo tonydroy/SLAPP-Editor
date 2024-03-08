@@ -10,7 +10,8 @@ public enum ExerciseType {
     TRUTH_TABLE("Truth table"),
     TRUTH_TABLE_EXPLAIN("Truth table explain"),
     VERTICAL_TREE("Vertical Tree"),
-    VERTICAL_TREE_EXP ("Vertical Tree Explain");
+    VERTICAL_TREE_EXP ("Vertical Tree Explain"),
+    VERTICAL_TREE_ABEXP ("Vertical Tree AB/Explain");
 
 
     public final String label;

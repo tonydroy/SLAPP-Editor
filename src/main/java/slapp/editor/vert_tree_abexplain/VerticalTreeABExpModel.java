@@ -1,4 +1,4 @@
-package slapp.editor.vert_tree_explain;
+package slapp.editor.vert_tree_abexplain;
 
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VerticalTreeExpModel implements ExerciseModel<Document>, Serializable {
+public class VerticalTreeABExpModel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.VERTICAL_TREE;
@@ -29,10 +29,15 @@ public class VerticalTreeExpModel implements ExerciseModel<Document>, Serializab
     private List<ClickableNodeLinkMod> clickableNodeLinks = new ArrayList<>();
     private List<ClickableMapLinkMod> clickableMapLinks = new ArrayList<>();
     private List <MapQuestionMarkerMod> mapQuestionMarkers = new ArrayList<>();
+    private String choiceLead = new String("");
+    private String aPrompt = new String("");
+    private boolean aSelected = false;
+    private String bPrompt = new String("");
+    private boolean bSelected = false;
     private Document explainDocument = new Document();
 
 
-    public VerticalTreeExpModel(){}
+    public VerticalTreeABExpModel(){}
 
 
     public void setExerciseName(String exerciseName) { this.exerciseName = exerciseName;    }
@@ -42,6 +47,27 @@ public class VerticalTreeExpModel implements ExerciseModel<Document>, Serializab
     public void setExplainDocument(Document explainDocument) {this.explainDocument = explainDocument; }
 
     public Document getExplainDocument() {  return explainDocument;  }
+
+    public void setChoiceLead(String choiceLead) {
+        this.choiceLead = choiceLead;
+    }
+
+    public void setaPrompt(String aPrompt) {
+        this.aPrompt = aPrompt;
+    }
+
+    public void setaSelected(boolean aSelected) {
+        this.aSelected = aSelected;
+    }
+
+    public void setbPrompt(String bPrompt) {
+        this.bPrompt = bPrompt;
+    }
+
+    public void setbSelected(boolean bSelected) {
+        this.bSelected = bSelected;
+    }
+
 
     public List<DragIconType> getDragIconList() { return dragIconList;    }
 
@@ -64,6 +90,11 @@ public class VerticalTreeExpModel implements ExerciseModel<Document>, Serializab
     public List<ClickableMapLinkMod> getClickableMapLinks() {  return clickableMapLinks;   }
 
     public List<MapQuestionMarkerMod> getMapQuestionMarkers() {  return mapQuestionMarkers;    }
+    public String getChoiceLead() {return choiceLead; }
+    public String getaPrompt() { return aPrompt; }
+    public boolean isaSelected() { return aSelected; }
+    public String getbPrompt() { return bPrompt; }
+    public boolean isbSelected() { return bSelected; }
 
     @Override
     public String getExerciseName() { return exerciseName;    }
