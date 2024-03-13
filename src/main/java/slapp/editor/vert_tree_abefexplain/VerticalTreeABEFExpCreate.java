@@ -1,4 +1,4 @@
-package slapp.editor.vert_tree_abexplain;
+package slapp.editor.vert_tree_abefexplain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
@@ -28,8 +28,8 @@ import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.MainWindow;
-import slapp.editor.vert_tree_abexplain.VerticalTreeABExpExercise;
-import slapp.editor.vert_tree_abexplain.VerticalTreeABExpModel;
+import slapp.editor.vert_tree_abefexplain.VerticalTreeABEFExpExercise;
+import slapp.editor.vert_tree_abefexplain.VerticalTreeABEFExpModel;
 import slapp.editor.vertical_tree.drag_drop.DragIconType;
 import slapp.editor.vertical_tree.object_models.ObjectControlType;
 
@@ -40,19 +40,25 @@ import static javafx.scene.control.ButtonType.OK;
 import static slapp.editor.vertical_tree.drag_drop.DragIconType.*;
 import static slapp.editor.vertical_tree.object_models.ObjectControlType.*;
 
-public class VerticalTreeABExpCreate {
+public class VerticalTreeABEFExpCreate {
     private MainWindow mainWindow;
     private TextField nameField;
     private DecoratedRTA statementDRTA;
     private RichTextArea statementRTA;
     private TextArea helpArea;
-    private TextField choiceLeadField;
+    private TextField abChoiceLeadField;
     private TextField aPromptField;
     private TextField bPromptField;
+    private TextField efChoiceLeadField;
+    private TextField ePromptField;
+    private TextField fPromptField;
     private ChangeListener nameListener;
-    ChangeListener choiceLeadListener;
+    ChangeListener abChoiceLeadListener;
     ChangeListener aPromptListener;
     ChangeListener bPromptListener;
+    ChangeListener efChoiceLeadListener;
+    ChangeListener ePromptListener;
+    ChangeListener fPromptListener;
     private boolean modified = false;
     private CheckBox treeFormulaBoxCheck;
     private CheckBox verticalBracketCheck;
@@ -72,20 +78,23 @@ public class VerticalTreeABExpCreate {
 
 
 
-    public VerticalTreeABExpCreate(MainWindow mainWindow) {
+    public VerticalTreeABEFExpCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
-    public VerticalTreeABExpCreate(MainWindow mainWindow, VerticalTreeABExpModel originalModel) {
+    public VerticalTreeABEFExpCreate(MainWindow mainWindow, VerticalTreeABEFExpModel originalModel) {
         this(mainWindow);
 
         statementRTA.setDocument(originalModel.getExerciseStatement());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         nameField.setText(originalModel.getExerciseName());
-        choiceLeadField.setText(originalModel.getChoiceLead());
+        abChoiceLeadField.setText(originalModel.getABChoiceLead());
+        efChoiceLeadField.setText(originalModel.getEFChoiceLead());
         aPromptField.setText(originalModel.getaPrompt());
         bPromptField.setText(originalModel.getbPrompt());
+        ePromptField.setText(originalModel.getePrompt());
+        fPromptField.setText(originalModel.getfPrompt());
 
         List<DragIconType> dragIconList = originalModel.getDragIconList();
         treeFormulaBoxCheck.setSelected(dragIconList.contains(tree_field));
@@ -120,7 +129,7 @@ public class VerticalTreeABExpCreate {
 
         //name
         Label nameLabel = new Label("Exercise Name: ");
-        nameLabel.setPrefWidth(100);
+        nameLabel.setPrefWidth(120);
         nameField  = new TextField();
         nameField.setPromptText("(plain text)");
         nameListener = new ChangeListener() {
@@ -135,18 +144,18 @@ public class VerticalTreeABExpCreate {
         nameBox.setAlignment(Pos.BASELINE_LEFT);
 
         //choice fields
-        Label choiceLeadLabel = new Label("Checkbox lead: ");
-        choiceLeadLabel.setPrefWidth(95);
-        choiceLeadField  = new TextField();
-        choiceLeadField.setPromptText("(plain text)");
-        choiceLeadListener = new ChangeListener() {
+        Label abChoiceLeadLabel = new Label("AB checkbox lead: ");
+        abChoiceLeadLabel.setPrefWidth(120);
+        abChoiceLeadField  = new TextField();
+        abChoiceLeadField.setPromptText("(plain text)");
+        abChoiceLeadListener = new ChangeListener() {
             @Override
             public void changed(ObservableValue ob, Object ov, Object nv) {
                 modified = true;
-                choiceLeadField.textProperty().removeListener(choiceLeadListener);
+                abChoiceLeadField.textProperty().removeListener(abChoiceLeadListener);
             }
         };
-        choiceLeadField.textProperty().addListener(choiceLeadListener);
+        abChoiceLeadField.textProperty().addListener(abChoiceLeadListener);
 
         Label aPromptLabel = new Label("A prompt: ");
         aPromptField  = new TextField();
@@ -172,8 +181,49 @@ public class VerticalTreeABExpCreate {
         };
         bPromptField.textProperty().addListener(bPromptListener);
 
-        HBox choicesBox = new HBox(10, choiceLeadLabel, choiceLeadField, aPromptLabel, aPromptField, bPromptLabel, bPromptField);
-        choicesBox.setAlignment(Pos.CENTER_LEFT);
+        Label efChoiceLeadLabel = new Label("EF checkbox lead: ");
+        efChoiceLeadLabel.setPrefWidth(120);
+        efChoiceLeadField  = new TextField();
+        efChoiceLeadField.setPromptText("(plain text)");
+        efChoiceLeadListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                modified = true;
+                efChoiceLeadField.textProperty().removeListener(efChoiceLeadListener);
+            }
+        };
+        efChoiceLeadField.textProperty().addListener(efChoiceLeadListener);
+
+        Label ePromptLabel = new Label("E prompt: ");
+        ePromptField  = new TextField();
+        ePromptField.setPromptText("(plain text)");
+        ePromptListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                modified = true;
+                ePromptField.textProperty().removeListener(ePromptListener);
+            }
+        };
+        ePromptField.textProperty().addListener(ePromptListener);
+
+        Label fPromptLabel = new Label("F prompt: ");
+        fPromptField  = new TextField();
+        fPromptField.setPromptText("(plain text)");
+        fPromptListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                modified = true;
+                fPromptField.textProperty().removeListener(fPromptListener);
+            }
+        };
+        fPromptField.textProperty().addListener(fPromptListener);
+
+
+
+        HBox choicesBox1 = new HBox(10, abChoiceLeadLabel, abChoiceLeadField, aPromptLabel, aPromptField, bPromptLabel, bPromptField);
+        choicesBox1.setAlignment(Pos.CENTER_LEFT);
+        HBox choicesBox2 = new HBox(10, efChoiceLeadLabel, efChoiceLeadField, ePromptLabel, ePromptField, fPromptLabel, fPromptField);
+        choicesBox2.setAlignment(Pos.CENTER_LEFT);
 
 
         //drag bar
@@ -220,12 +270,12 @@ public class VerticalTreeABExpCreate {
         HBox controlBox = new HBox(20,controlLabel, boxingFormulaCheck, circleCheck, starCheck, annotationCheck, underlineCheck, mappingCheck);
         controlBox.setAlignment(Pos.BASELINE_LEFT);
 
-        VBox fieldsBox = new VBox(15, nameBox, choicesBox, dragBox, controlBox);
+        VBox fieldsBox = new VBox(15, nameBox, choicesBox1, choicesBox2, dragBox, controlBox);
         fieldsBox.setPadding(new Insets(20,0, 0, 20));
 
         //center
-        String helpText = "Vertical Tree AB/Explain Exercise is like Vertical Tree Explain Exercise except that it requires a binary choice.  It is appropriate for any exercise that builds tree or map diagrams and requires a choice together with an explanation of the choice.  As in the simple cases, it is unlikely that any one exercise will include all the drag and control options -- but the different options make it possible to accommodate a wide variety of exercises.\n\n"+
-                "For this exercise, you supply the exercise name and statement.  The checkbox lead introduces the choice, and the A/B prompts label the choices.  Use checkboxes to select items that may be dragged into the work area, and then buttons for functions applied to the formula boxes."
+        String helpText = "Vertical Tree AB/EF Explain Exercise is like Vertical Tree AB Explain Exercise except that it requires a pair of binary choices.  It is appropriate for any exercise that builds tree or map diagrams and has two choices together with an explanation.  As in the simple cases, it is unlikely that any one exercise will include all the drag and control options -- but the different options make it possible to accommodate a wide variety of exercises.\n\n"+
+                "For this exercise, you supply the exercise name and statement.  The checkbox leads introduce the choices, and the A/B E/F prompts label the choices.  Use checkboxes to select items that may be dragged into the work area, and then buttons for functions applied to the formula boxes."
                 ;
 
 
@@ -304,7 +354,7 @@ public class VerticalTreeABExpCreate {
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
-        stage.setTitle("Create Vertical Tree AB Explain Exercise:");
+        stage.setTitle("Create Vertical Tree AB/EF Explain Exercise:");
         stage.getIcons().addAll(EditorMain.icons);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
@@ -369,12 +419,20 @@ public class VerticalTreeABExpCreate {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-            choiceLeadField.clear();
-            choiceLeadField.textProperty().addListener(choiceLeadListener);
+            abChoiceLeadField.clear();
+            abChoiceLeadField.textProperty().addListener(abChoiceLeadListener);
             aPromptField.clear();
             aPromptField.textProperty().addListener(aPromptListener);
             bPromptField.clear();
             bPromptField.textProperty().addListener(bPromptListener);
+
+            efChoiceLeadField.clear();
+            efChoiceLeadField.textProperty().addListener(efChoiceLeadListener);
+            ePromptField.clear();
+            ePromptField.textProperty().addListener(ePromptListener);
+            fPromptField.clear();
+            fPromptField.textProperty().addListener(fPromptListener);
+
             statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
             statementRTA.setDocument(new Document());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
@@ -383,7 +441,7 @@ public class VerticalTreeABExpCreate {
         }
     }
     private void viewExercise() {
-        VerticalTreeABExpExercise exercise = new VerticalTreeABExpExercise(extractModelFromWindow(), mainWindow);
+        VerticalTreeABEFExpExercise exercise = new VerticalTreeABEFExpExercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
@@ -395,10 +453,16 @@ public class VerticalTreeABExpCreate {
     }
     private void saveExercise(boolean saveAs) {
         nameField.textProperty().addListener(nameListener);
-        choiceLeadField.textProperty().addListener(choiceLeadListener);
+
+        abChoiceLeadField.textProperty().addListener(abChoiceLeadListener);
         aPromptField.textProperty().addListener(aPromptListener);
         bPromptField.textProperty().addListener(bPromptListener);
-        VerticalTreeABExpExercise exercise = new VerticalTreeABExpExercise(extractModelFromWindow(), mainWindow);
+        efChoiceLeadField.textProperty().addListener(efChoiceLeadListener);
+        ePromptField.textProperty().addListener(ePromptListener);
+        fPromptField.textProperty().addListener(fPromptListener);
+
+
+        VerticalTreeABEFExpExercise exercise = new VerticalTreeABEFExpExercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
@@ -410,12 +474,16 @@ public class VerticalTreeABExpCreate {
         modified = false;
     }
 
-    private VerticalTreeABExpModel extractModelFromWindow() {
-        VerticalTreeABExpModel model = new VerticalTreeABExpModel();
+    private VerticalTreeABEFExpModel extractModelFromWindow() {
+        VerticalTreeABEFExpModel model = new VerticalTreeABEFExpModel();
         model.setExerciseName(nameField.getText());
-        model.setChoiceLead(choiceLeadField.getText());
+
+        model.setABChoiceLead(abChoiceLeadField.getText());
         model.setaPrompt(aPromptField.getText());
         model.setbPrompt(bPromptField.getText());
+        model.setEFChoiceLead(efChoiceLeadField.getText());
+        model.setePrompt(ePromptField.getText());
+        model.setfPrompt(fPromptField.getText());
 
         List<DragIconType> dragList = model.getDragIconList();
         if (treeFormulaBoxCheck.isSelected()) dragList.add(tree_field);

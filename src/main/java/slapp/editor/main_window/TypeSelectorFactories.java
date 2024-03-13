@@ -22,6 +22,9 @@ import slapp.editor.truth_table.TruthTableModel;
 import slapp.editor.truth_table_explain.TruthTableExpCreate;
 import slapp.editor.truth_table_explain.TruthTableExpExercise;
 import slapp.editor.truth_table_explain.TruthTableExpModel;
+import slapp.editor.vert_tree_abefexplain.VerticalTreeABEFExpCreate;
+import slapp.editor.vert_tree_abefexplain.VerticalTreeABEFExpExercise;
+import slapp.editor.vert_tree_abefexplain.VerticalTreeABEFExpModel;
 import slapp.editor.vert_tree_abexplain.VerticalTreeABExpCreate;
 import slapp.editor.vert_tree_abexplain.VerticalTreeABExpExercise;
 import slapp.editor.vert_tree_abexplain.VerticalTreeABExpModel;
@@ -83,6 +86,10 @@ public class TypeSelectorFactories {
             case "VerticalTreeABExpModel": {
                 VerticalTreeABExpModel verticalTreeABExpModel = (VerticalTreeABExpModel) objectModel;
                 return new VerticalTreeABExpExercise(verticalTreeABExpModel, mainWindow);
+            }
+            case "VerticalTreeABEFExpModel": {
+                VerticalTreeABEFExpModel verticalTreeABEFExpModel = (VerticalTreeABEFExpModel) objectModel;
+                return new VerticalTreeABEFExpExercise(verticalTreeABEFExpModel, mainWindow);
             }
 
             default: {
@@ -186,6 +193,15 @@ public class TypeSelectorFactories {
                 VerticalTreeABExpCreate verticalTreeABExpCreate = new VerticalTreeABExpCreate(mainWindow, verticalTreeABExpModel);
                 break;
             }
+            case "VerticalTreeABEFExpModel": {
+                VerticalTreeABEFExpModel verticalTreeABEFExpModel = (VerticalTreeABEFExpModel) objectModel;
+                if (verticalTreeABEFExpModel.isStarted()) {
+                    EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
+                    break;
+                }
+                VerticalTreeABEFExpCreate verticalTreeABEFExpCreate = new VerticalTreeABEFExpCreate(mainWindow, verticalTreeABEFExpModel);
+                break;
+            }
 
             default: {
                 EditorAlerts.showSimpleAlert("Cannot Open", "I do not recognize this as a SLAPP exercise file.");
@@ -222,7 +238,7 @@ public class TypeSelectorFactories {
                 TruthTableCreate truthTableCreate = new TruthTableCreate(mainWindow);
                 break;
             }
-            case TRUTH_TABLE_EXPLAIN: {
+            case TRUTH_TABLE_ABEXP: {
                 TruthTableExpCreate truthTableExpCreate = new TruthTableExpCreate(mainWindow);
                 break;
             }
@@ -236,6 +252,10 @@ public class TypeSelectorFactories {
             }
             case VERTICAL_TREE_ABEXP: {
                 VerticalTreeABExpCreate verticalTreeABExpCreate = new VerticalTreeABExpCreate(mainWindow);
+                break;
+            }
+            case VERTICAL_TREE_ABEFEXP: {
+                VerticalTreeABEFExpCreate verticalTreeABEFExpCreate = new VerticalTreeABEFExpCreate(mainWindow);
                 break;
             }
 

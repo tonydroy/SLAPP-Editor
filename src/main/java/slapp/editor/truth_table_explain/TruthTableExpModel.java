@@ -6,13 +6,12 @@ import slapp.editor.main_window.ExerciseType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TruthTableExpModel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
-    private ExerciseType exerciseType = ExerciseType.TRUTH_TABLE_EXPLAIN;
+    private ExerciseType exerciseType = ExerciseType.TRUTH_TABLE_ABEXP;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
     private double statementPrefHeight = 80;

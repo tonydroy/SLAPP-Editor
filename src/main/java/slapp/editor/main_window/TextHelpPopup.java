@@ -1,7 +1,6 @@
 package slapp.editor.main_window;
 
 import javafx.concurrent.Worker;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -143,7 +142,7 @@ static {
                 break;
             }
 
-            case TRUTH_TABLE_EXPLAIN: { }
+            case TRUTH_TABLE_ABEXP: { }
             case TRUTH_TABLE: {
                 showHelp(truthTables);
                 break;

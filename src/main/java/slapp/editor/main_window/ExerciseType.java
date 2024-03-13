@@ -8,10 +8,11 @@ public enum ExerciseType {
     DRVTN_EXP("Derivation explain"),
     SIMPLE_EDITOR("Simple editor"),
     TRUTH_TABLE("Truth table"),
-    TRUTH_TABLE_EXPLAIN("Truth table explain"),
+    TRUTH_TABLE_ABEXP("Truth table AB explain"),
     VERTICAL_TREE("Vertical Tree"),
     VERTICAL_TREE_EXP ("Vertical Tree Explain"),
-    VERTICAL_TREE_ABEXP ("Vertical Tree AB/Explain");
+    VERTICAL_TREE_ABEXP ("Vertical Tree AB Explain"),
+    VERTICAL_TREE_ABEFEXP ("Vertical Tree AB/EF Explain");
 
 
     public final String label;
