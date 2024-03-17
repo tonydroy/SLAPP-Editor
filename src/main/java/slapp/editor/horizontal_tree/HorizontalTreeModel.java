@@ -8,58 +8,49 @@ import java.io.Serializable;
 
 public class HorizontalTreeModel implements ExerciseModel<Document>, Serializable {
 
-    @Override
-    public String getExerciseName() {
-        return null;
-    }
+    private String exerciseName = new String("");
+    private ExerciseType exerciseType = ExerciseType.HORIZONTAL_TREE;
+    private ExerciseModel<Document> originalModel = null;
+    private boolean started = false;
+    private double statementPrefHeight = 80;
+    private Document exerciseStatement = new Document();
+    private Document exerciseComment = new Document();
+    private Document explainDocument = new Document();
+
+    public Document getExplainDocument() {return explainDocument; }
 
     @Override
-    public ExerciseType getExerciseType() {
-        return null;
-    }
+    public String getExerciseName() { return exerciseName; }
 
     @Override
-    public boolean isStarted() {
-        return false;
-    }
+    public ExerciseType getExerciseType() { return exerciseType;  }
 
     @Override
-    public void setStarted(boolean started) {
-
-    }
+    public boolean isStarted() { return started; }
 
     @Override
-    public Document getExerciseComment() {
-        return null;
-    }
+    public void setStarted(boolean started) { this.started = started;  }
 
     @Override
-    public Document getExerciseStatement() {
-        return null;
-    }
+    public Document getExerciseComment() { return exerciseComment; }
 
     @Override
-    public void setExerciseComment(Document statement) {
-
-    }
+    public Document getExerciseStatement() { return exerciseStatement; }
 
     @Override
-    public double getStatementPrefHeight() {
-        return 0;
-    }
+    public void setExerciseComment(Document document) { this.exerciseComment = document;  }
 
     @Override
-    public void setStatementPrefHeight(double height) {
-
-    }
+    public double getStatementPrefHeight() { return statementPrefHeight;  }
 
     @Override
-    public ExerciseModel<Document> getOriginalModel() {
-        return null;
-    }
+    public void setStatementPrefHeight(double height) { this.statementPrefHeight = height; }
 
     @Override
-    public void setOriginalModel(ExerciseModel<Document> exerciseModel) {
+    public ExerciseModel<Document> getOriginalModel() { return originalModel; }
 
-    }
+    @Override
+    public void setOriginalModel(ExerciseModel<Document> exerciseModel) { this.originalModel = exerciseModel; }
+
+
 }

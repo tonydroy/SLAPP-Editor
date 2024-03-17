@@ -31,10 +31,10 @@ import java.util.List;
 
 public class VerticalTreeExercise implements Exercise<VerticalTreeModel, VerticalTreeView> {
 
-    MainWindow mainWindow;
-    MainWindowView mainView;
-    VerticalTreeModel verticalTreeModel;
-    VerticalTreeView verticalTreeView;
+    private MainWindow mainWindow;
+    private MainWindowView mainView;
+    private VerticalTreeModel verticalTreeModel;
+    private VerticalTreeView verticalTreeView;
     private boolean exerciseModified = false;
     private UndoRedoList<VerticalTreeModel> undoRedoList = new UndoRedoList<>(50);
     public BooleanProperty undoRedoFlag = new SimpleBooleanProperty();

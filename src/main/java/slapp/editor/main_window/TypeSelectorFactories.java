@@ -13,6 +13,8 @@ import slapp.editor.derivation.DerivationModel;
 import slapp.editor.derivation_explain.DrvtnExpCreate;
 import slapp.editor.derivation_explain.DrvtnExpExercise;
 import slapp.editor.derivation_explain.DrvtnExpModel;
+import slapp.editor.horizontal_tree.HorizontalTreeExercise;
+import slapp.editor.horizontal_tree.HorizontalTreeModel;
 import slapp.editor.simple_editor.SimpleEditCreate;
 import slapp.editor.simple_editor.SimpleEditExercise;
 import slapp.editor.simple_editor.SimpleEditModel;
@@ -230,6 +232,13 @@ public class TypeSelectorFactories {
                 DrvtnExpCreate drvtnExpCreate = new DrvtnExpCreate(mainWindow);
                 break;
             }
+            //temp stub
+            case HORIZONTAL_TREE: {
+                HorizontalTreeExercise hTreeExercise = new HorizontalTreeExercise(new HorizontalTreeModel(), mainWindow);
+                mainWindow.setUpExercise(hTreeExercise);
+                break;
+            }
+
             case SIMPLE_EDITOR: {
                 SimpleEditCreate simpleEditCreate = new SimpleEditCreate(mainWindow);
                 break;

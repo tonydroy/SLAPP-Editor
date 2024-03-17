@@ -6,6 +6,7 @@ public enum ExerciseType {
     ABEFG_EXPLAIN("AB/EFG explain"),
     DERIVATION("Derivation"),
     DRVTN_EXP("Derivation explain"),
+    HORIZONTAL_TREE("Horizontal Tree"),
     SIMPLE_EDITOR("Simple editor"),
     TRUTH_TABLE("Truth table"),
     TRUTH_TABLE_ABEXP("Truth table AB explain"),

@@ -181,8 +181,6 @@ public class MapFormulaBox extends AnchorPane {
 
 
     public void buildNodeDragHandlers() {
-
-
         mContextDragOver = new EventHandler <DragEvent>() {
 
             //dragover to handle node dragging in the right pane view
@@ -195,8 +193,6 @@ public class MapFormulaBox extends AnchorPane {
                 event.consume();
             }
         };
-
-
 
         //dragdrop for node dragging
         mContextDragDropped = new EventHandler <DragEvent> () {

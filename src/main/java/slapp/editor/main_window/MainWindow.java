@@ -13,10 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.util.Callback;
-import slapp.editor.DiskUtilities;
-import slapp.editor.EditorAlerts;
-import slapp.editor.EditorMain;
-import slapp.editor.PrintUtilities;
+import slapp.editor.*;
 import slapp.editor.front_page.FrontPageExercise;
 import slapp.editor.main_window.assignment.*;
 import slapp.editor.simple_editor.SimpleEditExercise;
@@ -99,6 +96,7 @@ public class MainWindow {
         mainView.getCommonElementsTextItem().setOnAction(e -> generalTextHelp());
         mainView.getAboutItem().setOnAction(e -> aboutTextHelp());
         mainView.getContextualTextItem().setOnAction(e -> contextualTextHelp());
+        mainView.getReportItem().setOnAction(e -> makeReport());
 
 
         Label previousExerciseLabel = new Label("Previous");
@@ -706,6 +704,11 @@ public class MainWindow {
     }
     private void contextualTextHelp() {
         TextHelpPopup.helpContextual(((ExerciseModel) (currentExercise.getExerciseModel())).getExerciseType());
+    }
+
+    private void makeReport() {
+        String message = "Please be as specific as you can about your concern; if you are reporting an error, include information about the version of SLAPP and of your operating system, and (if possible) whether and how the problem may be repeated (ok to delete this line).";
+        MailHelper.generate("messaging@slappservices.net", "SLAPP: (your issue)", message);
     }
 
 
