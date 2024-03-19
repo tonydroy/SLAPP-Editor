@@ -5,6 +5,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
@@ -13,6 +15,8 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import slapp.editor.vertical_tree.drag_drop.DragContainer;
 import slapp.editor.vertical_tree.drag_drop.Point2dSerial;
 
@@ -28,16 +32,20 @@ public class TreePane extends Pane {
     private EventHandler<DragEvent> mContextDragOver;
     private EventHandler <DragEvent> mContextDragDropped;
     private Point2D mDragOffset = new Point2D (0.0, 0.0);
+    private NumberAxis numAxis;
+    private boolean numberAxis = false;
 
 
     TreePane(HorizontalTreeView horizontalTreeView) {
         self = this;
         this.horizontalTreeView = horizontalTreeView;
         rootTreeNode = new TreeNode(null, horizontalTreeView);
+        rootTreeNode.setRoot(true);
 
         leftDragLabel = new Label("");
         leftDragLabel.setMaxWidth(10);
         leftDragLabel.setMinWidth(10);
+        leftDragLabel.setPrefWidth(10);
         leftDragLabel.setMaxHeight(26);
         leftDragLabel.setMinHeight(26);
         leftDragLabel.setPadding(new Insets(0));
@@ -49,9 +57,9 @@ public class TreePane extends Pane {
             leftDragLabel.setStyle("-fx-background-color: transparent");
         });
 
-
-
         rootTreeNode.getChildren().add(0, leftDragLabel);
+        rootTreeNode.setPadding(new Insets(0, 4, 0, 0));
+
 
         buildNodeDragHandlers();
 
@@ -75,6 +83,7 @@ public class TreePane extends Pane {
         double newY = self.getLayoutY();
         if (newY < 5.0) self.setLayoutY(5.0001);
     }
+
 
 
 

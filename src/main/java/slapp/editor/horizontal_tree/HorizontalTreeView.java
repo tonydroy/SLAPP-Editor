@@ -5,10 +5,8 @@ import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -39,10 +37,16 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     private Button undoButton;
     private Button redoButton;
     private ToggleButton formulaNodeToggle;
+    private ToggleButton oneBranchToggle;
     private ToggleButton twoBranchToggle;
+    private ToggleButton threeBranchToggle;
+    private ToggleButton indefiniteBranchToggle;
     private ToggleButton annotationToggle;
     private Button annotationPlus;
     private Button annotationMinus;
+    private ToggleButton rulerButton;
+
+    private Pane numAxisPane;
 
 
     private ToggleGroup buttonGroup = new ToggleGroup();
@@ -75,16 +79,80 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         formulaNodeToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) box with its branches."));
         formulaNodeToggle.setToggleGroup(buttonGroup);
 
+        oneBranchToggle = new ToggleButton();
+        oneBranchToggle.setPrefWidth(64);
+        oneBranchToggle.setMinHeight(28);
+        oneBranchToggle.setMaxHeight(28);
+        Line oneLine = new Line(0, 0, 27, 0);
+        VBox oneVBox = new VBox(oneLine);
+        oneVBox.setAlignment(Pos.CENTER);
+        oneLine.setStyle("-fx-stroke-width: 1.5");
+        oneBranchToggle.setGraphic(oneVBox);
+        oneBranchToggle.setTooltip(new Tooltip("Add branches to selected node (left click)."));
+        oneBranchToggle.setToggleGroup(buttonGroup);
+
         twoBranchToggle = new ToggleButton();
         twoBranchToggle.setPrefWidth(64);
         twoBranchToggle.setMinHeight(28);
         twoBranchToggle.setMaxHeight(28);
-        Line line1 = new Line(3, 13, 46, 13);
-        Line line2 = new Line(3, 7, 46, 7 );
-        Pane twoBranchTogglePane = new Pane(line1, line2);
-        twoBranchToggle.setGraphic(twoBranchTogglePane);
+        Line twoStub = new Line(0,0,3,0);
+        Line twoBrack = new Line(0,0,0, 9);
+        Line twoLine1 = new Line(0, 0, 24, 0);
+        Line twoLine2 = new Line(0, 0, 24, 0 );
+        VBox twoVBox = new VBox(7, twoLine1, twoLine2);
+        twoVBox.setAlignment(Pos.CENTER);
+        twoStub.setStyle("-fx-stroke-width: 1.5");
+        twoBrack.setStyle("-fx-stroke-width: 1.5");
+        twoLine1.setStyle("-fx-stroke-width: 1.5");
+        twoLine2.setStyle("-fx-stroke-width: 1.5");
+        HBox twoHBox = new HBox(twoStub, twoBrack, twoVBox);
+        twoHBox.setAlignment(Pos.CENTER);
+        twoBranchToggle.setGraphic(twoHBox);
         twoBranchToggle.setTooltip(new Tooltip("Add branches to selected node (left click)."));
         twoBranchToggle.setToggleGroup(buttonGroup);
+
+        threeBranchToggle = new ToggleButton();
+        threeBranchToggle.setPrefWidth(64);
+        threeBranchToggle.setMinHeight(28);
+        threeBranchToggle.setMaxHeight(28);
+        Line threeStub = new Line(0,0,3,0);
+        Line threeBrack = new Line(0,0,0, 14);
+        Line threeLine1 = new Line(0, 0, 24, 0);
+        Line threeLine2 = new Line(0, 0, 24, 0 );
+        Line threeLine3 = new Line(0,0,24,0);
+        VBox threeVBox = new VBox(5, threeLine1, threeLine2, threeLine3);
+        threeVBox.setAlignment(Pos.CENTER);
+        threeStub.setStyle("-fx-stroke-width: 1.5");
+        threeBrack.setStyle("-fx-stroke-width: 1.5");
+        threeLine1.setStyle("-fx-stroke-width: 1.5");
+        threeLine2.setStyle("-fx-stroke-width: 1.5");
+        threeLine3.setStyle("-fx-stroke-width: 1.5");
+        HBox threeHBox = new HBox(threeStub, threeBrack, threeVBox);
+        threeHBox.setAlignment(Pos.CENTER);
+        threeBranchToggle.setGraphic(threeHBox);
+        threeBranchToggle.setTooltip(new Tooltip("Add branches to selected node (left click)."));
+        threeBranchToggle.setToggleGroup(buttonGroup);
+
+        indefiniteBranchToggle = new ToggleButton();
+        indefiniteBranchToggle.setPrefWidth(64);
+        indefiniteBranchToggle.setMinHeight(28);
+        indefiniteBranchToggle.setMaxHeight(28);
+        Line indefStub = new Line(0,6,3,6);
+        Line indefBrack = new Line(3, 0,3, 12);
+        Line indefLine = new Line(3,0,24,0);
+        Label indefLabel = new Label("\u22ee");
+        Pane indefPane = new Pane(indefStub, indefBrack, indefLine, indefLabel);
+        indefLabel.setLayoutX(7);
+        indefLabel.setLayoutY(-5);
+        indefLabel.setStyle("-fx-font-size: 18");
+        indefLabel.setPadding(new Insets(0));
+        Pane indefBox = new Pane(indefPane);
+        indefPane.setLayoutY(4);
+        HBox indefHBox = new HBox(indefBox);
+        indefHBox.setAlignment(Pos.CENTER);
+        indefiniteBranchToggle.setGraphic(indefHBox);
+        indefiniteBranchToggle.setTooltip(new Tooltip("Add indefinite branch to selected node (left click)"));
+        indefiniteBranchToggle.setToggleGroup(buttonGroup);
 
         annotationToggle = new ToggleButton();
         annotationToggle.setPrefWidth(44);
@@ -105,6 +173,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         buttonBox.setAlignment(Pos.CENTER);
         annotationToggle.setGraphic(buttonBox);
         annotationToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) annotation box"));
+        annotationToggle.setToggleGroup(buttonGroup);
 
         annotationPlus = new Button("+");
         annotationPlus.setFont(new Font(10));
@@ -118,14 +187,46 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         HBox annotationBox = new HBox(annotationToggle, annotationButtons);
         annotationBox.setMaxHeight(30);
 
+        rulerButton = new ToggleButton();
+        rulerButton.setPrefWidth(64);
+        rulerButton.setMinHeight(28);
+        rulerButton.setMaxHeight(28);
+        Line ruler = new Line(0,3,30, 3);
+        Line tick1 = new Line(5,0,5,6);
+        Line tick2 = new Line(15, 0, 15, 6);
+        Line tick3 = new Line(25, 0, 25, 6);
+
+        Pane rulerPane = new Pane(ruler, tick1, tick2, tick3);
+        HBox rulerHBox = new HBox(rulerPane);
+        rulerHBox.setAlignment(Pos.CENTER);
+        VBox rulerVBox = new VBox(rulerHBox);
+        rulerVBox.setAlignment(Pos.CENTER);
+        rulerButton.setGraphic(rulerVBox);
+        rulerButton.setTooltip(new Tooltip("Add (right-click) or remove (left-click) horizontal ruler on tree."));
 
 
 
-        controlBox.getChildren().addAll(undoButton, redoButton, formulaNodeToggle, twoBranchToggle, annotationBox);
+
+        controlBox.getChildren().addAll(undoButton, redoButton, formulaNodeToggle, oneBranchToggle, twoBranchToggle, threeBranchToggle, indefiniteBranchToggle, annotationBox, rulerButton);
         controlBox.setMargin(annotationBox, new Insets(10, 0, 0, 0));
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
-        controlBox.setPadding(new Insets(100,10,0,80));
+        controlBox.setPadding(new Insets(50,10,0,80));
         exerciseControlNode = controlBox;
+
+        numAxisPane = new Pane();
+        Rectangle numClipRec = new Rectangle();
+        numAxisPane.setClip(numClipRec);
+//        numAxisPane.prefWidthProperty().bind(exerciseStatement.getEditor().widthProperty());
+        numAxisPane.setPrefWidth(mainPane.getPrefWidth());
+        numClipRec.widthProperty().bind(numAxisPane.widthProperty());
+
+        numClipRec.setHeight(25);
+        NumberAxis axis = new NumberAxis(0,250,5);
+        axis.setMinWidth(Control.USE_PREF_SIZE);
+        axis.setPrefWidth(3000);
+        axis.setMaxWidth(Control.USE_PREF_SIZE);
+        numAxisPane.getChildren().add(axis);
+
 
 
 
@@ -169,13 +270,23 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
     public ToggleButton getFormulaNodeToggle() {return formulaNodeToggle; }
 
+    public ToggleButton getOneBranchToggle() {  return oneBranchToggle;  }
+
     public ToggleButton getTwoBranchToggle() { return twoBranchToggle; }
+
+    public ToggleButton getThreeBranchToggle() { return threeBranchToggle;  }
+
+    public ToggleButton getIndefiniteBranchToggle() { return indefiniteBranchToggle;  }
 
     public ToggleButton getAnnotationToggle() { return annotationToggle;  }
 
     public Button getAnnotationPlus() { return annotationPlus;    }
 
     public Button getAnnotationMinus() { return annotationMinus; }
+
+    public ToggleButton getRulerButton() { return rulerButton;  }
+
+    public Pane getNumAxisPane() {  return numAxisPane;  }
 
     @Override
     public String getExerciseName() { return exerciseName;  }

@@ -3,16 +3,23 @@ package slapp.editor.horizontal_tree;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
 
 import java.util.ArrayList;
 
-public class TreeNode extends AnchorPane {
+public class TreeNode extends HBox {
     TreeNode self;
+    boolean root = false;
     TreeNode container;
     HorizontalTreeView horizontalTreeView;
     BoxedDRTA boxedDRTA;
@@ -24,6 +31,8 @@ public class TreeNode extends AnchorPane {
     double layoutX;
     double layoutY;
     boolean annotation = false;
+    TextField annotationField;
+    double annotationWidth  = 28;
 
     public TreeNode(TreeNode container, HorizontalTreeView horizontalTreeView) {
         super();
@@ -33,11 +42,10 @@ public class TreeNode extends AnchorPane {
         boxedDRTA = newFormulaBoxedDRTA();
 
         self.getChildren().add(boxedDRTA.getBoxedRTA());
-        setLeftAnchor(boxedDRTA.getBoxedRTA(), 2.0);
         HrzRightDragResizer resizer = new HrzRightDragResizer(horizontalTreeView);
         resizer.makeResizable(boxedDRTA.getRTA());
         self.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1.5 0");
-        self.setPadding(new Insets(0, 5, 0, 5));
+        self.setPadding(new Insets(0, 4, 0, 2));
     }
 
     void doLayout(double xVal) {
@@ -53,12 +61,16 @@ public class TreeNode extends AnchorPane {
             return layoutY;
         }
         else {
+            double ann = 0;
+            if (annotation) ann = annotationWidth;
+            double rootAdd = 0;
+            if (root) rootAdd = 8;
             TreeNode initialNode = dependents.get(0);
-            minLayoutY = initialNode.setLayout(xVal + boxedDRTA.getRTA().getPrefWidth() + 15);
+            minLayoutY = initialNode.setLayout(xVal + boxedDRTA.getRTA().getPrefWidth() + ann + rootAdd + 36);
             maxLayoutY = minLayoutY;
             for (int i = 1; i < dependents.size(); i++) {
                 TreeNode node = dependents.get(i);
-                maxLayoutY = node.setLayout(xVal + boxedDRTA.getRTA().getPrefWidth() + 15);
+                maxLayoutY = node.setLayout(xVal + boxedDRTA.getRTA().getPrefWidth() + ann + rootAdd + 36);
             }
             layoutY = minLayoutY + (maxLayoutY - minLayoutY)/2.0;
             return layoutY;
@@ -69,6 +81,25 @@ public class TreeNode extends AnchorPane {
         pane.getChildren().add(self);
         self.setLayoutX(layoutX + offsetX);
         self.setLayoutY(layoutY + offsetY);
+        if (dependents.size() == 1) {
+            VBox simpleConnector = newSimpleConnectBox();
+            pane.getChildren().add(simpleConnector);
+            TreeNode dependent = dependents.get(0);
+            simpleConnector.setLayoutX(dependent.getXLayout() - 30.0);
+            simpleConnector.setLayoutY(dependent.getYLayout() + 14.0);
+        }
+        if (dependents.size() > 1) {
+            TreeNode topNode = dependents.get(0);
+            TreeNode bottomNode = dependents.get(dependents.size() - 1);
+            double top = topNode.getYLayout();
+            double bottom = bottomNode.getYLayout();
+            HBox bracketBox = newBracketBox(top, bottom);
+            pane.getChildren().add(bracketBox);
+            bracketBox.setLayoutX(topNode.getXLayout() - 30);
+            bracketBox.setLayoutY(topNode.getYLayout() + 27.5);
+
+
+        }
 
         for (int i = 0; i < dependents.size(); i++) {
             TreeNode node = dependents.get(i);
@@ -94,16 +125,67 @@ public class TreeNode extends AnchorPane {
         return boxedDRTA;
     }
 
-    void processAnnotationRequest(boolean add) {
-
+    private VBox newSimpleConnectBox() {
+        BoxedDRTA boxedDRTA = newFormulaBoxedDRTA();
+        boxedDRTA.getRTA().setPrefWidth(30);
+        VBox connectBox = new VBox(boxedDRTA.getBoxedRTA());
+        connectBox.setAlignment(Pos.CENTER);
+        return connectBox;
     }
 
-    public TreeNode getContainer() {return container; }
+    private HBox newBracketBox(double top, double bottom) {
+        double height = bottom - top;
+        BoxedDRTA boxedDRTA = newFormulaBoxedDRTA();
+        boxedDRTA.getRTA().setPrefWidth(24);
+        VBox rtaBox = new VBox(boxedDRTA.getBoxedRTA());
+        rtaBox.setAlignment(Pos.CENTER);
+        Line stub = new Line(0, 0, 3, 0);
+        stub.setStyle("-fx-stroke-width: 1.5");
+        Line bracket = new Line(0,0, 0, height);
+        bracket.setStyle("-fx-stroke-width: 1.5");
+        HBox bracketBox = new HBox(rtaBox, stub, bracket);
+        bracketBox.setAlignment(Pos.CENTER);
+        return bracketBox;
+    }
 
+
+
+    void processAnnotationRequest(boolean add) {
+        if (add) {
+            if (!annotation) {
+                addAnnotation();
+            }
+        }
+        else {
+            if (annotation) {
+                self.getChildren().remove(annotationField);
+                annotation = false;
+            }
+        }
+    }
+
+    public void addAnnotation() {
+        if (!annotation) {
+            annotationField = new TextField();
+            annotationField.setPrefWidth(annotationWidth);
+            annotationField.setPrefHeight(15);
+            annotationField.setFont(new Font("Noto Sans", 10));
+            annotationField.setPadding(new Insets(0));
+
+            self.getChildren().add(annotationField);
+            self.setMargin(annotationField, new Insets(0, 0, 8, 0));
+            annotation = true;
+        }
+    }
+
+    public BoxedDRTA getBoxedDRTA() {  return boxedDRTA;  }
+
+    public TreeNode getContainer() {return container; }
     public double getXLayout() { return layoutX; }
 
+    public void setRoot(boolean root) {    this.root = root;}
+
     public double getYLayout() { return layoutY; }
-
-
     public ArrayList<TreeNode> getDependents() {  return dependents;  }
+
 }
