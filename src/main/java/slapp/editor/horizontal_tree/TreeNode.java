@@ -31,8 +31,13 @@ public class TreeNode extends HBox {
     double layoutX;
     double layoutY;
     boolean annotation = false;
+    boolean withDots;
     TextField annotationField;
     double annotationWidth  = 28;
+
+    double rootBump = 0;
+    double annBump = 0;
+
 
     public TreeNode(TreeNode container, HorizontalTreeView horizontalTreeView) {
         super();
@@ -46,6 +51,9 @@ public class TreeNode extends HBox {
         resizer.makeResizable(boxedDRTA.getRTA());
         self.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1.5 0");
         self.setPadding(new Insets(0, 4, 0, 2));
+
+
+
     }
 
     void doLayout(double xVal) {
@@ -61,16 +69,12 @@ public class TreeNode extends HBox {
             return layoutY;
         }
         else {
-            double ann = 0;
-            if (annotation) ann = annotationWidth;
-            double rootAdd = 0;
-            if (root) rootAdd = 8;
             TreeNode initialNode = dependents.get(0);
-            minLayoutY = initialNode.setLayout(xVal + boxedDRTA.getRTA().getPrefWidth() + ann + rootAdd + 36);
+            minLayoutY = initialNode.setLayout(xVal + boxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 36);
             maxLayoutY = minLayoutY;
             for (int i = 1; i < dependents.size(); i++) {
                 TreeNode node = dependents.get(i);
-                maxLayoutY = node.setLayout(xVal + boxedDRTA.getRTA().getPrefWidth() + ann + rootAdd + 36);
+                maxLayoutY = node.setLayout(xVal + boxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 36);
             }
             layoutY = minLayoutY + (maxLayoutY - minLayoutY)/2.0;
             return layoutY;
@@ -81,6 +85,13 @@ public class TreeNode extends HBox {
         pane.getChildren().add(self);
         self.setLayoutX(layoutX + offsetX);
         self.setLayoutY(layoutY + offsetY);
+        if (withDots) {
+            Line dotLine = new Line(0,0,0,27);
+            dotLine.getStrokeDashArray().addAll(1.0, 4.0);
+            pane.getChildren().add(dotLine);
+            dotLine.setLayoutX(self.layoutX + boxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 9);
+            dotLine.setLayoutY(self.layoutY + 14.0);
+        }
         if (dependents.size() == 1) {
             VBox simpleConnector = newSimpleConnectBox();
             pane.getChildren().add(simpleConnector);
@@ -97,8 +108,6 @@ public class TreeNode extends HBox {
             pane.getChildren().add(bracketBox);
             bracketBox.setLayoutX(topNode.getXLayout() - 30);
             bracketBox.setLayoutY(topNode.getYLayout() + 27.5);
-
-
         }
 
         for (int i = 0; i < dependents.size(); i++) {
@@ -154,12 +163,14 @@ public class TreeNode extends HBox {
         if (add) {
             if (!annotation) {
                 addAnnotation();
+                annBump = annotationWidth;
             }
         }
         else {
             if (annotation) {
                 self.getChildren().remove(annotationField);
                 annotation = false;
+                annBump = 0;
             }
         }
     }
@@ -188,4 +199,7 @@ public class TreeNode extends HBox {
     public double getYLayout() { return layoutY; }
     public ArrayList<TreeNode> getDependents() {  return dependents;  }
 
+    public void setWithDots(boolean withDots) { this.withDots = withDots; }
+
+    public void setRootBump(double rootBump) {    this.rootBump = rootBump;  }
 }

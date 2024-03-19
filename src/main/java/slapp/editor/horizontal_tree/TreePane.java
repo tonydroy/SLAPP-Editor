@@ -41,6 +41,7 @@ public class TreePane extends Pane {
         this.horizontalTreeView = horizontalTreeView;
         rootTreeNode = new TreeNode(null, horizontalTreeView);
         rootTreeNode.setRoot(true);
+        rootTreeNode.setRootBump(8.0);
 
         leftDragLabel = new Label("");
         leftDragLabel.setMaxWidth(10);

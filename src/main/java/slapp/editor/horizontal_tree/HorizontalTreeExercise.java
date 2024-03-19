@@ -16,6 +16,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
@@ -38,7 +40,9 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
     private EventHandler threeBranchClickFilter;
     private EventHandler indefinateBranchClickFilter;
     private EventHandler annotationClickFilter;
+    private EventHandler dotsClickFilter;
     private static TreeNode clickNode = null;
+    private Region axis;
 
 
 
@@ -228,7 +232,31 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
             else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, indefinateBranchClickFilter);
         });
 
+        dotsClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
 
+                for (TreePane pane : horizontalTreeView.getTreePanes()) {
+                    TreeNode rootNode = pane.getRootTreeNode();
+                    setClickedNode(event, rootNode);
+                    if (clickNode != null) {
+                        if (event.getButton() == MouseButton.PRIMARY) {
+                            clickNode.setWithDots(true);
+                            pane.refresh();
+                        }
+                        else {
+                            clickNode.setWithDots(false);
+                            pane.refresh();
+                        }
+                    }
+                }
+            }
+        };
+
+        horizontalTreeView.getVerticalDotsToggle().selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv) mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, dotsClickFilter);
+            else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, dotsClickFilter);
+        });
 
         annotationClickFilter = new EventHandler<MouseEvent>() {
             @Override
@@ -268,14 +296,14 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
             annotationToggle.setSelected(false);
         });
 
-
+        axis = horizontalTreeView.createClipped();
         ToggleButton rulerButton = horizontalTreeView.getRulerButton();
         rulerButton.selectedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
-                mainPane.getChildren().add(horizontalTreeView.getNumAxisPane());
+                mainPane.getChildren().add(0, axis);
             }
             else {
-                mainPane.getChildren().remove(horizontalTreeView.getNumAxisPane());
+                mainPane.getChildren().remove(axis);
             }
         });
 

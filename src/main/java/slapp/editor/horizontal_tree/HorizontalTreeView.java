@@ -4,13 +4,12 @@ import com.gluonhq.richtextarea.RichTextArea;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -28,8 +27,9 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private DecoratedRTA explainDRTA = new DecoratedRTA();
-    private VBox controlBox = new VBox(25);
+    private VBox controlBox = new VBox(15);
     private double statementPrefHeight = 80;
+
 
     private AnchorPane mainPane;
     private VBox centerBox;
@@ -41,12 +41,17 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     private ToggleButton twoBranchToggle;
     private ToggleButton threeBranchToggle;
     private ToggleButton indefiniteBranchToggle;
+    private ToggleButton verticalDotsToggle;
+    private ToggleButton oneBranchTermToggle;
+    private ToggleButton twoBranchTermToggle;
     private ToggleButton annotationToggle;
     private Button annotationPlus;
     private Button annotationMinus;
     private ToggleButton rulerButton;
 
-    private Pane numAxisPane;
+    private Rectangle numClipRec;
+    private Region numAxisPane;
+    private NumberAxis axis;
 
 
     private ToggleGroup buttonGroup = new ToggleGroup();
@@ -56,9 +61,17 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
     HorizontalTreeView(MainWindowView mainView) {
         this.mainView = mainView;
+
         mainPane = new AnchorPane();
         mainPane.setStyle("-fx-border-width: 2 2 2 2; -fx-border-color: lightgrey; -fx-background-color: white");
+
+
+
         centerBox = new VBox(3, mainPane, explainDRTA.getEditor());
+
+
+
+
         undoButton = new Button("Undo");
         redoButton = new Button("Redo");
         undoButton.setPrefWidth(64);
@@ -71,10 +84,9 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         formulaNodeToggle.setPrefHeight(28);
         formulaNodeToggle.setMinHeight(28);
         formulaNodeToggle.setMaxHeight(28);
-        Rectangle rectangle = new Rectangle(30,15);
+        Rectangle rectangle = new Rectangle(30,12);
         rectangle.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
-        HBox boxToggleGraphic = new HBox(rectangle);
-        boxToggleGraphic.setAlignment(Pos.CENTER);
+        Group boxToggleGraphic = new Group(rectangle);
         formulaNodeToggle.setGraphic(boxToggleGraphic);
         formulaNodeToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) box with its branches."));
         formulaNodeToggle.setToggleGroup(buttonGroup);
@@ -84,10 +96,9 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         oneBranchToggle.setMinHeight(28);
         oneBranchToggle.setMaxHeight(28);
         Line oneLine = new Line(0, 0, 27, 0);
-        VBox oneVBox = new VBox(oneLine);
-        oneVBox.setAlignment(Pos.CENTER);
+
         oneLine.setStyle("-fx-stroke-width: 1.5");
-        oneBranchToggle.setGraphic(oneVBox);
+        oneBranchToggle.setGraphic(new Group(oneLine));
         oneBranchToggle.setTooltip(new Tooltip("Add branches to selected node (left click)."));
         oneBranchToggle.setToggleGroup(buttonGroup);
 
@@ -116,11 +127,11 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         threeBranchToggle.setMinHeight(28);
         threeBranchToggle.setMaxHeight(28);
         Line threeStub = new Line(0,0,3,0);
-        Line threeBrack = new Line(0,0,0, 14);
+        Line threeBrack = new Line(0,0,0, 11);
         Line threeLine1 = new Line(0, 0, 24, 0);
         Line threeLine2 = new Line(0, 0, 24, 0 );
         Line threeLine3 = new Line(0,0,24,0);
-        VBox threeVBox = new VBox(5, threeLine1, threeLine2, threeLine3);
+        VBox threeVBox = new VBox(4, threeLine1, threeLine2, threeLine3);
         threeVBox.setAlignment(Pos.CENTER);
         threeStub.setStyle("-fx-stroke-width: 1.5");
         threeBrack.setStyle("-fx-stroke-width: 1.5");
@@ -140,19 +151,76 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         Line indefStub = new Line(0,6,3,6);
         Line indefBrack = new Line(3, 0,3, 12);
         Line indefLine = new Line(3,0,24,0);
-        Label indefLabel = new Label("\u22ee");
-        Pane indefPane = new Pane(indefStub, indefBrack, indefLine, indefLabel);
-        indefLabel.setLayoutX(7);
-        indefLabel.setLayoutY(-5);
-        indefLabel.setStyle("-fx-font-size: 18");
-        indefLabel.setPadding(new Insets(0));
-        Pane indefBox = new Pane(indefPane);
-        indefPane.setLayoutY(4);
-        HBox indefHBox = new HBox(indefBox);
+
+        indefStub.setStyle("-fx-stroke-width: 1.5");
+        indefBrack.setStyle("-fx-stroke-width: 1.5");
+        indefLine.setStyle("-fx-stroke-width: 1.5");
+
+        Line indefDots = new Line(10,4,10,14);
+        indefDots.getStrokeDashArray().addAll(1.0,3.0);
+        Group indefPane = new Group(indefStub, indefBrack, indefLine, indefDots);
+
+        HBox indefHBox = new HBox(indefPane);
         indefHBox.setAlignment(Pos.CENTER);
-        indefiniteBranchToggle.setGraphic(indefHBox);
+        indefiniteBranchToggle.setAlignment(Pos.CENTER);
+
+
+        indefiniteBranchToggle.setGraphic(indefPane);
         indefiniteBranchToggle.setTooltip(new Tooltip("Add indefinite branch to selected node (left click)"));
         indefiniteBranchToggle.setToggleGroup(buttonGroup);
+        oneBranchTermToggle = new ToggleButton();
+        oneBranchTermToggle.setPrefWidth(64);
+        oneBranchTermToggle.setMinHeight(28);
+        oneBranchTermToggle.setMaxHeight(28);
+        Line oneTermLine = new Line(0,0,20,0);
+        oneTermLine.setStyle("-fx-stroke-width: 1.5");
+        Rectangle oneTermRec = new Rectangle(10,10);
+        oneTermRec.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
+        HBox oneBranchHBox = new HBox(oneTermLine, oneTermRec);
+        oneBranchHBox.setAlignment(Pos.CENTER);
+        oneBranchTermToggle.setGraphic(oneBranchHBox);
+        oneBranchTermToggle.setTooltip(new Tooltip("Branch to term from selected node."));
+        oneBranchTermToggle.setToggleGroup(buttonGroup);
+
+        twoBranchTermToggle = new ToggleButton();
+        twoBranchTermToggle.setPrefWidth(64);
+        twoBranchTermToggle.setMinHeight(28);
+        twoBranchTermToggle.setMaxHeight(28);
+        Line twoTermLine1 = new Line(0, 7, 20, 2);
+        Line twoTermLine2 = new Line(0, 7, 20, 12);
+        VBox twoTermVBox1 = new VBox(twoTermLine1, twoTermLine2);
+        twoTermVBox1.setAlignment(Pos.CENTER);
+        Rectangle twoTermRec1 = new Rectangle(7,7);
+        twoTermRec1.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
+        Rectangle twoTermRec2 = new Rectangle(7, 7);
+        twoTermRec2.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
+        VBox twoTermVBox2 = new VBox(2, twoTermRec1, twoTermRec2);
+        twoTermVBox2.setAlignment(Pos.CENTER);
+        HBox twoTermHBox = new HBox(twoTermVBox1, twoTermVBox2);
+        twoTermHBox.setAlignment(Pos.CENTER);
+        twoBranchTermToggle.setGraphic(twoTermHBox);
+        twoBranchTermToggle.setTooltip(new Tooltip("Branch to terms from selected node."));
+        twoBranchTermToggle.setToggleGroup(buttonGroup);
+
+        verticalDotsToggle = new ToggleButton();
+        verticalDotsToggle.setPrefWidth(64);
+        verticalDotsToggle.setMinHeight(28);
+        verticalDotsToggle.setMaxHeight(28);
+        Line vDotsLine = new Line(0,0,0,16);
+        vDotsLine.getStrokeDashArray().addAll(1.0, 3.0);
+        vDotsLine.setStyle("-fx-stroke-width: 1.5");
+        VBox verticalDotsVBox = new VBox(vDotsLine);
+        verticalDotsVBox.setAlignment(Pos.CENTER);
+        verticalDotsVBox.setPadding(new Insets(1,0,0,0));
+        HBox verticalDotsHBox = new HBox(verticalDotsVBox);
+        verticalDotsHBox.setAlignment(Pos.CENTER);
+        verticalDotsToggle.setGraphic(verticalDotsHBox);
+        verticalDotsToggle.setTooltip(new Tooltip("Dots to divide term from formula."));
+        verticalDotsToggle.setToggleGroup(buttonGroup);
+
+
+
+
 
         annotationToggle = new ToggleButton();
         annotationToggle.setPrefWidth(44);
@@ -195,6 +263,10 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         Line tick1 = new Line(5,0,5,6);
         Line tick2 = new Line(15, 0, 15, 6);
         Line tick3 = new Line(25, 0, 25, 6);
+        ruler.setStyle("-fx-stroke-width: 0.75");
+        tick1.setStyle("-fx-stroke-width: 0.75");
+        tick2.setStyle("-fx-stroke-width: 0.75");
+        tick3.setStyle("-fx-stroke-width: 0.75");
 
         Pane rulerPane = new Pane(ruler, tick1, tick2, tick3);
         HBox rulerHBox = new HBox(rulerPane);
@@ -207,31 +279,45 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
 
 
-        controlBox.getChildren().addAll(undoButton, redoButton, formulaNodeToggle, oneBranchToggle, twoBranchToggle, threeBranchToggle, indefiniteBranchToggle, annotationBox, rulerButton);
-        controlBox.setMargin(annotationBox, new Insets(10, 0, 0, 0));
+        controlBox.getChildren().addAll(undoButton, redoButton, formulaNodeToggle, oneBranchToggle, twoBranchToggle, threeBranchToggle, indefiniteBranchToggle, oneBranchTermToggle, twoBranchTermToggle, verticalDotsToggle, rulerButton, annotationBox);
+        controlBox.setMargin(annotationBox, new Insets(15, 0, 0, 0));
+//        controlBox.setMargin(indefiniteBranchToggle, new Insets(12, 0, -10, 0));
+
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
-        controlBox.setPadding(new Insets(50,10,0,80));
+        controlBox.setPadding(new Insets(20,10,0,80));
         exerciseControlNode = controlBox;
-
-        numAxisPane = new Pane();
-        Rectangle numClipRec = new Rectangle();
-        numAxisPane.setClip(numClipRec);
-//        numAxisPane.prefWidthProperty().bind(exerciseStatement.getEditor().widthProperty());
-        numAxisPane.setPrefWidth(mainPane.getPrefWidth());
-        numClipRec.widthProperty().bind(numAxisPane.widthProperty());
-
-        numClipRec.setHeight(25);
-        NumberAxis axis = new NumberAxis(0,250,5);
-        axis.setMinWidth(Control.USE_PREF_SIZE);
-        axis.setPrefWidth(3000);
-        axis.setMaxWidth(Control.USE_PREF_SIZE);
-        numAxisPane.getChildren().add(axis);
-
-
-
 
     }
 
+    NumberAxis createAxis() {
+        NumberAxis axis = new NumberAxis(0,150,5);
+        axis.setMinWidth(Control.USE_PREF_SIZE);
+        axis.setPrefWidth(3000);
+        axis.setMaxWidth(Control.USE_PREF_SIZE);
+        axis.tickLabelFontProperty().set(Font.font(8));
+        axis.setTickLength(6);
+
+        return axis;
+    }
+
+    void clipChildren(Region region) {
+        final Rectangle outputClip = new Rectangle();
+        region.setClip(outputClip);
+        region.layoutBoundsProperty().addListener((ov, oldValue, newValue) -> {
+            outputClip.setWidth(newValue.getWidth());
+            outputClip.setHeight(newValue.getHeight());
+        });
+    }
+
+    Region createClipped() {
+        NumberAxis axis = createAxis();
+        final Pane pane = new Pane(axis);
+        axis.setLayoutX(10);
+        pane.prefWidthProperty().bind(mainPane.prefWidthProperty());
+        pane.setPrefHeight(25.0);
+        clipChildren(pane);
+        return pane;
+    }
 
     void initializeViewDetails() {
         RichTextArea statementRTA = exerciseStatement.getEditor();
@@ -266,6 +352,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
     public DecoratedRTA getExplainDRTA() { return explainDRTA; }
 
+
     public AnchorPane getMainPane() { return mainPane;}
 
     public ToggleButton getFormulaNodeToggle() {return formulaNodeToggle; }
@@ -286,7 +373,11 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
     public ToggleButton getRulerButton() { return rulerButton;  }
 
-    public Pane getNumAxisPane() {  return numAxisPane;  }
+    public ToggleButton getVerticalDotsToggle() {   return verticalDotsToggle;  }
+
+    public ToggleButton getOneBranchTermToggle() {   return oneBranchTermToggle;  }
+
+    public ToggleButton getTwoBranchTermToggle() {    return twoBranchTermToggle;  }
 
     @Override
     public String getExerciseName() { return exerciseName;  }
