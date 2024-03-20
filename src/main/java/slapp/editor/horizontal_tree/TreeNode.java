@@ -16,6 +16,7 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TreeNode extends HBox {
     TreeNode self;
@@ -31,10 +32,10 @@ public class TreeNode extends HBox {
     double layoutX;
     double layoutY;
     boolean annotation = false;
+    boolean formulaNode = true;
     boolean withDots;
     TextField annotationField;
     double annotationWidth  = 28;
-
     double rootBump = 0;
     double annBump = 0;
 
@@ -92,22 +93,37 @@ public class TreeNode extends HBox {
             dotLine.setLayoutX(self.layoutX + boxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 9);
             dotLine.setLayoutY(self.layoutY + 14.0);
         }
-        if (dependents.size() == 1) {
-            VBox simpleConnector = newSimpleConnectBox();
-            pane.getChildren().add(simpleConnector);
-            TreeNode dependent = dependents.get(0);
-            simpleConnector.setLayoutX(dependent.getXLayout() - 30.0);
-            simpleConnector.setLayoutY(dependent.getYLayout() + 14.0);
-        }
-        if (dependents.size() > 1) {
-            TreeNode topNode = dependents.get(0);
-            TreeNode bottomNode = dependents.get(dependents.size() - 1);
-            double top = topNode.getYLayout();
-            double bottom = bottomNode.getYLayout();
-            HBox bracketBox = newBracketBox(top, bottom);
-            pane.getChildren().add(bracketBox);
-            bracketBox.setLayoutX(topNode.getXLayout() - 30);
-            bracketBox.setLayoutY(topNode.getYLayout() + 27.5);
+        if (!dependents.isEmpty()) {
+            if (dependents.get(0).isFormulaNode()) {
+                offsetY = 0.0;
+                if (dependents.size() == 1) {
+                    VBox simpleConnector = newSimpleConnectBox();
+                    pane.getChildren().add(simpleConnector);
+                    TreeNode dependent = dependents.get(0);
+                    simpleConnector.setLayoutX(dependent.getXLayout() - 30.0);
+                    simpleConnector.setLayoutY(dependent.getYLayout() + 14.0);
+                }
+                else if (dependents.size() > 1) {
+                    TreeNode topNode = dependents.get(0);
+                    TreeNode bottomNode = dependents.get(dependents.size() - 1);
+                    double top = topNode.getYLayout();
+                    double bottom = bottomNode.getYLayout();
+                    HBox bracketBox = newBracketBox(top, bottom);
+                    pane.getChildren().add(bracketBox);
+                    bracketBox.setLayoutX(topNode.getXLayout() - 30);
+                    bracketBox.setLayoutY(topNode.getYLayout() + 27.5);
+                }
+            }
+            else {
+                offsetY = 14.0;
+                Pane branchPane = newTermBranch();
+                pane.getChildren().add(branchPane);
+                TreeNode topNode = dependents.get(0);
+                double xDiff = 31.0;
+                if (withDots) xDiff = 24.0;
+                branchPane.setLayoutX(topNode.getXLayout() - xDiff);
+                branchPane.setLayoutY(topNode.getYLayout() + 28);
+            }
         }
 
         for (int i = 0; i < dependents.size(); i++) {
@@ -132,6 +148,20 @@ public class TreeNode extends HBox {
             }
         });
         return boxedDRTA;
+    }
+
+    private Pane newTermBranch() {
+        double top = dependents.get(0).getYLayout();
+        double bottom  = dependents.get(dependents.size() - 1).getYLayout();
+        double center = (bottom - top)/2;
+        Pane branchPane = new Pane();
+        double xEnd = 31;
+        if (withDots) xEnd = 24;
+        for (TreeNode node : dependents) {
+            Line line = new Line(0, center, xEnd, node.getYLayout() - top);
+            branchPane.getChildren().add(line);
+        }
+        return branchPane;
     }
 
     private VBox newSimpleConnectBox() {
@@ -202,4 +232,8 @@ public class TreeNode extends HBox {
     public void setWithDots(boolean withDots) { this.withDots = withDots; }
 
     public void setRootBump(double rootBump) {    this.rootBump = rootBump;  }
+
+    public boolean isFormulaNode() {  return formulaNode; }
+
+    public void setFormulaNode(boolean formulaNode) { this.formulaNode = formulaNode; }
 }

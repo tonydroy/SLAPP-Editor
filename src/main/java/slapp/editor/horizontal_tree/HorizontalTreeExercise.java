@@ -23,6 +23,7 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
 import slapp.editor.vertical_tree.drag_drop.TreeFormulaBox;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,6 +42,8 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
     private EventHandler indefinateBranchClickFilter;
     private EventHandler annotationClickFilter;
     private EventHandler dotsClickFilter;
+    private EventHandler oneBranchTermClickFilter;
+    private EventHandler twoBranchTermClickFilter;
     private static TreeNode clickNode = null;
     private Region axis;
 
@@ -143,7 +146,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
                     for (TreePane pane : horizontalTreeView.getTreePanes()) {
                         TreeNode rootNode = pane.getRootTreeNode();
                         setClickedNode(event, rootNode);
-                        if (clickNode != null) {
+                        if (clickNode != null && clickNode.isFormulaNode() && formulaDependents(clickNode.getDependents())) {
                             TreeNode branch1 = new TreeNode(clickNode, horizontalTreeView);
                             clickNode.getDependents().add(branch1);
                             pane.refresh();
@@ -165,7 +168,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
                     for (TreePane pane : horizontalTreeView.getTreePanes()) {
                         TreeNode rootNode = pane.getRootTreeNode();
                         setClickedNode(event, rootNode);
-                        if (clickNode != null) {
+                        if (clickNode != null && clickNode.isFormulaNode() && formulaDependents(clickNode.getDependents())) {
                             TreeNode branch1 = new TreeNode(clickNode, horizontalTreeView);
                             TreeNode branch2 = new TreeNode(clickNode, horizontalTreeView);
                             clickNode.getDependents().addAll(Arrays.asList(branch1, branch2));
@@ -188,7 +191,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
                     for (TreePane pane : horizontalTreeView.getTreePanes()) {
                         TreeNode rootNode = pane.getRootTreeNode();
                         setClickedNode(event, rootNode);
-                        if (clickNode != null) {
+                        if (clickNode != null && clickNode.isFormulaNode() && formulaDependents(clickNode.getDependents())) {
                             TreeNode branch1 = new TreeNode(clickNode, horizontalTreeView);
                             TreeNode branch2 = new TreeNode(clickNode, horizontalTreeView);
                             TreeNode branch3 = new TreeNode(clickNode, horizontalTreeView);
@@ -213,7 +216,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
                     for (TreePane pane : horizontalTreeView.getTreePanes()) {
                         TreeNode rootNode = pane.getRootTreeNode();
                         setClickedNode(event, rootNode);
-                        if (clickNode != null) {
+                        if (clickNode != null && clickNode.isFormulaNode() && formulaDependents(clickNode.getDependents())) {
                             TreeNode branch = new TreeNode(clickNode, horizontalTreeView);
                             branch.setStyle("-fx-border-width: 0 0 0 0");
                             RichTextArea rta = branch.getBoxedDRTA().getRTA();
@@ -232,6 +235,64 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
             else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, indefinateBranchClickFilter);
         });
 
+
+        oneBranchTermClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    for (TreePane pane : horizontalTreeView.getTreePanes()) {
+                        TreeNode rootNode = pane.getRootTreeNode();
+                        setClickedNode(event, rootNode);
+                        if (clickNode != null && termDependents(clickNode.getDependents())) {
+                            TreeNode branch = new TreeNode(clickNode, horizontalTreeView);
+                            branch.setFormulaNode(false);
+                            branch.setStyle("-fx-border-width: 0 0 0 0");
+                            RichTextArea rta = branch.getBoxedDRTA().getRTA();
+                            rta.setPrefWidth(24);
+                            clickNode.getDependents().add(branch);
+                            pane.refresh();
+                        }
+                    }
+                }
+            }
+        };
+
+        horizontalTreeView.getOneBranchTermToggle().selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv) mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, oneBranchTermClickFilter);
+            else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, oneBranchTermClickFilter);
+        });
+
+        twoBranchTermClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    for (TreePane pane : horizontalTreeView.getTreePanes()) {
+                        TreeNode rootNode = pane.getRootTreeNode();
+                        setClickedNode(event, rootNode);
+                        if (clickNode != null && termDependents(clickNode.getDependents())) {
+                            TreeNode branch1 = new TreeNode(clickNode, horizontalTreeView);
+                            TreeNode branch2 = new TreeNode(clickNode, horizontalTreeView);
+                            branch1.setFormulaNode(false);
+                            branch2.setFormulaNode(false);
+                            branch1.setStyle("-fx-border-width: 0 0 0 0");
+                            branch2.setStyle("-fx-border-width: 0 0 0 0");
+                            RichTextArea rta1 = branch1.getBoxedDRTA().getRTA();
+                            RichTextArea rta2 = branch2.getBoxedDRTA().getRTA();
+                            rta1.setPrefWidth(24);
+                            rta2.setPrefWidth(24);
+                            clickNode.getDependents().addAll(Arrays.asList(branch1, branch2));
+                            pane.refresh();
+                        }
+                    }
+                }
+            }
+        };
+
+        horizontalTreeView.getTwoBranchTermToggle().selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv) mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, twoBranchTermClickFilter);
+            else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, twoBranchTermClickFilter);
+        });
+
         dotsClickFilter = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -239,7 +300,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
                 for (TreePane pane : horizontalTreeView.getTreePanes()) {
                     TreeNode rootNode = pane.getRootTreeNode();
                     setClickedNode(event, rootNode);
-                    if (clickNode != null) {
+                    if (clickNode != null && clickNode.isFormulaNode()) {
                         if (event.getButton() == MouseButton.PRIMARY) {
                             clickNode.setWithDots(true);
                             pane.refresh();
@@ -312,6 +373,30 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
 
         horizontalTreeView.initializeViewDetails();
+    }
+
+    //dependents empty or all formulaNodes
+    boolean formulaDependents(ArrayList<TreeNode> dependentList) {
+        boolean formulaDependents = true;
+        for (TreeNode node : dependentList) {
+            if (!node.isFormulaNode()) {
+                formulaDependents = false;
+                break;
+            }
+        }
+        return formulaDependents;
+    }
+
+    //dependents empty or all termNodes
+    boolean termDependents(ArrayList<TreeNode> dependentList) {
+        boolean termDependents = true;
+        for (TreeNode node : dependentList) {
+            if (node.isFormulaNode()) {
+                termDependents = false;
+                break;
+            }
+        }
+        return termDependents;
     }
 
     void setAnnotations(TreeNode node, boolean add) {

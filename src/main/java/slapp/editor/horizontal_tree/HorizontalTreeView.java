@@ -88,7 +88,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         rectangle.setStyle("-fx-stroke: black; -fx-stroke-width: 1.5; -fx-fill: transparent;");
         Group boxToggleGraphic = new Group(rectangle);
         formulaNodeToggle.setGraphic(boxToggleGraphic);
-        formulaNodeToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) box with its branches."));
+        formulaNodeToggle.setTooltip(new Tooltip("Add (left click) or remove (right click) box with its branches"));
         formulaNodeToggle.setToggleGroup(buttonGroup);
 
         oneBranchToggle = new ToggleButton();
@@ -99,7 +99,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
         oneLine.setStyle("-fx-stroke-width: 1.5");
         oneBranchToggle.setGraphic(new Group(oneLine));
-        oneBranchToggle.setTooltip(new Tooltip("Add branches to selected node (left click)."));
+        oneBranchToggle.setTooltip(new Tooltip("Add branch to selected node"));
         oneBranchToggle.setToggleGroup(buttonGroup);
 
         twoBranchToggle = new ToggleButton();
@@ -119,7 +119,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         HBox twoHBox = new HBox(twoStub, twoBrack, twoVBox);
         twoHBox.setAlignment(Pos.CENTER);
         twoBranchToggle.setGraphic(twoHBox);
-        twoBranchToggle.setTooltip(new Tooltip("Add branches to selected node (left click)."));
+        twoBranchToggle.setTooltip(new Tooltip("Add branches to selected node"));
         twoBranchToggle.setToggleGroup(buttonGroup);
 
         threeBranchToggle = new ToggleButton();
@@ -141,7 +141,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         HBox threeHBox = new HBox(threeStub, threeBrack, threeVBox);
         threeHBox.setAlignment(Pos.CENTER);
         threeBranchToggle.setGraphic(threeHBox);
-        threeBranchToggle.setTooltip(new Tooltip("Add branches to selected node (left click)."));
+        threeBranchToggle.setTooltip(new Tooltip("Add branches to selected node"));
         threeBranchToggle.setToggleGroup(buttonGroup);
 
         indefiniteBranchToggle = new ToggleButton();
@@ -166,7 +166,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
 
         indefiniteBranchToggle.setGraphic(indefPane);
-        indefiniteBranchToggle.setTooltip(new Tooltip("Add indefinite branch to selected node (left click)"));
+        indefiniteBranchToggle.setTooltip(new Tooltip("Add indefinite branch to selected node"));
         indefiniteBranchToggle.setToggleGroup(buttonGroup);
         oneBranchTermToggle = new ToggleButton();
         oneBranchTermToggle.setPrefWidth(64);
@@ -179,7 +179,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         HBox oneBranchHBox = new HBox(oneTermLine, oneTermRec);
         oneBranchHBox.setAlignment(Pos.CENTER);
         oneBranchTermToggle.setGraphic(oneBranchHBox);
-        oneBranchTermToggle.setTooltip(new Tooltip("Branch to term from selected node."));
+        oneBranchTermToggle.setTooltip(new Tooltip("Branch to term from selected node"));
         oneBranchTermToggle.setToggleGroup(buttonGroup);
 
         twoBranchTermToggle = new ToggleButton();
@@ -199,7 +199,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         HBox twoTermHBox = new HBox(twoTermVBox1, twoTermVBox2);
         twoTermHBox.setAlignment(Pos.CENTER);
         twoBranchTermToggle.setGraphic(twoTermHBox);
-        twoBranchTermToggle.setTooltip(new Tooltip("Branch to terms from selected node."));
+        twoBranchTermToggle.setTooltip(new Tooltip("Branch to terms from selected node"));
         twoBranchTermToggle.setToggleGroup(buttonGroup);
 
         verticalDotsToggle = new ToggleButton();
@@ -215,7 +215,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         HBox verticalDotsHBox = new HBox(verticalDotsVBox);
         verticalDotsHBox.setAlignment(Pos.CENTER);
         verticalDotsToggle.setGraphic(verticalDotsHBox);
-        verticalDotsToggle.setTooltip(new Tooltip("Dots to divide term from formula."));
+        verticalDotsToggle.setTooltip(new Tooltip("Dots to divide term from formula branches"));
         verticalDotsToggle.setToggleGroup(buttonGroup);
 
 
@@ -274,7 +274,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         VBox rulerVBox = new VBox(rulerHBox);
         rulerVBox.setAlignment(Pos.CENTER);
         rulerButton.setGraphic(rulerVBox);
-        rulerButton.setTooltip(new Tooltip("Add (right-click) or remove (left-click) horizontal ruler on tree."));
+        rulerButton.setTooltip(new Tooltip("Add (right-click) or remove (left-click) horizontal ruler on tree"));
 
 
 
