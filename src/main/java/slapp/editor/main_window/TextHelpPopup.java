@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.awt.Desktop;
 
+import static slapp.editor.main_window.ExerciseType.HORIZONTAL_TREE;
 
 
 public class TextHelpPopup {
@@ -82,10 +83,35 @@ static {
             ;
 
     verticalTrees = "<body style=\"margin-left:10; margin-right: 20\">"+
-            "<p><h3>VerticalTrees</h3></p>";
+            "<p><h3>VerticalTrees</h3></p>"+
+            "<p>Vertical trees appear in a variety of contexts and in a variety of forms, as sprinkled through chapters 2, 4, and 5 of <i>Symbolic Logic</i>.  Different exercises may include different combinations of the controls here described.  Also, though they are not strictly vertical trees, the 'map' problems of chapter 2 work within the same overall framework.</p>"+
+            "<ol><li>A vertical tree always  has a bar over the main work area containing items that may be dragged into the work area.  Among the possibilities are a blue formula field, a green formula field, a grey vertical bracket, and/or a grey dotted horizontal line.    Once placed in the work area, these may be sized from the far end (the right or right or bottom) by the mouse.  Each has small popup buttons at the start (the left or top) -- grey to drag the object around in the work area, black to delete.  It may be necessary to modify the size of your window in order to create space for items in the work area.  <br><br></li>"+
+            "<li>The 'undo' and 'redo' buttons apply to actions taken on the work area as a whole -- drag/drop actions, actions by commands on the left, and the entry of text fields.  This contrasts with the undo/redo edit controls, whose application is always to characters typed in the current formula field.  Other controls down the left apply just to formula fields.<br><br></li>"+
+            "<li>In addition to the usual sizing and movement controls, the blue formula field has popup grey buttons above and below the center of the field.  Grabbing a lower (upper) button of one field and dragging to an upper (lower) button of another results in  a line between the two. This line is linked to the formula fields and moves with them as the the fields move or grow. It is possible to 'grab' the center of a line with the mouse; then right-click deletes it.  Removing a box removes any lines to which it is connected. In addition, the box may have any of the following controls: <br><br></li>"+
+            "<ul><li>With 'box' selected, left-click adds a solid outline around the formula space.  Right-click removes the outline.<br><br></li>"+
+            "<li>With 'star' selected, left-click adds a solid star at the upper right-hand corner of the formula space.  Right-click removes the star.<br><br></li>"+
+            "<li>With 'annotation' (the stacked boxes) selected, left-click adds a small annotation field at the upper right-hand corner of the formula space.  Right-click removes the field.  The small '+' button adds annotation fields to each formula space, and '-' removes them all.  The annotation fields are regular text-entry fields.  Star and annotation options exclude one another. <br><br></li>"+
+            "<li> With 'circle' selected, F9 adds a marker at the current cursor position.  Move the cursor, and F9 again adds a second marker.  Pressing F9 a third time removes markers, and the cycle begins again.  With two markers, F10 adds a circle whose leftmost point is at the left marker and rightmost point is at the right marker.  Right-click removes a circle and any markers.  In order for the circle not to 'walk' on characters in the formula space, you can insert a space on either side of the circled item(s), and the markers just before the spaces.<br><br></li>"+
+            "<li> Underlines work very much like circle.  With 'underlines' (horizontal bars) selected, F9 adds a marker at the current cursor position.  Move the cursor, and F9 again adds a second marker.  Pressing F9 a third time removes markers and the cycle begins again.  With two markers, F10 adds an underline whose leftmost point is at the left marker, and rightmost point at the right marker.  Right-click removes all underlines and any markers on the field.  A new underline always rests just above any underlines beneath it.  This will be what you want so long as you begin with longer lines (for main operators) first, and come with shorter ones 'contained' within them after.<br><br></li></ul>"+
+            "<li>A 'mapping' function applies to green formula boxes.  This function is related to circle and underline.  It applies just to the green formula fields.  With 'mapping' (down arrow) selected, F9 adds a marker at the current cursor position.  Move the cursor, and F9 again adds a second marker.  Pressing F9 a third time removes markers, and the cycle begins again. And similarly for a separate formula field.  With mapping selected, right click on a formula box removes any markers.<br><br></li>"+
+            "<ul><li>With at least one marker in separate formula fields, F10 connects them by a line.  If there are two markers the line reaches to a bracket whose leftmost end is at the left marker, and rightmost point at the right marker.  If there is a single marker, the line reaches to the marked character.  It is possible to 'grab' the center of a line with the mouse; then right-click deletes it.   <br><br></li> "+
+            "<li>With at least one marker in a selected formula field, F11 adds '?' above.  If there are two markers, the question mark attaches to a bracket whose leftmost end is at the left marker, and rightmost point at the right marker.  If there is a single marker, the question mark attaches to the marked character.  It is possible to grab the question mark with the mouse; then right-click deletes it.<br><br></li></ol>"+
+            "<ul><li>Elements from categories (3) and (4) attach to the <i>formula box</i>.  This is just what you want for the box, star, and annotation options.  However, although circle, underline, and map are first set relative to formula characters, they too are linked to the boxes.  A result is that changes to the formula may leave these incorrectly positioned.  So it is best to add circle, underline, and map only after the formula is finalized.   </li></ul>"
+            ;
 
     horizontalTrees = "<body style=\"margin-left:10; margin-right: 20\">"+
-            "<p><h3>HorizontalTrees</h3></p>";
+            "<p><h3>HorizontalTrees</h3></p>"+
+            "<p>Horizontal trees appear especially in the quantificational portion of chapter 4 of <i>Symbolic Logic</i>.  Though there are a number of controls, their application is reasonably intuitive.</p>"+
+            "<ol><li>The 'undo' and 'redo' buttons apply to actions taken on the work area as a whole -- actions by commands on the left, and the entry of text fields.  This contrasts with the undo/redo edit controls, whose application is always to characters typed in the current formula field.<br><br></li>"+
+            "<li>Other controls down the left apply directly to the construction of trees.<br><br></li>"+
+            "<ul><li>A horizontal tree always begins by placing a 'root' formula box in the main work area.  Select the box control, and click on the work area to add the box.  With the box control selected, right click on a box removes it together with any branches it may have.  As for vertical trees, a formula box may be sized from the right.  As you are sizing a box, it may appear misaligned with its branches; however when you stop the drag, the tree will align itself properly. A root formula box, together with its branches, may be moved in the work area by the grey popup button to its right. <br><br></li>"+
+            "<li>One, two, or three branches may be added to a formula node by selecting the relevant control, and clicking on the formula box.  In fact, there is no limit to the number of branches a node may have -- as another click adds one, two, or three branches again (but it would be unusual to require more than two or three branches).  For a node with one or more branches, it is possible to indicate that the branches continue indefinitely, by adding a 'dots' branch with the control showing dots underneath a bar.<br><br></li>"+
+            "<li>If a break is required to separate a formula from its terms, a vertical dotted line may be added by selecting the relevant control and clicking on the formula box.<br><br></li>"+
+            "<li>Branching for terms works by selecting the relevant control and clicking on a node.  Such branching looks like that for vertical trees except rotated clockwise by 90&#176;. Again, there is no limit to the number of branches a node may have -- as another click adds one or two branches again (but it would be unusual to require more than one or two branches).  It will not be possible to add a formula branch to a term node; and it is not possible for the immediate branches of any node to include both formula and term nodes.<br><br></li>"+
+            "<li>By the control with vertical tick marks across a line, it is possible to add a 'ruler' over the main work area.  There is no special scale to these marks.  They are meant merely to locate positions in the work area, in order to aid references to one portion of a tree or another.<br><br></li>"+
+            "<li>As for vertical trees, selecting the control with the stacked boxes adds (left click) or removes (right click) an annotation box in the upper right corner of formula and term boxes.  The small '+' button adds annotation fields to them all; the small '-' button removes them from all.</li></ull></ol>"+
+            "<ul><li>Some horizontal trees are likely to overrun the right margin of a standard page.  Very often it will make sense to switch to landscape orientation by the 'page setup' print option.</li></ul>"
+            ;
 
     truthTables = "<body style=\"margin-left:10; margin-right: 20\">"+
             "<p><h3>Truth Table Exercises</h3></p>"+
@@ -148,8 +174,16 @@ static {
                 break;
             }
 
-            case VERTICAL_TREE: {
+            case VERTICAL_TREE: {}
+            case VERTICAL_TREE_EXP: {}
+            case VERTICAL_TREE_ABEXP: {}
+            case VERTICAL_TREE_ABEFEXP: {
                 showHelp(verticalTrees);
+                break;
+            }
+
+           case HORIZONTAL_TREE: {
+                showHelp(horizontalTrees);
                 break;
             }
 

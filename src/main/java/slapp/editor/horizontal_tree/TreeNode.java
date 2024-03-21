@@ -35,6 +35,7 @@ public class TreeNode extends HBox {
     boolean formulaNode = true;
     boolean withDots;
     TextField annotationField;
+    BoxedDRTA branchOperatorDRTA;
     double annotationWidth  = 28;
     double rootBump = 0;
     double annBump = 0;
@@ -165,18 +166,18 @@ public class TreeNode extends HBox {
     }
 
     private VBox newSimpleConnectBox() {
-        BoxedDRTA boxedDRTA = newFormulaBoxedDRTA();
-        boxedDRTA.getRTA().setPrefWidth(30);
-        VBox connectBox = new VBox(boxedDRTA.getBoxedRTA());
+        branchOperatorDRTA = newFormulaBoxedDRTA();
+        branchOperatorDRTA.getRTA().setPrefWidth(30);
+        VBox connectBox = new VBox(branchOperatorDRTA.getBoxedRTA());
         connectBox.setAlignment(Pos.CENTER);
         return connectBox;
     }
 
     private HBox newBracketBox(double top, double bottom) {
         double height = bottom - top;
-        BoxedDRTA boxedDRTA = newFormulaBoxedDRTA();
-        boxedDRTA.getRTA().setPrefWidth(24);
-        VBox rtaBox = new VBox(boxedDRTA.getBoxedRTA());
+        branchOperatorDRTA = newFormulaBoxedDRTA();
+        branchOperatorDRTA.getRTA().setPrefWidth(24);
+        VBox rtaBox = new VBox(branchOperatorDRTA.getBoxedRTA());
         rtaBox.setAlignment(Pos.CENTER);
         Line stub = new Line(0, 0, 3, 0);
         stub.setStyle("-fx-stroke-width: 1.5");

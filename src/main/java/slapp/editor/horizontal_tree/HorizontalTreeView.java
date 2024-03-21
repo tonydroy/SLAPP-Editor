@@ -1,13 +1,18 @@
 package slapp.editor.horizontal_tree;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.property.DoubleProperty;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -18,9 +23,12 @@ import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
+
+    private HorizontalTreeView self;
 
     private MainWindowView mainView;
     private String exerciseName = new String("");
@@ -48,29 +56,29 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     private Button annotationPlus;
     private Button annotationMinus;
     private ToggleButton rulerButton;
-
-    private Rectangle numClipRec;
-    private Region numAxisPane;
-    private NumberAxis axis;
-
-
     private ToggleGroup buttonGroup = new ToggleGroup();
     private Node exerciseControlNode;
-
     private List<TreePane> treePanes = new ArrayList<>();
+    EventHandler formulaNodeClickFilter;
+    private EventHandler oneBranchClickFilter;
+    private EventHandler twoBranchClickFilter;
+    private EventHandler threeBranchClickFilter;
+    private EventHandler indefinateBranchClickFilter;
+    private EventHandler annotationClickFilter;
+    private EventHandler dotsClickFilter;
+    private EventHandler oneBranchTermClickFilter;
+    private EventHandler twoBranchTermClickFilter;
+    private Region axis;
+
+    private static TreeNode clickNode = null;
 
     HorizontalTreeView(MainWindowView mainView) {
+        self = this;
         this.mainView = mainView;
 
         mainPane = new AnchorPane();
         mainPane.setStyle("-fx-border-width: 2 2 2 2; -fx-border-color: lightgrey; -fx-background-color: white");
-
-
-
         centerBox = new VBox(3, mainPane, explainDRTA.getEditor());
-
-
-
 
         undoButton = new Button("Undo");
         redoButton = new Button("Redo");
@@ -96,7 +104,6 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         oneBranchToggle.setMinHeight(28);
         oneBranchToggle.setMaxHeight(28);
         Line oneLine = new Line(0, 0, 27, 0);
-
         oneLine.setStyle("-fx-stroke-width: 1.5");
         oneBranchToggle.setGraphic(new Group(oneLine));
         oneBranchToggle.setTooltip(new Tooltip("Add branch to selected node"));
@@ -218,10 +225,6 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         verticalDotsToggle.setTooltip(new Tooltip("Dots to divide term from formula branches"));
         verticalDotsToggle.setToggleGroup(buttonGroup);
 
-
-
-
-
         annotationToggle = new ToggleButton();
         annotationToggle.setPrefWidth(44);
         annotationToggle.setPrefHeight(30);
@@ -276,16 +279,297 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         rulerButton.setGraphic(rulerVBox);
         rulerButton.setTooltip(new Tooltip("Add (right-click) or remove (left-click) horizontal ruler on tree"));
 
-
-
-
-        controlBox.getChildren().addAll(undoButton, redoButton, formulaNodeToggle, oneBranchToggle, twoBranchToggle, threeBranchToggle, indefiniteBranchToggle, oneBranchTermToggle, twoBranchTermToggle, verticalDotsToggle, rulerButton, annotationBox);
+        controlBox.getChildren().addAll(undoButton, redoButton, formulaNodeToggle, oneBranchToggle, twoBranchToggle, threeBranchToggle, indefiniteBranchToggle, verticalDotsToggle, oneBranchTermToggle, twoBranchTermToggle, rulerButton, annotationBox);
         controlBox.setMargin(annotationBox, new Insets(15, 0, 0, 0));
 //        controlBox.setMargin(indefiniteBranchToggle, new Insets(12, 0, -10, 0));
 
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
         controlBox.setPadding(new Insets(20,10,0,80));
         exerciseControlNode = controlBox;
+
+    }
+
+
+
+    void initializeViewDetails() {
+        RichTextArea statementRTA = exerciseStatement.getEditor();
+        statementRTA.setPrefHeight(statementPrefHeight);
+        statementRTA.setMinHeight(statementPrefHeight);
+        statementRTA.getStylesheets().add("slappTextArea.css");
+        statementRTA.setEditable(false);
+
+        RichTextArea commentRTA = exerciseComment.getEditor();
+        commentRTA.getStylesheets().add("slappTextArea.css");
+        commentRTA.setPrefHeight(70.0);
+        commentRTA.setMinHeight(70.0);
+        commentRTA.setPromptText("Comment:");
+
+        RichTextArea explainRTA = explainDRTA.getEditor();
+        explainRTA.getStylesheets().add("slappTextArea.css");
+        explainRTA.setPrefHeight(80.0);
+        explainRTA.setMinHeight(80.0);
+        explainRTA.setPromptText("Explain:");
+
+        formulaNodeClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    TreePane treePane = new TreePane(self);
+                    treePanes.add(treePane);
+                    mainPane.getChildren().add(treePane);
+                    refreshTreePanes();
+                    treePane.relocateToGridPoint(new Point2D(event.getX(), event.getY()));
+                }
+
+                else if (event.getButton() == MouseButton.SECONDARY) {
+                    for (TreePane pane : treePanes) {
+                        TreeNode rootNode = pane.getRootTreeNode();
+                        if (inHierarchy(event.getPickResult().getIntersectedNode(), rootNode)) {
+                            treePanes.remove(pane);
+                            mainPane.getChildren().remove(pane);
+                            formulaNodeToggle.setSelected(false);
+                            break;
+                        } else {
+                            setClickedNode(event, rootNode);
+                            if (clickNode != null && clickNode != rootNode) {
+                                clickNode.getContainer().getDependents().remove(clickNode);
+                                pane.refresh();
+                                formulaNodeToggle.setSelected(false);
+                                break;
+                            }
+                        }
+                    }
+                }
+                formulaNodeToggle.setSelected(false);
+            }
+        };
+        formulaNodeToggle.selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv) mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, formulaNodeClickFilter);
+            else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, formulaNodeClickFilter);
+        });
+
+        oneBranchClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    for (TreePane pane : treePanes) {
+                        TreeNode rootNode = pane.getRootTreeNode();
+                        setClickedNode(event, rootNode);
+                        if (clickNode != null && clickNode.isFormulaNode() && formulaDependents(clickNode.getDependents())) {
+                            TreeNode branch1 = new TreeNode(clickNode, self);
+                            clickNode.getDependents().add(branch1);
+                            pane.refresh();
+                        }
+                    }
+                }
+            }
+        };
+
+        oneBranchToggle.selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv) mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, oneBranchClickFilter);
+            else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, oneBranchClickFilter);
+        });
+
+        twoBranchClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    for (TreePane pane : treePanes) {
+                        TreeNode rootNode = pane.getRootTreeNode();
+                        setClickedNode(event, rootNode);
+                        if (clickNode != null && clickNode.isFormulaNode() && formulaDependents(clickNode.getDependents())) {
+                            TreeNode branch1 = new TreeNode(clickNode, self);
+                            TreeNode branch2 = new TreeNode(clickNode, self);
+                            clickNode.getDependents().addAll(Arrays.asList(branch1, branch2));
+                            pane.refresh();
+                        }
+                    }
+                }
+            }
+        };
+
+        twoBranchToggle.selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv) mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, twoBranchClickFilter);
+            else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, twoBranchClickFilter);
+        });
+
+        threeBranchClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    for (TreePane pane : treePanes) {
+                        TreeNode rootNode = pane.getRootTreeNode();
+                        setClickedNode(event, rootNode);
+                        if (clickNode != null && clickNode.isFormulaNode() && formulaDependents(clickNode.getDependents())) {
+                            TreeNode branch1 = new TreeNode(clickNode, self);
+                            TreeNode branch2 = new TreeNode(clickNode, self);
+                            TreeNode branch3 = new TreeNode(clickNode, self);
+                            clickNode.getDependents().addAll(Arrays.asList(branch1, branch2, branch3));
+                            pane.refresh();
+                        }
+                    }
+                }
+            }
+        };
+
+        threeBranchToggle.selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv) mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, threeBranchClickFilter);
+            else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, threeBranchClickFilter);
+        });
+
+        indefinateBranchClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    for (TreePane pane : treePanes) {
+                        TreeNode rootNode = pane.getRootTreeNode();
+                        setClickedNode(event, rootNode);
+                        if (clickNode != null && clickNode.isFormulaNode() && formulaDependents(clickNode.getDependents())) {
+                            TreeNode branch = new TreeNode(clickNode, self);
+                            branch.setStyle("-fx-border-width: 0 0 0 0");
+                            RichTextArea rta = branch.getBoxedDRTA().getRTA();
+                            rta.setDocument(new Document(" \u22ee"));
+                            rta.setPrefWidth(24);
+                            clickNode.getDependents().add(branch);
+                            pane.refresh();
+                        }
+                    }
+                }
+            }
+        };
+
+        indefiniteBranchToggle.selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv) mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, indefinateBranchClickFilter);
+            else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, indefinateBranchClickFilter);
+        });
+
+        oneBranchTermClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    for (TreePane pane : treePanes) {
+                        TreeNode rootNode = pane.getRootTreeNode();
+                        setClickedNode(event, rootNode);
+                        if (clickNode != null && termDependents(clickNode.getDependents())) {
+                            TreeNode branch = new TreeNode(clickNode, self);
+                            branch.setFormulaNode(false);
+                            branch.setStyle("-fx-border-width: 0 0 0 0");
+                            RichTextArea rta = branch.getBoxedDRTA().getRTA();
+                            rta.setPrefWidth(24);
+                            clickNode.getDependents().add(branch);
+                            pane.refresh();
+                        }
+                    }
+                }
+            }
+        };
+
+        oneBranchTermToggle.selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv) mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, oneBranchTermClickFilter);
+            else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, oneBranchTermClickFilter);
+        });
+
+        twoBranchTermClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    for (TreePane pane : treePanes) {
+                        TreeNode rootNode = pane.getRootTreeNode();
+                        setClickedNode(event, rootNode);
+                        if (clickNode != null && termDependents(clickNode.getDependents())) {
+                            TreeNode branch1 = new TreeNode(clickNode, self);
+                            TreeNode branch2 = new TreeNode(clickNode, self);
+                            branch1.setFormulaNode(false);
+                            branch2.setFormulaNode(false);
+                            branch1.setStyle("-fx-border-width: 0 0 0 0");
+                            branch2.setStyle("-fx-border-width: 0 0 0 0");
+                            RichTextArea rta1 = branch1.getBoxedDRTA().getRTA();
+                            RichTextArea rta2 = branch2.getBoxedDRTA().getRTA();
+                            rta1.setPrefWidth(24);
+                            rta2.setPrefWidth(24);
+                            clickNode.getDependents().addAll(Arrays.asList(branch1, branch2));
+                            pane.refresh();
+                        }
+                    }
+                }
+            }
+        };
+
+        twoBranchTermToggle.selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv) mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, twoBranchTermClickFilter);
+            else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, twoBranchTermClickFilter);
+        });
+
+        dotsClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+
+                for (TreePane pane : treePanes) {
+                    TreeNode rootNode = pane.getRootTreeNode();
+                    setClickedNode(event, rootNode);
+                    if (clickNode != null && clickNode.isFormulaNode()) {
+                        if (event.getButton() == MouseButton.PRIMARY) {
+                            clickNode.setWithDots(true);
+                            pane.refresh();
+                        }
+                        else {
+                            clickNode.setWithDots(false);
+                            pane.refresh();
+                        }
+                    }
+                }
+            }
+        };
+
+        verticalDotsToggle.selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv) mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, dotsClickFilter);
+            else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, dotsClickFilter);
+        });
+
+
+        annotationClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                for (TreePane pane : treePanes) {
+                    TreeNode rootNode = pane.getRootTreeNode();
+                    setClickedNode(event, rootNode);
+                    if (clickNode != null) {
+                        clickNode.processAnnotationRequest(event.getButton() == MouseButton.PRIMARY);
+                        pane.refresh();
+                        break;
+                    }
+                }
+            }
+        };
+        annotationToggle.selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv)  mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, annotationClickFilter );
+            else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, annotationClickFilter);
+        });
+
+        annotationPlus.setOnAction(e -> {
+            for (TreePane pane : treePanes) {
+                setAnnotations(pane.getRootTreeNode(), true);
+                pane.refresh();
+            }
+            annotationToggle.setSelected(false);
+        });
+        annotationMinus.setOnAction(e -> {
+            for (TreePane pane : treePanes) {
+                setAnnotations(pane.getRootTreeNode(), false);
+                pane.refresh();
+            }
+            annotationToggle.setSelected(false);
+        });
+
+        axis = createClipped();
+        rulerButton.selectedProperty().addListener((ob, ov, nv) -> {
+            if (nv) {
+                mainPane.getChildren().add(0, axis);
+            }
+            else {
+                mainPane.getChildren().remove(axis);
+            }
+        });
 
     }
 
@@ -319,24 +603,65 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         return pane;
     }
 
-    void initializeViewDetails() {
-        RichTextArea statementRTA = exerciseStatement.getEditor();
-        statementRTA.setPrefHeight(statementPrefHeight);
-        statementRTA.setMinHeight(statementPrefHeight);
-        statementRTA.getStylesheets().add("slappTextArea.css");
-        statementRTA.setEditable(false);
+    //dependents empty or all formulaNodes
+    boolean formulaDependents(ArrayList<TreeNode> dependentList) {
+        boolean formulaDependents = true;
+        for (TreeNode node : dependentList) {
+            if (!node.isFormulaNode()) {
+                formulaDependents = false;
+                break;
+            }
+        }
+        return formulaDependents;
+    }
 
-        RichTextArea commentRTA = exerciseComment.getEditor();
-        commentRTA.getStylesheets().add("slappTextArea.css");
-        commentRTA.setPrefHeight(70.0);
-        commentRTA.setMinHeight(70.0);
-        commentRTA.setPromptText("Comment:");
 
-        RichTextArea explainRTA = explainDRTA.getEditor();
-        explainRTA.getStylesheets().add("slappTextArea.css");
-        explainRTA.setPrefHeight(80.0);
-        explainRTA.setMinHeight(80.0);
-        explainRTA.setPromptText("Explain:");
+    //dependents empty or all termNodes
+    boolean termDependents(ArrayList<TreeNode> dependentList) {
+        boolean termDependents = true;
+        for (TreeNode node : dependentList) {
+            if (node.isFormulaNode()) {
+                termDependents = false;
+                break;
+            }
+        }
+        return termDependents;
+    }
+
+    void setAnnotations(TreeNode node, boolean add) {
+        node.processAnnotationRequest(add);
+        for (TreeNode child : node.getDependents()) {
+            setAnnotations(child, add);
+        }
+    }
+
+    public static boolean inHierarchy(Node node, Node potentialHierarchyElement) {
+        if (potentialHierarchyElement == null) {
+            return true;
+        }
+        while (node != null) {
+            if (node == potentialHierarchyElement) {
+                return true;
+            }
+            node = node.getParent();
+        }
+        return false;
+    }
+
+    void setClickedNode(MouseEvent event, TreeNode node) {
+        clickNode = null;
+        findClickNodeInTree(event, node);
+    }
+    void findClickNodeInTree(MouseEvent event, TreeNode node) {
+        if ((inHierarchy(event.getPickResult().getIntersectedNode(), node))) {
+            clickNode = node;
+        }
+        else {
+            for (int i = 0; i < node.getDependents().size(); i++) {
+                TreeNode newNode = node.getDependents().get(i);
+                findClickNodeInTree(event, newNode);
+            }
+        }
     }
 
     void refreshTreePanes() {
@@ -346,38 +671,12 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     }
 
 
-    public List<TreePane> getTreePanes() { return treePanes; }
-
     public MainWindowView getMainView() { return mainView; }
 
     public DecoratedRTA getExplainDRTA() { return explainDRTA; }
 
 
     public AnchorPane getMainPane() { return mainPane;}
-
-    public ToggleButton getFormulaNodeToggle() {return formulaNodeToggle; }
-
-    public ToggleButton getOneBranchToggle() {  return oneBranchToggle;  }
-
-    public ToggleButton getTwoBranchToggle() { return twoBranchToggle; }
-
-    public ToggleButton getThreeBranchToggle() { return threeBranchToggle;  }
-
-    public ToggleButton getIndefiniteBranchToggle() { return indefiniteBranchToggle;  }
-
-    public ToggleButton getAnnotationToggle() { return annotationToggle;  }
-
-    public Button getAnnotationPlus() { return annotationPlus;    }
-
-    public Button getAnnotationMinus() { return annotationMinus; }
-
-    public ToggleButton getRulerButton() { return rulerButton;  }
-
-    public ToggleButton getVerticalDotsToggle() {   return verticalDotsToggle;  }
-
-    public ToggleButton getOneBranchTermToggle() {   return oneBranchTermToggle;  }
-
-    public ToggleButton getTwoBranchTermToggle() {    return twoBranchTermToggle;  }
 
     @Override
     public String getExerciseName() { return exerciseName;  }
