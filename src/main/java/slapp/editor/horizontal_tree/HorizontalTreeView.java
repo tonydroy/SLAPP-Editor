@@ -14,7 +14,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -70,7 +69,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     private EventHandler twoBranchTermClickFilter;
     private Region axis;
 
-    private static TreeNode clickNode = null;
+    private static BranchNode clickNode = null;
 
     HorizontalTreeView(MainWindowView mainView) {
         self = this;
@@ -323,7 +322,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
                 else if (event.getButton() == MouseButton.SECONDARY) {
                     for (TreePane pane : treePanes) {
-                        TreeNode rootNode = pane.getRootTreeNode();
+                        BranchNode rootNode = pane.getRootTreeNode();
                         if (inHierarchy(event.getPickResult().getIntersectedNode(), rootNode)) {
                             treePanes.remove(pane);
                             mainPane.getChildren().remove(pane);
@@ -353,10 +352,10 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
             public void handle(MouseEvent event) {
                 if (event.getButton() == MouseButton.PRIMARY) {
                     for (TreePane pane : treePanes) {
-                        TreeNode rootNode = pane.getRootTreeNode();
+                        BranchNode rootNode = pane.getRootTreeNode();
                         setClickedNode(event, rootNode);
                         if (clickNode != null && clickNode.isFormulaNode() && formulaDependents(clickNode.getDependents())) {
-                            TreeNode branch1 = new TreeNode(clickNode, self);
+                            BranchNode branch1 = new BranchNode(clickNode, self);
                             clickNode.getDependents().add(branch1);
                             pane.refresh();
                         }
@@ -375,11 +374,11 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
             public void handle(MouseEvent event) {
                 if (event.getButton() == MouseButton.PRIMARY) {
                     for (TreePane pane : treePanes) {
-                        TreeNode rootNode = pane.getRootTreeNode();
+                        BranchNode rootNode = pane.getRootTreeNode();
                         setClickedNode(event, rootNode);
                         if (clickNode != null && clickNode.isFormulaNode() && formulaDependents(clickNode.getDependents())) {
-                            TreeNode branch1 = new TreeNode(clickNode, self);
-                            TreeNode branch2 = new TreeNode(clickNode, self);
+                            BranchNode branch1 = new BranchNode(clickNode, self);
+                            BranchNode branch2 = new BranchNode(clickNode, self);
                             clickNode.getDependents().addAll(Arrays.asList(branch1, branch2));
                             pane.refresh();
                         }
@@ -398,12 +397,12 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
             public void handle(MouseEvent event) {
                 if (event.getButton() == MouseButton.PRIMARY) {
                     for (TreePane pane : treePanes) {
-                        TreeNode rootNode = pane.getRootTreeNode();
+                        BranchNode rootNode = pane.getRootTreeNode();
                         setClickedNode(event, rootNode);
                         if (clickNode != null && clickNode.isFormulaNode() && formulaDependents(clickNode.getDependents())) {
-                            TreeNode branch1 = new TreeNode(clickNode, self);
-                            TreeNode branch2 = new TreeNode(clickNode, self);
-                            TreeNode branch3 = new TreeNode(clickNode, self);
+                            BranchNode branch1 = new BranchNode(clickNode, self);
+                            BranchNode branch2 = new BranchNode(clickNode, self);
+                            BranchNode branch3 = new BranchNode(clickNode, self);
                             clickNode.getDependents().addAll(Arrays.asList(branch1, branch2, branch3));
                             pane.refresh();
                         }
@@ -422,12 +421,13 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
             public void handle(MouseEvent event) {
                 if (event.getButton() == MouseButton.PRIMARY) {
                     for (TreePane pane : treePanes) {
-                        TreeNode rootNode = pane.getRootTreeNode();
+                        BranchNode rootNode = pane.getRootTreeNode();
                         setClickedNode(event, rootNode);
                         if (clickNode != null && clickNode.isFormulaNode() && formulaDependents(clickNode.getDependents())) {
-                            TreeNode branch = new TreeNode(clickNode, self);
+                            BranchNode branch = new BranchNode(clickNode, self);
+                            branch.setIndefiniteNode(true);
                             branch.setStyle("-fx-border-width: 0 0 0 0");
-                            RichTextArea rta = branch.getBoxedDRTA().getRTA();
+                            RichTextArea rta = branch.getFormulaBoxedDRTA().getRTA();
                             rta.setDocument(new Document(" \u22ee"));
                             rta.setPrefWidth(24);
                             clickNode.getDependents().add(branch);
@@ -448,13 +448,13 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
             public void handle(MouseEvent event) {
                 if (event.getButton() == MouseButton.PRIMARY) {
                     for (TreePane pane : treePanes) {
-                        TreeNode rootNode = pane.getRootTreeNode();
+                        BranchNode rootNode = pane.getRootTreeNode();
                         setClickedNode(event, rootNode);
                         if (clickNode != null && termDependents(clickNode.getDependents())) {
-                            TreeNode branch = new TreeNode(clickNode, self);
+                            BranchNode branch = new BranchNode(clickNode, self);
                             branch.setFormulaNode(false);
                             branch.setStyle("-fx-border-width: 0 0 0 0");
-                            RichTextArea rta = branch.getBoxedDRTA().getRTA();
+                            RichTextArea rta = branch.getFormulaBoxedDRTA().getRTA();
                             rta.setPrefWidth(24);
                             clickNode.getDependents().add(branch);
                             pane.refresh();
@@ -474,17 +474,17 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
             public void handle(MouseEvent event) {
                 if (event.getButton() == MouseButton.PRIMARY) {
                     for (TreePane pane : treePanes) {
-                        TreeNode rootNode = pane.getRootTreeNode();
+                        BranchNode rootNode = pane.getRootTreeNode();
                         setClickedNode(event, rootNode);
                         if (clickNode != null && termDependents(clickNode.getDependents())) {
-                            TreeNode branch1 = new TreeNode(clickNode, self);
-                            TreeNode branch2 = new TreeNode(clickNode, self);
+                            BranchNode branch1 = new BranchNode(clickNode, self);
+                            BranchNode branch2 = new BranchNode(clickNode, self);
                             branch1.setFormulaNode(false);
                             branch2.setFormulaNode(false);
                             branch1.setStyle("-fx-border-width: 0 0 0 0");
                             branch2.setStyle("-fx-border-width: 0 0 0 0");
-                            RichTextArea rta1 = branch1.getBoxedDRTA().getRTA();
-                            RichTextArea rta2 = branch2.getBoxedDRTA().getRTA();
+                            RichTextArea rta1 = branch1.getFormulaBoxedDRTA().getRTA();
+                            RichTextArea rta2 = branch2.getFormulaBoxedDRTA().getRTA();
                             rta1.setPrefWidth(24);
                             rta2.setPrefWidth(24);
                             clickNode.getDependents().addAll(Arrays.asList(branch1, branch2));
@@ -505,15 +505,15 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
             public void handle(MouseEvent event) {
 
                 for (TreePane pane : treePanes) {
-                    TreeNode rootNode = pane.getRootTreeNode();
+                    BranchNode rootNode = pane.getRootTreeNode();
                     setClickedNode(event, rootNode);
                     if (clickNode != null && clickNode.isFormulaNode()) {
                         if (event.getButton() == MouseButton.PRIMARY) {
-                            clickNode.setWithDots(true);
+                            clickNode.setDotDivider(true);
                             pane.refresh();
                         }
                         else {
-                            clickNode.setWithDots(false);
+                            clickNode.setDotDivider(false);
                             pane.refresh();
                         }
                     }
@@ -531,7 +531,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
             @Override
             public void handle(MouseEvent event) {
                 for (TreePane pane : treePanes) {
-                    TreeNode rootNode = pane.getRootTreeNode();
+                    BranchNode rootNode = pane.getRootTreeNode();
                     setClickedNode(event, rootNode);
                     if (clickNode != null) {
                         clickNode.processAnnotationRequest(event.getButton() == MouseButton.PRIMARY);
@@ -604,9 +604,9 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     }
 
     //dependents empty or all formulaNodes
-    boolean formulaDependents(ArrayList<TreeNode> dependentList) {
+    boolean formulaDependents(ArrayList<BranchNode> dependentList) {
         boolean formulaDependents = true;
-        for (TreeNode node : dependentList) {
+        for (BranchNode node : dependentList) {
             if (!node.isFormulaNode()) {
                 formulaDependents = false;
                 break;
@@ -617,9 +617,9 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
 
     //dependents empty or all termNodes
-    boolean termDependents(ArrayList<TreeNode> dependentList) {
+    boolean termDependents(ArrayList<BranchNode> dependentList) {
         boolean termDependents = true;
-        for (TreeNode node : dependentList) {
+        for (BranchNode node : dependentList) {
             if (node.isFormulaNode()) {
                 termDependents = false;
                 break;
@@ -628,9 +628,9 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         return termDependents;
     }
 
-    void setAnnotations(TreeNode node, boolean add) {
+    void setAnnotations(BranchNode node, boolean add) {
         node.processAnnotationRequest(add);
-        for (TreeNode child : node.getDependents()) {
+        for (BranchNode child : node.getDependents()) {
             setAnnotations(child, add);
         }
     }
@@ -648,17 +648,17 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         return false;
     }
 
-    void setClickedNode(MouseEvent event, TreeNode node) {
+    void setClickedNode(MouseEvent event, BranchNode node) {
         clickNode = null;
         findClickNodeInTree(event, node);
     }
-    void findClickNodeInTree(MouseEvent event, TreeNode node) {
+    void findClickNodeInTree(MouseEvent event, BranchNode node) {
         if ((inHierarchy(event.getPickResult().getIntersectedNode(), node))) {
             clickNode = node;
         }
         else {
             for (int i = 0; i < node.getDependents().size(); i++) {
-                TreeNode newNode = node.getDependents().get(i);
+                BranchNode newNode = node.getDependents().get(i);
                 findClickNodeInTree(event, newNode);
             }
         }
@@ -671,12 +671,18 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     }
 
 
+    public ToggleButton getRulerButton() {    return rulerButton;  }
+
     public MainWindowView getMainView() { return mainView; }
 
     public DecoratedRTA getExplainDRTA() { return explainDRTA; }
 
 
     public AnchorPane getMainPane() { return mainPane;}
+
+    public Region getAxis() {   return axis;  }
+
+    public List<TreePane> getTreePanes() { return treePanes;   }
 
     @Override
     public String getExerciseName() { return exerciseName;  }

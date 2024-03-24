@@ -5,10 +5,12 @@ import slapp.editor.main_window.ExerciseModel;
 import slapp.editor.main_window.ExerciseType;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HorizontalTreeModel implements ExerciseModel<Document>, Serializable {
 
-    private String exerciseName = new String("");
+    private String exerciseName = new String("test");  //*************************************
     private ExerciseType exerciseType = ExerciseType.HORIZONTAL_TREE;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
@@ -17,7 +19,23 @@ public class HorizontalTreeModel implements ExerciseModel<Document>, Serializabl
     private Document exerciseComment = new Document();
     private Document explainDocument = new Document();
 
+    private List<TreeModel> treeModels = new ArrayList<>();
+    private boolean axis = false;
+
+
     public Document getExplainDocument() {return explainDocument; }
+
+    public void setExerciseName(String exerciseName) { this.exerciseName = exerciseName;  }
+
+    public void setExerciseStatement(Document exerciseStatement) {   this.exerciseStatement = exerciseStatement;    }
+
+    public void setExplainDocument(Document explainDocument) { this.explainDocument = explainDocument;  }
+
+    public void setAxis(boolean axis) { this.axis = axis; }
+
+    public boolean isAxis() {     return axis;  }
+
+    public List<TreeModel> getTreeModels() {  return treeModels;  }
 
     @Override
     public String getExerciseName() { return exerciseName; }

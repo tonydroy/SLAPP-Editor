@@ -4,30 +4,22 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import slapp.editor.vertical_tree.drag_drop.DragContainer;
 import slapp.editor.vertical_tree.drag_drop.Point2dSerial;
-
-import java.util.ListIterator;
 
 public class TreePane extends Pane {
 
     TreePane self;
 
     HorizontalTreeView horizontalTreeView;
-    TreeNode rootTreeNode;
+    BranchNode rootBranchNode;
     Label leftDragLabel;
     private EventHandler<DragEvent> mContextDragOver;
     private EventHandler <DragEvent> mContextDragDropped;
@@ -39,9 +31,9 @@ public class TreePane extends Pane {
     TreePane(HorizontalTreeView horizontalTreeView) {
         self = this;
         this.horizontalTreeView = horizontalTreeView;
-        rootTreeNode = new TreeNode(null, horizontalTreeView);
-        rootTreeNode.setRoot(true);
-        rootTreeNode.setRootBump(8.0);
+        rootBranchNode = new BranchNode(null, horizontalTreeView);
+        rootBranchNode.setRoot(true);
+        rootBranchNode.setRootBump(8.0);
 
         leftDragLabel = new Label("");
         leftDragLabel.setMaxWidth(10);
@@ -58,8 +50,8 @@ public class TreePane extends Pane {
             leftDragLabel.setStyle("-fx-background-color: transparent");
         });
 
-        rootTreeNode.getChildren().add(0, leftDragLabel);
-        rootTreeNode.setPadding(new Insets(0, 4, 0, 0));
+        rootBranchNode.getChildren().add(0, leftDragLabel);
+        rootBranchNode.setPadding(new Insets(0, 4, 0, 0));
 
 
         buildNodeDragHandlers();
@@ -69,16 +61,16 @@ public class TreePane extends Pane {
     }
 
     void refresh() {
-        double startX = rootTreeNode.getLayoutX();
-        double startY = rootTreeNode.getLayoutY();
+        double startX = rootBranchNode.getLayoutX();
+        double startY = rootBranchNode.getLayoutY();
 
         this.getChildren().clear();
-        rootTreeNode.doLayout(0);
-        rootTreeNode.addToPane(self, 0, 0);
+        rootBranchNode.doLayout(0);
+        rootBranchNode.addToPane(self, 0, 0);
 
-        double deltaX = startX - rootTreeNode.getXLayout();
+        double deltaX = startX - rootBranchNode.getXLayout();
         self.setLayoutX(self.getLayoutX() + deltaX);
-        double deltaY = startY - rootTreeNode.getYLayout();
+        double deltaY = startY - rootBranchNode.getYLayout();
         self.setLayoutY(self.getLayoutY() + deltaY);
 
         double newY = self.getLayoutY();
@@ -189,5 +181,5 @@ public class TreePane extends Pane {
     }
 
 
-    public TreeNode getRootTreeNode() { return rootTreeNode; }
+    public BranchNode getRootTreeNode() { return rootBranchNode; }
 }

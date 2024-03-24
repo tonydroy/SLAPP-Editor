@@ -5,7 +5,6 @@ import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -16,15 +15,16 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class TreeNode extends HBox {
-    TreeNode self;
+public class BranchNode extends HBox {
+    BranchNode self;
     boolean root = false;
-    TreeNode container;
+    BranchNode container;
     HorizontalTreeView horizontalTreeView;
-    BoxedDRTA boxedDRTA;
-    ArrayList<TreeNode> dependents = new ArrayList<>();
+    BoxedDRTA formulaBoxedDRTA;
+    BoxedDRTA connectorBoxedDRTA;
+    TextField annotationField = new TextField();
+    ArrayList<BranchNode> dependents = new ArrayList<>();
     static double offsetY = 38;
     static double leafPos = -38;
     double minLayoutY;
@@ -33,24 +33,27 @@ public class TreeNode extends HBox {
     double layoutY;
     boolean annotation = false;
     boolean formulaNode = true;
-    boolean withDots;
-    TextField annotationField;
-    BoxedDRTA branchOperatorDRTA;
+    boolean indefiniteNode = false;
+    boolean dotDivider;
+
+
+
     double annotationWidth  = 28;
     double rootBump = 0;
     double annBump = 0;
 
 
-    public TreeNode(TreeNode container, HorizontalTreeView horizontalTreeView) {
+    public BranchNode(BranchNode container, HorizontalTreeView horizontalTreeView) {
         super();
         this.container = container;
         this.horizontalTreeView = horizontalTreeView;
         self = this;
-        boxedDRTA = newFormulaBoxedDRTA();
+        formulaBoxedDRTA = newFormulaBoxedDRTA();
+        connectorBoxedDRTA = newFormulaBoxedDRTA();
 
-        self.getChildren().add(boxedDRTA.getBoxedRTA());
+        self.getChildren().add(formulaBoxedDRTA.getBoxedRTA());
         HrzRightDragResizer resizer = new HrzRightDragResizer(horizontalTreeView);
-        resizer.makeResizable(boxedDRTA.getRTA());
+        resizer.makeResizable(formulaBoxedDRTA.getRTA());
         self.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1.5 0");
         self.setPadding(new Insets(0, 4, 0, 2));
 
@@ -71,12 +74,12 @@ public class TreeNode extends HBox {
             return layoutY;
         }
         else {
-            TreeNode initialNode = dependents.get(0);
-            minLayoutY = initialNode.setLayout(xVal + boxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 36);
+            BranchNode initialNode = dependents.get(0);
+            minLayoutY = initialNode.setLayout(xVal + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 36);
             maxLayoutY = minLayoutY;
             for (int i = 1; i < dependents.size(); i++) {
-                TreeNode node = dependents.get(i);
-                maxLayoutY = node.setLayout(xVal + boxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 36);
+                BranchNode node = dependents.get(i);
+                maxLayoutY = node.setLayout(xVal + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 36);
             }
             layoutY = minLayoutY + (maxLayoutY - minLayoutY)/2.0;
             return layoutY;
@@ -87,11 +90,11 @@ public class TreeNode extends HBox {
         pane.getChildren().add(self);
         self.setLayoutX(layoutX + offsetX);
         self.setLayoutY(layoutY + offsetY);
-        if (withDots) {
+        if (dotDivider) {
             Line dotLine = new Line(0,0,0,27);
             dotLine.getStrokeDashArray().addAll(1.0, 4.0);
             pane.getChildren().add(dotLine);
-            dotLine.setLayoutX(self.layoutX + boxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 9);
+            dotLine.setLayoutX(self.layoutX + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 9);
             dotLine.setLayoutY(self.layoutY + 14.0);
         }
         if (!dependents.isEmpty()) {
@@ -100,13 +103,13 @@ public class TreeNode extends HBox {
                 if (dependents.size() == 1) {
                     VBox simpleConnector = newSimpleConnectBox();
                     pane.getChildren().add(simpleConnector);
-                    TreeNode dependent = dependents.get(0);
+                    BranchNode dependent = dependents.get(0);
                     simpleConnector.setLayoutX(dependent.getXLayout() - 30.0);
                     simpleConnector.setLayoutY(dependent.getYLayout() + 14.0);
                 }
                 else if (dependents.size() > 1) {
-                    TreeNode topNode = dependents.get(0);
-                    TreeNode bottomNode = dependents.get(dependents.size() - 1);
+                    BranchNode topNode = dependents.get(0);
+                    BranchNode bottomNode = dependents.get(dependents.size() - 1);
                     double top = topNode.getYLayout();
                     double bottom = bottomNode.getYLayout();
                     HBox bracketBox = newBracketBox(top, bottom);
@@ -119,16 +122,16 @@ public class TreeNode extends HBox {
                 offsetY = 14.0;
                 Pane branchPane = newTermBranch();
                 pane.getChildren().add(branchPane);
-                TreeNode topNode = dependents.get(0);
+                BranchNode topNode = dependents.get(0);
                 double xDiff = 31.0;
-                if (withDots) xDiff = 24.0;
+                if (dotDivider) xDiff = 24.0;
                 branchPane.setLayoutX(topNode.getXLayout() - xDiff);
                 branchPane.setLayoutY(topNode.getYLayout() + 28);
             }
         }
 
         for (int i = 0; i < dependents.size(); i++) {
-            TreeNode node = dependents.get(i);
+            BranchNode node = dependents.get(i);
             node.addToPane(pane, offsetX, offsetY);
         }
     }
@@ -157,8 +160,8 @@ public class TreeNode extends HBox {
         double center = (bottom - top)/2;
         Pane branchPane = new Pane();
         double xEnd = 31;
-        if (withDots) xEnd = 24;
-        for (TreeNode node : dependents) {
+        if (dotDivider) xEnd = 24;
+        for (BranchNode node : dependents) {
             Line line = new Line(0, center, xEnd, node.getYLayout() - top);
             branchPane.getChildren().add(line);
         }
@@ -166,18 +169,17 @@ public class TreeNode extends HBox {
     }
 
     private VBox newSimpleConnectBox() {
-        branchOperatorDRTA = newFormulaBoxedDRTA();
-        branchOperatorDRTA.getRTA().setPrefWidth(30);
-        VBox connectBox = new VBox(branchOperatorDRTA.getBoxedRTA());
+
+        connectorBoxedDRTA.getRTA().setPrefWidth(30);
+        VBox connectBox = new VBox(connectorBoxedDRTA.getBoxedRTA());
         connectBox.setAlignment(Pos.CENTER);
         return connectBox;
     }
 
     private HBox newBracketBox(double top, double bottom) {
         double height = bottom - top;
-        branchOperatorDRTA = newFormulaBoxedDRTA();
-        branchOperatorDRTA.getRTA().setPrefWidth(24);
-        VBox rtaBox = new VBox(branchOperatorDRTA.getBoxedRTA());
+        connectorBoxedDRTA.getRTA().setPrefWidth(24);
+        VBox rtaBox = new VBox(connectorBoxedDRTA.getBoxedRTA());
         rtaBox.setAlignment(Pos.CENTER);
         Line stub = new Line(0, 0, 3, 0);
         stub.setStyle("-fx-stroke-width: 1.5");
@@ -208,7 +210,6 @@ public class TreeNode extends HBox {
 
     public void addAnnotation() {
         if (!annotation) {
-            annotationField = new TextField();
             annotationField.setPrefWidth(annotationWidth);
             annotationField.setPrefHeight(15);
             annotationField.setFont(new Font("Noto Sans", 10));
@@ -220,17 +221,34 @@ public class TreeNode extends HBox {
         }
     }
 
-    public BoxedDRTA getBoxedDRTA() {  return boxedDRTA;  }
+    public boolean isAnnotation() {    return annotation;  }
 
-    public TreeNode getContainer() {return container; }
+    public void setAnnotation(boolean annotation) {   this.annotation = annotation; }
+
+    public TextField getAnnotationField() {    return annotationField;  }
+
+
+    public boolean isIndefiniteNode() {    return indefiniteNode;   }
+
+    public boolean isDotDivider() {    return dotDivider;  }
+
+    public boolean isRoot() {     return root;  }
+
+    public void setIndefiniteNode(boolean indefiniteNode) {    this.indefiniteNode = indefiniteNode;  }
+
+    public BoxedDRTA getFormulaBoxedDRTA() {  return formulaBoxedDRTA;  }
+
+    public BoxedDRTA getConnectorBoxedDRTA() {     return connectorBoxedDRTA;  }
+
+    public BranchNode getContainer() {return container; }
     public double getXLayout() { return layoutX; }
 
     public void setRoot(boolean root) {    this.root = root;}
 
     public double getYLayout() { return layoutY; }
-    public ArrayList<TreeNode> getDependents() {  return dependents;  }
+    public ArrayList<BranchNode> getDependents() {  return dependents;  }
 
-    public void setWithDots(boolean withDots) { this.withDots = withDots; }
+    public void setDotDivider(boolean dotDivider) { this.dotDivider = dotDivider; }
 
     public void setRootBump(double rootBump) {    this.rootBump = rootBump;  }
 

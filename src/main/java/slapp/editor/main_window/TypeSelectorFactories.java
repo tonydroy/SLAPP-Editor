@@ -13,6 +13,7 @@ import slapp.editor.derivation.DerivationModel;
 import slapp.editor.derivation_explain.DrvtnExpCreate;
 import slapp.editor.derivation_explain.DrvtnExpExercise;
 import slapp.editor.derivation_explain.DrvtnExpModel;
+import slapp.editor.horizontal_tree.HorizontalTreeCreate;
 import slapp.editor.horizontal_tree.HorizontalTreeExercise;
 import slapp.editor.horizontal_tree.HorizontalTreeModel;
 import slapp.editor.simple_editor.SimpleEditCreate;
@@ -92,6 +93,10 @@ public class TypeSelectorFactories {
             case "VerticalTreeABEFExpModel": {
                 VerticalTreeABEFExpModel verticalTreeABEFExpModel = (VerticalTreeABEFExpModel) objectModel;
                 return new VerticalTreeABEFExpExercise(verticalTreeABEFExpModel, mainWindow);
+            }
+            case "HorizontalTreeModel": {
+                HorizontalTreeModel horizontalTreeModel = (HorizontalTreeModel) objectModel;
+                return new HorizontalTreeExercise(horizontalTreeModel, mainWindow);
             }
 
             default: {
@@ -202,6 +207,15 @@ public class TypeSelectorFactories {
                     break;
                 }
                 VerticalTreeABEFExpCreate verticalTreeABEFExpCreate = new VerticalTreeABEFExpCreate(mainWindow, verticalTreeABEFExpModel);
+                break;
+            }
+            case "HorizontalTreeModel": {
+                HorizontalTreeModel horizontalTreeModel = (HorizontalTreeModel) objectModel;
+                if (horizontalTreeModel.isStarted()) {
+                    EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
+                    break;
+                }
+                HorizontalTreeCreate horizontalTreeCreate = new HorizontalTreeCreate(mainWindow, horizontalTreeModel);
                 break;
             }
 

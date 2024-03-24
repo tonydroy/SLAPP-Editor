@@ -247,9 +247,6 @@ public class MainWindow {
                     TypeSelectorFactories typeFactories = new TypeSelectorFactories(this);
                     Exercise exercise = typeFactories.getExerciseFromModelObject(exerciseModelObject);
                     if (exercise != null) {
-
-
-
                         setUpExercise(exercise);
                         isExerciseOpen = true;
                         currentAssignment = null;
