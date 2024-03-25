@@ -25,12 +25,12 @@ public class BranchNode extends HBox {
     BoxedDRTA connectorBoxedDRTA;
     TextField annotationField = new TextField();
     ArrayList<BranchNode> dependents = new ArrayList<>();
-    static double offsetY = 38;
-    static double leafPos = -38;
-    double minLayoutY;
-    double maxLayoutY;
-    double layoutX;
-    double layoutY;
+    static double offsetY = 40;
+    static double leafPos = -40;
+    double minYlayout;
+    double maxYlayout;
+    double Xlayout;
+    double Ylayout;
     boolean annotation = false;
     boolean formulaNode = true;
     boolean indefiniteNode = false;
@@ -67,35 +67,38 @@ public class BranchNode extends HBox {
     }
 
     double setLayout(double xVal) {
-        layoutX = xVal;
+        Xlayout = xVal;
         if (dependents.isEmpty()) {
             leafPos = leafPos + offsetY;
-            layoutY = leafPos;
-            return layoutY;
+ //           if (!formulaNode) leafPos -= 10.0;
+            Ylayout = leafPos;
+            if (!formulaNode) Ylayout -= 14;
+            return Ylayout;
         }
         else {
             BranchNode initialNode = dependents.get(0);
-            minLayoutY = initialNode.setLayout(xVal + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 36);
-            maxLayoutY = minLayoutY;
+            minYlayout = initialNode.setLayout(xVal + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 36);
+            maxYlayout = minYlayout;
             for (int i = 1; i < dependents.size(); i++) {
                 BranchNode node = dependents.get(i);
-                maxLayoutY = node.setLayout(xVal + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 36);
+                maxYlayout = node.setLayout(xVal + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 36);
             }
-            layoutY = minLayoutY + (maxLayoutY - minLayoutY)/2.0;
-            return layoutY;
+            Ylayout = minYlayout + (maxYlayout - minYlayout)/2.0;
+            return Ylayout;
         }
     }
 
     void addToPane (Pane pane, double offsetX, double offsetY) {
         pane.getChildren().add(self);
-        self.setLayoutX(layoutX + offsetX);
-        self.setLayoutY(layoutY + offsetY);
+        self.setLayoutX(Xlayout + offsetX);
+        self.setLayoutY(Ylayout + offsetY);
+
         if (dotDivider) {
             Line dotLine = new Line(0,0,0,27);
             dotLine.getStrokeDashArray().addAll(1.0, 4.0);
             pane.getChildren().add(dotLine);
-            dotLine.setLayoutX(self.layoutX + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 9);
-            dotLine.setLayoutY(self.layoutY + 14.0);
+            dotLine.setLayoutX(self.Xlayout + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 9);
+            dotLine.setLayoutY(self.Ylayout + 14.0);
         }
         if (!dependents.isEmpty()) {
             if (dependents.get(0).isFormulaNode()) {
@@ -105,7 +108,7 @@ public class BranchNode extends HBox {
                     pane.getChildren().add(simpleConnector);
                     BranchNode dependent = dependents.get(0);
                     simpleConnector.setLayoutX(dependent.getXLayout() - 30.0);
-                    simpleConnector.setLayoutY(dependent.getYLayout() + 14.0);
+                    simpleConnector.setLayoutY(dependent.getYLayout() + 12.0);
                 }
                 else if (dependents.size() > 1) {
                     BranchNode topNode = dependents.get(0);
@@ -179,6 +182,7 @@ public class BranchNode extends HBox {
     private HBox newBracketBox(double top, double bottom) {
         double height = bottom - top;
         connectorBoxedDRTA.getRTA().setPrefWidth(24);
+        connectorBoxedDRTA.getBoxedRTA().setPadding(new Insets(0,0,6,0));
         VBox rtaBox = new VBox(connectorBoxedDRTA.getBoxedRTA());
         rtaBox.setAlignment(Pos.CENTER);
         Line stub = new Line(0, 0, 3, 0);
@@ -227,6 +231,9 @@ public class BranchNode extends HBox {
 
     public TextField getAnnotationField() {    return annotationField;  }
 
+    public void setAnnBump(double annBump) {    this.annBump = annBump;   }
+
+    public double getAnnotationWidth() {     return annotationWidth;  }
 
     public boolean isIndefiniteNode() {    return indefiniteNode;   }
 
@@ -241,11 +248,11 @@ public class BranchNode extends HBox {
     public BoxedDRTA getConnectorBoxedDRTA() {     return connectorBoxedDRTA;  }
 
     public BranchNode getContainer() {return container; }
-    public double getXLayout() { return layoutX; }
+    public double getXLayout() { return Xlayout; }
 
     public void setRoot(boolean root) {    this.root = root;}
 
-    public double getYLayout() { return layoutY; }
+    public double getYLayout() { return Ylayout; }
     public ArrayList<BranchNode> getDependents() {  return dependents;  }
 
     public void setDotDivider(boolean dotDivider) { this.dotDivider = dotDivider; }

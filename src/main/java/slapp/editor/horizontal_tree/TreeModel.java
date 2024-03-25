@@ -6,13 +6,15 @@ public class TreeModel implements Serializable {
 
     private double paneXlayout;
     private double paneYlayout;
+    private double rootXlayout;
+    private double rootYlayout;
     private BranchModel root;
 
 
 
     public void setPaneXlayout(double paneXlayout) {    this.paneXlayout = paneXlayout;   }
 
-    public void setPaneYlayout(double paneYayoutY) {   this.paneYlayout = paneYlayout;    }
+    public void setPaneYlayout(double paneYlayout) {   this.paneYlayout = paneYlayout;    }
 
     public double getPaneXlayout() {  return paneXlayout;  }
 
@@ -21,4 +23,20 @@ public class TreeModel implements Serializable {
     public void setRoot(BranchModel root) {     this.root = root;  }
 
     public BranchModel getRoot() {   return root;  }
+
+    public double getRootXlayout() {
+        return rootXlayout;
+    }
+
+    public void setRootXlayout(double rootXlayout) {
+        this.rootXlayout = rootXlayout;
+    }
+
+    public double getRootYlayout() {
+        return rootYlayout;
+    }
+
+    public void setRootYlayout(double rootYlayout) {
+        this.rootYlayout = rootYlayout;
+    }
 }

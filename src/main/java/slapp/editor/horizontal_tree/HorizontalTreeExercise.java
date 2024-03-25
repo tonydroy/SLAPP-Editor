@@ -6,7 +6,6 @@ import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import slapp.editor.DiskUtilities;
-import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
 import java.util.List;
@@ -25,7 +24,6 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
         this.mainView = mainWindow.getMainView();
         this.horizontalTreeView = new HorizontalTreeView(mainView);
-
         setHorizontalTreeView();
     }
 
@@ -70,25 +68,35 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         if (horizontalTreeModel.isAxis()) {
             horizontalTreeView.getRulerButton().setSelected(true);
         }
-
         populateTreePanes();
         horizontalTreeView.refreshTreePanes();
 
     }
 
     private void populateTreePanes() {
+        horizontalTreeView.getTreePanes().clear();
+
         for (TreeModel treeModel : horizontalTreeModel.getTreeModels()) {
             TreePane treePane = new TreePane(horizontalTreeView);
-            AnchorPane mainPane = horizontalTreeView.getMainPane();
-            mainPane.getChildren().add(treePane);
             treePane.setLayoutX(treeModel.getPaneXlayout());
             treePane.setLayoutY(treeModel.getPaneYlayout());
-            setTreeNodes(treePane.getRootTreeNode(), treeModel.getRoot());
+            BranchNode rootNode = treePane.getRootBranchNode();
+
+            rootNode.setLayoutX(treeModel.getRootXlayout());
+            rootNode.setLayoutY(treeModel.getRootYlayout());
+
+            setTreeNodes(rootNode, treeModel.getRoot());
+
+            horizontalTreeView.getTreePanes().add(treePane);
         }
     }
 
     private void setTreeNodes(BranchNode branchNode, BranchModel branchModel) {
-        branchNode.setAnnotation(branchModel.isAnnotation());
+        if (branchModel.isAnnotation()) {
+            branchNode.addAnnotation();
+            branchNode.setAnnBump(branchNode.getAnnotationWidth());
+            branchNode.setAnnotation(true);
+        }
         branchNode.setFormulaNode(branchModel.isFormulaBranch());
         branchNode.setIndefiniteNode(branchModel.isIndefiniteNumBranch());
         branchNode.setDotDivider(branchModel.isDotDivider());
@@ -102,11 +110,15 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         RichTextArea connectRTA = branchNode.getConnectorBoxedDRTA().getRTA();
         connectRTA.setDocument(branchModel.getConnectorDoc());
         connectRTA.setPrefWidth(branchModel.getConnectorPrefWidth());
+        if (!branchModel.isFormulaBranch()) branchNode.setStyle("-fx-border-width: 0 0 0 0");
+        if (branchModel.isIndefiniteNumBranch()) branchNode.setStyle("-fx-border-width: 0 0 0 0");
+
 
         for (BranchModel dependentMod : branchModel.getDependents()) {
             BranchNode dependentNode = new BranchNode(branchNode, horizontalTreeView);
-            branchNode.getChildren().add(dependentNode);
+            branchNode.getDependents().add(dependentNode);
             setTreeNodes(dependentNode, dependentMod);
+
         }
     }
 
@@ -169,16 +181,21 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         model.setAxis(horizontalTreeView.getMainPane().getChildren().contains(axis));
 
         List<TreePane> treePanes = horizontalTreeView.getTreePanes();
-        List<TreeModel> treeModels = horizontalTreeModel.getTreeModels();
+        List<TreeModel> treeModels = model.getTreeModels();
         for (TreePane treePane : treePanes) {
             TreeModel treeModel = new TreeModel();
             treeModel.setPaneXlayout(treePane.getLayoutX());
             treeModel.setPaneYlayout(treePane.getLayoutY());
 
-            BranchNode rootNode = treePane.getRootTreeNode();
+            BranchNode rootNode = treePane.getRootBranchNode();
             BranchModel rootModel = new BranchModel();
             setBranchModel(rootModel, rootNode);
             treeModel.setRoot(rootModel);
+
+            treeModel.setRootXlayout(rootNode.getLayoutX());
+            treeModel.setRootYlayout(rootNode.getLayoutY());
+
+            treeModels.add(treeModel);
         }
         return model;
     }

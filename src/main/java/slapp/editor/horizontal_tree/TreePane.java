@@ -181,5 +181,8 @@ public class TreePane extends Pane {
     }
 
 
-    public BranchNode getRootTreeNode() { return rootBranchNode; }
+    public BranchNode getRootBranchNode() { return rootBranchNode; }
+
+
+
 }
