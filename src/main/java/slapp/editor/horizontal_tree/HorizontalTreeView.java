@@ -2,7 +2,9 @@ package slapp.editor.horizontal_tree;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.model.Document;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -36,6 +38,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     private DecoratedRTA explainDRTA = new DecoratedRTA();
     private VBox controlBox = new VBox(15);
     private double statementPrefHeight = 80;
+    private boolean annotationModified = false;
+
 
 
     private AnchorPane mainPane;
@@ -43,6 +47,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
     private Button undoButton;
     private Button redoButton;
+    public BooleanProperty undoRedoFlag = new SimpleBooleanProperty();
     private ToggleButton formulaNodeToggle;
     private ToggleButton oneBranchToggle;
     private ToggleButton twoBranchToggle;
@@ -67,7 +72,11 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     private EventHandler dotsClickFilter;
     private EventHandler oneBranchTermClickFilter;
     private EventHandler twoBranchTermClickFilter;
-    private Region axis;
+
+    private Ruler axisNode;
+//    private Region axisNode;
+    private boolean axis = false;
+
 
     private static BranchNode clickNode = null;
 
@@ -82,6 +91,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         undoButton = new Button("Undo");
         redoButton = new Button("Redo");
         undoButton.setPrefWidth(64);
+
         redoButton.setPrefWidth(64);
         undoButton.setPrefHeight(28);
         redoButton.setPrefHeight(28);
@@ -249,6 +259,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         annotationPlus.setFont(new Font(10));
         annotationPlus.setPadding(new Insets(0));
         annotationPlus.setPrefWidth(20); annotationPlus.setPrefHeight(12);
+
         annotationMinus = new Button("-");
         annotationMinus.setFont(new Font(10));
         annotationMinus.setPadding(new Insets(0));
@@ -256,6 +267,9 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         VBox annotationButtons = new VBox(annotationPlus, annotationMinus);
         HBox annotationBox = new HBox(annotationToggle, annotationButtons);
         annotationBox.setMaxHeight(30);
+
+        axisNode = new Ruler();
+//        axisNode = createClipped();
 
         rulerButton = new ToggleButton();
         rulerButton.setPrefWidth(64);
@@ -278,14 +292,31 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         rulerButton.setGraphic(rulerVBox);
         rulerButton.setTooltip(new Tooltip("Add (right-click) or remove (left-click) horizontal ruler on tree"));
 
-        controlBox.getChildren().addAll(undoButton, redoButton, formulaNodeToggle, oneBranchToggle, twoBranchToggle, threeBranchToggle, indefiniteBranchToggle, verticalDotsToggle, oneBranchTermToggle, twoBranchTermToggle, rulerButton, annotationBox);
-        controlBox.setMargin(annotationBox, new Insets(15, 0, 0, 0));
+        Region spacer = new Region();
+        spacer.setPrefWidth(5);
+        spacer.setMinWidth(5);
+        spacer.setMaxWidth(5);
+        controlBox.getChildren().addAll(undoButton, redoButton, formulaNodeToggle, oneBranchToggle, twoBranchToggle, threeBranchToggle, indefiniteBranchToggle, verticalDotsToggle, oneBranchTermToggle, twoBranchTermToggle, spacer, annotationBox, rulerButton);
+//        controlBox.setMargin(annotationBox, new Insets(0, 0, -20, 0));
 //        controlBox.setMargin(indefiniteBranchToggle, new Insets(12, 0, -10, 0));
+        controlBox.setMargin(rulerButton, new Insets(-10, 0, 0, 0));
 
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
         controlBox.setPadding(new Insets(20,10,0,80));
         exerciseControlNode = controlBox;
 
+    }
+
+    public void deselectToggles() {
+        formulaNodeToggle.setSelected(false);
+        oneBranchToggle.setSelected(false);
+        twoBranchToggle.setSelected(false);
+        threeBranchToggle.setSelected(false);
+        indefiniteBranchToggle.setSelected(false);
+        verticalDotsToggle.setSelected(false);
+        oneBranchTermToggle.setSelected(false);
+        twoBranchTermToggle.setSelected(false);
+        annotationToggle.setSelected(false);
     }
 
 
@@ -309,6 +340,10 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         explainRTA.setMinHeight(80.0);
         explainRTA.setPromptText("Explain:");
 
+        mainPane.prefWidthProperty().addListener((ob, ov, nv) -> {
+            axisNode.updateRuler(mainPane.getPrefWidth());
+        });
+
         formulaNodeClickFilter = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -318,6 +353,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                     mainPane.getChildren().add(treePane);
                     refreshTreePanes();
                     treePane.relocateToGridPoint(new Point2D(event.getX(), event.getY()));
+                    setUndoRedoFlag(true);
+                    setUndoRedoFlag(false);
                 }
 
                 else if (event.getButton() == MouseButton.SECONDARY) {
@@ -327,6 +364,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                             treePanes.remove(pane);
                             mainPane.getChildren().remove(pane);
                             formulaNodeToggle.setSelected(false);
+                            setUndoRedoFlag(true);
+                            setUndoRedoFlag(false);
                             break;
                         } else {
                             setClickedNode(event, rootNode);
@@ -334,6 +373,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                                 clickNode.getContainer().getDependents().remove(clickNode);
                                 pane.refresh();
                                 formulaNodeToggle.setSelected(false);
+                                setUndoRedoFlag(true);
+                                setUndoRedoFlag(false);
                                 break;
                             }
                         }
@@ -358,6 +399,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                             BranchNode branch1 = new BranchNode(clickNode, self);
                             clickNode.getDependents().add(branch1);
                             pane.refresh();
+                            setUndoRedoFlag(true);
+                            setUndoRedoFlag(false);
                         }
                     }
                 }
@@ -381,6 +424,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                             BranchNode branch2 = new BranchNode(clickNode, self);
                             clickNode.getDependents().addAll(Arrays.asList(branch1, branch2));
                             pane.refresh();
+                            setUndoRedoFlag(true);
+                            setUndoRedoFlag(false);
                         }
                     }
                 }
@@ -405,6 +450,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                             BranchNode branch3 = new BranchNode(clickNode, self);
                             clickNode.getDependents().addAll(Arrays.asList(branch1, branch2, branch3));
                             pane.refresh();
+                            setUndoRedoFlag(true);
+                            setUndoRedoFlag(false);
                         }
                     }
                 }
@@ -432,6 +479,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                             rta.setPrefWidth(24);
                             clickNode.getDependents().add(branch);
                             pane.refresh();
+                            setUndoRedoFlag(true);
+                            setUndoRedoFlag(false);
                         }
                     }
                 }
@@ -458,6 +507,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                             rta.setPrefWidth(24);
                             clickNode.getDependents().add(branch);
                             pane.refresh();
+                            setUndoRedoFlag(true);
+                            setUndoRedoFlag(false);
                         }
                     }
                 }
@@ -489,6 +540,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                             rta2.setPrefWidth(24);
                             clickNode.getDependents().addAll(Arrays.asList(branch1, branch2));
                             pane.refresh();
+                            setUndoRedoFlag(true);
+                            setUndoRedoFlag(false);
                         }
                     }
                 }
@@ -511,10 +564,14 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                         if (event.getButton() == MouseButton.PRIMARY) {
                             clickNode.setDotDivider(true);
                             pane.refresh();
+                            setUndoRedoFlag(true);
+                            setUndoRedoFlag(false);
                         }
                         else {
                             clickNode.setDotDivider(false);
                             pane.refresh();
+                            setUndoRedoFlag(true);
+                            setUndoRedoFlag(false);
                         }
                     }
                 }
@@ -536,6 +593,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                     if (clickNode != null) {
                         clickNode.processAnnotationRequest(event.getButton() == MouseButton.PRIMARY);
                         pane.refresh();
+                        setUndoRedoFlag(true);
+                        setUndoRedoFlag(false);
                         break;
                     }
                 }
@@ -550,27 +609,48 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
             for (TreePane pane : treePanes) {
                 setAnnotations(pane.getRootBranchNode(), true);
                 pane.refresh();
+                setUndoRedoFlag(true);
+                setUndoRedoFlag(false);
             }
-            annotationToggle.setSelected(false);
+            deselectToggles();
         });
         annotationMinus.setOnAction(e -> {
             for (TreePane pane : treePanes) {
                 setAnnotations(pane.getRootBranchNode(), false);
                 pane.refresh();
+                setUndoRedoFlag(true);
+                setUndoRedoFlag(false);
             }
-            annotationToggle.setSelected(false);
+            deselectToggles();
         });
 
-        axis = createClipped();
         rulerButton.selectedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
-                mainPane.getChildren().add(0, axis);
+                if (!axis) {
+                    simpleAddAxis();
+                    setUndoRedoFlag(true);
+                    setUndoRedoFlag(false);
+                }
             }
             else {
-                mainPane.getChildren().remove(axis);
+                if (axis) {
+                    simpleRemoveAxis();
+                    setUndoRedoFlag(true);
+                    setUndoRedoFlag(false);
+                }
             }
         });
 
+    }
+
+    void simpleAddAxis() {
+        axis = true;
+        mainPane.getChildren().add(0, axisNode);
+        axisNode.setLayoutX(5.0);
+    }
+    void simpleRemoveAxis() {
+        axis = false;
+        mainPane.getChildren().remove(axisNode);
     }
 
     NumberAxis createAxis() {
@@ -585,7 +665,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     }
 
     void clipChildren(Region region) {
-        final Rectangle outputClip = new Rectangle();
+        Rectangle outputClip = new Rectangle();
         region.setClip(outputClip);
         region.layoutBoundsProperty().addListener((ov, oldValue, newValue) -> {
             outputClip.setWidth(newValue.getWidth());
@@ -665,13 +745,28 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     }
 
     void refreshTreePanes() {
+
         mainPane.getChildren().clear();
         for (TreePane pane : treePanes) {
             pane.refresh();
             mainPane.getChildren().add(pane);
         }
+
+        if (axis) {
+            rulerButton.setSelected(true);
+        }
+        else {
+            rulerButton.setSelected(false);
+        }
     }
 
+    public Button getUndoButton() {    return undoButton;  }
+
+    public Button getRedoButton() {  return redoButton;  }
+
+    public BooleanProperty undoRedoFlagProperty() {    return undoRedoFlag;    }
+
+    public void setUndoRedoFlag(boolean undoRedoFlag) {  this.undoRedoFlag.set(undoRedoFlag);  }
 
     public ToggleButton getRulerButton() {    return rulerButton;  }
 
@@ -682,9 +777,17 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
     public AnchorPane getMainPane() { return mainPane;}
 
-    public Region getAxis() {   return axis;  }
+    public boolean isAxis() {   return axis; }
+
+    public void setAxis(boolean axis) {    this.axis = axis;   }
 
     public List<TreePane> getTreePanes() { return treePanes;   }
+
+    public boolean isAnnotationModified() {    return annotationModified;  }
+
+    public void setAnnotationModified(boolean annotationModified) {      this.annotationModified = annotationModified;  }
+
+    public Ruler getAxisNode() {     return axisNode; }
 
     @Override
     public String getExerciseName() { return exerciseName;  }
@@ -735,12 +838,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     public Node getExerciseControl() { return exerciseControlNode;  }
 
     @Override
-    public double getContentWidth() {
-        return 0;
-    }
+    public double getContentWidth() { return 0; }
 
     @Override
-    public double getContentHeight() {
-        return 0;
-    }
+    public double getContentHeight() {   return 0;  }
 }

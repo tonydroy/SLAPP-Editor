@@ -1,13 +1,30 @@
 package slapp.editor.horizontal_tree;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.RichTextAreaSkin;
+import com.gluonhq.richtextarea.model.Document;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.HBox;
+import org.apache.commons.lang3.SerializationUtils;
 import slapp.editor.DiskUtilities;
+import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
+import slapp.editor.vertical_tree.VerticalTreeExercise;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, HorizontalTreeView> {
@@ -17,6 +34,9 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
     private HorizontalTreeModel horizontalTreeModel;
     private HorizontalTreeView horizontalTreeView;
     private boolean exerciseModified = false;
+    private UndoRedoList<HorizontalTreeModel> undoRedoList = new UndoRedoList<>(100);
+
+    public BooleanProperty undoRedoFlag = new SimpleBooleanProperty();
 
     public HorizontalTreeExercise(HorizontalTreeModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -25,6 +45,15 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         this.mainView = mainWindow.getMainView();
         this.horizontalTreeView = new HorizontalTreeView(mainView);
         setHorizontalTreeView();
+        undoRedoFlag.set(false);
+        undoRedoFlag.bind(horizontalTreeView.undoRedoFlagProperty());
+        undoRedoFlag.addListener((ob, ov, nv) -> {
+            if (nv) {
+                exerciseModified = true;
+                pushUndoRedo();
+            }
+        });
+        pushUndoRedo();
     }
 
     private void setHorizontalTreeView() {
@@ -64,14 +93,29 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
             }
         });
 
+        horizontalTreeView.getUndoButton().setOnAction(e -> undoAction());
+        horizontalTreeView.getRedoButton().setOnAction(e -> redoAction());
+
         horizontalTreeView.initializeViewDetails();
-        if (horizontalTreeModel.isAxis()) {
-            horizontalTreeView.getRulerButton().setSelected(true);
-        }
+
+        refreshViewFromModel();
+    }
+
+    private void refreshViewFromModel() {
+
         populateTreePanes();
         horizontalTreeView.refreshTreePanes();
 
+        if (horizontalTreeModel.isAxis()) {
+            horizontalTreeView.simpleAddAxis();
+            horizontalTreeView.getRulerButton().setSelected(true);
+        }
+        else {
+            horizontalTreeView.simpleRemoveAxis();
+            horizontalTreeView.getRulerButton().setSelected(false);
+        }
     }
+
 
     private void populateTreePanes() {
         horizontalTreeView.getTreePanes().clear();
@@ -81,12 +125,9 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
             treePane.setLayoutX(treeModel.getPaneXlayout());
             treePane.setLayoutY(treeModel.getPaneYlayout());
             BranchNode rootNode = treePane.getRootBranchNode();
-
             rootNode.setLayoutX(treeModel.getRootXlayout());
             rootNode.setLayoutY(treeModel.getRootYlayout());
-
             setTreeNodes(rootNode, treeModel.getRoot());
-
             horizontalTreeView.getTreePanes().add(treePane);
         }
     }
@@ -105,10 +146,16 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
         RichTextArea formulaRTA = branchNode.getFormulaBoxedDRTA().getRTA();
         formulaRTA.setDocument(branchModel.getFormulaDoc());
+
+        formulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
+
         formulaRTA.setPrefWidth(branchModel.getFormulaPrefWidth());
 
         RichTextArea connectRTA = branchNode.getConnectorBoxedDRTA().getRTA();
         connectRTA.setDocument(branchModel.getConnectorDoc());
+
+        connectRTA.getActionFactory().saveNow().execute(new ActionEvent());
+
         connectRTA.setPrefWidth(branchModel.getConnectorPrefWidth());
         if (!branchModel.isFormulaBranch()) branchNode.setStyle("-fx-border-width: 0 0 0 0");
         if (branchModel.isIndefiniteNumBranch()) branchNode.setStyle("-fx-border-width: 0 0 0 0");
@@ -122,7 +169,34 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         }
     }
 
-
+    private void undoAction() {
+        HorizontalTreeModel undoElement = undoRedoList.getUndoElement();
+        if (undoElement != null) {
+            horizontalTreeModel = (HorizontalTreeModel) SerializationUtils.clone(undoElement);
+            refreshViewFromModel();
+            updateUndoRedoButtons();
+            horizontalTreeView.deselectToggles();
+        }
+    }
+    private void redoAction() {
+        HorizontalTreeModel redoElement = undoRedoList.getRedoElement();
+        if (redoElement != null) {
+            horizontalTreeModel = (HorizontalTreeModel) SerializationUtils.clone(redoElement);
+            refreshViewFromModel();
+            updateUndoRedoButtons();
+            horizontalTreeView.deselectToggles();
+        }
+    }
+    private void updateUndoRedoButtons() {
+        horizontalTreeView.getUndoButton().setDisable(!undoRedoList.canUndo());
+        horizontalTreeView.getRedoButton().setDisable(!undoRedoList.canRedo());
+    }
+    private void pushUndoRedo() {
+        HorizontalTreeModel model = getHorizontalTreeModelFromView();
+        HorizontalTreeModel deepCopy = (HorizontalTreeModel) SerializationUtils.clone(model);
+        undoRedoList.push(deepCopy);
+        updateUndoRedoButtons();
+    }
 
 
     @Override
@@ -134,22 +208,115 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
     @Override
     public void saveExercise(boolean saveAs) {
         boolean success = DiskUtilities.saveExercise(saveAs, getHorizontalTreeModelFromView());
-        if (success) exerciseModified = false;
+        if (success) {
+            exerciseModified = false;
+            horizontalTreeView.setAnnotationModified(false);
+        }
     }
 
     @Override
     public List<Node> getPrintNodes() {
-        return null;
+        List<Node> nodeList = new ArrayList<>();
+        horizontalTreeModel = getHorizontalTreeModelFromView();
+        HorizontalTreeExercise exercise = new HorizontalTreeExercise(horizontalTreeModel, mainWindow);
+        double nodeWidth = PrintUtilities.getPageWidth();
+
+        //header node
+        Label exerciseName = new Label(horizontalTreeModel.getExerciseName());
+        exerciseName.setStyle("-fx-font-weight: bold;");
+        HBox hbox = new HBox(exerciseName);
+        hbox.setPadding(new Insets(0,0,10,0));
+
+        Group headerRoot = new Group();
+        Scene headerScene = new Scene(headerRoot);
+        headerRoot.getChildren().add(hbox);
+        headerRoot.applyCss();
+        headerRoot.layout();
+        double boxHeight = hbox.getHeight();
+        hbox.setPrefHeight(boxHeight);
+        nodeList.add(hbox);
+        nodeList.add(new Separator(Orientation.HORIZONTAL));
+
+        //statement node
+        RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
+        statementRTA.setEditable(true);
+        RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
+        double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+        statementRTA.setPrefHeight(statementHeight + 35.0);
+        statementRTA.setContentAreaWidth(nodeWidth);
+        statementRTA.setPrefWidth(nodeWidth);
+        statementRTA.getStylesheets().clear(); statementRTA.getStylesheets().add("richTextAreaPrinter.css");
+        nodeList.add(statementRTA);
+
+        Separator statementSeparator = new Separator(Orientation.HORIZONTAL);
+        statementSeparator.setPrefWidth(100);
+        HBox statementSepBox = new HBox(statementSeparator);
+        statementSepBox.setAlignment(Pos.CENTER);
+        nodeList.add(statementSepBox);
+
+        //content
+        AnchorPane mainPane = exercise.getExerciseView().getMainPane();
+        mainPane.setStyle("-fx-background-color: transparent");
+
+
+
+        ObservableList<Node> mainNodes = mainPane.getChildren();
+        for (Node mainNode : mainNodes) {
+            if (mainNode instanceof TreePane) {
+                TreePane treePane = (TreePane) mainNode;
+                ObservableList<Node> paneNodes = treePane.getChildren();
+                for (Node paneNode : paneNodes) {
+                    if (paneNode instanceof BranchNode) {
+                        BranchNode branchNode = (BranchNode) paneNode;
+                        branchNode.getFormulaBoxedDRTA().getRTA().setStyle("-fx-border-color: transparent");
+                        branchNode.getConnectorBoxedDRTA().getRTA().setStyle("-fx-border-color: transparent");
+                        branchNode.getAnnotationField().setStyle("-fx-background-color: transparent");
+                    }
+                }
+            }
+        }
+
+        mainPane.setPrefWidth(nodeWidth - 20);
+        HBox contentHBox = new HBox(mainPane);
+        contentHBox.setAlignment(Pos.CENTER);
+        contentHBox.setPadding(new Insets(0,0,20, 0));
+
+        nodeList.add(contentHBox);
+
+        Separator contentSeparator = new Separator(Orientation.HORIZONTAL);
+        contentSeparator.setStyle("-fx-stroke-dash-array:0.1 5.0");
+        contentSeparator.setPrefWidth(100);
+        HBox contentSepBox = new HBox(contentSeparator);
+        contentSepBox.setAlignment(Pos.CENTER);
+        nodeList.add(contentSepBox);
+
+        //comment node
+        RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
+        double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+        commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
+        commentRTA.setContentAreaWidth(nodeWidth);
+        commentRTA.setPrefWidth(nodeWidth);
+        commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
+        nodeList.add(commentRTA);
+
+        return nodeList;
     }
 
     @Override
     public Exercise<HorizontalTreeModel, HorizontalTreeView> resetExercise() {
-        return null;
+        RichTextArea commentRTA = horizontalTreeView.getExerciseComment().getEditor();
+        commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        Document commentDocument = commentRTA.getDocument();
+        HorizontalTreeModel originalModel = (HorizontalTreeModel) (horizontalTreeModel.getOriginalModel());
+        originalModel.setExerciseComment(commentDocument);
+        HorizontalTreeExercise clearExercise = new HorizontalTreeExercise(originalModel, mainWindow);
+        return clearExercise;
     }
 
     @Override
     public boolean isExerciseModified() {
-        return false;
+        return exerciseModified || horizontalTreeView.isAnnotationModified();
     }
 
     @Override
@@ -177,8 +344,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         explainRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setExplainDocument(explainRTA.getDocument());
 
-        Region axis = horizontalTreeView.getAxis();
-        model.setAxis(horizontalTreeView.getMainPane().getChildren().contains(axis));
+        model.setAxis(horizontalTreeView.isAxis());
 
         List<TreePane> treePanes = horizontalTreeView.getTreePanes();
         List<TreeModel> treeModels = model.getTreeModels();

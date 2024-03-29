@@ -233,6 +233,7 @@ public class VerticalTreeCreate {
         ToolBar fontsToolbar = statementDRTA.getFontsToolbar();
         ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
         ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
+        kbdDiaToolBar.setPrefHeight(38);
 
         if (kbdDiaToolBar.getItems().isEmpty()) {
             kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner,  new Label("    "), statementDRTA.getKeyboardDiagramButton());

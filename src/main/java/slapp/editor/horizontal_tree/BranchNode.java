@@ -2,6 +2,9 @@ package slapp.editor.horizontal_tree;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
@@ -25,8 +28,8 @@ public class BranchNode extends HBox {
     BoxedDRTA connectorBoxedDRTA;
     TextField annotationField = new TextField();
     ArrayList<BranchNode> dependents = new ArrayList<>();
-    static double offsetY = 40;
-    static double leafPos = -40;
+    static double offsetY = 34;
+    static double leafPos = -34;
     double minYlayout;
     double maxYlayout;
     double Xlayout;
@@ -35,12 +38,14 @@ public class BranchNode extends HBox {
     boolean formulaNode = true;
     boolean indefiniteNode = false;
     boolean dotDivider;
-
-
-
     double annotationWidth  = 28;
     double rootBump = 0;
     double annBump = 0;
+    double formulaBoxHeight = 22.5;
+    ChangeListener annotationListener;
+    ChangeListener formulaFocusListener;
+    ChangeListener connectorFocusListener;
+
 
 
     public BranchNode(BranchNode container, HorizontalTreeView horizontalTreeView) {
@@ -51,18 +56,66 @@ public class BranchNode extends HBox {
         formulaBoxedDRTA = newFormulaBoxedDRTA();
         connectorBoxedDRTA = newFormulaBoxedDRTA();
 
+
         self.getChildren().add(formulaBoxedDRTA.getBoxedRTA());
         HrzRightDragResizer resizer = new HrzRightDragResizer(horizontalTreeView);
         resizer.makeResizable(formulaBoxedDRTA.getRTA());
         self.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1.5 0");
         self.setPadding(new Insets(0, 4, 0, 2));
 
+        annotationField.setPrefWidth(annotationWidth);
+        annotationField.setPrefHeight(15);
+        annotationField.setFont(new Font("Noto Sans", 10));
+        annotationField.setPadding(new Insets(0));
 
+        annotationField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (!nv) {
+                horizontalTreeView.setUndoRedoFlag(true);
+                horizontalTreeView.setUndoRedoFlag(false);
+            }
+        });
 
+        formulaFocusListener = new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ob, Boolean ov, Boolean nv) {
+                if (nv) {
+                    horizontalTreeView.getMainView().editorInFocus(formulaBoxedDRTA.getDRTA(), ControlType.FIELD);
+                }
+                else {
+                    if (formulaBoxedDRTA.getRTA().isModified()) {
+                        horizontalTreeView.setUndoRedoFlag(true);
+                        horizontalTreeView.setUndoRedoFlag(false);
+                        formulaBoxedDRTA.getRTA().getActionFactory().saveNow().execute(new ActionEvent());
+                    }
+                }
+            }
+        };
+        formulaBoxedDRTA.getRTA().focusedProperty().addListener(formulaFocusListener);
+
+        connectorFocusListener = new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ob, Boolean ov, Boolean nv) {
+                if (nv) {
+                    horizontalTreeView.getMainView().editorInFocus(connectorBoxedDRTA.getDRTA(), ControlType.FIELD);
+                }
+                else {
+                    if (connectorBoxedDRTA.getRTA().isModified()) {
+                        horizontalTreeView.setUndoRedoFlag(true);
+                        horizontalTreeView.setUndoRedoFlag(false);
+                        connectorBoxedDRTA.getRTA().getActionFactory().saveNow().execute(new ActionEvent());
+                    }
+                }
+            }
+        };
+        connectorBoxedDRTA.getRTA().focusedProperty().addListener(connectorFocusListener);
+
+        annotationField.textProperty().addListener((ob, ov, nv) -> {
+            horizontalTreeView.setAnnotationModified(true);
+        });
     }
 
     void doLayout(double xVal) {
-        leafPos = -38;
+        leafPos = -34;
         setLayout(xVal);
     }
 
@@ -72,7 +125,7 @@ public class BranchNode extends HBox {
             leafPos = leafPos + offsetY;
  //           if (!formulaNode) leafPos -= 10.0;
             Ylayout = leafPos;
-            if (!formulaNode) Ylayout -= 14;
+            if (!formulaNode) Ylayout -= formulaBoxHeight/2; //Ylayout -= 14;
             return Ylayout;
         }
         else {
@@ -98,7 +151,7 @@ public class BranchNode extends HBox {
             dotLine.getStrokeDashArray().addAll(1.0, 4.0);
             pane.getChildren().add(dotLine);
             dotLine.setLayoutX(self.Xlayout + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 9);
-            dotLine.setLayoutY(self.Ylayout + 14.0);
+            dotLine.setLayoutY(self.Ylayout + formulaBoxHeight/2);
         }
         if (!dependents.isEmpty()) {
             if (dependents.get(0).isFormulaNode()) {
@@ -108,7 +161,7 @@ public class BranchNode extends HBox {
                     pane.getChildren().add(simpleConnector);
                     BranchNode dependent = dependents.get(0);
                     simpleConnector.setLayoutX(dependent.getXLayout() - 30.0);
-                    simpleConnector.setLayoutY(dependent.getYLayout() + 12.0);
+                    simpleConnector.setLayoutY(dependent.getYLayout() + formulaBoxHeight * 3/8);
                 }
                 else if (dependents.size() > 1) {
                     BranchNode topNode = dependents.get(0);
@@ -118,18 +171,18 @@ public class BranchNode extends HBox {
                     HBox bracketBox = newBracketBox(top, bottom);
                     pane.getChildren().add(bracketBox);
                     bracketBox.setLayoutX(topNode.getXLayout() - 30);
-                    bracketBox.setLayoutY(topNode.getYLayout() + 27.5);
+                    bracketBox.setLayoutY(topNode.getYLayout() + formulaBoxHeight + .8);
                 }
             }
             else {
-                offsetY = 14.0;
+                offsetY = formulaBoxHeight/2;
                 Pane branchPane = newTermBranch();
                 pane.getChildren().add(branchPane);
                 BranchNode topNode = dependents.get(0);
                 double xDiff = 31.0;
                 if (dotDivider) xDiff = 24.0;
                 branchPane.setLayoutX(topNode.getXLayout() - xDiff);
-                branchPane.setLayoutY(topNode.getYLayout() + 28);
+                branchPane.setLayoutY(topNode.getYLayout() + formulaBoxHeight + 1.5);
             }
         }
 
@@ -141,19 +194,43 @@ public class BranchNode extends HBox {
 
     private BoxedDRTA newFormulaBoxedDRTA() {
         BoxedDRTA boxedDRTA = new BoxedDRTA();
+
         DecoratedRTA drta = boxedDRTA.getDRTA();
         drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
         RichTextArea rta = boxedDRTA.getRTA();
-        rta.setMaxHeight(27);
-        rta.setMinHeight(27);
+        rta.setMaxHeight(formulaBoxHeight);
+        rta.setMinHeight(formulaBoxHeight);
         rta.setPrefWidth(48);
         rta.getStylesheets().add("RichTExtField.css");
         rta.setPromptText("");
+
+//        rta.getActionFactory().saveNow().execute(new ActionEvent());
+
+/*
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 horizontalTreeView.getMainView().editorInFocus(drta, ControlType.FIELD);
             }
+
+            else {
+
+                if (rta.isModified()) {
+                    System.out.println("rta focus lost");
+ //                   horizontalTreeView.setUndoRedoFlag(true);
+ //                   horizontalTreeView.setUndoRedoFlag(false);
+ //                   rta.getActionFactory().saveNow().execute(new ActionEvent());
+                }
+
+
+            }
+
         });
+
+ */
+
+
+
+
         return boxedDRTA;
     }
 
@@ -214,10 +291,7 @@ public class BranchNode extends HBox {
 
     public void addAnnotation() {
         if (!annotation) {
-            annotationField.setPrefWidth(annotationWidth);
-            annotationField.setPrefHeight(15);
-            annotationField.setFont(new Font("Noto Sans", 10));
-            annotationField.setPadding(new Insets(0));
+
 
             self.getChildren().add(annotationField);
             self.setMargin(annotationField, new Insets(0, 0, 8, 0));
@@ -262,4 +336,8 @@ public class BranchNode extends HBox {
     public boolean isFormulaNode() {  return formulaNode; }
 
     public void setFormulaNode(boolean formulaNode) { this.formulaNode = formulaNode; }
+
+    public ChangeListener getFormulaFocusListener() {   return formulaFocusListener;  }
+
+    public ChangeListener getConnectorFocusListener() {     return connectorFocusListener;  }
 }

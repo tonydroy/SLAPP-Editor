@@ -549,6 +549,7 @@ public class DrvtnExpCreate {
         fontsToolbar = decoratedRTA.getFontsToolbar();
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
         kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
+        kbdDiaToolBar.setPrefHeight(38);
 
         if (kbdDiaToolBar.getItems().isEmpty()) {
 

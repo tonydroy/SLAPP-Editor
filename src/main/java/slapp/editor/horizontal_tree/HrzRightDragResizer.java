@@ -67,6 +67,8 @@ public class HrzRightDragResizer {
         dragging = false;
         region.setCursor(Cursor.DEFAULT);
         horizontalTreeView.refreshTreePanes();
+        horizontalTreeView.setUndoRedoFlag(true);
+        horizontalTreeView.setUndoRedoFlag(false);
     }
 
     protected void mouseOver(MouseEvent event) {

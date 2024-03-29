@@ -10,7 +10,7 @@ import java.util.List;
 
 public class HorizontalTreeModel implements ExerciseModel<Document>, Serializable {
 
-    private String exerciseName = new String("test");  //*************************************
+    private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.HORIZONTAL_TREE;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
@@ -18,7 +18,6 @@ public class HorizontalTreeModel implements ExerciseModel<Document>, Serializabl
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
     private Document explainDocument = new Document();
-
     private List<TreeModel> treeModels = new ArrayList<>();
     private boolean axis = false;
 
@@ -34,6 +33,7 @@ public class HorizontalTreeModel implements ExerciseModel<Document>, Serializabl
     public void setAxis(boolean axis) { this.axis = axis; }
 
     public boolean isAxis() {     return axis;  }
+
 
     public List<TreeModel> getTreeModels() {  return treeModels;  }
 

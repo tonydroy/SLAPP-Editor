@@ -246,10 +246,8 @@ public class TypeSelectorFactories {
                 DrvtnExpCreate drvtnExpCreate = new DrvtnExpCreate(mainWindow);
                 break;
             }
-            //temp stub
             case HORIZONTAL_TREE: {
-                HorizontalTreeExercise hTreeExercise = new HorizontalTreeExercise(new HorizontalTreeModel(), mainWindow);
-                mainWindow.setUpExercise(hTreeExercise);
+               HorizontalTreeCreate horizontalTreeCreate = new HorizontalTreeCreate(mainWindow);
                 break;
             }
 

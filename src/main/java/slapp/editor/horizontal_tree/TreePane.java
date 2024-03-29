@@ -1,5 +1,6 @@
 package slapp.editor.horizontal_tree;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -24,7 +25,6 @@ public class TreePane extends Pane {
     private EventHandler<DragEvent> mContextDragOver;
     private EventHandler <DragEvent> mContextDragDropped;
     private Point2D mDragOffset = new Point2D (0.0, 0.0);
-    private NumberAxis numAxis;
     private boolean numberAxis = false;
 
 
@@ -39,8 +39,8 @@ public class TreePane extends Pane {
         leftDragLabel.setMaxWidth(10);
         leftDragLabel.setMinWidth(10);
         leftDragLabel.setPrefWidth(10);
-        leftDragLabel.setMaxHeight(26);
-        leftDragLabel.setMinHeight(26);
+        leftDragLabel.setMaxHeight(21);
+        leftDragLabel.setMinHeight(21);
         leftDragLabel.setPadding(new Insets(0));
 
         leftDragLabel.setOnMouseEntered(e -> {
@@ -55,12 +55,10 @@ public class TreePane extends Pane {
 
 
         buildNodeDragHandlers();
-
-
-
     }
 
     void refresh() {
+
         double startX = rootBranchNode.getLayoutX();
         double startY = rootBranchNode.getLayoutY();
 
@@ -76,8 +74,6 @@ public class TreePane extends Pane {
         double newY = self.getLayoutY();
         if (newY < 5.0) self.setLayoutY(5.0001);
     }
-
-
 
 
     public void buildNodeDragHandlers() {
@@ -111,6 +107,9 @@ public class TreePane extends Pane {
 
                 relocateToGridPoint(new Point2D(event.getX(), event.getY()));
                 relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+
+                horizontalTreeView.setUndoRedoFlag(true);
+                horizontalTreeView.setUndoRedoFlag(false);
 
                 self.setCursor(Cursor.DEFAULT);
             }

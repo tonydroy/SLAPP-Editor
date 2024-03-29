@@ -37,7 +37,9 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
     private VerticalTreeView verticalTreeView;
     private boolean exerciseModified = false;
     private UndoRedoList<VerticalTreeModel> undoRedoList = new UndoRedoList<>(50);
+
     public BooleanProperty undoRedoFlag = new SimpleBooleanProperty();
+
 
 
     public VerticalTreeExercise(VerticalTreeModel model, MainWindow mainWindow) {
