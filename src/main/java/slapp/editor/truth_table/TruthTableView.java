@@ -46,6 +46,8 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     private int tableRows = 0;
     private VBox[] sizers;
     private Pane endPane;
+    private int formulaBoxHeight = 22;
+    private BoxedDRTA focusedBoxedDRTA;
 
 
     TruthTableView(MainWindowView mainView) {
@@ -66,8 +68,29 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         HBox controlButtonBox = new HBox(20, addBasicFormulaButton, removeBasicFormulaButton);
         VBox upperControlBox = new VBox(10, basicFormulasLabel, controlButtonBox);
 
-        basicFormulasBoxedDRTAList.add(newFormulaDRTAField());
+        BoxedDRTA boxedDRTA = newFormulaDRTAField();
+        basicFormulasBoxedDRTAList.add(boxedDRTA);
         updateBasicFormulasPaneFromList();
+
+        //this is messy: can't get an event filter on the RTA itself to fire.  Why?
+        basicFormulasPane.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            int index = basicFormulasBoxedDRTAList.indexOf(focusedBoxedDRTA);
+            if (index >= 0) {
+                KeyCode code = e.getCode();
+                if (code == KeyCode.DOWN) {
+                    if (index + 1 < basicFormulasBoxedDRTAList.size()) {
+                        basicFormulasBoxedDRTAList.get(index + 1).getRTA().requestFocus();
+                    }
+                    e.consume();
+                }
+                if (code == KeyCode.UP) {
+                    if (index > 0) {
+                        basicFormulasBoxedDRTAList.get(index - 1).getRTA().requestFocus();
+                    }
+                    e.consume();
+                }
+            }
+        });
 
         addBasicFormulaButton.setOnAction(e -> {
             basicFormulasBoxedDRTAList.add(newFormulaDRTAField());
@@ -168,6 +191,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
         for (int i = 0; i < tableRows + 3; i++) {
             sizers[i] = new VBox();
+//            sizers[i].setMinHeight(25);
             tableGrid.add(sizers[i], tableHeadItemsList.size() + 1, i);
         }
 
@@ -176,7 +200,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         tableRowConstraints.clear();
         tableRowConstraints.add(new RowConstraints());
         tableRowConstraints.add(new RowConstraints(5));
-        for (int i = 0; i < tableRows; i++) tableRowConstraints.add(new RowConstraints());
+        for (int i = 0; i < tableRows; i++) tableRowConstraints.add(new RowConstraints(25));
         tableRowConstraints.add(new RowConstraints(5));
         tableRowConstraints.add(new RowConstraints());
     }
@@ -186,6 +210,8 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         for (int i = 0; i < basicFormulasBoxedDRTAList.size(); i++) {
             basicFormulasPane.add(basicFormulasBoxedDRTAList.get(i).getBoxedRTA(),0, i);
         }
+
+
     }
 
     TextField newSingleCharTextField(int column, int row) {
@@ -301,11 +327,12 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         rta.setMinHeight(27);
         rta.setContentAreaWidth(200);
         rta.setPrefWidth(100);
-        rta.getStylesheets().add("RichTextField.css");
+        rta.getStylesheets().add("RichTextFieldWide.css");
         rta.setPromptText("Formula");
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(bdrta.getDRTA(), ControlType.FIELD);
+                focusedBoxedDRTA = bdrta;
             }
         });
         return bdrta;
@@ -314,8 +341,8 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     public BoxedDRTA newCommentBoxedDRTA() {
         BoxedDRTA bdrta = new BoxedDRTA();
         RichTextArea rta = bdrta.getRTA();
-        rta.setMaxHeight(27);
-        rta.setMinHeight(27);
+        rta.setMaxHeight(formulaBoxHeight);
+        rta.setMinHeight(formulaBoxHeight);
         rta.setContentAreaWidth(200);
         rta.setPrefWidth(200);
         rta.getStylesheets().add("RichTextField.css");

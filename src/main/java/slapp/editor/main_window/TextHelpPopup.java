@@ -241,7 +241,7 @@ static {
 
         Stage stage = new Stage();
         stage.setScene(scene);
-        stage.setTitle("Text Help");
+        stage.setTitle("SLAPP Text Help");
         stage.initModality(Modality.NONE);
         stage.getIcons().addAll(EditorMain.icons);
         stage.initOwner(EditorMain.mainStage);

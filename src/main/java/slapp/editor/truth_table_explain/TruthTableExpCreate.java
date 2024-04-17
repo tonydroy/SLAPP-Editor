@@ -76,10 +76,11 @@ public class TruthTableExpCreate {
     private ToolBar insertToolbar;
     private ToolBar paragraphToolbar;
     private ToolBar kbdDiaToolBar;
-    ChangeListener nameListener;
-    ChangeListener choiceLeadListener;
-    ChangeListener aPromptListener;
-    ChangeListener bPromptListener;
+    private ChangeListener nameListener;
+    private ChangeListener choiceLeadListener;
+    private ChangeListener aPromptListener;
+    private ChangeListener bPromptListener;
+    private double formulaBoxHeight = 27;
 
 
     public TruthTableExpCreate(MainWindow mainWindow) {
@@ -299,7 +300,7 @@ public class TruthTableExpCreate {
 
         //main formulas top
         mainFormulasPane = new GridPane();
-        mainFormulasPane.setPadding(new Insets(10, 0, 20, 105));
+        mainFormulasPane.setPadding(new Insets(10, 0, 0, 105));
         mainFormulasPane.setVgap(10);
         mainFormulaList = new ArrayList<>();
         BoxedDRTA mainFormulaBoxedDRTA = newMainFormulaBoxedDRTA();
@@ -496,10 +497,10 @@ public class TruthTableExpCreate {
         DecoratedRTA drta = bdrta.getDRTA();
         drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
         RichTextArea rta = bdrta.getRTA();
-        rta.setMaxHeight(27);
-        rta.setMinHeight(27);
+        rta.setMaxHeight(formulaBoxHeight);
+        rta.setMinHeight(formulaBoxHeight);
         rta.setPrefWidth(30);
-        rta.getStylesheets().add("RichTextField.css");
+        rta.getStylesheets().add("RichTextFieldWide.css");
 
  // Center text in field?  This doesn't work.
  //       RichTextAreaViewModel rtaViewModel = ((RichTextAreaSkin) rta.getSkin()).getViewModel();
@@ -527,10 +528,10 @@ public class TruthTableExpCreate {
         drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
         RichTextArea rta = bdrta.getRTA();
         rta.getActionFactory().saveNow().execute(new ActionEvent());
-        rta.setMaxHeight(27);
-        rta.setMinHeight(27);
+        rta.setMaxHeight(formulaBoxHeight);
+        rta.setMinHeight(formulaBoxHeight);
         rta.setPrefWidth(300);
-        rta.getStylesheets().add("RichTextField.css");
+        rta.getStylesheets().add("RichTextFieldWide.css");
         rta.setPromptText("Formula");
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {

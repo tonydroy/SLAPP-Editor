@@ -70,6 +70,7 @@ public class DerivationCreate {
     private ToolBar paragraphToolbar;;
     private ToolBar kbdDiaToolBar;
 
+
     public DerivationCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();

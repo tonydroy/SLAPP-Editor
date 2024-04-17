@@ -47,6 +47,7 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
 
 
     private double contentFixedHeight = 70;
+    private double formulaBoxHeight = 22;
 
     private List<TableHeadItem> tableHeadItemsList;
     private TextField[][]  tableFields; //list of text field columns
@@ -56,6 +57,8 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private VBox[] sizers;
 
     private Pane endPane;
+
+    BoxedDRTA focusedBoxedDRTA;
 
 
 
@@ -84,6 +87,25 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
 
         basicFormulasBoxedDRTAs.add(newFormulaBoxedDRTA());
         updateBasicFormulasPaneFromList();
+
+        basicFormulasPane.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            int index = basicFormulasBoxedDRTAs.indexOf(focusedBoxedDRTA);
+            if (index >= 0) {
+                KeyCode code = e.getCode();
+                if (code == KeyCode.DOWN) {
+                    if (index + 1 < basicFormulasBoxedDRTAs.size()) {
+                        basicFormulasBoxedDRTAs.get(index + 1).getRTA().requestFocus();
+                    }
+                    e.consume();
+                }
+                if (code == KeyCode.UP) {
+                    if (index > 0) {
+                        basicFormulasBoxedDRTAs.get(index - 1).getRTA().requestFocus();
+                    }
+                    e.consume();
+                }
+            }
+        });
 
         addBasicFormulaButton.setOnAction(e -> {
             basicFormulasBoxedDRTAs.add(newFormulaBoxedDRTA());
@@ -187,7 +209,7 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         tableRowConstraints.clear();
         tableRowConstraints.add(new RowConstraints());
         tableRowConstraints.add(new RowConstraints(5));
-        for (int i = 0; i < tableRows; i++) tableRowConstraints.add(new RowConstraints());
+        for (int i = 0; i < tableRows; i++) tableRowConstraints.add(new RowConstraints(25));
         tableRowConstraints.add(new RowConstraints(5));
         tableRowConstraints.add(new RowConstraints());
     }
@@ -206,6 +228,8 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
 
         singleCharField.setPadding(new Insets(0));
         singleCharField.setPrefWidth(15);
+
+
 
         singleCharField.setAlignment(Pos.CENTER);
         singleCharField.setStyle("-fx-background-radius: 2");
@@ -313,11 +337,12 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         rta.setMinHeight(27);
         rta.setContentAreaWidth(200);
         rta.setPrefWidth(100);
-        rta.getStylesheets().add("RichTextField.css");
+        rta.getStylesheets().add("RichTextFieldWide.css");
         rta.setPromptText("Formula");
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(drta, ControlType.FIELD);
+                focusedBoxedDRTA = bdrta;
             }
         });
         return bdrta;
@@ -327,8 +352,8 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         BoxedDRTA bdrta = new BoxedDRTA();
         DecoratedRTA drta = bdrta.getDRTA();
         RichTextArea rta = bdrta.getRTA();
-        rta.setMaxHeight(27);
-        rta.setMinHeight(27);
+        rta.setMaxHeight(formulaBoxHeight);
+        rta.setMinHeight(formulaBoxHeight);
         rta.setContentAreaWidth(200);
         rta.setPrefWidth(100);
         rta.getStylesheets().add("RichTextField.css");

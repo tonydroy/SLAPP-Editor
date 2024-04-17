@@ -25,6 +25,7 @@ public class SetupLine {
     private CheckBox addGapBox;
     private HBox spinnerBox;
     private boolean modified = false;
+    private double formulaBoxHeight = 27;
 
     public SetupLine(DerivationCreate derivationCreate) {
         this.derivationCreate = derivationCreate;
@@ -32,11 +33,11 @@ public class SetupLine {
         formulaBoxedDRTA.getDRTA().getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
         RichTextArea formulaRTA = formulaBoxedDRTA.getRTA();
 
-        formulaRTA.setMaxHeight(27);
-        formulaRTA.setMinHeight(27);
+        formulaRTA.setMaxHeight(formulaBoxHeight);
+        formulaRTA.setMinHeight(formulaBoxHeight);
         formulaRTA.setPrefWidth(400);
         formulaRTA.setContentAreaWidth(500);
-        formulaRTA.getStylesheets().add("RichTextField.css");
+        formulaRTA.getStylesheets().add("RichTextFieldWide.css");
         formulaRTA.setPromptText("Formula");
 
         formulaRTA.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
@@ -65,11 +66,11 @@ public class SetupLine {
         justificationBoxedDRTA.getDRTA().getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.BASE);
         RichTextArea justificationRTA = justificationBoxedDRTA.getRTA();
         justificationRTA.setDocument(new Document(""));
-        justificationRTA.setMaxHeight(27);
-        justificationRTA.setMinHeight(27);
+        justificationRTA.setMaxHeight(formulaBoxHeight);
+        justificationRTA.setMinHeight(formulaBoxHeight);
         justificationRTA.setPrefWidth(100);
         justificationRTA.setContentAreaWidth(200);
-        justificationRTA.getStylesheets().add("RichTextField.css");
+        justificationRTA.getStylesheets().add("RichTextFieldWide.css");
         justificationRTA.setPromptText("Justification");
 
         justificationRTA.addEventFilter(KeyEvent.KEY_PRESSED, e -> {

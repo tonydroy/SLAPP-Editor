@@ -6,6 +6,7 @@ module slapp.editor {
     requires com.gluonhq.richtextarea;
     requires com.gluonhq.emoji;
     requires java.logging;
+    requires javafx.media;
 
 
 
@@ -15,6 +16,7 @@ module slapp.editor {
     requires org.apache.commons.lang3;
     requires java.desktop;
     requires jdk.xml.dom;
+
 
 
 

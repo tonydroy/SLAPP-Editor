@@ -72,7 +72,8 @@ public class TruthTableCreate {
     private ToolBar insertToolBar;
     private ToolBar paragraphToolbar;
     private ToolBar kbdDiaToolBar;
-    ChangeListener nameListener;
+    private ChangeListener nameListener;
+    private double formulaBoxHeight = 27;
 
 
     public TruthTableCreate(MainWindow mainWindow) {
@@ -250,7 +251,7 @@ public class TruthTableCreate {
 
         //main formulas top
         mainFormulasPane = new GridPane();
-        mainFormulasPane.setPadding(new Insets(10, 0, 20, 105));
+        mainFormulasPane.setPadding(new Insets(10, 0, 0, 105));
         mainFormulasPane.setVgap(10);
         mainFormulaList = new ArrayList<>();
         BoxedDRTA mainFormulaBoxedDRTA = newMainFormulaBoxedDRTA();
@@ -448,10 +449,10 @@ public class TruthTableCreate {
         DecoratedRTA drta = boxedDRTA.getDRTA();
         drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
         RichTextArea rta = boxedDRTA.getRTA();
-        rta.setMaxHeight(27);
-        rta.setMinHeight(27);
+        rta.setMaxHeight(formulaBoxHeight);
+        rta.setMinHeight(formulaBoxHeight);
         rta.setPrefWidth(30);
-        rta.getStylesheets().add("RichTextField.css");
+        rta.getStylesheets().add("RichTextFieldWide.css");
 
  // Center text in field?  This doesn't work.
  //       RichTextAreaViewModel rtaViewModel = ((RichTextAreaSkin) rta.getSkin()).getViewModel();
@@ -479,10 +480,10 @@ public class TruthTableCreate {
         drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
         RichTextArea rta = boxedDRTA.getRTA();
         rta.getActionFactory().saveNow().execute(new ActionEvent());
-        rta.setMaxHeight(27);
-        rta.setMinHeight(27);
+        rta.setMaxHeight(formulaBoxHeight);
+        rta.setMinHeight(formulaBoxHeight);
         rta.setPrefWidth(300);
-        rta.getStylesheets().add("RichTextField.css");
+        rta.getStylesheets().add("RichTextFieldWide.css");
         rta.setPromptText("Formula");
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {

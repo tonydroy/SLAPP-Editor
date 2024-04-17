@@ -16,6 +16,7 @@ import javafx.util.Callback;
 import slapp.editor.*;
 import slapp.editor.front_page.FrontPageExercise;
 import slapp.editor.main_window.assignment.*;
+import slapp.editor.main_window.media_player.MediaViewer;
 import slapp.editor.simple_editor.SimpleEditExercise;
 import slapp.editor.simple_editor.SimpleEditModel;
 
@@ -35,6 +36,7 @@ public class MainWindow {
     boolean assignmentContentModified = false;
     ChangeListener<Node> focusListener;
     Node lastFocusOwner;
+    MediaViewer mediaViewer = new MediaViewer();
 
     boolean isExerciseOpen = false;
 
@@ -92,6 +94,12 @@ public class MainWindow {
         mainView.getExportAssignmentToPDFItemPM().setOnAction(e -> exportAssignment());
         mainView.getPageSetupItem().setOnAction(e -> pageSetup());
         mainView.getExportSetupItem().setOnAction(e -> exportSetup());
+
+        mainView.getGeneralIntroItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4"));
+        mainView.getVerticalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4"));
+        mainView.getHorizontalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4"));
+        mainView.getTruthTableItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4"));
+        mainView.getDerivationItem().setOnAction(e -> videoHelp("https://www.slappservices.net/derivations.mp4"));
 
         mainView.getCommonElementsTextItem().setOnAction(e -> generalTextHelp());
         mainView.getAboutItem().setOnAction(e -> aboutTextHelp());
@@ -696,6 +704,13 @@ public class MainWindow {
     private void aboutTextHelp() {
         TextHelpPopup.helpAbout();
     }
+
+    private void videoHelp(String urlString) {
+        mediaViewer.stopPlay();
+        mediaViewer.play(urlString);
+//        mediaViewer.play("file:/c:/Users/tonyd/Dropbox/MyFiles(DB)/JavaProgs/resources/videos/derivations.mp4");
+    }
+
     private void generalTextHelp() {
         TextHelpPopup.helpCommonElements();
     }
