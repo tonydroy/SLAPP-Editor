@@ -17,7 +17,7 @@ public class MediaViewer {
 
 
 
-    public void play(String file) {
+    public void play(String file, double width, double height) {
         try {
             player = new Player(file);
         }
@@ -26,7 +26,7 @@ public class MediaViewer {
             return;
         }
 
-        Scene scene = new Scene(player, 700, 725, Color.BLACK);
+        Scene scene = new Scene(player, width, height, Color.BLACK);
 
         stage = new Stage();
         stage.setScene(scene);

@@ -95,11 +95,12 @@ public class MainWindow {
         mainView.getPageSetupItem().setOnAction(e -> pageSetup());
         mainView.getExportSetupItem().setOnAction(e -> exportSetup());
 
-        mainView.getGeneralIntroItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4"));
-        mainView.getVerticalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4"));
-        mainView.getHorizontalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4"));
-        mainView.getTruthTableItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4"));
-        mainView.getDerivationItem().setOnAction(e -> videoHelp("https://www.slappservices.net/derivations.mp4"));
+        mainView.getGeneralIntroItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4", 700, 725));
+        mainView.getVerticalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4", 700, 725));
+        mainView.getHorizontalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4", 700, 725));
+        mainView.getTruthTableItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4", 700, 725));
+        mainView.getDerivationItem().setOnAction(e -> videoHelp("https://www.slappservices.net/derivations.mp4", 700, 725));
+        mainView.getInstructorInfoItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4", 700, 725));
 
         mainView.getCommonElementsTextItem().setOnAction(e -> generalTextHelp());
         mainView.getAboutItem().setOnAction(e -> aboutTextHelp());
@@ -705,9 +706,9 @@ public class MainWindow {
         TextHelpPopup.helpAbout();
     }
 
-    private void videoHelp(String urlString) {
+    private void videoHelp(String urlString, double width, double height) {
         mediaViewer.stopPlay();
-        mediaViewer.play(urlString);
+        mediaViewer.play(urlString, width, height);
 //        mediaViewer.play("file:/c:/Users/tonyd/Dropbox/MyFiles(DB)/JavaProgs/resources/videos/derivations.mp4");
     }
 

@@ -2,9 +2,7 @@ package slapp.editor.main_window;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -25,6 +23,30 @@ public class ExerciseTypePopup {
         typeList.getItems().setAll(ExerciseType.values());
         typeList.setPrefWidth(200);
         typeList.getSelectionModel().select(lastSelectedItem);
+
+
+        typeList.setCellFactory(cell -> new ListCell<ExerciseType>() {
+            final Tooltip tooltip = new Tooltip();
+
+            @Override
+            protected void updateItem(ExerciseType type, boolean empty) {
+                super.updateItem(type, empty);
+
+                if (type == null || empty) {
+                    setText(null);
+                    setTooltip(null);
+                }
+                else {
+                    setText(type.toString());
+                    tooltip.setText(type.getDescription());
+                    tooltip.setStyle("-fx-font-size: 12");
+                    setTooltip(tooltip);
+                }
+            }
+
+        });
+
+
 
 
         Button selectButton = new Button("Select");

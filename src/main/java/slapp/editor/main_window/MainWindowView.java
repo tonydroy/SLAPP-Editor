@@ -104,6 +104,7 @@ public class MainWindowView {
     private MenuItem horizontalTreeItem;
     private MenuItem truthTableItem;
     private MenuItem derivationItem;
+    private MenuItem instructorInfoItem;
     private MenuItem reportItem;
     Menu previousExerciseMenu = new Menu();
     Menu nextExerciseMenu = new Menu();
@@ -149,6 +150,9 @@ public class MainWindowView {
         Text filmItemGraphic5 = new Text("\uf008");
         filmItemGraphic5.setStyle("-fx-font-family: la-solid-900");
         derivationItem = new MenuItem("Derivations", filmItemGraphic5);
+        Text filmItemGraphic6 = new Text("\uf008");
+        filmItemGraphic6.setStyle("-fx-font-family: la-solid-900");
+        instructorInfoItem = new MenuItem("Instructor Info", filmItemGraphic6);
 
 
         Text textItemGraphic1 = new Text("\uf15c");
@@ -171,7 +175,7 @@ public class MainWindowView {
         exerciseMenu.getItems().addAll(saveExerciseItem, saveAsExerciseItem, openExerciseItem, clearExerciseItem, closeExerciseItem, printExerciseItem, exportToPDFExerciseItem, createRevisedExerciseItem, createNewExerciseItem);
         assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, closeAssignmentItem, printAssignmentItem, exportAssignmentToPDFItem, createRevisedAssignmentItem, createNewAssignmentItem);
         printMenu.getItems().addAll(printExerciseItemPM, exportExerciseToPDFItemPM, printAssignmentItemPM, exportAssignmentToPDFItemPM, pageSetupItem, exportSetupItem, fitToPageItem);
-        helpMenu.getItems().addAll(generalIntroItem, verticalTreeItem, horizontalTreeItem, truthTableItem, derivationItem, commonElementsTextItem, contextualTextItem, aboutItem, reportItem);
+        helpMenu.getItems().addAll(generalIntroItem, verticalTreeItem, horizontalTreeItem, truthTableItem, derivationItem, instructorInfoItem, commonElementsTextItem, contextualTextItem, aboutItem, reportItem);
 
         zoomLabel = new Label(" Zoom ");
         zoomSpinner = new Spinner(25, 500, 100, 5);
@@ -782,6 +786,7 @@ public class MainWindowView {
     public MenuItem getDerivationItem() {
         return derivationItem;
     }
+    public MenuItem getInstructorInfoItem() { return instructorInfoItem; }
 
     public MenuItem getReportItem() {
         return reportItem;
