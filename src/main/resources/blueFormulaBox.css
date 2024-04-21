@@ -2,7 +2,7 @@
 
 .rich-text-area:focused .paragraph-tile {
     -fx-background-color: aliceblue;
-    -fx-padding: 3 0 0 5;
+    -fx-padding: 3 0 0 0;
 
 }
 
@@ -10,7 +10,7 @@
 
 .rich-text-area .paragraph-tile {
     -fx-background-color: white;
-    -fx-padding: 3 0 0 5;
+    -fx-padding: 3 0 0 0;
 }
 
 

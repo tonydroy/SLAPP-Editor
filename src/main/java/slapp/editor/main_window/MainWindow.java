@@ -100,7 +100,7 @@ public class MainWindow {
         mainView.getHorizontalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4", 700, 725));
         mainView.getTruthTableItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4", 700, 725));
         mainView.getDerivationItem().setOnAction(e -> videoHelp("https://www.slappservices.net/derivations.mp4", 700, 725));
-        mainView.getInstructorInfoItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4", 700, 725));
+        mainView.getInstructorInfoItem().setOnAction(e -> videoHelp("https://www.slappservices.net/instructor_info.mp4", 900, 600));
 
         mainView.getCommonElementsTextItem().setOnAction(e -> generalTextHelp());
         mainView.getAboutItem().setOnAction(e -> aboutTextHelp());

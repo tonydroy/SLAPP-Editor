@@ -117,5 +117,7 @@ public class VerticalTreeABExpModel implements ExerciseModel<Document>, Serializ
     @Override
     public ExerciseModel<Document> getOriginalModel() {  return originalModel;  }
     public void setOriginalModel(ExerciseModel<Document> originalModel) {  this.originalModel = originalModel; }
+    @Override
+    public String toString() { return exerciseName; }
 
 }

@@ -69,6 +69,8 @@ public class HorizontalTreeModel implements ExerciseModel<Document>, Serializabl
 
     @Override
     public void setOriginalModel(ExerciseModel<Document> exerciseModel) { this.originalModel = exerciseModel; }
+    @Override
+    public String toString() { return exerciseName; }
 
 
 }

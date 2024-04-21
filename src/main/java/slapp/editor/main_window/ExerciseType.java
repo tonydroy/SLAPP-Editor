@@ -2,11 +2,11 @@ package slapp.editor.main_window;
 
 public enum ExerciseType {
 
-    AB_EXPLAIN("AB explain", "Requires binary choice with an explanation."),
-    ABEFG_EXPLAIN("AB/EFG explain", "Requires both binary and tertiary choice with an explanation"),
-    DERIVATION("Derivation", "Requires a derivation"),
-    DRVTN_EXP("Derivation explain", "Requires a derivation and explanation."),
-    HORIZONTAL_TREE("Horizontal Tree", "Exercise requires a horizontal tree (of the type encountered in Ch 4 of SL) and an explanation."),
+    AB_EXPLAIN("AB explain", "Exercise requires binary choice with an explanation."),
+    ABEFG_EXPLAIN("AB/EFG explain", "Exercise requires both binary and tertiary choice with an explanation"),
+    DERIVATION("Derivation", "Exercise requires a derivation"),
+    DRVTN_EXP("Derivation explain", "Exercise requires a derivation and explanation."),
+    HORIZONTAL_TREE("Horizontal Tree", "Exercise requires a horizontal tree (of the type encountered in chapters 4 and 5 of SL) and an explanation."),
     SIMPLE_EDITOR("Simple editor", "Exercise requires a text response -- anywhere from short answer, to paragraph, to essay."),
     TRUTH_TABLE("Truth table", "Exercise requires a truth table."),
     TRUTH_TABLE_ABEXP("Truth table AB explain", "Exercise requires a truth table with a binary choice and explanation."),

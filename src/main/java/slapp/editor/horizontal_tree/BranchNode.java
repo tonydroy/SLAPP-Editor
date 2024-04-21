@@ -65,7 +65,7 @@ public class BranchNode extends HBox {
 
         annotationField.setPrefWidth(annotationWidth);
         annotationField.setPrefHeight(15);
-        annotationField.setFont(new Font("Noto Sans", 10));
+        annotationField.setFont(new Font("Ariel", 10));
         annotationField.setPadding(new Insets(0));
 
         annotationField.focusedProperty().addListener((ob, ov, nv) -> {

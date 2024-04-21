@@ -741,7 +741,7 @@ public class TreeFormulaBox extends AnchorPane {
         annotationField = new TextField();
         annotationField.setPrefWidth(28);
         annotationField.setPrefHeight(15);
-        annotationField.setFont(new Font("Noto Sans", 10));
+        annotationField.setFont(new Font( "Ariel",10));  // with 'Noto Sans' here font was all wrong
         annotationField.setPadding(new Insets(0));
 
         mainBox.getChildren().clear();

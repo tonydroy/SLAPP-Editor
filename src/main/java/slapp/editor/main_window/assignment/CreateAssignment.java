@@ -209,11 +209,13 @@ public class CreateAssignment {
         removeButton.setPrefWidth(60);
         Button saveButton = new Button("Save");
         saveButton.setPrefWidth(60);
+        Button saveAsButton = new Button("Save As");
+        saveAsButton.setPrefWidth(60);
         Button closeButton = new Button("Close");
         closeButton.setPrefWidth(60);
-        VBox buttonBox = new VBox(20, addUpButton, addDownButton, removeButton, saveButton, closeButton);
+        VBox buttonBox = new VBox(20, addUpButton, addDownButton, removeButton, saveButton, saveAsButton, closeButton);
         buttonBox.setPadding(new Insets(0,20,40,0));
-        buttonBox.setMargin(saveButton, new Insets(50,0,0,0));
+        buttonBox.setMargin(saveButton, new Insets(30,0,0,0));
         buttonBox.setAlignment(Pos.CENTER_LEFT);
 
         SelectionModel exerciseSelectionModel = exerciseList.getSelectionModel();
@@ -282,10 +284,21 @@ public class CreateAssignment {
         });
 
         removeButton.setOnAction(e -> {
-           assignmentList.getItems().remove(assignmentSelectionModel.getSelectedIndex());
-           isModified = true;
+            if (assignmentSelectionModel.getSelectedIndex() >= 0) {
+                assignmentList.getItems().remove(assignmentSelectionModel.getSelectedIndex());
+                isModified = true;
+            }
         });
 
+        saveButton.setOnAction(e -> {
+            saveAssignment(false);
+        });
+
+        saveAsButton.setOnAction(e -> {
+           saveAssignment(true);
+        });
+
+        /*
         saveButton.setOnAction(e -> {
            Assignment assignment = getAssignmentFromWindow();
            boolean saved = false;
@@ -295,6 +308,8 @@ public class CreateAssignment {
             }
             else EditorAlerts.showSimpleAlert("Cannot Save", "No named assignment to save.");
         });
+
+         */
 
         closeButton.setOnAction(e -> {
             closeWindow();
@@ -353,6 +368,16 @@ public class CreateAssignment {
         assignment.setExerciseModels(new ArrayList<ExerciseModel>(assignmentList.getItems()));
 
         return assignment;
+    }
+
+    private void saveAssignment(boolean saveAs) {
+        Assignment assignment = getAssignmentFromWindow();
+        boolean saved = false;
+        if (!assignment.getHeader().getAssignmentName().isEmpty()) {
+            saved = DiskUtilities.saveAssignment(saveAs, assignment);
+            if (saved) isModified = false;
+        }
+        else EditorAlerts.showSimpleAlert("Cannot Save", "No named assignment to save.");
     }
 
     private void closeWindow() {

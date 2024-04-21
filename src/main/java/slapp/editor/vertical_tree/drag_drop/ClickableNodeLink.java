@@ -50,7 +50,6 @@ public class ClickableNodeLink extends Pane {
                 parent.getChildren().remove(this);
                 verticalTreeView.setUndoRedoFlag(true);
                 verticalTreeView.setUndoRedoFlag(false);
-                System.out.println("node link, remove");
             }
         });
     }
