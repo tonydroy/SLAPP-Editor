@@ -716,6 +716,7 @@ public class ABEFExpTreeFormulaBox extends AnchorPane {
 
     public void addStar() {
         Label star = new Label("\u2605");
+        star.setStyle("-fx-font-size: 8");
         mainBox.getChildren().clear();
         mainBox.getChildren().addAll(labelPane, centerBox, star);
         mainBox.setMargin(star, new Insets(6,0, 0, 0));

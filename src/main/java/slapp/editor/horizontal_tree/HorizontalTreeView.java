@@ -753,6 +753,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         }
 
         if (axis) {
+            simpleAddAxis();
             rulerButton.setSelected(true);
         }
         else {

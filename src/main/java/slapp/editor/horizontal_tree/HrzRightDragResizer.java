@@ -25,7 +25,7 @@ public class HrzRightDragResizer {
      */
 
     HorizontalTreeView horizontalTreeView;
-    private static final int RESIZE_MARGIN = 12;
+    private static final int RESIZE_MARGIN = 18;
 
     private Region region;
 

@@ -10,6 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -28,8 +29,8 @@ public class BranchNode extends HBox {
     BoxedDRTA connectorBoxedDRTA;
     TextField annotationField = new TextField();
     ArrayList<BranchNode> dependents = new ArrayList<>();
-    static double offsetY = 34;
-    static double leafPos = -34;
+    static double offsetY = 48;  //34
+    static double leafPos = -48;
     double minYlayout;
     double maxYlayout;
     double Xlayout;
@@ -58,8 +59,17 @@ public class BranchNode extends HBox {
 
 
         self.getChildren().add(formulaBoxedDRTA.getBoxedRTA());
+
+        //
+//        formulaBoxedDRTA.getBoxedRTA().setHgrow(formulaBoxedDRTA.getRTA(), Priority.ALWAYS);
+//        self.setHgrow(formulaBoxedDRTA.getBoxedRTA(), Priority.ALWAYS);
+        //
+
         HrzRightDragResizer resizer = new HrzRightDragResizer(horizontalTreeView);
         resizer.makeResizable(formulaBoxedDRTA.getRTA());
+
+ //       resizer.makeResizable(this);
+
         self.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1.5 0");
         self.setPadding(new Insets(0, 4, 0, 2));
 
@@ -115,7 +125,7 @@ public class BranchNode extends HBox {
     }
 
     void doLayout(double xVal) {
-        leafPos = -34;
+        leafPos = -48;
         setLayout(xVal);
     }
 
