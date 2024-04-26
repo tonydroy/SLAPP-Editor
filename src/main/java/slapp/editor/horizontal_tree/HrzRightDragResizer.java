@@ -25,9 +25,10 @@ public class HrzRightDragResizer {
      */
 
     HorizontalTreeView horizontalTreeView;
-    private static final int RESIZE_MARGIN = 18;
+    private static final int RESIZE_MARGIN = 12;
 
     private Region region;
+    private Region target;
 
     private double x;
 
@@ -40,8 +41,9 @@ public class HrzRightDragResizer {
         this.horizontalTreeView = horizontalTreeView;
     }
 
-    public void makeResizable(Region region) {
+    public void makeResizable(Region region, Region target) {
         this.region = region;
+        this.target = target;
 
         region.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -80,6 +82,8 @@ public class HrzRightDragResizer {
         }
     }
 
+
+
     protected boolean isInDraggableZone(MouseEvent event) {
 
         return event.getX() > (region.getWidth() - RESIZE_MARGIN);
@@ -89,14 +93,13 @@ public class HrzRightDragResizer {
         if(!dragging) {
             return;
         }
-
         double mousex = event.getX();
 
 //        double newWidth = region.getMinWidth() + (mousex - x);
 //        region.setMinWidth(newWidth);
 
-        double newWidth = region.getPrefWidth() + (mousex - x);
-        region.setPrefWidth(newWidth);
+        double newWidth = target.getPrefWidth() + (mousex - x);
+        target.setPrefWidth(newWidth);
 
         x = mousex;
     }
@@ -117,7 +120,7 @@ public class HrzRightDragResizer {
 
 
 //            region.setMinWidth(region.getWidth());
-            region.setPrefWidth(region.getWidth());
+            target.setPrefWidth(target.getWidth());
             initMinWidth = true;
         }
 

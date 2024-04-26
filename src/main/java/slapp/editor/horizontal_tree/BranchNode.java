@@ -60,13 +60,15 @@ public class BranchNode extends HBox {
 
         self.getChildren().add(formulaBoxedDRTA.getBoxedRTA());
 
+
+
         //
 //        formulaBoxedDRTA.getBoxedRTA().setHgrow(formulaBoxedDRTA.getRTA(), Priority.ALWAYS);
 //        self.setHgrow(formulaBoxedDRTA.getBoxedRTA(), Priority.ALWAYS);
         //
 
         HrzRightDragResizer resizer = new HrzRightDragResizer(horizontalTreeView);
-        resizer.makeResizable(formulaBoxedDRTA.getRTA());
+        resizer.makeResizable(self, formulaBoxedDRTA.getRTA());
 
  //       resizer.makeResizable(this);
 
