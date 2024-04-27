@@ -4,12 +4,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import slapp.editor.main_window.Exercise;
 import slapp.editor.main_window.assignment.Assignment;
 import slapp.editor.main_window.ExerciseModel;
 
 import java.io.*;
-import java.util.List;
+import java.util.Collections;
 
 public class DiskUtilities {
 
@@ -177,6 +176,9 @@ public class DiskUtilities {
         };
         File[] files = directory.listFiles(filenameFilter);
         list = FXCollections.observableArrayList(files);
+
+        Collections.sort(list, new AlphanumFileComparator());
+
         return list;
     }
 

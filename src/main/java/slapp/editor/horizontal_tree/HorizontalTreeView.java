@@ -475,7 +475,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                             branch.setIndefiniteNode(true);
                             branch.setStyle("-fx-border-width: 0 0 0 0");
                             RichTextArea rta = branch.getFormulaBoxedDRTA().getRTA();
-                            rta.setDocument(new Document(" \u22ee"));
+                            rta.setDocument(new Document("   \u22ee"));
                             rta.setPrefWidth(24);
                             clickNode.getDependents().add(branch);
                             pane.refresh();

@@ -464,7 +464,7 @@ public class KeyboardDiagram {
         }
     StackPane getControlKey(String name, int width) {
         Text text = new Text(name);
-        text.setFont(new Font("Noto Sans", mapFontSize * 2/3));
+        text.setFont(new Font("Arial", mapFontSize * 2/3));
         TextFlow flow = new TextFlow(text);
         flow.setTextAlignment(TextAlignment.CENTER);
         StackPane pane = new StackPane(flow);

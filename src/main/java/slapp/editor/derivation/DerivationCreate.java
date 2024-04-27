@@ -69,6 +69,8 @@ public class DerivationCreate {
     private ToolBar insertToolbar;
     private ToolBar paragraphToolbar;;
     private ToolBar kbdDiaToolBar;
+    private Button lowerSaveButton;
+    private Button saveAsButton;
 
 
     public DerivationCreate(MainWindow mainWindow) {
@@ -248,10 +250,10 @@ public class DerivationCreate {
         Button viewButton = new Button("View");
         viewButton.setOnAction(e -> viewExercise());
 
-        Button lowerSaveButton = new Button ("Save");
+        lowerSaveButton = new Button ("Save");
         lowerSaveButton.setOnAction(e -> saveExercise(false));
 
-        Button saveAsButton = new Button("Save As");
+        saveAsButton = new Button("Save As");
         saveAsButton.setOnAction(e -> saveExercise(true));
 
         HBox buttonBox = new HBox(saveAsButton, lowerSaveButton, viewButton, clearButton, closeButton);
@@ -441,6 +443,8 @@ public class DerivationCreate {
     }
 
     private void saveExercise(boolean saveAs) {
+        lowerSaveButton.setDisable(true);
+        saveAsButton.setDisable(true);
 
         nameField.textProperty().addListener(nameListener);
         scopeLineCheck.selectedProperty().addListener(leftmostScopeListner);
@@ -457,11 +461,9 @@ public class DerivationCreate {
         rta.setEditable(false);
         exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
-
-
-
-
         exercise.saveExercise(saveAs);
+        lowerSaveButton.setDisable(false);
+        saveAsButton.setDisable(false);
 
         fieldModified = false;
     }

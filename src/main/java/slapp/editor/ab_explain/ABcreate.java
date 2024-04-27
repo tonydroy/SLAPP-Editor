@@ -58,6 +58,8 @@ public class ABcreate {
     private SimpleDoubleProperty centerHeightProperty;
     private TextArea helpArea;
     private VBox centerBox;
+    private Button saveButton;
+    private Button saveAsButton;
 
 
 
@@ -214,10 +216,10 @@ public class ABcreate {
         Button viewButton = new Button("View");
         viewButton.setOnAction(e -> viewExercise());
 
-        Button saveButton = new Button ("Save");
+        saveButton = new Button ("Save");
         saveButton.setOnAction(e -> saveExercise(false));
 
-        Button saveAsButton = new Button("Save As");
+        saveAsButton = new Button("Save As");
         saveAsButton.setOnAction(e -> saveExercise(true));
 
         HBox buttonBox = new HBox(saveAsButton, saveButton, viewButton, clearButton, closeButton);
@@ -352,6 +354,8 @@ public class ABcreate {
     }
 
     private void saveExercise(boolean saveAs) {
+        saveButton.setDisable(true);
+        saveAsButton.setDisable(true);
 
         nameField.textProperty().addListener(nameListener);
         ABexercise exercise = new ABexercise(extractModelFromWindow(), mainWindow);
@@ -363,6 +367,8 @@ public class ABcreate {
         exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
         exercise.saveExercise(saveAs);
+        saveButton.setDisable(false);
+        saveAsButton.setDisable(false);
         fieldsModified = false;
     }
     private ABmodel extractModelFromWindow() {

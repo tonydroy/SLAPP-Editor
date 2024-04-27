@@ -62,6 +62,8 @@ public class ABEFGcreate {
     private SimpleDoubleProperty centerHeightProperty;
     private TextArea helpArea;
     private VBox centerBox;
+    private Button saveButton;
+    private Button saveAsButton;
 
 
     public ABEFGcreate(MainWindow mainWindow) {
@@ -267,10 +269,10 @@ public class ABEFGcreate {
         Button viewButton = new Button("View");
         viewButton.setOnAction(e -> viewExercise());
 
-        Button saveButton = new Button ("Save");
+        saveButton = new Button ("Save");
         saveButton.setOnAction(e -> saveExercise(false));
 
-        Button saveAsButton = new Button("Save As");
+        saveAsButton = new Button("Save As");
         saveAsButton.setOnAction(e -> saveExercise(true));
 
         HBox buttonBox = new HBox(saveAsButton, saveButton, viewButton, clearButton, closeButton);
@@ -402,6 +404,8 @@ public class ABEFGcreate {
     }
 
     private void saveExercise(boolean saveAs) {
+        saveButton.setDisable(true);
+        saveAsButton.setDisable(true);
         nameField.textProperty().addListener(nameListener);
         ABEFGexercise exercise = new ABEFGexercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
@@ -412,6 +416,8 @@ public class ABEFGcreate {
         exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
         exercise.saveExercise(saveAs);
+        saveButton.setDisable(false);
+        saveAsButton.setDisable(false);
         fieldsModified = false;
     }
     private ABEFGmodel extractModelFromWindow() {

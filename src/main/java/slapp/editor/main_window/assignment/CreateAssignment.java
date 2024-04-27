@@ -146,6 +146,8 @@ public class CreateAssignment {
                 insItemIndex--;
                 optionalItemsPane.getChildren().remove(labelFields.get(insItemIndex));
                 optionalItemsPane.getChildren().remove(valueFields.get(insItemIndex));
+                labelFields.remove(insItemIndex);
+                valueFields.remove(insItemIndex);
             }
         });
 

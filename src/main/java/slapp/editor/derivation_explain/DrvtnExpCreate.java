@@ -74,6 +74,8 @@ public class DrvtnExpCreate {
     private ToolBar insertToolbar;
     private ToolBar paragraphToolbar;;
     private ToolBar kbdDiaToolBar;
+    private Button lowerSaveButton;
+    private Button saveAsButton;
 
     public DrvtnExpCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -270,10 +272,10 @@ public class DrvtnExpCreate {
         Button viewButton = new Button("View");
         viewButton.setOnAction(e -> viewExercise());
 
-        Button lowerSaveButton = new Button ("Save");
+        lowerSaveButton = new Button ("Save");
         lowerSaveButton.setOnAction(e -> saveExercise(false));
 
-        Button saveAsButton = new Button("Save As");
+        saveAsButton = new Button("Save As");
         saveAsButton.setOnAction(e -> saveExercise(true));
 
         HBox buttonBox = new HBox(saveAsButton, lowerSaveButton, viewButton, clearButton, closeButton);
@@ -465,6 +467,8 @@ public class DrvtnExpCreate {
     }
 
     private void saveExercise(boolean saveAs) {
+        lowerSaveButton.setDisable(true);
+        saveAsButton.setDisable(true);
 
         nameField.textProperty().addListener(nameListener);
         promptField.textProperty().addListener(promptFieldListener);
@@ -472,9 +476,6 @@ public class DrvtnExpCreate {
         defaultShelfCheck.selectedProperty().addListener(defaultShelfListener);
 
         DrvtnExpExercise exercise = new DrvtnExpExercise(extractModelFromWindow(), mainWindow);
-
-
-
 
         for (DrvtnExpSetupLine line : setupLines) { line.setModified(false); }
 
@@ -486,6 +487,8 @@ public class DrvtnExpCreate {
         exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
         exercise.saveExercise(saveAs);
+        lowerSaveButton.setDisable(false);
+        saveAsButton.setDisable(false);
 
         fieldModified = false;
     }

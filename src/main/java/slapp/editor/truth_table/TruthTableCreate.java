@@ -74,6 +74,8 @@ public class TruthTableCreate {
     private ToolBar kbdDiaToolBar;
     private ChangeListener nameListener;
     private double formulaBoxHeight = 27;
+    private Button lowerSaveButton;
+    private Button saveAsButton;
 
 
     public TruthTableCreate(MainWindow mainWindow) {
@@ -330,10 +332,10 @@ public class TruthTableCreate {
         Button viewButton = new Button("View");
         viewButton.setOnAction(e -> viewExercise());
 
-        Button lowerSaveButton = new Button ("Save");
+        lowerSaveButton = new Button ("Save");
         lowerSaveButton.setOnAction(e -> saveExercise(false));
 
-        Button saveAsButton = new Button("Save As");
+        saveAsButton = new Button("Save As");
         saveAsButton.setOnAction(e -> saveExercise(true));
 
         HBox buttonBox = new HBox(saveAsButton, lowerSaveButton, viewButton, clearButton, closeButton);
@@ -534,6 +536,9 @@ public class TruthTableCreate {
         }
     }
     private void saveExercise(boolean saveAs) {
+        lowerSaveButton.setDisable(true);
+        saveAsButton.setDisable(true);
+
         nameField.textProperty().addListener(nameListener);
 
         TruthTableExercise exercise = new TruthTableExercise(extractModelFromWindow(), mainWindow, true);
@@ -547,6 +552,8 @@ public class TruthTableCreate {
         exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
 
         exercise.saveExercise(saveAs);
+        lowerSaveButton.setDisable(false);
+        saveAsButton.setDisable(false);
         fieldModified = false;
     }
 

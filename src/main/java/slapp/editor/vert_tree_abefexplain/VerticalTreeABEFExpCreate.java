@@ -75,6 +75,8 @@ public class VerticalTreeABEFExpCreate {
     private Scene scene;
     private VBox centerBox;
     private SimpleDoubleProperty centerHeightProperty;
+    private Button saveButton;
+    private Button saveAsButton;
 
 
 
@@ -302,10 +304,10 @@ public class VerticalTreeABEFExpCreate {
         Button viewButton = new Button("View");
         viewButton.setOnAction(e -> viewExercise());
 
-        Button saveButton = new Button ("Save");
+        saveButton = new Button ("Save");
         saveButton.setOnAction(e -> saveExercise(false));
 
-        Button saveAsButton = new Button("Save As");
+        saveAsButton = new Button("Save As");
         saveAsButton.setOnAction(e -> saveExercise(true));
 
         HBox buttonBox = new HBox(saveAsButton, saveButton, viewButton, clearButton, closeButton);
@@ -420,18 +422,11 @@ public class VerticalTreeABEFExpCreate {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-            abChoiceLeadField.clear();
             abChoiceLeadField.textProperty().addListener(abChoiceLeadListener);
-            aPromptField.clear();
             aPromptField.textProperty().addListener(aPromptListener);
-            bPromptField.clear();
             bPromptField.textProperty().addListener(bPromptListener);
-
-            efChoiceLeadField.clear();
             efChoiceLeadField.textProperty().addListener(efChoiceLeadListener);
-            ePromptField.clear();
             ePromptField.textProperty().addListener(ePromptListener);
-            fPromptField.clear();
             fPromptField.textProperty().addListener(fPromptListener);
 
             statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
@@ -453,6 +448,8 @@ public class VerticalTreeABEFExpCreate {
 
     }
     private void saveExercise(boolean saveAs) {
+        saveButton.setDisable(true);
+        saveAsButton.setDisable(true);
         nameField.textProperty().addListener(nameListener);
 
         abChoiceLeadField.textProperty().addListener(abChoiceLeadListener);
@@ -472,6 +469,8 @@ public class VerticalTreeABEFExpCreate {
         exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
         exercise.saveExercise(saveAs);
+        saveButton.setDisable(false);
+        saveAsButton.setDisable(false);
         modified = false;
     }
 

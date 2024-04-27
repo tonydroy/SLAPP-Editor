@@ -49,6 +49,8 @@ public class SimpleEditCreate {
     private SimpleDoubleProperty centerHeightProperty;
     private TextArea helpArea;
     private VBox centerBox;
+    private Button saveButton;
+    private Button saveAsButton;
 
 
     public SimpleEditCreate(MainWindow mainWindow) {
@@ -142,10 +144,10 @@ public class SimpleEditCreate {
         Button viewButton = new Button("View");
         viewButton.setOnAction(e -> viewExercise());
 
-        Button saveButton = new Button ("Save");
+        saveButton = new Button ("Save");
         saveButton.setOnAction(e -> saveExercise(false));
 
-        Button saveAsButton = new Button("Save As");
+        saveAsButton = new Button("Save As");
         saveAsButton.setOnAction(e -> saveExercise(true));
 
         HBox buttonBox = new HBox(saveAsButton, saveButton, viewButton, clearButton, closeButton);
@@ -248,8 +250,6 @@ public class SimpleEditCreate {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-            promptField.clear();
-            promptField.textProperty().addListener(promptListener);
             statementRTA.setDocument(new Document());
             statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
@@ -280,6 +280,8 @@ public class SimpleEditCreate {
     }
 
     private void saveExercise(boolean saveAs) {
+        saveButton.setDisable(true);
+        saveAsButton.setDisable(true);
 
         nameField.textProperty().addListener(nameListener);
         SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
@@ -291,6 +293,8 @@ public class SimpleEditCreate {
         exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
         exercise.saveExercise(saveAs);
+        saveButton.setDisable(false);
+        saveAsButton.setDisable(false);
         fieldModified = false;
     }
     private SimpleEditModel extractModelFromWindow() {

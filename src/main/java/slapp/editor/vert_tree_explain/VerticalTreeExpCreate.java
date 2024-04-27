@@ -61,6 +61,8 @@ public class VerticalTreeExpCreate {
     private Scene scene;
     private VBox centerBox;
     private SimpleDoubleProperty centerHeightProperty;
+    private Button saveButton;
+    private Button saveAsButton;
 
 
 
@@ -198,10 +200,10 @@ public class VerticalTreeExpCreate {
         Button viewButton = new Button("View");
         viewButton.setOnAction(e -> viewExercise());
 
-        Button saveButton = new Button ("Save");
+        saveButton = new Button ("Save");
         saveButton.setOnAction(e -> saveExercise(false));
 
-        Button saveAsButton = new Button("Save As");
+        saveAsButton = new Button("Save As");
         saveAsButton.setOnAction(e -> saveExercise(true));
 
         HBox buttonBox = new HBox(saveAsButton, saveButton, viewButton, clearButton, closeButton);
@@ -335,6 +337,8 @@ public class VerticalTreeExpCreate {
 
     }
     private void saveExercise(boolean saveAs) {
+        saveButton.setDisable(true);
+        saveAsButton.setDisable(true);
         nameField.textProperty().addListener(nameListener);
         VerticalTreeExpExercise exercise = new VerticalTreeExpExercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
@@ -345,6 +349,8 @@ public class VerticalTreeExpCreate {
         exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
         exercise.saveExercise(saveAs);
+        saveButton.setDisable(false);
+        saveAsButton.setDisable(false);
         modified = false;
     }
 

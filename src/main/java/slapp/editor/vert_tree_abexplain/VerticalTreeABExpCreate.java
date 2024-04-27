@@ -69,6 +69,8 @@ public class VerticalTreeABExpCreate {
     private Scene scene;
     private VBox centerBox;
     private SimpleDoubleProperty centerHeightProperty;
+    private Button saveButton;
+    private Button saveAsButton;
 
 
 
@@ -252,10 +254,10 @@ public class VerticalTreeABExpCreate {
         Button viewButton = new Button("View");
         viewButton.setOnAction(e -> viewExercise());
 
-        Button saveButton = new Button ("Save");
+        saveButton = new Button ("Save");
         saveButton.setOnAction(e -> saveExercise(false));
 
-        Button saveAsButton = new Button("Save As");
+        saveAsButton = new Button("Save As");
         saveAsButton.setOnAction(e -> saveExercise(true));
 
         HBox buttonBox = new HBox(saveAsButton, saveButton, viewButton, clearButton, closeButton);
@@ -370,12 +372,10 @@ public class VerticalTreeABExpCreate {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-            choiceLeadField.clear();
             choiceLeadField.textProperty().addListener(choiceLeadListener);
-            aPromptField.clear();
             aPromptField.textProperty().addListener(aPromptListener);
-            bPromptField.clear();
             bPromptField.textProperty().addListener(bPromptListener);
+
             statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
             statementRTA.setDocument(new Document());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
@@ -395,6 +395,8 @@ public class VerticalTreeABExpCreate {
 
     }
     private void saveExercise(boolean saveAs) {
+        saveButton.setDisable(true);
+        saveAsButton.setDisable(true);
         nameField.textProperty().addListener(nameListener);
         choiceLeadField.textProperty().addListener(choiceLeadListener);
         aPromptField.textProperty().addListener(aPromptListener);
@@ -408,6 +410,8 @@ public class VerticalTreeABExpCreate {
         exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
         exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
         exercise.saveExercise(saveAs);
+        saveButton.setDisable(false);
+        saveAsButton.setDisable(false);
         modified = false;
     }
 
