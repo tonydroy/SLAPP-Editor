@@ -481,7 +481,7 @@ public class TruthTableCreate {
         DecoratedRTA drta = boxedDRTA.getDRTA();
         drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
         RichTextArea rta = boxedDRTA.getRTA();
-        rta.getActionFactory().saveNow().execute(new ActionEvent());
+//        rta.getActionFactory().saveNow().execute(new ActionEvent());
         rta.setMaxHeight(formulaBoxHeight);
         rta.setMinHeight(formulaBoxHeight);
         rta.setPrefWidth(300);
@@ -517,11 +517,11 @@ public class TruthTableCreate {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
 
-            conclusionDividerCheck.setSelected(false);
-            unaryOperatorList.clear();
-            updateUnaryOperatorGridFromFields();
-            binaryOperatorList.clear();
-            updateBinaryOperatorGridFromFields();
+//            conclusionDividerCheck.setSelected(false);
+//            unaryOperatorList.clear();
+//            updateUnaryOperatorGridFromFields();
+//            binaryOperatorList.clear();
+//            updateBinaryOperatorGridFromFields();
             mainFormulaList.clear();
             BoxedDRTA mainFormulaBoxedDRTA = newMainFormulaBoxedDRTA();
             mainFormulaList.add(mainFormulaBoxedDRTA);
@@ -531,8 +531,8 @@ public class TruthTableCreate {
             statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
-            fieldModified = false;
             viewExercise();
+            fieldModified = false;
         }
     }
     private void saveExercise(boolean saveAs) {
@@ -697,6 +697,7 @@ public class TruthTableCreate {
 
         HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
+        editAndKbdBox.layout();
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, upperFieldsBox);
 //        topBox.layout();

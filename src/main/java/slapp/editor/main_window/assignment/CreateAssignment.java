@@ -54,6 +54,10 @@ public class CreateAssignment {
     DoubleProperty centerHeightProperty;
     HBox workingBox;
 
+    private Button saveButton;
+    private Button saveAsButton;
+    private Button exerciseFolderButton;
+
 
     List<TextField> labelFields = new ArrayList<>();
     List<TextField> valueFields = new ArrayList<>();
@@ -153,7 +157,7 @@ public class CreateAssignment {
 
         Label exerciseFolderLabel = new Label("Exercise Folder: ");
         Label exerciseFolderName = new Label("None");
-        Button exerciseFolderButton = new Button("Open Folder");
+        exerciseFolderButton = new Button("Open Folder");
         Region spacer2 = new Region();
         HBox folderBox = new HBox(exerciseFolderLabel, exerciseFolderName, spacer2, exerciseFolderButton);
         folderBox.setPadding(new Insets(10,20,10,20));
@@ -192,11 +196,13 @@ public class CreateAssignment {
         workingBox.setPadding(new Insets(10,20,20,20));
 
         exerciseFolderButton.setOnAction(e -> {
+           exerciseFolderButton.setDisable(true);
            exerciseFolder = DiskUtilities.getDirectory();
            if (exerciseFolder != null) {
                exerciseFolderName.setText(exerciseFolder.getAbsolutePath());
                exerciseList.getItems().setAll(DiskUtilities.getFileListFromDir(exerciseFolder, ".sle"));
            }
+            exerciseFolderButton.setDisable(false);
         });
 
 
@@ -209,9 +215,9 @@ public class CreateAssignment {
         addDownButton.setPrefWidth(60);
         Button removeButton = new Button("Remove");
         removeButton.setPrefWidth(60);
-        Button saveButton = new Button("Save");
+        saveButton = new Button("Save");
         saveButton.setPrefWidth(60);
-        Button saveAsButton = new Button("Save As");
+        saveAsButton = new Button("Save As");
         saveAsButton.setPrefWidth(60);
         Button closeButton = new Button("Close");
         closeButton.setPrefWidth(60);
@@ -376,7 +382,11 @@ public class CreateAssignment {
         Assignment assignment = getAssignmentFromWindow();
         boolean saved = false;
         if (!assignment.getHeader().getAssignmentName().isEmpty()) {
+            saveButton.setDisable(true);
+            saveAsButton.setDisable(true);
             saved = DiskUtilities.saveAssignment(saveAs, assignment);
+            saveButton.setDisable(false);
+            saveAsButton.setDisable(false);
             if (saved) isModified = false;
         }
         else EditorAlerts.showSimpleAlert("Cannot Save", "No named assignment to save.");

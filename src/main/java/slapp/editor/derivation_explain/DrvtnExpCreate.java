@@ -419,13 +419,13 @@ public class DrvtnExpCreate {
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
-            promptField.clear();
+//            promptField.clear();
             nameField.textProperty().addListener(nameListener);
             promptField.textProperty().addListener(promptFieldListener);
 
-            scopeLineCheck.setSelected(true);
-            defaultShelfCheck.setSelected(true);
-            widthSpinner.getValueFactory().setValue(0.0);
+//            scopeLineCheck.setSelected(true);
+//            defaultShelfCheck.setSelected(true);
+//            widthSpinner.getValueFactory().setValue(0.0);
 
             setupLines.clear();
             DrvtnExpSetupLine firstLine = new DrvtnExpSetupLine(this);
@@ -437,8 +437,8 @@ public class DrvtnExpCreate {
             statementRTA.setDocument(new Document());
             statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
-            fieldModified = false;
             viewExercise();
+            fieldModified = false;
         }
     }
 
@@ -575,6 +575,7 @@ public class DrvtnExpCreate {
 
         HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
+        editAndKbdBox.layout();
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, upperFieldsBox);
 //        topBox.layout();

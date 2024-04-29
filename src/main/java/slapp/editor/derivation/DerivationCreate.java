@@ -51,6 +51,7 @@ public class DerivationCreate {
     private SimpleDoubleProperty centerHeightProperty;
     private TextArea helpArea;
     private VBox centerBox;
+//    private VBox topBox;
     private CheckBox scopeLineCheck;
     private CheckBox defaultShelfCheck;
     private List<SetupLine> setupLines;
@@ -399,9 +400,9 @@ public class DerivationCreate {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
 
-            scopeLineCheck.setSelected(true);
-            defaultShelfCheck.setSelected(true);
-            widthSpinner.getValueFactory().setValue(0.0);
+//            scopeLineCheck.setSelected(true);
+//            defaultShelfCheck.setSelected(true);
+//            widthSpinner.getValueFactory().setValue(0.0);
 
             setupLines.clear();
             SetupLine firstLine = new SetupLine(this);
@@ -410,9 +411,31 @@ public class DerivationCreate {
             setupLines.add(firstLine);
             updateGridFromSetupLines();
 
+
+/*
+            statementDRTA = new DecoratedRTA();
+            statementRTA = statementDRTA.getEditor();
+            statementRTA.setPromptText("Exercise Statement:");
+            statementRTA.getStylesheets().add("slappTextArea.css");
+            statementRTA.setPrefWidth(PrintUtilities.getPageWidth() + 20);
+            statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
+            statementRTA.setPrefHeight(100);
+            statementRTA.setMinHeight(50);
+            statementRTA.focusedProperty().addListener((ob, ov, nv) -> {
+                if (nv) {
+                    editorInFocus(statementDRTA, ControlType.AREA);
+                }
+            });
+
+ */
+
+
+
             statementRTA.setDocument(new Document());
             statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
+
+
             fieldModified = false;
             viewExercise();
         }
@@ -525,8 +548,13 @@ public class DerivationCreate {
         editToolbar = decoratedRTA.getEditToolbar();
         fontsToolbar = decoratedRTA.getFontsToolbar();
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
+
+//        kbdDiaToolBar = new ToolBar();
+//        kbdDiaToolBar.setStyle("-fx-spacing: 5");
         kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
+
         kbdDiaToolBar.setPrefHeight(38);
+
 
         if (kbdDiaToolBar.getItems().isEmpty()) {
 
@@ -549,6 +577,8 @@ public class DerivationCreate {
 
         HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
+        editAndKbdBox.layout();
+
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, upperFieldsBox);
 //        topBox.layout();

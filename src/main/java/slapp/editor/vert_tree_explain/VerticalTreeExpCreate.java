@@ -179,7 +179,7 @@ public class VerticalTreeExpCreate {
 
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(160);
+        helpArea.setPrefHeight(170);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);

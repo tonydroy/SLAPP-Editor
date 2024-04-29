@@ -530,7 +530,7 @@ public class TruthTableExpCreate {
         DecoratedRTA drta = bdrta.getDRTA();
         drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
         RichTextArea rta = bdrta.getRTA();
-        rta.getActionFactory().saveNow().execute(new ActionEvent());
+//        rta.getActionFactory().saveNow().execute(new ActionEvent());
         rta.setMaxHeight(formulaBoxHeight);
         rta.setMinHeight(formulaBoxHeight);
         rta.setPrefWidth(300);
@@ -565,18 +565,17 @@ public class TruthTableExpCreate {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-            choiceLeadField.clear();
+//            choiceLeadField.clear();
             choiceLeadField.textProperty().addListener(choiceLeadListener);
-            aPromptField.clear();
+//            aPromptField.clear();
             aPromptField.textProperty().addListener(aPromptListener);
-            bPromptField.clear();
+//            bPromptField.clear();
             bPromptField.textProperty().addListener(bPromptListener);
-
-            conclusionDividerCheck.setSelected(false);
-            unaryOperatorList.clear();
-            updateUnaryOperatorGridFromFields();
-            binaryOperatorList.clear();
-            updateBinaryOperatorGridFromFields();
+//            conclusionDividerCheck.setSelected(false);
+//            unaryOperatorList.clear();
+//            updateUnaryOperatorGridFromFields();
+//            binaryOperatorList.clear();
+//            updateBinaryOperatorGridFromFields();
             mainFormulaList.clear();
             BoxedDRTA mainFormulaBoxedDRTA = newMainFormulaBoxedDRTA();
             mainFormulaList.add(mainFormulaBoxedDRTA);
@@ -585,9 +584,8 @@ public class TruthTableExpCreate {
             statementRTA.setDocument(new Document());
             statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
-
-            fieldModified = false;
             viewExercise();
+            fieldModified = false;
         }
     }
     private void saveExercise(boolean saveAs) {
@@ -617,16 +615,17 @@ public class TruthTableExpCreate {
 
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
+
         for (BoxedDRTA bdrta : unaryOperatorList) {
-            if (bdrta.getRTA().isModified()) {fieldModified = true; }
+            if (bdrta.getRTA().isModified()) {fieldModified = true;}
         }
         for (BoxedDRTA bdrta : binaryOperatorList) {
-            if (bdrta.getRTA().isModified()) {fieldModified = true; }
+            if (bdrta.getRTA().isModified()) {fieldModified = true;}
         }
         for (BoxedDRTA bdrta : mainFormulaList) {
-            if (bdrta.getRTA().isModified()) {fieldModified = true; }
+            if (bdrta.getRTA().isModified()) {fieldModified = true;  }
         }
-        if (statementRTA.isModified()) {fieldModified = true;  }
+        if (statementRTA.isModified()) {fieldModified = true; }
 
         if (fieldModified) {
             Alert confirm = EditorAlerts.confirmationAlert(title, content);
@@ -750,6 +749,7 @@ public class TruthTableExpCreate {
 
         HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
+        editAndKbdBox.layout();
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, upperFieldsBox);
 //        topBox.layout();
