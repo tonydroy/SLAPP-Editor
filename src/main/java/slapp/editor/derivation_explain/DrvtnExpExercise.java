@@ -70,6 +70,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         drvtnExpView.setExerciseName(drvtnExpModel.getExerciseName());
         drvtnExpView.setContentPrompt(drvtnExpModel.getContentPrompt());
         drvtnExpView.setLeftmostScopeLine(drvtnExpModel.isLeftmostScopeLine());
+        drvtnExpView.setKeyboardSelector(drvtnExpModel.getKeyboardSelector());
 
 
 
@@ -967,6 +968,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
         boolean leftmostScopeLine = drvtnExpModel.isLeftmostScopeLine();
         boolean defaultShelf = drvtnExpModel.isDefaultShelf();
+        RichTextAreaSkin.KeyMapValue keyboardSelector = drvtnExpModel.getKeyboardSelector();
         Document statementDocument = drvtnExpModel.getExerciseStatement();
 
         RichTextArea commentRTA = drvtnExpView.getExerciseComment().getEditor();
@@ -1009,7 +1011,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         }
 
 
-        DrvtnExpModel model = new DrvtnExpModel(name, started, statementHeight, gridWidth, prompt, leftmostScopeLine, defaultShelf, statementDocument, commentDocument, explanationDocument, modelLines);
+        DrvtnExpModel model = new DrvtnExpModel(name, started, statementHeight, gridWidth, prompt, leftmostScopeLine, defaultShelf, keyboardSelector, statementDocument, commentDocument, explanationDocument, modelLines);
         model.setOriginalModel(drvtnExpModel.getOriginalModel());
 
         return model;

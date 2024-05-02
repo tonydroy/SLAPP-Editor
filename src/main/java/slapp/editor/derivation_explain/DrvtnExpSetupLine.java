@@ -30,7 +30,7 @@ public class DrvtnExpSetupLine {
     public DrvtnExpSetupLine(DrvtnExpCreate drvtnExpCreate) {
         this.drvtnExpCreate = drvtnExpCreate;
         formulaBoxedDRTA = new BoxedDRTA();
-        formulaBoxedDRTA.getDRTA().getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
+        formulaBoxedDRTA.getDRTA().getKeyboardSelector().valueProperty().setValue(drvtnExpCreate.getKeyboardSelector());
         RichTextArea formulaRTA = formulaBoxedDRTA.getRTA();
 
         formulaRTA.setMaxHeight(formulaBoxHeight);

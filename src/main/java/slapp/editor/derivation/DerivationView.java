@@ -28,6 +28,7 @@ import java.util.List;
 public class DerivationView implements ExerciseView<DecoratedRTA> {
     MainWindowView mainView;
     private String exerciseName = new String("");
+    private RichTextAreaSkin.KeyMapValue keyboardSelector;
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
@@ -163,7 +164,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
             if (viewLine.getLineContentBoxedDRTA() != null) {
                 BoxedDRTA bdrta = viewLine.getLineContentBoxedDRTA();
                 DecoratedRTA drta = bdrta.getDRTA();
-                drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
+                drta.getKeyboardSelector().valueProperty().setValue(keyboardSelector);
                 RichTextArea rta = bdrta.getRTA();
                 rta.setMaxHeight(contentRowHeight);
                 rta.setMinHeight(contentRowHeight);
@@ -175,7 +176,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
             }
             if (depth > 1) {
                 Pane spacer1 = new Pane();
-                if (isLeftmostScopeLine) spacer1.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1;");
+                if (isLeftmostScopeLine) spacer1.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1");
                 else spacer1.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 0;");
                 grid.add(spacer1, 1, index, 1, 1);
 
@@ -186,6 +187,8 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
                 }
             }
             if (LineType.isContentLine(lineType)) {
+
+
                 if (isLeftmostScopeLine || depth > 1)
                     contentBox.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1;");
                 else contentBox.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 0;");
@@ -219,6 +222,8 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
 
     public GridPane getGrid() { return grid; }
     public void setLeftmostScopeLine(boolean leftmostScopeLine) { isLeftmostScopeLine = leftmostScopeLine;  }
+    public boolean isLeftmostScopeLine() {return isLeftmostScopeLine;}
+    public void setKeyboardSelector(RichTextAreaSkin.KeyMapValue keyboardSelector) {this.keyboardSelector = keyboardSelector;}
     public List<ViewLine> getViewLines() { return viewLines; }
     public void setViewLines(List<ViewLine> viewLines) {this.viewLines = viewLines; }
     public SplitPane getContentSplitPane() { return contentSplitPane; }

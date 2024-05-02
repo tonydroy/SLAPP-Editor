@@ -30,7 +30,7 @@ public class SetupLine {
     public SetupLine(DerivationCreate derivationCreate) {
         this.derivationCreate = derivationCreate;
         formulaBoxedDRTA = new BoxedDRTA();
-        formulaBoxedDRTA.getDRTA().getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
+        formulaBoxedDRTA.getDRTA().getKeyboardSelector().valueProperty().setValue(derivationCreate.getKeyboardSelector());
         RichTextArea formulaRTA = formulaBoxedDRTA.getRTA();
 
         formulaRTA.setMaxHeight(formulaBoxHeight);

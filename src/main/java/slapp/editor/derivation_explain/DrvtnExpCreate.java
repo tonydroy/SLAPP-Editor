@@ -30,6 +30,7 @@ import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.derivation.LineType;
 import slapp.editor.derivation.ModelLine;
 
+import slapp.editor.derivation.SetupLine;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
 
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.gluonhq.richtextarea.RichTextAreaSkin.KeyMapValue.*;
 import static javafx.scene.control.ButtonType.OK;
 
 public class DrvtnExpCreate {
@@ -58,6 +60,14 @@ public class DrvtnExpCreate {
     private VBox centerBox;
     private CheckBox scopeLineCheck;
     private CheckBox defaultShelfCheck;
+    private CheckBox italicAndSansCheck;
+    private CheckBox scriptAndSansCheck;
+    private CheckBox italicAndBlackboardCheck;
+    private ChangeListener italicAndSansListener;
+    private ChangeListener scriptAndSansListener;
+    private ChangeListener italicAndBlackboardListener;
+    private RichTextAreaSkin.KeyMapValue keyboardSelector = ITALIC_AND_SANS;
+
     private List<DrvtnExpSetupLine> setupLines;
     private GridPane setupLinesPane;
     private Spinner<Double> widthSpinner;
@@ -177,6 +187,60 @@ public class DrvtnExpCreate {
         defaultShelfCheck.setSelected(true);
         defaultShelfCheck.selectedProperty().addListener(defaultShelfListener);
 
+        Label keyboardLabel = new Label("Default Derivation Keyboard: ");
+        italicAndSansCheck = new CheckBox("Italic and Sans");
+        italicAndSansCheck.setSelected(true);
+        scriptAndSansCheck = new CheckBox("Script and Sans");
+        scriptAndSansCheck.setSelected(false);
+        italicAndBlackboardCheck = new CheckBox("Italic and Blackboard");
+        italicAndBlackboardCheck.setSelected(false);
+
+        italicAndSansListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                boolean selected = (boolean) nv;
+                if (selected) {
+                    fieldModified = true;
+                    keyboardSelector = ITALIC_AND_SANS;
+                    updateKeyboard();
+                    scriptAndSansCheck.setSelected(false);
+                    italicAndBlackboardCheck.setSelected(false);
+                }
+            }
+        };
+        italicAndSansCheck.selectedProperty().addListener(italicAndSansListener);
+
+        scriptAndSansListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                boolean selected = (boolean) nv;
+                if (selected) {
+                    fieldModified = true;
+                    keyboardSelector = SCRIPT_AND_SANS;
+                    updateKeyboard();
+                    italicAndSansCheck.setSelected(false);
+                    italicAndBlackboardCheck.setSelected(false);
+                }
+            }
+        };
+        scriptAndSansCheck.selectedProperty().addListener(scriptAndSansListener);
+
+        italicAndBlackboardListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                boolean selected = (boolean) nv;
+                if (selected) {
+                    fieldModified = true;
+                    keyboardSelector = ITALIC_AND_BLACKBOARD;
+                    updateKeyboard();
+                    italicAndSansCheck.setSelected(false);
+                    scriptAndSansCheck.setSelected(false);
+                }
+            }
+        };
+        italicAndBlackboardCheck.selectedProperty().addListener(italicAndBlackboardListener);
+
+
         widthSpinner = new Spinner<>(64.0, 100, 0, 2 );
         defaultWidthListener = new ChangeListener() {
             @Override
@@ -218,6 +282,7 @@ public class DrvtnExpCreate {
         });
 
 
+        HBox keyboardBox = new HBox(10, keyboardLabel, italicAndSansCheck, scriptAndSansCheck, italicAndBlackboardCheck);
 
         Label widthLabel = new Label("Width: ");
         HBox topFields = new HBox(30, scopeLineCheck, defaultShelfCheck, widthLabel, widthSpinner, setupLinesLabel, addSetupLineButton, removeSetupLineButton);
@@ -243,12 +308,12 @@ public class DrvtnExpCreate {
         setupLinesPane.setVgap(15);
         updateGridFromSetupLines();
 
-        upperFieldsBox = new VBox(10, nameBox, topFields, setupLinesPane);
+        upperFieldsBox = new VBox(15, nameBox, keyboardBox, topFields, setupLinesPane);
         upperFieldsBox.setPadding(new Insets(20,0,20,20));
 
         String helpText = "Derivation Explain is appropriate for any exercise that calls for a derivation together with an explanation.\n\n" +
-                "Setup is the same as Derivation Exercise except that you may add a prompt to appear in the explanation area.  For the derivation exercise, provide the exercise name, and explanation prompt.  Then and select whether there is to be " +
-                "a leftmost scope line, and/or a \"shelf\" beneath the top line of automatically an generated subderivation; width is the (default) percentage of the window's width allocated to this derivation.\n\n" +
+                "Setup is the same as Derivation Exercise except that you may add a prompt to appear in the explanation area.  For the derivation exercise, provide the exercise name, and explanation prompt.  " +
+                "Then select the default keyboard and whether there is to be a leftmost scope line, and/or a \"shelf\" beneath the top line of automatically an generated subderivation; width is the (default) percentage of the window's width allocated to this derivation.\n\n" +
                 "After that, give the exercise statement, and insert setup derivation lines as appropriate.";
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
@@ -382,6 +447,14 @@ public class DrvtnExpCreate {
                     setupLine.getAddShelfBox(),
                     setupLine.getAddGapBox()
             );
+        }
+    }
+
+    private void updateKeyboard() {
+        for (int i = 0; i < setupLines.size(); i++) {
+            DrvtnExpSetupLine setupLine = setupLines.get(i);
+            BoxedDRTA formulaBoxedDRTA = setupLine.getFormulaBoxedDRTA();
+            formulaBoxedDRTA.getDRTA().getKeyboardSelector().valueProperty().setValue(keyboardSelector);
         }
     }
 
@@ -536,7 +609,7 @@ public class DrvtnExpCreate {
         }
 
 
-        DrvtnExpModel model = new DrvtnExpModel(name, false, 70.0, gridWidth, prompt, leftmostScope, defaultShelf, statementDocument, new Document(), new Document(), modelLines);
+        DrvtnExpModel model = new DrvtnExpModel(name, false, 70.0, gridWidth, prompt, leftmostScope, defaultShelf, keyboardSelector, statementDocument, new Document(), new Document(), modelLines);
         return model;
     }
 
@@ -583,5 +656,7 @@ public class DrvtnExpCreate {
 
 
     }
+
+    public RichTextAreaSkin.KeyMapValue getKeyboardSelector() {return keyboardSelector;}
 
 }

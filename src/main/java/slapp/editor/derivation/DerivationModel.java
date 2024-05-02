@@ -1,5 +1,6 @@
 package slapp.editor.derivation;
 
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
 import slapp.editor.main_window.ExerciseType;
@@ -17,18 +18,21 @@ public class DerivationModel implements ExerciseModel<Document>, Serializable {
     private double gridWidth = 0;
     private boolean isLeftmostScopeLine = true;
     private boolean defaultShelf = true;
+    private RichTextAreaSkin.KeyMapValue keyboardSelector;
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
     private List<ModelLine> derivationLines = new ArrayList<>();
 
 
-    public DerivationModel(String name, boolean started, double statementPrefHeight, double gridWidth, boolean isLeftmostScopeLine, boolean defaultShelf, Document exerciseStatement, Document exerciseComment, List<ModelLine> derivationLines) {
+    public DerivationModel(String name, boolean started, double statementPrefHeight, double gridWidth, boolean isLeftmostScopeLine, boolean defaultShelf, RichTextAreaSkin.KeyMapValue keyboardSelector,
+                           Document exerciseStatement, Document exerciseComment, List<ModelLine> derivationLines) {
         this.exerciseName = name;
         this.started = started;
         this.statementPrefHeight = statementPrefHeight;
         this.gridWidth = gridWidth;
-        this.isLeftmostScopeLine = isLeftmostScopeLine();
+        this.isLeftmostScopeLine = isLeftmostScopeLine;
         this.defaultShelf = defaultShelf;
+        this.keyboardSelector = keyboardSelector;
         this.exerciseStatement = exerciseStatement;
         this.exerciseComment = exerciseComment;
         this.derivationLines = derivationLines;
@@ -38,6 +42,7 @@ public class DerivationModel implements ExerciseModel<Document>, Serializable {
     public boolean isDefaultShelf() { return defaultShelf; }
     public double getGridWidth() {return gridWidth; }
     public List<ModelLine> getDerivationLines() { return derivationLines; }
+    public RichTextAreaSkin.KeyMapValue getKeyboardSelector() {return keyboardSelector;}
 
     @Override
     public String getExerciseName() { return exerciseName; }

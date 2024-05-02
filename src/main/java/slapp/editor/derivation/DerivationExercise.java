@@ -65,6 +65,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
         derivationView.setExerciseName(derivationModel.getExerciseName());
         derivationView.setLeftmostScopeLine(derivationModel.isLeftmostScopeLine());
+        derivationView.setKeyboardSelector(derivationModel.getKeyboardSelector());
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
@@ -112,8 +113,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         setViewLinesFromModel();
         derivationView.setGridFromViewLines();
         setContentFocusListeners();
-
-
     }
 
     private void setViewLinesFromModel() {
@@ -946,6 +945,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
         boolean leftmostScopeLine = derivationModel.isLeftmostScopeLine();
         boolean defaultShelf = derivationModel.isDefaultShelf();
+        RichTextAreaSkin.KeyMapValue keyboardSelector = derivationModel.getKeyboardSelector();
         Document statementDocument = derivationModel.getExerciseStatement();
 
         RichTextArea commentRTA = derivationView.getExerciseComment().getEditor();
@@ -981,7 +981,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             ModelLine modelLine = new ModelLine(depth, lineContentDocument, justification, lineType);
             modelLines.add(modelLine);
         }
-        DerivationModel model = new DerivationModel(name, started, statementHeight,gridWidth, leftmostScopeLine, defaultShelf, statementDocument, commentDocument, modelLines);
+        DerivationModel model = new DerivationModel(name, started, statementHeight,gridWidth, leftmostScopeLine, defaultShelf, keyboardSelector, statementDocument, commentDocument, modelLines);
         model.setOriginalModel(derivationModel.getOriginalModel());
 
         return model;

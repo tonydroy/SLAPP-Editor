@@ -27,6 +27,7 @@ import java.util.List;
 public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
     MainWindowView mainView;
     private String exerciseName = new String("");
+    private RichTextAreaSkin.KeyMapValue keyboardSelector;
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
@@ -172,7 +173,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
             if (viewLine.getLineContentBoxedDRTA() != null) {
                 BoxedDRTA bdrta = viewLine.getLineContentBoxedDRTA();
                 DecoratedRTA drta = bdrta.getDRTA();
-                drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
+                drta.getKeyboardSelector().valueProperty().setValue(keyboardSelector);
                 RichTextArea rta = bdrta.getRTA();
                 rta.setMaxHeight(contentRowHeight);
                 rta.setMinHeight(contentRowHeight);
@@ -227,6 +228,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
 
     public GridPane getGrid() { return grid; }
     public void setLeftmostScopeLine(boolean leftmostScopeLine) { isLeftmostScopeLine = leftmostScopeLine;  }
+    public void setKeyboardSelector(RichTextAreaSkin.KeyMapValue keyboardSelector) {this.keyboardSelector = keyboardSelector;}
     public List<ViewLine> getViewLines() { return viewLines; }
     public void setViewLines(List<ViewLine> viewLines) {this.viewLines = viewLines; }
     public Button getInsertLineButton() { return insertLineButton;  }

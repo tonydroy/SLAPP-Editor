@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.gluonhq.richtextarea.RichTextAreaSkin.KeyMapValue.*;
 import static javafx.scene.control.ButtonType.OK;
 
 public class DerivationCreate {
@@ -54,6 +55,13 @@ public class DerivationCreate {
 //    private VBox topBox;
     private CheckBox scopeLineCheck;
     private CheckBox defaultShelfCheck;
+    private CheckBox italicAndSansCheck;
+    private CheckBox scriptAndSansCheck;
+    private CheckBox italicAndBlackboardCheck;
+    private ChangeListener italicAndSansListener;
+    private ChangeListener scriptAndSansListener;
+    private ChangeListener italicAndBlackboardListener;
+    private RichTextAreaSkin.KeyMapValue keyboardSelector = ITALIC_AND_SANS;
     private List<SetupLine> setupLines;
     private GridPane setupLinesPane;
     private Spinner<Double> widthSpinner;
@@ -155,6 +163,60 @@ public class DerivationCreate {
         defaultShelfCheck.setSelected(true);
         defaultShelfCheck.selectedProperty().addListener(defaultShelfListener);
 
+        Label keyboardLabel = new Label("Default Derivation Keyboard: ");
+        italicAndSansCheck = new CheckBox("Italic and Sans");
+        italicAndSansCheck.setSelected(true);
+        scriptAndSansCheck = new CheckBox("Script and Sans");
+        scriptAndSansCheck.setSelected(false);
+        italicAndBlackboardCheck = new CheckBox("Italic and Blackboard");
+        italicAndBlackboardCheck.setSelected(false);
+
+        italicAndSansListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                boolean selected = (boolean) nv;
+                if (selected) {
+                    fieldModified = true;
+                    keyboardSelector = ITALIC_AND_SANS;
+                    updateKeyboard();
+                    scriptAndSansCheck.setSelected(false);
+                    italicAndBlackboardCheck.setSelected(false);
+                }
+            }
+        };
+        italicAndSansCheck.selectedProperty().addListener(italicAndSansListener);
+
+        scriptAndSansListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                boolean selected = (boolean) nv;
+                if (selected) {
+                    fieldModified = true;
+                    keyboardSelector = SCRIPT_AND_SANS;
+                    updateKeyboard();
+                    italicAndSansCheck.setSelected(false);
+                    italicAndBlackboardCheck.setSelected(false);
+                }
+            }
+        };
+        scriptAndSansCheck.selectedProperty().addListener(scriptAndSansListener);
+
+        italicAndBlackboardListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                boolean selected = (boolean) nv;
+                if (selected) {
+                    fieldModified = true;
+                    keyboardSelector = ITALIC_AND_BLACKBOARD;
+                    updateKeyboard();
+                    italicAndSansCheck.setSelected(false);
+                    scriptAndSansCheck.setSelected(false);
+                }
+            }
+        };
+        italicAndBlackboardCheck.selectedProperty().addListener(italicAndBlackboardListener);
+
+
         widthSpinner = new Spinner<>(64.0, 100, 0, 2 );
         defaultWidthListener = new ChangeListener() {
             @Override
@@ -197,6 +259,9 @@ public class DerivationCreate {
 
         HBox nameBox = new HBox(10, nameLabel, nameField);
         nameBox.setAlignment(Pos.CENTER_LEFT);
+
+        HBox keyboardBox = new HBox(10, keyboardLabel, italicAndSansCheck, scriptAndSansCheck, italicAndBlackboardCheck);
+
         Label widthLabel = new Label("Width: ");
         HBox topFields = new HBox(30, scopeLineCheck, defaultShelfCheck, widthLabel, widthSpinner, setupLinesLabel, addSetupLineButton, removeSetupLineButton);
         topFields.setAlignment(Pos.CENTER_LEFT);
@@ -221,17 +286,17 @@ public class DerivationCreate {
         setupLinesPane.setVgap(15);
         updateGridFromSetupLines();
 
-        upperFieldsBox = new VBox(10, nameBox, topFields, setupLinesPane);
+        upperFieldsBox = new VBox(15, nameBox, keyboardBox, topFields, setupLinesPane);
         upperFieldsBox.setPadding(new Insets(20,0,20,20));
 
         String helpText = "Derivation Exercise is appropriate for any exercise that calls for a derivation as response.\n\n" +
-                "For the derivation exercise, provide the exercise statement, exercise name, and select whether there is to be a leftmost scope line, and/or a \"shelf\" beneath the top line of an automatically generated subderivation. "  +
-                "A typical natural derivation system (as chapter 6 of Symbolic Logic) selects both.  The width is the (default) percentage of the window's width allocated to this derivation.\n\n" +
+                "For the derivation exercise, provide the exercise statement and exercise name, select the default keyboard for derivation content lines, and select whether there is to be a leftmost scope line, and/or a \"shelf\" beneath the top line of an automatically generated subderivation. "  +
+                "A typical natural derivation system (as chapter 6 of Symbolic Logic) selects 'italic and sans', 'leftmost scope line' and 'default shelf'.  The width is the (default) percentage of the window's width allocated to this derivation.\n\n" +
                 "After that, insert setup derivation lines as appropriate.  In the ordinary case, there will be some premise lines with justification 'P' (the last sitting on a shelf), a blank line, and a conclusion line (without justification), all at scope depth 1. " +
                 "A line identified as a premise cannot have either its formula or justification modified; one identified as a conclusion cannot have its formula modified.  Different arrangements (as, e.g. \"fill in the justification\" exercises) are possible.";
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(250);
+        helpArea.setPrefHeight(270);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
@@ -361,6 +426,14 @@ public class DerivationCreate {
                     setupLine.getAddShelfBox(),
                     setupLine.getAddGapBox()
             );
+        }
+    }
+
+    private void updateKeyboard() {
+        for (int i = 0; i < setupLines.size(); i++) {
+            SetupLine setupLine = setupLines.get(i);
+            BoxedDRTA formulaBoxedDRTA = setupLine.getFormulaBoxedDRTA();
+            formulaBoxedDRTA.getDRTA().getKeyboardSelector().valueProperty().setValue(keyboardSelector);
         }
     }
 
@@ -532,8 +605,7 @@ public class DerivationCreate {
            }
         }
 
-
-        DerivationModel model = new DerivationModel(name, false, 70.0, gridWidth, leftmostScope, defaultShelf, statementDocument, new Document(), modelLines);
+        DerivationModel model = new DerivationModel(name, false, 70.0, gridWidth, leftmostScope, defaultShelf, keyboardSelector, statementDocument, new Document(), modelLines);
         return model;
     }
 
@@ -586,5 +658,7 @@ public class DerivationCreate {
 
 
     }
+
+    public RichTextAreaSkin.KeyMapValue getKeyboardSelector() {return keyboardSelector;}
 
 }
