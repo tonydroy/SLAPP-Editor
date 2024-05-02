@@ -307,7 +307,7 @@ public class DrvtnExpCreate {
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
 
-        stage.setTitle("Create Derivation Exercise:");
+        stage.setTitle("Create Derivation Explain Exercise:");
         stage.getIcons().addAll(EditorMain.icons);
         stage.setWidth(1030);
         stage.setHeight(850);
@@ -425,7 +425,7 @@ public class DrvtnExpCreate {
 
 //            scopeLineCheck.setSelected(true);
 //            defaultShelfCheck.setSelected(true);
-//            widthSpinner.getValueFactory().setValue(0.0);
+            widthSpinner.getValueFactory().setValue(0.0);
 
             setupLines.clear();
             DrvtnExpSetupLine firstLine = new DrvtnExpSetupLine(this);

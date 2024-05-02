@@ -90,7 +90,8 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
         DecoratedRTA explainDRTA = verticalTreeExpView.getExplainDRTA();
         RichTextArea explainEditor = explainDRTA.getEditor();
         explainEditor.setDocument(verticalTreeExpModel.getExplainDocument());
-        explainEditor.setPromptText("Explain:");
+        verticalTreeExpView.setExplainPrompt(verticalTreeExpModel.getExplainPrompt());
+
         explainEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(explainDRTA, ControlType.AREA);
         explainEditor.focusedProperty().addListener((o, ov, nv) -> {
@@ -478,6 +479,7 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
         VerticalTreeExpModel model = new VerticalTreeExpModel();
 
         model.setExerciseName(verticalTreeExpModel.getExerciseName());
+        model.setExplainPrompt(verticalTreeExpModel.getExplainPrompt());
         model.setOriginalModel(verticalTreeExpModel.getOriginalModel());
         model.setDragIconList(verticalTreeExpModel.getDragIconList());
         model.setObjectControlList(verticalTreeExpModel.getObjectControlList());

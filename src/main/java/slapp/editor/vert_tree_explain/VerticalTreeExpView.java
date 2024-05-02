@@ -28,6 +28,7 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
     private DecoratedRTA explainDRTA = new DecoratedRTA();
+    private String explainPrompt ="";
     private VBox controlBox = new VBox(25);
     private Button undoButton;
     private Button redoButton;
@@ -72,7 +73,7 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
         explainRTA.getStylesheets().add("slappTextArea.css");
         explainRTA.setPrefHeight(80.0);
         explainRTA.setMinHeight(80.0);
-        explainRTA.setPromptText("Explain:");
+        explainRTA.setPromptText(explainPrompt);
     }
 
     public MainWindowView getMainView() {
@@ -94,6 +95,7 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
     public void setUndoRedoFlag(boolean undoRedoFlag) {    this.undoRedoFlag.set(undoRedoFlag);    }
 
     public DecoratedRTA getExplainDRTA() { return explainDRTA; }
+    public void setExplainPrompt(String prompt) {this.explainPrompt = prompt;}
 
     @Override
     public String getExerciseName() { return exerciseName; }

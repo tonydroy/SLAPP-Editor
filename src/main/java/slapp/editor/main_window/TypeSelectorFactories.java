@@ -25,6 +25,9 @@ import slapp.editor.truth_table.TruthTableModel;
 import slapp.editor.truth_table_explain.TruthTableExpCreate;
 import slapp.editor.truth_table_explain.TruthTableExpExercise;
 import slapp.editor.truth_table_explain.TruthTableExpModel;
+import slapp.editor.truth_table_generate.TruthTableGenCreate;
+import slapp.editor.truth_table_generate.TruthTableGenExercise;
+import slapp.editor.truth_table_generate.TruthTableGenModel;
 import slapp.editor.vert_tree_abefexplain.VerticalTreeABEFExpCreate;
 import slapp.editor.vert_tree_abefexplain.VerticalTreeABEFExpExercise;
 import slapp.editor.vert_tree_abefexplain.VerticalTreeABEFExpModel;
@@ -77,6 +80,10 @@ public class TypeSelectorFactories {
             case "TruthTableExpModel": {
                 TruthTableExpModel truthTableExpModel = (TruthTableExpModel) objectModel;
                 return new TruthTableExpExercise(truthTableExpModel, mainWindow);
+            }
+            case "TruthTableGenModel": {
+                TruthTableGenModel truthTableGenModel = (TruthTableGenModel) objectModel;
+                return new TruthTableGenExercise(truthTableGenModel, mainWindow);
             }
             case "VerticalTreeModel": {
                 VerticalTreeModel verticalTreeModel = (VerticalTreeModel) objectModel;
@@ -173,6 +180,15 @@ public class TypeSelectorFactories {
                 TruthTableExpCreate truthTableExpCreate = new TruthTableExpCreate(mainWindow, truthTableExpModel);
                 break;
             }
+            case "TruthTableGenModel": {
+                TruthTableGenModel truthTableGenModel = (TruthTableGenModel) objectModel;
+                if (truthTableGenModel.isStarted()) {
+                    EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
+                    break;
+                }
+                TruthTableGenCreate truthTableGenCreate = new TruthTableGenCreate(mainWindow, truthTableGenModel);
+                break;
+            }
             case "VerticalTreeModel": {
                 VerticalTreeModel verticalTreeModel = (VerticalTreeModel) objectModel;
                 if (verticalTreeModel.isStarted()) {
@@ -261,6 +277,10 @@ public class TypeSelectorFactories {
             }
             case TRUTH_TABLE_ABEXP: {
                 TruthTableExpCreate truthTableExpCreate = new TruthTableExpCreate(mainWindow);
+                break;
+            }
+            case TRUTH_TABLE_GENERATE: {
+                TruthTableGenCreate truthTableGenCreate = new TruthTableGenCreate(mainWindow);
                 break;
             }
             case VERTICAL_TREE: {

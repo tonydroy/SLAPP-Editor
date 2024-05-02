@@ -1,4 +1,4 @@
-package slapp.editor.truth_table;
+package slapp.editor.truth_table_generate;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
@@ -16,7 +16,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -33,6 +32,8 @@ import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
 import slapp.editor.main_window.MainWindowView;
+import slapp.editor.truth_table_generate.TruthTableGenExercise;
+import slapp.editor.truth_table_generate.TruthTableGenModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
-public class TruthTableCreate {
+public class TruthTableGenCreate {
     private MainWindow mainWindow;
     private MainWindowView mainView;
     private TextField nameField;
@@ -55,6 +56,9 @@ public class TruthTableCreate {
     private TextArea helpArea;
     private VBox centerBox;
     private CheckBox conclusionDividerCheck;
+    private TextField choiceLeadField;
+    private TextField aPromptField;
+    private TextField bPromptField;
     private List<BoxedDRTA> unaryOperatorList;
     private List<BoxedDRTA> binaryOperatorList;
     private List<BoxedDRTA> mainFormulaList;
@@ -69,26 +73,33 @@ public class TruthTableCreate {
     private VBox upperFieldsBox;
     private ToolBar editToolbar;
     private ToolBar fontsToolbar;
-    private ToolBar insertToolBar;
+    private ToolBar insertToolbar;
     private ToolBar paragraphToolbar;
     private ToolBar kbdDiaToolBar;
     private ChangeListener nameListener;
+    private ChangeListener choiceLeadListener;
+    private ChangeListener aPromptListener;
+    private ChangeListener bPromptListener;
     private double formulaBoxHeight = 27;
     private Button lowerSaveButton;
     private Button saveAsButton;
 
 
-    public TruthTableCreate(MainWindow mainWindow) {
+
+    public TruthTableGenCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
-    public TruthTableCreate(MainWindow mainWindow, TruthTableModel originalModel) {
+    public TruthTableGenCreate(MainWindow mainWindow, TruthTableGenModel originalModel) {
         this(mainWindow);
 
         nameField.setText(originalModel.getExerciseName());
         statementRTA.setDocument(originalModel.getExerciseStatement());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        choiceLeadField.setText(originalModel.getChoiceLead());
+        aPromptField.setText(originalModel.getaPrompt());
+        bPromptField.setText(originalModel.getbPrompt());
         conclusionDividerCheck.setSelected(originalModel.isConclusionDivider());
         updateOperatorFieldsFromModel(originalModel);
         updateUnaryOperatorGridFromFields();
@@ -137,7 +148,46 @@ public class TruthTableCreate {
         HBox nameBox = new HBox(10, nameLabel, nameField);
         nameBox.setAlignment(Pos.CENTER_LEFT);
 
+        //choice fields
+        Label choiceLeadLabel = new Label("Checkbox lead: ");
+        choiceLeadLabel.setPrefWidth(95);
+        choiceLeadField  = new TextField();
+        choiceLeadField.setPromptText("(plain text)");
+        choiceLeadListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldModified = true;
+                choiceLeadField.textProperty().removeListener(choiceLeadListener);
+            }
+        };
+        choiceLeadField.textProperty().addListener(choiceLeadListener);
 
+        Label aPromptLabel = new Label("A prompt: ");
+        aPromptField  = new TextField();
+        aPromptField.setPromptText("(plain text)");
+        aPromptListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldModified = true;
+                aPromptField.textProperty().removeListener(aPromptListener);
+            }
+        };
+        aPromptField.textProperty().addListener(aPromptListener);
+
+        Label bPromptLabel = new Label("B prompt: ");
+        bPromptField  = new TextField();
+        bPromptField.setPromptText("(plain text)");
+        bPromptListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldModified = true;
+                bPromptField.textProperty().removeListener(bPromptListener);
+            }
+        };
+        bPromptField.textProperty().addListener(bPromptListener);
+
+        HBox choicesBox = new HBox(10, choiceLeadLabel, choiceLeadField, aPromptLabel, aPromptField, bPromptLabel, bPromptField);
+        choicesBox.setAlignment(Pos.CENTER_LEFT);
 
         //language presets
         Label operatorPresetLabel = new Label("Preset operators: ");
@@ -257,6 +307,7 @@ public class TruthTableCreate {
         mainFormulasPane.setVgap(10);
         mainFormulaList = new ArrayList<>();
         BoxedDRTA mainFormulaBoxedDRTA = newMainFormulaBoxedDRTA();
+        mainFormulaBoxedDRTA.getRTA().getActionFactory().saveNow().execute(new ActionEvent());
         mainFormulaList.add(mainFormulaBoxedDRTA);
         updateMainFormulaGridFromFields();
 
@@ -286,6 +337,7 @@ public class TruthTableCreate {
         });
 
         conclusionDividerCheck = new CheckBox("Include Conclusion Divider");
+        conclusionDividerCheck.setSelected(true);
         ChangeListener conclusionDividerCheckListener = new ChangeListener() {
             @Override
             public void changed(ObservableValue ob, Object ov, Object nv) {
@@ -300,18 +352,20 @@ public class TruthTableCreate {
         mainFormulasTop.setAlignment(Pos.CENTER_LEFT);
         mainFormulasTop.setMargin(conclusionDividerCheck, new Insets(0, 0, 0, 100));
 
-        upperFieldsBox = new VBox(10, nameBox, languagePresetsBox, unaryOperatorBox, binaryOperatorBox, mainFormulasTop, mainFormulasPane);
+        upperFieldsBox = new VBox(10, nameBox, choicesBox, languagePresetsBox, unaryOperatorBox, binaryOperatorBox, mainFormulasTop, mainFormulasPane);
         upperFieldsBox.setPadding(new Insets(20, 0, 20, 20));
 
         //center area
-        String helpText = "Truth Table Explain Exercise is like Truth Table Exercise except that it requests a choice between some mutually exclusive options (as valid/invalid) along with a short explanation.\n\n" +
-                "For the Truth Table Explain exercise, supply the exercise name and exercise statement.  The Checkbox lead appears prior to the check boxes, the A prompt with the first box, and the B prompt with the second.  " +
+        String helpText = "Truth Table Gen Exercise is like Truth Table Explain Exercise in that it requests a choice between some mutually exclusive options along with an explanation.  " +
+                "In addition it begins with a field for an interpretation/translation, and lets the student generate the premises and conclusion on the table.\n\n" +
+                "For the Truth Table Gen exercise, supply the exercise name and exercise statement.  The Checkbox lead appears prior to the check boxes, the A prompt with the first box, and the B prompt with the second.  " +
                 "The preset operator buttons set operators according to the official and abbreviating languages from Symbolic Logic; alternatively, you may edit sentential operator symbols individually. " +
-                "Finally supply formulas to appear across the top of the truth table (not including the base column).  The \"conclusion divider\" merely inserts an extra space and slash ('/') prior to the last formula." ;
+                "Finally you will usually leave the formula fields blank, as formulas you enter here may be overwritten by the student working the exercise.  " +
+                "In the ordinary case, you will also leave the \"conclusion divider\" selected as the student is expeceted to provide at least a conclusion sentence." ;
 
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(180);
+        helpArea.setPrefHeight(230);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
@@ -359,8 +413,6 @@ public class TruthTableCreate {
             setCenterVgrow();
         });
 
-
-
         //setup  window
         scene = new Scene(borderPane);
         scene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
@@ -369,11 +421,11 @@ public class TruthTableCreate {
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
 
-        stage.setTitle("Create Truth Table Exercise:");
+        stage.setTitle("Create Truth Table Gen Exercise:");
         stage.getIcons().addAll(EditorMain.icons);
         stage.setWidth(860);
         stage.setMinWidth(860);
-        stage.setHeight(860);
+        stage.setHeight(900);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.initModality(Modality.WINDOW_MODAL);
@@ -390,7 +442,7 @@ public class TruthTableCreate {
 
     }
 
-    private void updateOperatorFieldsFromModel(TruthTableModel model){
+    private void updateOperatorFieldsFromModel(TruthTableGenModel model){
         unaryOperatorList.clear();
         List<String> unaryList = model.getUnaryOperators();
         for (String str : unaryList) {
@@ -425,12 +477,12 @@ public class TruthTableCreate {
         }
     }
 
-    private void updateMainFormulaFieldsFromModel(TruthTableModel model){
+    private void updateMainFormulaFieldsFromModel(TruthTableGenModel model){
         mainFormulaList.clear();
         List<Document> formulasList = model.getMainFormulas();
+
         for (Document doc : formulasList) {
             BoxedDRTA bdrta = newMainFormulaBoxedDRTA();
-
             RichTextArea rta = bdrta.getRTA();
             rta.setDocument(doc);
             rta.getActionFactory().saveNow().execute(new ActionEvent());
@@ -440,6 +492,7 @@ public class TruthTableCreate {
 
     private void updateMainFormulaGridFromFields(){
         mainFormulasPane.getChildren().clear();
+
         for (int i = 0; i < mainFormulaList.size(); i++) {
             BoxedDRTA bdrta = mainFormulaList.get(i);
             mainFormulasPane.add(bdrta.getBoxedRTA(), 0, i);
@@ -447,10 +500,10 @@ public class TruthTableCreate {
     }
 
     private BoxedDRTA newOperatorBoxedDRTA() {
-        BoxedDRTA boxedDRTA = new BoxedDRTA();
-        DecoratedRTA drta = boxedDRTA.getDRTA();
+        BoxedDRTA bdrta = new BoxedDRTA();
+        DecoratedRTA drta = bdrta.getDRTA();
         drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
-        RichTextArea rta = boxedDRTA.getRTA();
+        RichTextArea rta = bdrta.getRTA();
         rta.setMaxHeight(formulaBoxHeight);
         rta.setMinHeight(formulaBoxHeight);
         rta.setPrefWidth(30);
@@ -465,7 +518,7 @@ public class TruthTableCreate {
                 editorInFocus(drta, ControlType.STATEMENT);
             }
         });
-        return boxedDRTA;
+        return bdrta;
     }
 
     private BoxedDRTA contentOperatorBoxedDRTA(String operator) {
@@ -477,10 +530,10 @@ public class TruthTableCreate {
     }
 
     private BoxedDRTA newMainFormulaBoxedDRTA() {
-        BoxedDRTA boxedDRTA = new BoxedDRTA();
-        DecoratedRTA drta = boxedDRTA.getDRTA();
+        BoxedDRTA bdrta = new BoxedDRTA();
+        DecoratedRTA drta = bdrta.getDRTA();
         drta.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS);
-        RichTextArea rta = boxedDRTA.getRTA();
+        RichTextArea rta = bdrta.getRTA();
 //        rta.getActionFactory().saveNow().execute(new ActionEvent());
         rta.setMaxHeight(formulaBoxHeight);
         rta.setMinHeight(formulaBoxHeight);
@@ -492,7 +545,7 @@ public class TruthTableCreate {
                 editorInFocus(drta, ControlType.FIELD);
             }
         });
-        return boxedDRTA;
+        return bdrta;
     }
 
     private void closeWindow() {
@@ -502,7 +555,7 @@ public class TruthTableCreate {
         }
     }
     private void viewExercise() {
-        TruthTableExercise exercise = new TruthTableExercise(extractModelFromWindow(), mainWindow, true);
+        TruthTableGenExercise exercise = new TruthTableGenExercise(extractModelFromWindow(), mainWindow, true);
         exercise.generateEmptyTableModel();
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
@@ -510,13 +563,22 @@ public class TruthTableCreate {
         double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
         exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
+//        exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
+        exercise.getExerciseView().getExerciseStatement().getEditor().setMinHeight(height + 25.0);
+
+
         mainWindow.setUpExercise(exercise);
     }
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-
+//            choiceLeadField.clear();
+            choiceLeadField.textProperty().addListener(choiceLeadListener);
+//            aPromptField.clear();
+            aPromptField.textProperty().addListener(aPromptListener);
+//            bPromptField.clear();
+            bPromptField.textProperty().addListener(bPromptListener);
 //            conclusionDividerCheck.setSelected(false);
 //            unaryOperatorList.clear();
 //            updateUnaryOperatorGridFromFields();
@@ -530,7 +592,6 @@ public class TruthTableCreate {
             statementRTA.setDocument(new Document());
             statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
-
             viewExercise();
             fieldModified = false;
         }
@@ -538,10 +599,12 @@ public class TruthTableCreate {
     private void saveExercise(boolean saveAs) {
         lowerSaveButton.setDisable(true);
         saveAsButton.setDisable(true);
-
         nameField.textProperty().addListener(nameListener);
+        choiceLeadField.textProperty().addListener(choiceLeadListener);
+        aPromptField.textProperty().addListener(aPromptListener);
+        bPromptField.textProperty().addListener(bPromptListener);
 
-        TruthTableExercise exercise = new TruthTableExercise(extractModelFromWindow(), mainWindow, true);
+        TruthTableGenExercise exercise = new TruthTableGenExercise(extractModelFromWindow(), mainWindow, true);
 
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
@@ -552,6 +615,7 @@ public class TruthTableCreate {
         exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
 
         exercise.saveExercise(saveAs);
+
         lowerSaveButton.setDisable(false);
         saveAsButton.setDisable(false);
         fieldModified = false;
@@ -559,25 +623,17 @@ public class TruthTableCreate {
 
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
-//        System.out.println("1: " + fieldModified);
 
         for (BoxedDRTA bdrta : unaryOperatorList) {
             if (bdrta.getRTA().isModified()) {fieldModified = true; }
         }
-//        System.out.println("2: " + fieldModified);
-
         for (BoxedDRTA bdrta : binaryOperatorList) {
-            if (bdrta.getRTA().isModified()) {fieldModified = true; }
+            if (bdrta.getRTA().isModified()) {fieldModified = true;  }
         }
- //       System.out.println("3: " + fieldModified);
-
         for (BoxedDRTA bdrta : mainFormulaList) {
-            if (bdrta.getRTA().isModified()) {fieldModified = true; }
+            if (bdrta.getRTA().isModified()) {fieldModified = true;    }
         }
- //       System.out.println("4: " + fieldModified);
-
-        if (statementRTA.isModified()) {fieldModified = true;  }
- //       System.out.println("5: " + fieldModified);
+        if (statementRTA.isModified()) {fieldModified = true;   }
 
         if (fieldModified) {
             Alert confirm = EditorAlerts.confirmationAlert(title, content);
@@ -613,12 +669,12 @@ public class TruthTableCreate {
     }
 
     //this leaves tableValues, rowComments, columnHighlights to be initialized by the TruthTableExercise (based on the model mainFormulas).
-    private TruthTableModel extractModelFromWindow() {
-        TruthTableModel model = new TruthTableModel();
+    private TruthTableGenModel extractModelFromWindow() {
+        TruthTableGenModel model = new TruthTableGenModel();
 
         model.setExerciseName(nameField.getText());
         model.setStarted(false);
-        model.setStatementPrefHeight(70.0);
+//        model.setStatementPrefHeight(70.0);
 
         if (statementRTA.isModified()) fieldModified = true;
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
@@ -655,8 +711,9 @@ public class TruthTableCreate {
         model.setMainFormulas(mainFormulaDocs);
 
         model.setConclusionDivider(conclusionDividerCheck.isSelected());
-
-        System.out.println("Model: " + model.getStatementPrefHeight());
+        model.setChoiceLead(choiceLeadField.getText());
+        model.setaPrompt(aPromptField.getText());
+        model.setbPrompt(bPromptField.getText());
 
         return model;
     }
@@ -666,6 +723,7 @@ public class TruthTableCreate {
 
 
     void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
+
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
         keyboardDiagram.initialize(decoratedRTA);
         if (keyboardDiagram.isShowing()) {

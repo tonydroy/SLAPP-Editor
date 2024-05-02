@@ -10,6 +10,7 @@ public enum ExerciseType {
     SIMPLE_EDITOR("Simple editor", "Exercise requires a text response -- anywhere from short answer, to paragraph, to essay."),
     TRUTH_TABLE("Truth table", "Exercise requires a truth table."),
     TRUTH_TABLE_ABEXP("Truth table AB explain", "Exercise requires a truth table with a binary choice and explanation."),
+    TRUTH_TABLE_GENERATE("Truth table gen explain", "Exercise requires an interpretation, creation of truth table, with a binary choice and explanation."),
     VERTICAL_TREE("Vertical Tree", "Exercise requires a vertical tree (or map) of types as encountered in chapters 2, 4, and 5 of SL."),
     VERTICAL_TREE_EXP ("Vertical Tree Explain", "Exercise requires a vertical tree (or map) with an explanation."),
     VERTICAL_TREE_ABEXP ("Vertical Tree AB Explain", "Exercise requires a vertical tree (or map) with a binary choice and explanation."),

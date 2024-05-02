@@ -298,7 +298,7 @@ public class MainWindowView {
         stage.setX(mainWindowX);
         stage.setY(mainWindowY);
 
-        stage.setHeight(800); //this added to keep SlappLogoView on screen (adjust with actual logo) ok in general?
+        stage.setHeight(800); //this added to keep SlappLogoView on screen (adjust with actual logo) ok in general? 800
         stage.setOnCloseRequest(e -> {
             e.consume();
             closeWindow();

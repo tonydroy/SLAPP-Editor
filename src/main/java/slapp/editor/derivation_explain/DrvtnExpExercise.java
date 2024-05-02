@@ -563,38 +563,42 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         else if (lastJustificationRTA == lastFocusedNode) row = lastJustificationRow;
         List<ViewLine> viewLines = drvtnExpView.getViewLines();
         if (row >= 0 && row < viewLines.size()) {
-
-            if (!LineType.isSetupLine(viewLines.get(row).getLineType())) {
-                List<Label> clients = viewLines.get(row).getClientLabels();
-                for (Label label : clients) {
-                    label.textProperty().unbind();
-                    label.setText("??");
-                }
-                viewLines.remove(row);
-                exerciseModified = true;
-
-                if (row < viewLines.size()) {
-                    LineType type = viewLines.get(row).getLineType();
-                    if (LineType.isShelfLine(type) || LineType.isGapLine(type)) viewLines.remove(row);
-                }
-
-                drvtnExpView.setGridFromViewLines();
-
-                pushUndoRedo();
-
-                for (int i = row; i < viewLines.size(); i++) {
-                    if (viewLines.get(i).getLineContentBoxedDRTA() != null) {
-                        viewLines.get(i).getLineContentBoxedDRTA().getRTA().requestFocus();
-                        break;
+            if (viewLines.size() > 1) {
+                if (!LineType.isSetupLine(viewLines.get(row).getLineType())) {
+                    List<Label> clients = viewLines.get(row).getClientLabels();
+                    for (Label label : clients) {
+                        label.textProperty().unbind();
+                        label.setText("??");
                     }
+                    viewLines.remove(row);
+                    exerciseModified = true;
+
+                    if (row < viewLines.size()) {
+                        LineType type = viewLines.get(row).getLineType();
+                        if (LineType.isShelfLine(type) || LineType.isGapLine(type)) viewLines.remove(row);
+                    }
+
+                    drvtnExpView.setGridFromViewLines();
+
+                    pushUndoRedo();
+
+                    for (int i = row; i < viewLines.size(); i++) {
+                        if (viewLines.get(i).getLineContentBoxedDRTA() != null) {
+                            viewLines.get(i).getLineContentBoxedDRTA().getRTA().requestFocus();
+                            break;
+                        }
+                    }
+                }
+                else {
+                    EditorAlerts.fleetingPopup("Cannot modify setup line.");
                 }
             }
             else {
-                EditorAlerts.fleetingPopup("Cannot modify setup line.");
+                EditorAlerts.fleetingPopup("A derivation must contain at least one line.");
             }
         }
         else {
-            EditorAlerts.fleetingPopup("Select derivation row to delete.");
+            EditorAlerts.fleetingPopup("Select derivation line to delete.");
         }
     }
 

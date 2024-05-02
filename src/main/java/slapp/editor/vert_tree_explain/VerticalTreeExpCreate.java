@@ -41,10 +41,12 @@ import static slapp.editor.vertical_tree.object_models.ObjectControlType.*;
 public class VerticalTreeExpCreate {
     private MainWindow mainWindow;
     private TextField nameField;
+    private TextField promptField;
     private DecoratedRTA statementDRTA;
     private RichTextArea statementRTA;
     private TextArea helpArea;
     private ChangeListener nameListener;
+    private ChangeListener promptListener;
     private boolean modified = false;
     private CheckBox treeFormulaBoxCheck;
     private CheckBox verticalBracketCheck;
@@ -124,6 +126,26 @@ public class VerticalTreeExpCreate {
         HBox nameBox = new HBox(nameLabel, nameField);
         nameBox.setAlignment(Pos.BASELINE_LEFT);
 
+        //prompt
+        Label promptLabel = new Label("Explain Prompt: ");
+        promptLabel.setPrefWidth(100);
+        promptField = new TextField();
+        promptField.setPromptText("(plain text)");
+        promptListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                modified = true;
+            }
+        };
+        promptField.textProperty().addListener(promptListener);
+        HBox promptBox = new HBox(promptLabel, promptField);
+        promptBox.setAlignment(Pos.BASELINE_LEFT);
+
+        VBox topFieldsBox = new VBox(10, nameBox, promptBox);
+
+
+
+
         //drag bar
         Label dragLabel = new Label("Drag Bar: ");
         dragLabel.setPrefWidth(100);
@@ -168,7 +190,7 @@ public class VerticalTreeExpCreate {
         HBox controlBox = new HBox(20,controlLabel, boxingFormulaCheck, circleCheck, starCheck, annotationCheck, underlineCheck, mappingCheck);
         controlBox.setAlignment(Pos.BASELINE_LEFT);
 
-        VBox fieldsBox = new VBox(15, nameBox, dragBox, controlBox);
+        VBox fieldsBox = new VBox(15, topFieldsBox, dragBox, controlBox);
         fieldsBox.setPadding(new Insets(20,0, 0, 20));
 
         //center
@@ -357,6 +379,7 @@ public class VerticalTreeExpCreate {
     private VerticalTreeExpModel extractModelFromWindow() {
         VerticalTreeExpModel model = new VerticalTreeExpModel();
         model.setExerciseName(nameField.getText());
+        model.setExplainPrompt(promptField.getText());
 
         List<DragIconType> dragList = model.getDragIconList();
         if (treeFormulaBoxCheck.isSelected()) dragList.add(tree_field);

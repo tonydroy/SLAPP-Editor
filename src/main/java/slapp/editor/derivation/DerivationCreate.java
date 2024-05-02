@@ -289,7 +289,7 @@ public class DerivationCreate {
         stage.setTitle("Create Derivation Exercise:");
         stage.getIcons().addAll(EditorMain.icons);
         stage.setWidth(1030);
-        stage.setHeight(840);
+        stage.setHeight(900);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.initModality(Modality.WINDOW_MODAL);
@@ -402,7 +402,7 @@ public class DerivationCreate {
 
 //            scopeLineCheck.setSelected(true);
 //            defaultShelfCheck.setSelected(true);
-//            widthSpinner.getValueFactory().setValue(0.0);
+            widthSpinner.getValueFactory().setValue(0.0);
 
             setupLines.clear();
             SetupLine firstLine = new SetupLine(this);

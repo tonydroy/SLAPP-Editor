@@ -30,6 +30,7 @@ public class VerticalTreeExpModel implements ExerciseModel<Document>, Serializab
     private List<ClickableMapLinkMod> clickableMapLinks = new ArrayList<>();
     private List <MapQuestionMarkerMod> mapQuestionMarkers = new ArrayList<>();
     private Document explainDocument = new Document();
+    private String explainPrompt = "";
 
 
     public VerticalTreeExpModel(){}
@@ -38,6 +39,8 @@ public class VerticalTreeExpModel implements ExerciseModel<Document>, Serializab
     public void setExerciseName(String exerciseName) { this.exerciseName = exerciseName;    }
 
     public void setExerciseStatement(Document exerciseStatement) { this.exerciseStatement = exerciseStatement;    }
+    public String getExplainPrompt() {return explainPrompt;}
+    public void setExplainPrompt(String prompt) {explainPrompt = prompt;}
 
     public void setExplainDocument(Document explainDocument) {this.explainDocument = explainDocument; }
 
