@@ -84,7 +84,8 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         DecoratedRTA explainDRTA = horizontalTreeView.getExplainDRTA();
         RichTextArea explainEditor = explainDRTA.getEditor();
         explainEditor.setDocument(horizontalTreeModel.getExplainDocument());
-        explainEditor.setPromptText("Explain:");
+        horizontalTreeView.setExplainPrompt(horizontalTreeModel.getExplainPrompt());
+
         explainEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(explainDRTA, ControlType.AREA);
         explainEditor.focusedProperty().addListener((o, ov, nv) -> {
@@ -92,6 +93,8 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
                 mainView.editorInFocus(explainDRTA, ControlType.AREA);
             }
         });
+
+
 
         horizontalTreeView.getUndoButton().setOnAction(e -> undoAction());
         horizontalTreeView.getRedoButton().setOnAction(e -> redoAction());
@@ -331,6 +334,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         HorizontalTreeModel model = new HorizontalTreeModel();
 
         model.setExerciseName(horizontalTreeModel.getExerciseName());
+        model.setExplainPrompt(horizontalTreeModel.getExplainPrompt());
         model.setOriginalModel(horizontalTreeModel.getOriginalModel());
         model.setStarted(horizontalTreeModel.isStarted() || exerciseModified);
         model.setStatementPrefHeight(horizontalTreeView.getExerciseStatement().getEditor().getPrefHeight());

@@ -11,7 +11,6 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
@@ -197,7 +196,7 @@ public class CreateAssignment {
 
         exerciseFolderButton.setOnAction(e -> {
            exerciseFolderButton.setDisable(true);
-           exerciseFolder = DiskUtilities.getDirectory();
+           exerciseFolder = DiskUtilities.getDirectory(DiskUtilities.DirType.EXERCISE);
            if (exerciseFolder != null) {
                exerciseFolderName.setText(exerciseFolder.getAbsolutePath());
                exerciseList.getItems().setAll(DiskUtilities.getFileListFromDir(exerciseFolder, ".sle"));

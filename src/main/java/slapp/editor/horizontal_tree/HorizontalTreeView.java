@@ -36,9 +36,11 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private DecoratedRTA explainDRTA = new DecoratedRTA();
+    private String explainPrompt = "";
     private VBox controlBox = new VBox(15);
     private double statementPrefHeight = 80;
     private boolean annotationModified = false;
+
 
 
 
@@ -85,8 +87,10 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         this.mainView = mainView;
 
         mainPane = new AnchorPane();
+        mainPane.setMinHeight(100);
         mainPane.setStyle("-fx-border-width: 2 2 2 2; -fx-border-color: lightgrey; -fx-background-color: white");
         centerBox = new VBox(3, mainPane, explainDRTA.getEditor());
+
 
         undoButton = new Button("Undo");
         redoButton = new Button("Redo");
@@ -338,7 +342,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         explainRTA.getStylesheets().add("slappTextArea.css");
         explainRTA.setPrefHeight(80.0);
         explainRTA.setMinHeight(80.0);
-        explainRTA.setPromptText("Explain:");
+        explainRTA.setPromptText(explainPrompt);
 
         mainPane.prefWidthProperty().addListener((ob, ov, nv) -> {
             axisNode.updateRuler(mainPane.getPrefWidth());
@@ -775,6 +779,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
     public DecoratedRTA getExplainDRTA() { return explainDRTA; }
 
+    public void setExplainPrompt(String explainPrompt) {  this.explainPrompt = explainPrompt; }
 
     public AnchorPane getMainPane() { return mainPane;}
 

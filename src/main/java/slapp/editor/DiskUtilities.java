@@ -159,10 +159,15 @@ public class DiskUtilities {
         return exerciseModel;
     }
 
-    public static File getDirectory() {
+    public static File getDirectory(DirType type) {
+        File startingDir = userHomeFile;
+        if (type == DirType.EXERCISE && exerciseDirectory != null) startingDir = exerciseDirectory;
+        if (type == DirType.ASSIGNMENT && assignmentDirectory != null) startingDir = assignmentDirectory;
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setInitialDirectory(userHomeFile);
+        directoryChooser.setInitialDirectory(startingDir);
         File directory = directoryChooser.showDialog(EditorMain.mainStage);
+        if (directory != null && type == DirType.EXERCISE) exerciseDirectory = directory;
+        if (directory != null && type == DirType.ASSIGNMENT) assignmentDirectory = directory;
         return directory;
     }
 
@@ -180,6 +185,14 @@ public class DiskUtilities {
         Collections.sort(list, new AlphanumFileComparator());
 
         return list;
+    }
+
+
+
+    public enum DirType {
+        EXERCISE,
+        ASSIGNMENT;
+
     }
 
 

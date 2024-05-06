@@ -18,11 +18,18 @@ public class HorizontalTreeModel implements ExerciseModel<Document>, Serializabl
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
     private Document explainDocument = new Document();
+    private String explainPrompt = "";
     private List<TreeModel> treeModels = new ArrayList<>();
     private boolean axis = false;
 
+    public HorizontalTreeModel() {}
+
 
     public Document getExplainDocument() {return explainDocument; }
+
+    public String getExplainPrompt() {   return explainPrompt;  }
+
+    public void setExplainPrompt(String explainPrompt) { this.explainPrompt = explainPrompt; }
 
     public void setExerciseName(String exerciseName) { this.exerciseName = exerciseName;  }
 

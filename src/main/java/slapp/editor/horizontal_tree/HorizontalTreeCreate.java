@@ -41,6 +41,8 @@ public class HorizontalTreeCreate {
     private TextField nameField;
     private boolean fieldModified = false;
     private ChangeListener nameListener;
+    private TextField promptField;
+    private ChangeListener promptListener;
     private double scale =1.0;
     private Scene scene;
     private Stage stage;
@@ -61,6 +63,7 @@ public class HorizontalTreeCreate {
         statementRTA.setDocument(originalModel.getExerciseStatement());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         nameField.setText(originalModel.getExerciseName());
+        promptField.setText(originalModel.getExplainPrompt());
         nameField.textProperty().addListener(nameListener);
         fieldModified = false;
     }
@@ -83,7 +86,7 @@ public class HorizontalTreeCreate {
 
         //name field
         Label nameLabel = new Label("Exercise Name: ");
-        nameLabel.setPrefWidth(95);
+        nameLabel.setPrefWidth(100);
         nameField  = new TextField();
         nameField.setPromptText("(plain text)");
         nameListener = new ChangeListener() {
@@ -97,14 +100,32 @@ public class HorizontalTreeCreate {
 
         HBox nameBox = new HBox(nameLabel, nameField);
         nameBox.setAlignment(Pos.BASELINE_LEFT);
-        nameBox.setPadding(new Insets(20, 0, 0, 70));
+//        nameBox.setPadding(new Insets(20, 0, 0, 70));
+
+        //prompt
+        Label promptLabel = new Label("Explain Prompt: ");
+        promptLabel.setPrefWidth(100);
+        promptField = new TextField();
+        promptField.setPromptText("(plain text)");
+        promptListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldModified = true;
+            }
+        };
+        promptField.textProperty().addListener(promptListener);
+        HBox promptBox = new HBox(promptLabel, promptField);
+        promptBox.setAlignment(Pos.BASELINE_LEFT);
+
+        VBox topFieldsBox = new VBox(15, nameBox, promptBox);
+        topFieldsBox.setPadding(new Insets(10, 0,0, 60));
 
         //help area
-        String helpText = "Horizontal Tree Exercise is appropriate for exercises that involve horizontal trees of the sort that appear in Chapter 4 of Symbolic Logic.\n\n" +
-                "Setup of these exercises is especially easy: Give the exercise name, and exercise statement.  That's it!";
+        String helpText = "Horizontal Tree Explain Exercise is appropriate for exercises that involve horizontal trees (of the sort that appear in Chapter 4 of Symbolic Logic) along with an explanation of some sort.\n\n" +
+                "Setup of these exercises is especially easy: Give the exercise name, a prompt for the explain field, and exercise statement.  That's it!";
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(100);
+        helpArea.setPrefHeight(115);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
@@ -169,7 +190,7 @@ public class HorizontalTreeCreate {
         HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
 
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, nameBox);
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, topFieldsBox);
 //        topBox.layout();
         borderPane.topProperty().setValue(topBox);
 
@@ -178,7 +199,7 @@ public class HorizontalTreeCreate {
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
-        stage.setTitle("Create Horizontal Tree Exercise:");
+        stage.setTitle("Create Horizontal Tree Explain Exercise:");
         stage.getIcons().addAll(EditorMain.icons);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
@@ -280,6 +301,7 @@ public class HorizontalTreeCreate {
     private HorizontalTreeModel extractModelFromWindow() {
         HorizontalTreeModel model = new HorizontalTreeModel();
         model.setExerciseName(nameField.getText());
+        model.setExplainPrompt(promptField.getText());
         if (statementRTA.isModified()) fieldModified = true;
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setExerciseStatement(statementRTA.getDocument());
