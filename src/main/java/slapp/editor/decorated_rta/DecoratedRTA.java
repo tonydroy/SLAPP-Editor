@@ -79,6 +79,9 @@ public class DecoratedRTA {
         this.mainStage = EditorMain.mainStage;
         this.editor = new RichTextArea(mainStage);
         setup();
+
+
+
     }
     public void setup() {
         //presets combo box
@@ -140,13 +143,15 @@ public class DecoratedRTA {
         final ColorPicker textForeground = new ColorPicker();
         textForeground.setTooltip(new Tooltip("Foreground Color"));
         textForeground.getStyleClass().add("foreground");
-        new TextDecorateAction<>(editor, textForeground.valueProperty(), TextDecoration::getForeground, (builder, a) -> builder.foreground(a).build());
+        new TextDecorateAction<>(editor, textForeground.valueProperty(), (TextDecoration textDecoration1) -> Color.web(textDecoration1.getForeground()), (builder, a) -> builder.foreground(toHexString(a)).build());
+//        new TextDecorateAction<>(editor, textForeground.valueProperty(), TextDecoration::getForeground, (builder, a) -> builder.foreground(a).build());
         textForeground.setValue(Color.BLACK);
 
         final ColorPicker textBackground = new ColorPicker();
         textBackground.setTooltip(new Tooltip("Background Color"));
         textBackground.getStyleClass().add("background");
-        new TextDecorateAction<>(editor, textBackground.valueProperty(), TextDecoration::getBackground, (builder, a) -> builder.background(a).build());
+        new TextDecorateAction<>(editor, textBackground.valueProperty(), (TextDecoration textDecoration) -> Color.web(textDecoration.getBackground()), (builder, a) -> builder.background(toHexString(a)).build());
+//        new TextDecorateAction<>(editor, textBackground.valueProperty(), TextDecoration::getBackground, (builder, a) -> builder.background(a).build());
         textBackground.setValue(Color.TRANSPARENT);
 
         //overline button
@@ -278,6 +283,13 @@ public class DecoratedRTA {
                 //LineAwesomeSolid ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT, ALIGN_JUSTIFY, LIST_OL, LIST_UL, IMAGE, LINK, TABLE, BOLD, ITALIC
             );
         setRtaListeners();
+    }
+
+    private String toHexString(Color value) {
+        return String.format("#%02X%02X%02X%02X", (int) Math.round(value.getRed() * 255),
+                (int) Math.round(value.getGreen() * 255),
+                (int) Math.round(value.getBlue() * 255),
+                (int) Math.round(value.getOpacity() * 255));
     }
 
     public void setRtaListeners() {

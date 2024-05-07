@@ -595,7 +595,7 @@ public class MainWindow {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("Cannot Advance.  There is no open assignment.");
         } else {
-            if (currentExercise.isExerciseModified()) {assignmentContentModified = true; System.out.println("current: " + currentExercise.isExerciseModified() + " assignment: " + assignmentContentModified);}
+            if (currentExercise.isExerciseModified()) {assignmentContentModified = true; }
             int nextIndex = assignmentIndex + 1;
             if (nextIndex < currentAssignment.getExerciseModels().size()) {
                 ExerciseModel model = currentExercise.getExerciseModelFromView();

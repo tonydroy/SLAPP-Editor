@@ -4,6 +4,7 @@ import com.gluonhq.richtextarea.model.DecorationModel;
 import com.gluonhq.richtextarea.model.Document;
 import com.gluonhq.richtextarea.model.TextBuffer;
 import com.gluonhq.richtextarea.model.TextDecoration;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -60,7 +61,8 @@ public class ExtractSubText {
         }
         Objects.requireNonNull(decoration);
         Text text = new Text(Objects.requireNonNull(content));
-        text.setFill(decoration.getForeground());
+//        text.setFill(decoration.getForeground());
+        Color.web(decoration.getForeground());
         text.setStrikethrough(decoration.isStrikethrough());
         text.setUnderline(decoration.isUnderline());
 

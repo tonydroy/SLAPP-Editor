@@ -52,14 +52,6 @@ public class SetupLine {
             if (nv) {
                derivationCreate.editorInFocus(formulaBoxedDRTA.getDRTA(), ControlType.FIELD);
             }
-            /*
-            else if (ov) {
-                formulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
-                System.out.println(formulaRTA.getDocument().toString());
-            }
-             */
-
-
         });
 
         justificationBoxedDRTA = new BoxedDRTA();

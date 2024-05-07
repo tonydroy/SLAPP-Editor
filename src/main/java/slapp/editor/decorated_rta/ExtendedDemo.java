@@ -217,13 +217,15 @@ public class ExtendedDemo {
         final ColorPicker textForeground = new ColorPicker();
         textForeground.setTooltip(new Tooltip("Foreground Color"));
         textForeground.getStyleClass().add("foreground");
-        new TextDecorateAction<>(editor, textForeground.valueProperty(), TextDecoration::getForeground, (builder, a) -> builder.foreground(a).build());
+
+        new TextDecorateAction<>(editor, textForeground.valueProperty(), (TextDecoration textDecoration1) -> Color.web(textDecoration1.getForeground()), (builder, a) -> builder.foreground(toHexString(a)).build());
+
         textForeground.setValue(Color.BLACK);
 
         final ColorPicker textBackground = new ColorPicker();
         textBackground.setTooltip(new Tooltip("Background Color"));
         textBackground.getStyleClass().add("background");
-        new TextDecorateAction<>(editor, textBackground.valueProperty(), TextDecoration::getBackground, (builder, a) -> builder.background(a).build());
+        new TextDecorateAction<>(editor, textBackground.valueProperty(), (TextDecoration textDecoration) -> Color.web(textDecoration.getBackground()), (builder, a) -> builder.background(toHexString(a)).build());
         textBackground.setValue(Color.TRANSPARENT);
 
         CheckBox editableProp = new CheckBox("Editable");
@@ -460,6 +462,13 @@ public class ExtendedDemo {
            if (keyboardDiagram != null) keyboardDiagram.updateTextMaps();
            editor.requestFocus();   //have not been able to find way to stop keyboard window from stealing focus see https://stackoverflow.com/questions/33151460/javafx-stop-new-window-stealing-focus
         });
+    }
+
+    private String toHexString(Color value) {
+        return String.format("#%02X%02X%02X%02X", (int) Math.round(value.getRed() * 255),
+                (int) Math.round(value.getGreen() * 255),
+                (int) Math.round(value.getBlue() * 255),
+                (int) Math.round(value.getOpacity() * 255));
     }
 
     private Button actionButton(Ikon ikon, String tooltip, Action action) {

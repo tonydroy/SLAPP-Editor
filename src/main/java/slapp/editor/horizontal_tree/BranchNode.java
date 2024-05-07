@@ -216,32 +216,6 @@ public class BranchNode extends HBox {
         rta.getStylesheets().add("RichTExtField.css");
         rta.setPromptText("");
 
-//        rta.getActionFactory().saveNow().execute(new ActionEvent());
-
-/*
-        rta.focusedProperty().addListener((ob, ov, nv) -> {
-            if (nv) {
-                horizontalTreeView.getMainView().editorInFocus(drta, ControlType.FIELD);
-            }
-
-            else {
-
-                if (rta.isModified()) {
-                    System.out.println("rta focus lost");
- //                   horizontalTreeView.setUndoRedoFlag(true);
- //                   horizontalTreeView.setUndoRedoFlag(false);
- //                   rta.getActionFactory().saveNow().execute(new ActionEvent());
-                }
-
-
-            }
-
-        });
-
- */
-
-
-
 
         return boxedDRTA;
     }

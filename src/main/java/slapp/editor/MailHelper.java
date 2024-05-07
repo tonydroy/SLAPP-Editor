@@ -9,9 +9,8 @@ public class MailHelper {
         }
         catch (Exception err) {EditorAlerts.showSimpleAlert("Cannot Open", "Could not open default email application.  You may still send a message to messaging@slappservices.net with 'SLAPP' in subject line.");
 
-//            err.printStackTrace();
+
         }
-//        System.out.println("Done!");
     }
 
     public static void composeEmail(String receiver, String subject, String body) throws Exception {

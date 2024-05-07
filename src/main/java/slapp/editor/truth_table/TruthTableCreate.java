@@ -656,7 +656,7 @@ public class TruthTableCreate {
 
         model.setConclusionDivider(conclusionDividerCheck.isSelected());
 
-        System.out.println("Model: " + model.getStatementPrefHeight());
+
 
         return model;
     }

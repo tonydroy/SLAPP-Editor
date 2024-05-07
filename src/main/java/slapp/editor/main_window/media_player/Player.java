@@ -26,7 +26,6 @@ public class Player extends BorderPane {
         try {
             if (InetAddress.getByName("www.slappservices.net").isReachable(2000)) {
                 media = new Media(file);
-                System.out.println(media);
             }
         }
         catch (SecurityException | IOException e ) {

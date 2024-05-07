@@ -7,6 +7,7 @@ import javafx.application.*;
 import slapp.editor.main_window.MainWindow;
 import slapp.editor.decorated_rta.*;
 import slapp.editor.tests.*;
+import slapp.editor.decorated_rta.*;
 
 public class EditorMain extends Application {
 
@@ -25,6 +26,7 @@ public class EditorMain extends Application {
 
         icons = stage.getIcons();
         MainWindow mainWindow = new MainWindow();
+
 
 //        ExtendedDemo demo = new ExtendedDemo(stage); demo.start();
 //        DerivationTest test = new DerivationTest(); test.testGrid(stage);
