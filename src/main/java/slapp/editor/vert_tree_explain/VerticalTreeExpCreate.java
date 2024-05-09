@@ -79,6 +79,7 @@ public class VerticalTreeExpCreate {
         statementRTA.setDocument(originalModel.getExerciseStatement());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         nameField.setText(originalModel.getExerciseName());
+        promptField.setText(originalModel.getExplainPrompt());
         List<DragIconType> dragIconList = originalModel.getDragIconList();
         treeFormulaBoxCheck.setSelected(dragIconList.contains(tree_field));
         verticalBracketCheck.setSelected(dragIconList.contains(bracket));
@@ -90,7 +91,7 @@ public class VerticalTreeExpCreate {
         starCheck.setSelected(objectControlList.contains(STAR));
         annotationCheck.setSelected(objectControlList.contains(ANNOTATION));
         underlineCheck.setSelected(objectControlList.contains(UNDERLINE));
-        mappingCheck.setSelected(objectControlList.contains(UNDERLINE));
+        mappingCheck.setSelected(objectControlList.contains(MAPPING));
         modified = false;
     }
 

@@ -13,6 +13,7 @@ public class EditorMain extends Application {
 
     public static Stage mainStage;
     public static ObservableList<Image> icons;
+    public static boolean secondaryCopy = false;
 
     public static void main(String[] args) {
         launch(args);
@@ -21,10 +22,25 @@ public class EditorMain extends Application {
     @Override
     public void start(Stage stage) {
         this.mainStage = stage;
-        stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon32x32.png")));
-        stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
 
+        secondaryCopy = JustOneLock.isAppActive();
+
+        if (!secondaryCopy) {
+            System.out.println("primary");
+            stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon32x32.png")));
+            stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
+        }
+        else {
+            System.out.println("secondary");
+            stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon32x32.png")));
+            stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
+        }
         icons = stage.getIcons();
+
+
+
+
+
         MainWindow mainWindow = new MainWindow();
 
 

@@ -100,7 +100,7 @@ public class VerticalTreeABExpCreate {
         starCheck.setSelected(objectControlList.contains(STAR));
         annotationCheck.setSelected(objectControlList.contains(ANNOTATION));
         underlineCheck.setSelected(objectControlList.contains(UNDERLINE));
-        mappingCheck.setSelected(objectControlList.contains(UNDERLINE));
+        mappingCheck.setSelected(objectControlList.contains(MAPPING));
         modified = false;
     }
 

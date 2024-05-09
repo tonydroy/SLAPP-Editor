@@ -193,6 +193,14 @@ public class MainWindowView {
         saveButton.getStyleClass().add("lasolid-icon");
         saveButton.setTooltip(new Tooltip("Save assignment if open and otherwise exercise"));
 
+        if (EditorMain.secondaryCopy) {
+            saveButton.setDisable(true);
+            saveExerciseItem.setDisable(true);
+            saveAsExerciseItem.setDisable(true);
+            saveAssignmentItem.setDisable(true);
+            saveAsAssignmentItem.setDisable(true);
+        }
+
         hWindowCheck = new CheckBox("Win");
         hWindowCheck.setTooltip(new Tooltip("Fix width by window"));
         hCustomSpinner = new Spinner<>(5.0, 999.0, 100.0, 5.0);
