@@ -380,6 +380,11 @@ public class DrvtnExpCreate {
         buttonBox.setAlignment(Pos.BASELINE_CENTER);
         borderPane.setBottom(buttonBox);
 
+        if (EditorMain.secondaryCopy) {
+            lowerSaveButton.setDisable(true);
+            saveAsButton.setDisable(true);
+        }
+
         scene = new Scene(borderPane);
         scene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
 

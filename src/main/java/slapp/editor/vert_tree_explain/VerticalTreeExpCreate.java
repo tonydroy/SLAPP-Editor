@@ -235,6 +235,11 @@ public class VerticalTreeExpCreate {
         buttonBox.setAlignment(Pos.BASELINE_CENTER);
         borderPane.setBottom(buttonBox);
 
+        if (EditorMain.secondaryCopy) {
+            saveButton.setDisable(true);
+            saveAsButton.setDisable(true);
+        }
+
 
         //finish up with top
         Label zoomLabel = new Label(" Zoom ");

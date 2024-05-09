@@ -158,6 +158,11 @@ public class HorizontalTreeCreate {
         buttonBox.setAlignment(Pos.BASELINE_CENTER);
         borderPane.setBottom(buttonBox);
 
+        if (EditorMain.secondaryCopy) {
+            saveButton.setDisable(true);
+            saveAsButton.setDisable(true);
+        }
+
         //window setup
         scene = new Scene(borderPane);
         scene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());

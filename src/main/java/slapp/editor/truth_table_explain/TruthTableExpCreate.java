@@ -394,6 +394,11 @@ public class TruthTableExpCreate {
         buttonBox.setAlignment(Pos.BASELINE_CENTER);
         borderPane.setBottom(buttonBox);
 
+        if (EditorMain.secondaryCopy) {
+            lowerSaveButton.setDisable(true);
+            saveAsButton.setDisable(true);
+        }
+
         //editor decoration misc
         zoomLabel = new Label(" Zoom ");
         zoomSpinner = new Spinner(25, 500, 100, 5);

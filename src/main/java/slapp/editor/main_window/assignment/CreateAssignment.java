@@ -225,6 +225,11 @@ public class CreateAssignment {
         buttonBox.setMargin(saveButton, new Insets(30,0,0,0));
         buttonBox.setAlignment(Pos.CENTER_LEFT);
 
+        if (EditorMain.secondaryCopy) {
+            saveButton.setDisable(true);
+            saveAsButton.setDisable(true);
+        }
+
         SelectionModel exerciseSelectionModel = exerciseList.getSelectionModel();
         SelectionModel assignmentSelectionModel = assignmentList.getSelectionModel();
 
