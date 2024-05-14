@@ -1,5 +1,6 @@
 package slapp.editor.vert_tree_abefexplain;
 
+import com.gluonhq.richtextarea.RichTextArea;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Cursor;
@@ -69,8 +70,13 @@ public class ABEFExpClickableNodeLink extends Pane {
         DoubleProperty deltaYProperty = new SimpleDoubleProperty();
 
 
-        node_link.startXProperty().bind(add(source.layoutXProperty(), (source.widthProperty().divide(centerDivisor))));
-        node_link.endXProperty().bind(add(target.layoutXProperty(), (target.widthProperty().divide(centerDivisor))));
+        RichTextArea simpleSource = source.getFormulaBox().getRTA();
+        RichTextArea simpleTarget = target.getFormulaBox().getRTA();
+        node_link.startXProperty().bind(add(add(source.layoutXProperty(), source.getCenterBox().layoutXProperty()), (simpleSource.widthProperty().divide(centerDivisor))));
+        node_link.endXProperty().bind(add(add(target.layoutXProperty(), target.getCenterBox().layoutXProperty()), (simpleTarget.widthProperty().divide(centerDivisor))));
+
+//        node_link.startXProperty().bind(add(source.layoutXProperty(), (source.widthProperty().divide(centerDivisor))));
+//        node_link.endXProperty().bind(add(target.layoutXProperty(), (target.widthProperty().divide(centerDivisor))));
         deltaXProperty.bind(subtract(node_link.endXProperty(), node_link.startXProperty()));
         node_link1.startXProperty().bind(add(node_link.startXProperty(), (deltaXProperty.multiply(startFraction))));
         node_link1.endXProperty().bind(add(node_link.startXProperty(), (deltaXProperty.multiply(endFraction))));

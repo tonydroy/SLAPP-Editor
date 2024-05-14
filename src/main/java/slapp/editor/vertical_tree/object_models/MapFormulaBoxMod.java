@@ -10,7 +10,7 @@ public class MapFormulaBoxMod implements Serializable {
     private String idString;
     private double layoutX;
     private double layoutY;
-    private double width;
+//    private double width;
     private Document text;
     private List<String> linkIdStrings;
 
@@ -40,13 +40,13 @@ public class MapFormulaBoxMod implements Serializable {
         this.layoutY = layoutY;
     }
 
-    public double getWidth() {
-        return width;
-    }
+ //   public double getWidth() {
+   //     return width;
+//    }
 
-    public void setWidth(double width) {
-        this.width = width;
-    }
+//    public void setWidth(double width) {
+//        this.width = width;
+//    }
 
     public Document getText() {
         return text;

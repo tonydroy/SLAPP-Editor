@@ -47,6 +47,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
     private VBox resultsBox;
     private HBox choiceBox;
     private VBox centerBox;
+    private String generatePrompt;
 
 
     private double contentFixedHeight = 70;
@@ -448,7 +449,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         interpretationRTA.getStylesheets().add("slappTextArea.css");
 //        interpretationRTA.setPrefHeight(100.0);
         interpretationRTA.setMinHeight(100.0);
-        interpretationRTA.setPromptText("Translation:");
+        interpretationRTA.setPromptText(generatePrompt);
 
         RichTextArea commentRTA = exerciseComment.getEditor();
         commentRTA.getStylesheets().add("slappTextArea.css");
@@ -508,6 +509,9 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
     public DecoratedRTA getExplainDRTA() {return explainDRTA; }
     public void setExerciseInterpretation(DecoratedRTA drta) {exerciseInterpretation = drta;}
     public DecoratedRTA getExerciseInterpretation() {return exerciseInterpretation; }
+
+    public void setGeneratePrompt(String generatePrompt) {   this.generatePrompt = generatePrompt; }
+
     @Override
     public String getExerciseName() { return exerciseName;  }
 

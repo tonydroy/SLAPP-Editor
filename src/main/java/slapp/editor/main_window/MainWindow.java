@@ -8,6 +8,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -56,8 +58,18 @@ public class MainWindow {
         };
         setUpExercise(new FrontPageExercise(this));
 
-
         mainView.getMainScene().focusOwnerProperty().addListener(focusListener);
+
+        mainView.getMainScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent e) {
+                if (e.getCode() == KeyCode.ESCAPE) {
+                    setUpExercise(getEmptyExercise());
+                    isExerciseOpen = false;
+                    mainView.getMainScene().removeEventFilter(KeyEvent.KEY_PRESSED, this);
+                }
+            }
+        });
     }
 
     /* Comment:

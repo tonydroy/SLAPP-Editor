@@ -2,6 +2,7 @@ package slapp.editor.vertical_tree.drag_drop;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -114,8 +115,8 @@ public class MapFormulaBox extends AnchorPane {
 
 
         formulaBox = newFormulaBoxedDRTA();
-        RightDragResizer resizer = new RightDragResizer(verticalTreeView);
-        resizer.makeResizable(formulaBox.getRTA());
+//        RightDragResizer resizer = new RightDragResizer(verticalTreeView);
+//        resizer.makeResizable(formulaBox.getRTA());
 
         centerBox = new VBox(formulaBox.getBoxedRTA());
         centerBox.setAlignment(Pos.CENTER);
@@ -334,6 +335,14 @@ public class MapFormulaBox extends AnchorPane {
         rta.setMinHeight(24);
         rta.setPrefWidth(36);
  //       rta.setContentAreaWidth(500);
+
+        RichTextAreaSkin rtaSkin = (RichTextAreaSkin) rta.getSkin();
+        rta.prefWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 3), 10));
+        rta.addEventFilter(KeyEvent.ANY, e -> {
+            if (e.getCode() == KeyCode.ENTER) e.consume();
+        });
+
+
        rta.getStylesheets().add("greenFormulaBox.css");
         rta.setPromptText("");
  //       rta.getActionFactory().saveNow().execute(new ActionEvent());  messes up rta on reopen

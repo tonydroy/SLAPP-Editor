@@ -2,6 +2,7 @@ package slapp.editor.vert_tree_abexplain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -174,8 +175,8 @@ public class ABExpTreeFormulaBox extends AnchorPane {
 
 
         formulaBox = newFormulaBoxedDRTA();
-        ABExpRightDragResizer resizer = new ABExpRightDragResizer(verticalTreeView);
-        resizer.makeResizable(formulaBox.getRTA());
+//        ABExpRightDragResizer resizer = new ABExpRightDragResizer(verticalTreeView);
+//        resizer.makeResizable(formulaBox.getRTA());
 
         middleBox = new VBox(formulaBox.getBoxedRTA(), linesPane);
 
@@ -653,6 +654,13 @@ public class ABExpTreeFormulaBox extends AnchorPane {
         rta.setMaxHeight(24);
         rta.setMinHeight(24);
         rta.setPrefWidth(36);
+
+        RichTextAreaSkin rtaSkin = (RichTextAreaSkin) rta.getSkin();
+        rta.prefWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 3), 10));
+        rta.addEventFilter(KeyEvent.ANY, e -> {
+            if (e.getCode() == KeyCode.ENTER) e.consume();
+        });
+
 //        rta.setContentAreaWidth(500);
        rta.getStylesheets().add("blueFormulaBox.css");
         rta.setPromptText("");
@@ -846,6 +854,7 @@ public class ABExpTreeFormulaBox extends AnchorPane {
     public BoxedDRTA getFormulaBox() {
         return formulaBox;
     }
+    public VBox getCenterBox() {return centerBox;}
 
     public boolean isBoxed() {
         return boxed;

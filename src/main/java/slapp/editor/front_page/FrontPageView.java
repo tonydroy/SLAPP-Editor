@@ -5,9 +5,12 @@ import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -17,6 +20,8 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
+
+import javax.xml.stream.EventFilter;
 
 /**
  * Simple view including just comment area, to support FrontPageExercise
@@ -38,6 +43,7 @@ public class FrontPageView implements ExerciseView<Label> {
     private boolean played = false;
 
     private ChangeListener contentFocusListener;
+    private EventHandler escapeFilter;
 
 
 
@@ -86,6 +92,7 @@ public class FrontPageView implements ExerciseView<Label> {
             }
         };
         exerciseContent.focusedProperty().addListener(contentFocusListener);
+
     }
 
     @Override

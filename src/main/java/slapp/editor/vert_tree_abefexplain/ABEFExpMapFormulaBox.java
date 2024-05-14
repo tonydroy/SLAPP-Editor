@@ -2,6 +2,7 @@ package slapp.editor.vert_tree_abefexplain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -118,8 +119,8 @@ public class ABEFExpMapFormulaBox extends AnchorPane {
 
 
         formulaBox = newFormulaBoxedDRTA();
-        ABEFExpRightDragResizer resizer = new ABEFExpRightDragResizer(verticalTreeView);
-        resizer.makeResizable(formulaBox.getRTA());
+//        ABEFExpRightDragResizer resizer = new ABEFExpRightDragResizer(verticalTreeView);
+//        resizer.makeResizable(formulaBox.getRTA());
 
         centerBox = new VBox(formulaBox.getBoxedRTA());
         centerBox.setAlignment(Pos.CENTER);
@@ -342,7 +343,16 @@ public class ABEFExpMapFormulaBox extends AnchorPane {
         rta.setMinHeight(24);
         rta.setPrefWidth(36);
  //       rta.setContentAreaWidth(500);
-       rta.getStylesheets().add("greenFormulaBox.css");
+
+        RichTextAreaSkin rtaSkin = (RichTextAreaSkin) rta.getSkin();
+        rta.prefWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 3), 10));
+        rta.addEventFilter(KeyEvent.ANY, e -> {
+            if (e.getCode() == KeyCode.ENTER) e.consume();
+        });
+
+
+
+        rta.getStylesheets().add("greenFormulaBox.css");
         rta.setPromptText("");
  //       rta.getActionFactory().saveNow().execute(new ActionEvent());  messes up rta on reopen
         rta.focusedProperty().addListener((ob, ov, nv) -> {

@@ -26,14 +26,12 @@ public class EditorMain extends Application {
         secondaryCopy = JustOneLock.isAppActive();
 
         if (!secondaryCopy) {
-            System.out.println("primary");
             stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon32x32.png")));
             stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
         }
         else {
-            System.out.println("secondary");
-            stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon32x32.png")));
-            stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
+            stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon_purple32x32.png")));
+            stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon_purple16x16.png")));
         }
         icons = stage.getIcons();
 
@@ -49,6 +47,7 @@ public class EditorMain extends Application {
 //        ExtractFromDoc test = new ExtractFromDoc(); test.rtaInsertTest(stage);
 //        ParseTableDocTest test = new ParseTableDocTest(); test.parseTableDocTest(stage);
 //        BoxedRTATest test = new BoxedRTATest(); test.testBoxedDRTA(stage);
+//        TextWidthTest test = new TextWidthTest(); test.testTextWidth(stage);
     }
 
 

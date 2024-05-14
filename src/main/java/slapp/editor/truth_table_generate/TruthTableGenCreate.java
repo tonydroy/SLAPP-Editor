@@ -32,8 +32,6 @@ import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
 import slapp.editor.main_window.MainWindowView;
-import slapp.editor.truth_table_generate.TruthTableGenExercise;
-import slapp.editor.truth_table_generate.TruthTableGenModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +78,10 @@ public class TruthTableGenCreate {
     private ChangeListener choiceLeadListener;
     private ChangeListener aPromptListener;
     private ChangeListener bPromptListener;
+
+    private TextField genPromptField;
+    private ChangeListener genPromptListener;
+
     private double formulaBoxHeight = 27;
     private Button lowerSaveButton;
     private Button saveAsButton;
@@ -95,6 +97,7 @@ public class TruthTableGenCreate {
         this(mainWindow);
 
         nameField.setText(originalModel.getExerciseName());
+        genPromptField.setText(originalModel.getGeneratePrompt());
         statementRTA.setDocument(originalModel.getExerciseStatement());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         choiceLeadField.setText(originalModel.getChoiceLead());
@@ -132,7 +135,7 @@ public class TruthTableGenCreate {
             }
         });
 
-        //name field
+        //name explain prompt fields
         Label nameLabel = new Label("Exercise Name: ");
         nameLabel.setPrefWidth(95);
         nameField  = new TextField();
@@ -147,6 +150,20 @@ public class TruthTableGenCreate {
         nameField.textProperty().addListener(nameListener);
         HBox nameBox = new HBox(10, nameLabel, nameField);
         nameBox.setAlignment(Pos.CENTER_LEFT);
+
+        Label genPromptLabel = new Label("Gen Prompt: ");
+        genPromptLabel.setPrefWidth(95);
+        genPromptField = new TextField();
+        genPromptField.setPromptText("(plain text)");
+        genPromptListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldModified = true;
+            }
+        };
+        genPromptField.textProperty().addListener(genPromptListener);
+        HBox genPromptBox = new HBox(10, genPromptLabel, genPromptField);
+        genPromptBox.setAlignment(Pos.CENTER_LEFT);
 
         //choice fields
         Label choiceLeadLabel = new Label("Checkbox lead: ");
@@ -352,20 +369,20 @@ public class TruthTableGenCreate {
         mainFormulasTop.setAlignment(Pos.CENTER_LEFT);
         mainFormulasTop.setMargin(conclusionDividerCheck, new Insets(0, 0, 0, 100));
 
-        upperFieldsBox = new VBox(10, nameBox, choicesBox, languagePresetsBox, unaryOperatorBox, binaryOperatorBox, mainFormulasTop, mainFormulasPane);
+        upperFieldsBox = new VBox(10, nameBox, genPromptBox, choicesBox, languagePresetsBox, unaryOperatorBox, binaryOperatorBox, mainFormulasTop, mainFormulasPane);
         upperFieldsBox.setPadding(new Insets(20, 0, 20, 20));
 
         //center area
         String helpText = "Truth Table Gen Exercise is like Truth Table Explain Exercise in that it requests a choice between some mutually exclusive options along with an explanation.  " +
                 "In addition it begins with a field for an interpretation/translation, and lets the student generate the premises and conclusion on the table.\n\n" +
-                "For the Truth Table Gen exercise, supply the exercise name and exercise statement.  The Checkbox lead appears prior to the check boxes, the A prompt with the first box, and the B prompt with the second.  " +
+                "For the Truth Table Gen exercise, supply the exercise name and exercise statement.  The Gen Prompt appears in the interpretation/translation field.  The Checkbox lead appears prior to the check boxes, the A prompt with the first box, and the B prompt with the second.  " +
                 "The preset operator buttons set operators according to the official and abbreviating languages from Symbolic Logic; alternatively, you may edit sentential operator symbols individually. " +
                 "Finally you will usually leave the formula fields blank, as formulas you enter here may be overwritten by the student working the exercise.  " +
                 "In the ordinary case, you will also leave the \"conclusion divider\" selected as the student is expeceted to provide at least a conclusion sentence." ;
 
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(230);
+        helpArea.setPrefHeight(240);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
@@ -678,6 +695,7 @@ public class TruthTableGenCreate {
         TruthTableGenModel model = new TruthTableGenModel();
 
         model.setExerciseName(nameField.getText());
+        model.setGeneratePrompt(genPromptField.getText());
         model.setStarted(false);
 //        model.setStatementPrefHeight(70.0);
 

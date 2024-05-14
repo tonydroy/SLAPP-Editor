@@ -29,8 +29,6 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
 import slapp.editor.truth_table.ParseDocForTTable;
 import slapp.editor.truth_table.TableHeadItem;
-import slapp.editor.truth_table_generate.TruthTableGenModel;
-import slapp.editor.truth_table_generate.TruthTableGenView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +81,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         spacerConstraint = new ColumnConstraints(10);
 
         truthTableGenView.setExerciseName(truthTableGenModel.getExerciseName());
+        truthTableGenView.setGeneratePrompt(truthTableGenModel.getGeneratePrompt());
         truthTableGenView.setTableRows(tableRows);
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
@@ -486,6 +485,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
     private TruthTableGenModel getTruthTableGenModelFromView() {
         TruthTableGenModel model = new TruthTableGenModel();
         model.setExerciseName(truthTableGenView.getExerciseName());
+        model.setGeneratePrompt(truthTableGenModel.getGeneratePrompt());
         model.setOriginalModel(truthTableGenModel.getOriginalModel());
         model.setStarted(truthTableGenModel.isStarted() || exerciseModified);
         model.setStatementPrefHeight(truthTableGenView.getExerciseStatement().getEditor().getPrefHeight());

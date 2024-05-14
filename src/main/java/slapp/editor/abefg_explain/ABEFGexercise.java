@@ -54,7 +54,6 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
 
         abefgView.setExerciseName(abefgModel.getExerciseName());
         ABEFGmodelExtra modelFields = abefgModel.getModelFields();
-
         abefgView.getLeaderLabelAB().setText(modelFields.getLeaderAB());
         abefgView.getLeaderLabelEFG().setText(modelFields.getLeaderEFG());
         CheckBox checkBoxA = abefgView.getCheckBoxA();
@@ -110,7 +109,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         });
 
         checkBoxG.setText(modelFields.getPromptG());
-        checkBoxE.setSelected(modelFields.getValueG());
+        checkBoxG.setSelected(modelFields.getValueG());
         checkBoxG.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ob, Boolean ov, Boolean nv) {

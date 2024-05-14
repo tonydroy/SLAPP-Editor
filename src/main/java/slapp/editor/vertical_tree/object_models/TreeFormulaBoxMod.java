@@ -51,13 +51,13 @@ public class TreeFormulaBoxMod implements Serializable {
         this.layoutY = layoutY;
     }
 
-    public double getWidth() {
-        return width;
-    }
+//    public double getWidth() {
+//        return width;
+ //   }
 
-    public void setWidth(double width) {
-        this.width = width;
-    }
+//    public void setWidth(double width) {
+//        this.width = width;
+//    }
 
     public Document getText() {
         return text;

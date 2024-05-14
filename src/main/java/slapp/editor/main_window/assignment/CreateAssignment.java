@@ -44,6 +44,7 @@ public class CreateAssignment {
     private File assignemtFile;
     private String creationID;
     private TextField assignmentNameField;
+    private ChangeListener<String> nameListener;
     ListView<File> exerciseList;
     ListView<ExerciseModel> assignmentList;
     private boolean isModified = false;
@@ -55,7 +56,9 @@ public class CreateAssignment {
 
     private Button saveButton;
     private Button saveAsButton;
+    private Button clearButton;
     private Button exerciseFolderButton;
+    private Label creationIDNum;
 
 
     List<TextField> labelFields = new ArrayList<>();
@@ -69,9 +72,7 @@ public class CreateAssignment {
     }
 
     private void setUpWindow() {
-        Random rand = new Random();
-        idNumber = rand.nextInt(1000000000);
-        creationID = Integer.toString(idNumber);
+        setCreationID();
 
         BorderPane borderPane = new BorderPane();
 
@@ -79,7 +80,7 @@ public class CreateAssignment {
         assignmentNameField = new TextField(assignment.getHeader().getAssignmentName());
         Label creationIDLabel = new Label("Creation ID: ");
 
-        ChangeListener<String> nameListener = new ChangeListener<String>() {
+        nameListener = new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ob, String ov, String nv) {
                 isModified = true;
@@ -88,7 +89,7 @@ public class CreateAssignment {
         };
         assignmentNameField.textProperty().addListener(nameListener);
 
-        Label creationIDNum = new Label(creationID);
+        creationIDNum = new Label(creationID);
         Region spacer1 = new Region();
 
 
@@ -218,9 +219,11 @@ public class CreateAssignment {
         saveButton.setPrefWidth(60);
         saveAsButton = new Button("Save As");
         saveAsButton.setPrefWidth(60);
+        clearButton = new Button("Clear");
+        clearButton.setPrefWidth(60);
         Button closeButton = new Button("Close");
         closeButton.setPrefWidth(60);
-        VBox buttonBox = new VBox(20, addUpButton, addDownButton, removeButton, saveButton, saveAsButton, closeButton);
+        VBox buttonBox = new VBox(20, addUpButton, addDownButton, removeButton, saveButton, saveAsButton, clearButton, closeButton);
         buttonBox.setPadding(new Insets(0,20,40,0));
         buttonBox.setMargin(saveButton, new Insets(30,0,0,0));
         buttonBox.setAlignment(Pos.CENTER_LEFT);
@@ -310,6 +313,10 @@ public class CreateAssignment {
            saveAssignment(true);
         });
 
+        clearButton.setOnAction(e -> {
+            clearAssignment();
+        });
+
         /*
         saveButton.setOnAction(e -> {
            Assignment assignment = getAssignmentFromWindow();
@@ -367,6 +374,12 @@ public class CreateAssignment {
         setCenterVgrow();
     }
 
+    private void setCreationID() {
+        Random rand = new Random();
+        idNumber = rand.nextInt(1000000000);
+        creationID = Integer.toString(idNumber);
+    }
+
     private Assignment getAssignmentFromWindow() {
         Assignment assignment = new Assignment();
         AssignmentHeader assignmentHeader = assignment.getHeader();
@@ -394,6 +407,23 @@ public class CreateAssignment {
             if (saved) isModified = false;
         }
         else EditorAlerts.showSimpleAlert("Cannot Save", "No named assignment to save.");
+    }
+
+    private void clearAssignment() {
+        boolean okContinue = true;
+        if (isModified) {
+            Alert confirm = EditorAlerts.confirmationAlert("Confirm Clear", "This assignment appears to have been changed.\n\nContinue to clear exercise?");
+            Optional<ButtonType> result = confirm.showAndWait();
+            if (result.get() != OK) okContinue = false;
+        }
+        if (okContinue) {
+            assignmentNameField.clear();
+            assignmentNameField.textProperty().addListener(nameListener);
+            setCreationID();
+            creationIDNum.setText(creationID);
+            assignmentList.getItems().clear();
+            isModified = false;
+        }
     }
 
     private void closeWindow() {

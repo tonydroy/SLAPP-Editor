@@ -167,7 +167,7 @@ public class VerticalTreeABExpExercise implements Exercise<VerticalTreeABExpMode
 
             BoxedDRTA formulaBox = mapFormulaBox.getFormulaBox();
             RichTextArea mapBoxRTA = formulaBox.getRTA();
-            mapBoxRTA.setPrefWidth(mapBoxMod.getWidth());
+//            mapBoxRTA.setPrefWidth(mapBoxMod.getWidth());
             mapBoxRTA.setDocument(mapBoxMod.getText());
             mapBoxRTA.getActionFactory().saveNow().execute(new ActionEvent());
         }
@@ -182,7 +182,7 @@ public class VerticalTreeABExpExercise implements Exercise<VerticalTreeABExpMode
 
             BoxedDRTA treeFormulaDRTA = treeFormulaBox.getFormulaBox();
             RichTextArea treeBoxRTA = treeFormulaDRTA.getRTA();
-            treeBoxRTA.setPrefWidth(treeBoxMod.getWidth());
+//            treeBoxRTA.setPrefWidth(treeBoxMod.getWidth());
             treeBoxRTA.setDocument(treeBoxMod.getText());
             treeBoxRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
@@ -552,7 +552,7 @@ public class VerticalTreeABExpExercise implements Exercise<VerticalTreeABExpMode
                 newTreeMod.setLinkIdStrings(originalTreeBox.getmLinkIds());
 
                 BoxedDRTA treeFormulaBox = originalTreeBox.getFormulaBox();
-                newTreeMod.setWidth(treeFormulaBox.getRTA().getPrefWidth());
+//                newTreeMod.setWidth(treeFormulaBox.getRTA().getPrefWidth());
                 RichTextArea treeRTA = treeFormulaBox.getRTA();
                 treeRTA.getActionFactory().saveNow().execute(new ActionEvent());
                 newTreeMod.setText(treeRTA.getDocument());
@@ -587,7 +587,7 @@ public class VerticalTreeABExpExercise implements Exercise<VerticalTreeABExpMode
                 newMapMod.setLinkIdStrings(originalMapBox.getmLinkIds());
 
                 BoxedDRTA formulaBox = originalMapBox.getFormulaBox();
-                newMapMod.setWidth(formulaBox.getRTA().getPrefWidth());
+ //               newMapMod.setWidth(formulaBox.getRTA().getPrefWidth());
                 RichTextArea mapRTA = formulaBox.getRTA();
                 mapRTA.getActionFactory().saveNow().execute(new ActionEvent());
                 newMapMod.setText(mapRTA.getDocument());

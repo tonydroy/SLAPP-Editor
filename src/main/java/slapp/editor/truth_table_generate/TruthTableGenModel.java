@@ -34,6 +34,7 @@ public class TruthTableGenModel implements ExerciseModel<Document>, Serializable
     private String bPrompt = new String("");
     private boolean bSelected = false;
     private Document explainDocument = new Document();
+    private String generatePrompt = "";
     private int tableRows = 0;
 
 
@@ -123,6 +124,10 @@ public class TruthTableGenModel implements ExerciseModel<Document>, Serializable
     public void setExplainDocument(Document explainDocument) {
         this.explainDocument = explainDocument;
     }
+
+    public String getGeneratePrompt() {    return generatePrompt;  }
+
+    public void setGeneratePrompt(String generatePrompt) {  this.generatePrompt = generatePrompt;  }
 
     public void setTableRows(int tableRows) { this.tableRows = tableRows;  }
 
