@@ -225,6 +225,8 @@ public class PrintUtilities {
         scale = Math.min(Math.min(wScale, hScale), scale);
         printBuffer.add(new Pair(node, height));
 
+        System.out.println(scale);
+
         return nodeFit;
     }
 

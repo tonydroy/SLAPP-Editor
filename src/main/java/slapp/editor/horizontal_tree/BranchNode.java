@@ -244,8 +244,6 @@ public class BranchNode extends HBox {
         rta.prefWidthProperty().addListener((ob, ov, nv) -> {
             horizontalTreeView.refreshTreePanes();
         });
-
-
         rta.addEventFilter(KeyEvent.ANY, e -> {
             if (e.getCode() == KeyCode.ENTER) e.consume();
         });

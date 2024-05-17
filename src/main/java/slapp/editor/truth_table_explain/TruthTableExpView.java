@@ -2,10 +2,12 @@ package slapp.editor.truth_table_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -189,11 +191,19 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
             }
         }
 
-        gridColConstraints.add(new ColumnConstraints(100));
+
+        ColumnConstraints commentConstraints = new ColumnConstraints();
+        commentConstraints.setPrefWidth(100);
+        gridColConstraints.add(commentConstraints);
+
         endPane = new Pane();
         endPane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
         tableGrid.add(endPane, tableHeadItemsList.size(), 0);
         for (int j = 0; j < tableRows; j++) {
+            if (j != 0 && j % 4 == 0) {
+                rowCommentsArray[j].getBoxedRTA().setAlignment(Pos.BOTTOM_LEFT);
+                rowCommentsArray[j].getBoxedRTA().setPadding(new Insets(0,0,1.5,0));
+            }
             tableGrid.add(rowCommentsArray[j].getBoxedRTA(), tableHeadItemsList.size(), j + 2);
         }
 
@@ -209,7 +219,20 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         tableRowConstraints.clear();
         tableRowConstraints.add(new RowConstraints());
         tableRowConstraints.add(new RowConstraints(5));
-        for (int i = 0; i < tableRows; i++) tableRowConstraints.add(new RowConstraints(25));
+        for (int i = 0; i < tableRows; i++) {
+            RowConstraints rowCon = new RowConstraints();
+            if (i != 0 && i % 4 == 0) {
+                rowCon.setMinHeight(30);
+                rowCon.setMaxHeight(30);
+                rowCon.setValignment(VPos.BOTTOM);
+            }
+            else {
+                rowCon.setMinHeight(25);
+                rowCon.setMaxHeight(25);
+            }
+            tableRowConstraints.add(rowCon);
+//            tableRowConstraints.add(new RowConstraints(25));
+        }
         tableRowConstraints.add(new RowConstraints(5));
         tableRowConstraints.add(new RowConstraints());
     }
@@ -354,8 +377,13 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         RichTextArea rta = bdrta.getRTA();
         rta.setMaxHeight(formulaBoxHeight);
         rta.setMinHeight(formulaBoxHeight);
-        rta.setContentAreaWidth(200);
-        rta.setPrefWidth(100);
+
+        RichTextAreaSkin rtaSkin = (RichTextAreaSkin) rta.getSkin();
+        rta.minWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 3), 100));
+        rta.addEventFilter(KeyEvent.ANY, e -> {
+            if (e.getCode() == KeyCode.ENTER) e.consume();
+        });
+
         rta.getStylesheets().add("RichTextField.css");
 //        rta.setPromptText("Comment");
         rta.focusedProperty().addListener((ob, ov, nv) -> {
