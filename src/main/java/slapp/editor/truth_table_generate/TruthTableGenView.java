@@ -118,7 +118,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
             int index = basicFormulasBoxedDRTAs.indexOf(focusedBoxedDRTA);
             if (index >= 0) {
                 KeyCode code = e.getCode();
-                if (code == KeyCode.DOWN) {
+                if (code == KeyCode.DOWN || code == KeyCode.ENTER) {
                     if (index + 1 < basicFormulasBoxedDRTAs.size()) {
                         basicFormulasBoxedDRTAs.get(index + 1).getRTA().requestFocus();
                     }

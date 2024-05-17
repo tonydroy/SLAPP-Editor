@@ -74,10 +74,10 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
         //this is messy: can't get an event filter on the RTA itself to fire.  Why?
         basicFormulasPane.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            KeyCode code = e.getCode();
             int index = basicFormulasBoxedDRTAList.indexOf(focusedBoxedDRTA);
             if (index >= 0) {
-                KeyCode code = e.getCode();
-                if (code == KeyCode.DOWN) {
+                if (code == KeyCode.DOWN || code == KeyCode.ENTER) {
                     if (index + 1 < basicFormulasBoxedDRTAList.size()) {
                         basicFormulasBoxedDRTAList.get(index + 1).getRTA().requestFocus();
                     }

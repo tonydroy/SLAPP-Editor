@@ -12,11 +12,14 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.apache.commons.lang3.SerializationUtils;
 import slapp.editor.DiskUtilities;
 import slapp.editor.PrintUtilities;
@@ -102,6 +105,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         horizontalTreeView.initializeViewDetails();
 
         refreshViewFromModel();
+        horizontalTreeView.setAnnotationModified(false);
     }
 
     private void refreshViewFromModel() {
@@ -152,14 +156,14 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
         formulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
-        formulaRTA.setPrefWidth(branchModel.getFormulaPrefWidth());
+//        formulaRTA.setPrefWidth(branchModel.getFormulaPrefWidth());
 
         RichTextArea connectRTA = branchNode.getConnectorBoxedDRTA().getRTA();
         connectRTA.setDocument(branchModel.getConnectorDoc());
 
         connectRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
-        connectRTA.setPrefWidth(branchModel.getConnectorPrefWidth());
+//        connectRTA.setPrefWidth(branchModel.getConnectorPrefWidth());
         if (!branchModel.isFormulaBranch()) branchNode.setStyle("-fx-border-width: 0 0 0 0");
         if (branchModel.isIndefiniteNumBranch()) branchNode.setStyle("-fx-border-width: 0 0 0 0");
 
@@ -258,10 +262,20 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         nodeList.add(statementSepBox);
 
         //content
+
+
         AnchorPane mainPane = exercise.getExerciseView().getMainPane();
+
+        Group root = new Group();
+        Scene scene = new Scene(root);
+        root.getChildren().add(mainPane);
+        root.applyCss();
+        root.layout();
+
+
+
+
         mainPane.setStyle("-fx-background-color: transparent");
-
-
 
         ObservableList<Node> mainNodes = mainPane.getChildren();
         for (Node mainNode : mainNodes) {
@@ -279,7 +293,10 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
             }
         }
 
-        mainPane.setPrefWidth(nodeWidth - 20);
+//        mainPane.setPrefWidth(nodeWidth - 20);
+
+
+
         HBox contentHBox = new HBox(mainPane);
         contentHBox.setAlignment(Pos.CENTER);
         contentHBox.setPadding(new Insets(0,0,20, 0));
@@ -382,12 +399,12 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         RichTextArea formulaRTA = node.getFormulaBoxedDRTA().getRTA();
         formulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setFormulaDoc(formulaRTA.getDocument());
-        model.setFormulaPrefWidth(formulaRTA.getPrefWidth());
+//        model.setFormulaPrefWidth(formulaRTA.getPrefWidth());
 
         RichTextArea connectRTA = node.getConnectorBoxedDRTA().getRTA();
         connectRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setConnectorDoc(connectRTA.getDocument());
-        model.setConnectorPrefWidth(connectRTA.getPrefWidth());
+//        model.setConnectorPrefWidth(connectRTA.getPrefWidth());
 
         for (BranchNode dependentNode : node.getDependents()) {
             BranchModel dependentMod = new BranchModel();

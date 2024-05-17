@@ -508,7 +508,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                             branch.setFormulaNode(false);
                             branch.setStyle("-fx-border-width: 0 0 0 0");
                             RichTextArea rta = branch.getFormulaBoxedDRTA().getRTA();
-                            rta.setPrefWidth(24);
+ //                           rta.setPrefWidth(24);
                             clickNode.getDependents().add(branch);
                             pane.refresh();
                             setUndoRedoFlag(true);
@@ -540,8 +540,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                             branch2.setStyle("-fx-border-width: 0 0 0 0");
                             RichTextArea rta1 = branch1.getFormulaBoxedDRTA().getRTA();
                             RichTextArea rta2 = branch2.getFormulaBoxedDRTA().getRTA();
-                            rta1.setPrefWidth(24);
-                            rta2.setPrefWidth(24);
+//                            rta1.setPrefWidth(24);
+//                            rta2.setPrefWidth(24);
                             clickNode.getDependents().addAll(Arrays.asList(branch1, branch2));
                             pane.refresh();
                             setUndoRedoFlag(true);
@@ -753,6 +753,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         mainPane.getChildren().clear();
         for (TreePane pane : treePanes) {
             pane.refresh();
+
             mainPane.getChildren().add(pane);
         }
 

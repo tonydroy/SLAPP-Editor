@@ -2,12 +2,16 @@ package slapp.editor.horizontal_tree;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -67,8 +71,8 @@ public class BranchNode extends HBox {
 //        self.setHgrow(formulaBoxedDRTA.getBoxedRTA(), Priority.ALWAYS);
         //
 
-        HrzRightDragResizer resizer = new HrzRightDragResizer(horizontalTreeView);
-        resizer.makeResizable(self, formulaBoxedDRTA.getRTA());
+//        HrzRightDragResizer resizer = new HrzRightDragResizer(horizontalTreeView);
+//        resizer.makeResizable(self, formulaBoxedDRTA.getRTA());
 
  //       resizer.makeResizable(this);
 
@@ -135,18 +139,25 @@ public class BranchNode extends HBox {
         Xlayout = xVal;
         if (dependents.isEmpty()) {
             leafPos = leafPos + offsetY;
- //           if (!formulaNode) leafPos -= 10.0;
             Ylayout = leafPos;
             if (!formulaNode) Ylayout -= formulaBoxHeight/2; //Ylayout -= 14;
             return Ylayout;
         }
         else {
             BranchNode initialNode = dependents.get(0);
-            minYlayout = initialNode.setLayout(xVal + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 36);
+
+            if (!initialNode.isFormulaNode())   minYlayout = initialNode.setLayout(xVal + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 36);
+            else
+            minYlayout = initialNode.setLayout(xVal + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + connectorBoxedDRTA.getRTA().getPrefWidth() + 9);
+
             maxYlayout = minYlayout;
             for (int i = 1; i < dependents.size(); i++) {
                 BranchNode node = dependents.get(i);
-                maxYlayout = node.setLayout(xVal + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 36);
+
+
+              if (!initialNode.isFormulaNode()) maxYlayout = node.setLayout(xVal + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 36);
+              else
+                maxYlayout = node.setLayout(xVal + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + connectorBoxedDRTA.getRTA().getPrefWidth() + 9);
             }
             Ylayout = minYlayout + (maxYlayout - minYlayout)/2.0;
             return Ylayout;
@@ -169,10 +180,16 @@ public class BranchNode extends HBox {
             if (dependents.get(0).isFormulaNode()) {
                 offsetY = 0.0;
                 if (dependents.size() == 1) {
-                    VBox simpleConnector = newSimpleConnectBox();
+
+                    HBox simpleConnector = connectorBoxedDRTA.getBoxedRTA();
+
+//                    VBox simpleConnector = newSimpleConnectBox();
                     pane.getChildren().add(simpleConnector);
                     BranchNode dependent = dependents.get(0);
-                    simpleConnector.setLayoutX(dependent.getXLayout() - 30.0);
+
+//                    simpleConnector.setLayoutX(dependent.getXLayout() - 30.0);
+
+                    simpleConnector.setLayoutX(Xlayout + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 8);
                     simpleConnector.setLayoutY(dependent.getYLayout() + formulaBoxHeight * 3/8);
                 }
                 else if (dependents.size() > 1) {
@@ -182,7 +199,10 @@ public class BranchNode extends HBox {
                     double bottom = bottomNode.getYLayout();
                     HBox bracketBox = newBracketBox(top, bottom);
                     pane.getChildren().add(bracketBox);
-                    bracketBox.setLayoutX(topNode.getXLayout() - 30);
+
+     //               bracketBox.setLayoutX(topNode.getXLayout() - 30);
+
+                    bracketBox.setLayoutX(Xlayout + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + 3);
                     bracketBox.setLayoutY(topNode.getYLayout() + formulaBoxHeight + .8);
                 }
             }
@@ -191,9 +211,15 @@ public class BranchNode extends HBox {
                 Pane branchPane = newTermBranch();
                 pane.getChildren().add(branchPane);
                 BranchNode topNode = dependents.get(0);
-                double xDiff = 31.0;
-                if (dotDivider) xDiff = 24.0;
-                branchPane.setLayoutX(topNode.getXLayout() - xDiff);
+ //               double xDiff = 31.0;
+ //               if (dotDivider) xDiff = 24.0;
+
+                double dotsBump = 6;
+                if (dotDivider) dotsBump = 12;
+
+
+               branchPane.setLayoutX(Xlayout + formulaBoxedDRTA.getRTA().getPrefWidth() + annBump + rootBump + dotsBump );
+ //               branchPane.setLayoutX(topNode.getXLayout() - xDiff);
                 branchPane.setLayoutY(topNode.getYLayout() + formulaBoxHeight + 1.5);
             }
         }
@@ -212,7 +238,22 @@ public class BranchNode extends HBox {
         RichTextArea rta = boxedDRTA.getRTA();
         rta.setMaxHeight(formulaBoxHeight);
         rta.setMinHeight(formulaBoxHeight);
-        rta.setPrefWidth(48);
+
+        RichTextAreaSkin rtaSkin = (RichTextAreaSkin) rta.getSkin();
+        rta.prefWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 3), 10));
+        rta.prefWidthProperty().addListener((ob, ov, nv) -> {
+            horizontalTreeView.refreshTreePanes();
+        });
+
+
+        rta.addEventFilter(KeyEvent.ANY, e -> {
+            if (e.getCode() == KeyCode.ENTER) e.consume();
+        });
+//        rta.setPrefWidth(48);
+
+
+
+
         rta.getStylesheets().add("RichTExtField.css");
         rta.setPromptText("");
 
@@ -236,7 +277,7 @@ public class BranchNode extends HBox {
 
     private VBox newSimpleConnectBox() {
 
-        connectorBoxedDRTA.getRTA().setPrefWidth(30);
+//        connectorBoxedDRTA.getRTA().setPrefWidth(30);
         VBox connectBox = new VBox(connectorBoxedDRTA.getBoxedRTA());
         connectBox.setAlignment(Pos.CENTER);
         return connectBox;
@@ -244,16 +285,23 @@ public class BranchNode extends HBox {
 
     private HBox newBracketBox(double top, double bottom) {
         double height = bottom - top;
-        connectorBoxedDRTA.getRTA().setPrefWidth(24);
+//        connectorBoxedDRTA.getRTA().setPrefWidth(24);
         connectorBoxedDRTA.getBoxedRTA().setPadding(new Insets(0,0,6,0));
-        VBox rtaBox = new VBox(connectorBoxedDRTA.getBoxedRTA());
-        rtaBox.setAlignment(Pos.CENTER);
+
+
+//        VBox rtaBox = new VBox(connectorBoxedDRTA.getBoxedRTA());
+//        rtaBox.setAlignment(Pos.CENTER);
+//        HBox rtaBox = connectorBoxedDRTA.getBoxedRTA();
+        Group rtaBox = new Group(connectorBoxedDRTA.getBoxedRTA());
+
+
         Line stub = new Line(0, 0, 3, 0);
         stub.setStyle("-fx-stroke-width: 1.5");
         Line bracket = new Line(0,0, 0, height);
         bracket.setStyle("-fx-stroke-width: 1.5");
         HBox bracketBox = new HBox(rtaBox, stub, bracket);
         bracketBox.setAlignment(Pos.CENTER);
+
         return bracketBox;
     }
 

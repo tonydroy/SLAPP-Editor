@@ -14,9 +14,9 @@ public class BranchModel implements Serializable {
     private boolean rootBranch;
     private String annotationText;
     private Document formulaDoc;
-    private double formulaPrefWidth;
+//    private double formulaPrefWidth;
     private Document connectorDoc;
-    private double connectorPrefWidth;
+//    private double connectorPrefWidth;
     private ArrayList<BranchModel> dependents = new ArrayList<>();
 
 
@@ -51,16 +51,16 @@ public class BranchModel implements Serializable {
 
     public Document getFormulaDoc() {    return formulaDoc;   }
 
-    public void setFormulaPrefWidth(double formulaPrefWidth) {     this.formulaPrefWidth = formulaPrefWidth;   }
+//    public void setFormulaPrefWidth(double formulaPrefWidth) {     this.formulaPrefWidth = formulaPrefWidth;   }
 
-    public double getFormulaPrefWidth() {     return formulaPrefWidth; }
+//    public double getFormulaPrefWidth() {     return formulaPrefWidth; }
 
     public void setConnectorDoc(Document connectorDoc) {    this.connectorDoc = connectorDoc;   }
 
     public Document getConnectorDoc() {    return connectorDoc;  }
 
-    public double getConnectorPrefWidth() {    return connectorPrefWidth;  }
+//    public double getConnectorPrefWidth() {    return connectorPrefWidth;  }
 
-    public void setConnectorPrefWidth(double connectorPrefWidth) {     this.connectorPrefWidth = connectorPrefWidth;  }
+//    public void setConnectorPrefWidth(double connectorPrefWidth) {     this.connectorPrefWidth = connectorPrefWidth;  }
 
 }
