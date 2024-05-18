@@ -1,6 +1,7 @@
 package slapp.editor.vertical_tree;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -19,6 +20,7 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
 
     private MainWindowView mainView;
     private String exerciseName = new String("");
+    private RichTextAreaSkin.KeyMapValue defaultKeyboard;
     private BorderPane root;
     private RootLayout rootLayout;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
@@ -80,6 +82,10 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
     public BooleanProperty undoRedoFlagProperty() {    return undoRedoFlag;    }
 
     public void setUndoRedoFlag(boolean undoRedoFlag) {    this.undoRedoFlag.set(undoRedoFlag);    }
+
+    public void setDefaultKeyboard(RichTextAreaSkin.KeyMapValue defaultKeyboard) {    this.defaultKeyboard = defaultKeyboard;  }
+
+    public RichTextAreaSkin.KeyMapValue getDefaultKeyboard() {     return defaultKeyboard; }
 
     @Override
     public String getExerciseName() { return exerciseName; }

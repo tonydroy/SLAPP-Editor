@@ -65,6 +65,8 @@ public class VerticalTreeABEFExpExercise implements Exercise<VerticalTreeABEFExp
 
     private void setVerticalTreeView() {
         verticalTreeABEFExpView.setExerciseName(verticalTreeABEFExpModel.getExerciseName());
+        verticalTreeABEFExpView.setExplainPrompt(verticalTreeABEFExpModel.getExplainPrompt());
+        verticalTreeABEFExpView.setDefaultKeyboard(verticalTreeABEFExpModel.getDefaultKeyboardType());
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
@@ -554,7 +556,9 @@ public class VerticalTreeABEFExpExercise implements Exercise<VerticalTreeABEFExp
         VerticalTreeABEFExpModel model = new VerticalTreeABEFExpModel();
 
         model.setExerciseName(verticalTreeABEFExpModel.getExerciseName());
+        model.setExplainPrompt(verticalTreeABEFExpModel.getExplainPrompt());
         model.setOriginalModel(verticalTreeABEFExpModel.getOriginalModel());
+        model.setDefaultKeyboardType(verticalTreeABEFExpModel.getDefaultKeyboardType());
 
         model.setABChoiceLead(verticalTreeABEFExpModel.getABChoiceLead());
         model.setaPrompt(verticalTreeABEFExpModel.getaPrompt());

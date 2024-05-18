@@ -43,6 +43,7 @@ public class TruthTableGenCreate {
     private MainWindow mainWindow;
     private MainWindowView mainView;
     private TextField nameField;
+    private TextField explainPromptField;
     private RichTextArea statementRTA;
     private DecoratedRTA statementDRTA;
     private boolean fieldModified = false;
@@ -78,6 +79,7 @@ public class TruthTableGenCreate {
     private ChangeListener choiceLeadListener;
     private ChangeListener aPromptListener;
     private ChangeListener bPromptListener;
+    private ChangeListener explainPromptListener;
 
     private TextField genPromptField;
     private ChangeListener genPromptListener;
@@ -97,6 +99,7 @@ public class TruthTableGenCreate {
         this(mainWindow);
 
         nameField.setText(originalModel.getExerciseName());
+        explainPromptField.setText(originalModel.getExplainPrompt());
         genPromptField.setText(originalModel.getGeneratePrompt());
         statementRTA.setDocument(originalModel.getExerciseStatement());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
@@ -162,7 +165,20 @@ public class TruthTableGenCreate {
             }
         };
         genPromptField.textProperty().addListener(genPromptListener);
-        HBox genPromptBox = new HBox(10, genPromptLabel, genPromptField);
+
+        Label explainPromptLabel = new Label("Explain Prompt: ");
+        explainPromptField  = new TextField();
+        explainPromptField.setPromptText("(plain text)");
+        explainPromptListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldModified = true;
+            }
+        };
+        explainPromptField.textProperty().addListener(nameListener);
+
+
+        HBox genPromptBox = new HBox(10, genPromptLabel, genPromptField, explainPromptLabel, explainPromptField);
         genPromptBox.setAlignment(Pos.CENTER_LEFT);
 
         //choice fields
@@ -375,14 +391,14 @@ public class TruthTableGenCreate {
         //center area
         String helpText = "Truth Table Gen Exercise is like Truth Table Explain Exercise in that it requests a choice between some mutually exclusive options along with an explanation.  " +
                 "In addition it begins with a field for an interpretation/translation, and lets the student generate the premises and conclusion on the table.\n\n" +
-                "For the Truth Table Gen exercise, supply the exercise name and exercise statement.  The Gen Prompt appears in the interpretation/translation field.  The Checkbox lead appears prior to the check boxes, the A prompt with the first box, and the B prompt with the second.  " +
+                "For the Truth Table Gen exercise, supply the exercise name and exercise statement.  The Explain Prompt appears in the explain field.  The Gen Prompt appears in the interpretation/translation field.  The Checkbox lead appears prior to the check boxes, the A prompt with the first box, and the B prompt with the second.  " +
                 "The preset operator buttons set operators according to the official and abbreviating languages from Symbolic Logic; alternatively, you may edit sentential operator symbols individually. " +
                 "Finally you will usually leave the formula fields blank, as formulas you enter here may be overwritten by the student working the exercise.  " +
                 "In the ordinary case, you will also leave the \"conclusion divider\" selected as the student is expeceted to provide at least a conclusion sentence." ;
 
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(240);
+        helpArea.setPrefHeight(255);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
@@ -695,6 +711,7 @@ public class TruthTableGenCreate {
         TruthTableGenModel model = new TruthTableGenModel();
 
         model.setExerciseName(nameField.getText());
+        model.setExplainPrompt(explainPromptField.getText());
         model.setGeneratePrompt(genPromptField.getText());
         model.setStarted(false);
 //        model.setStatementPrefHeight(70.0);

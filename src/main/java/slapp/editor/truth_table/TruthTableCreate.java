@@ -257,6 +257,7 @@ public class TruthTableCreate {
         mainFormulasPane.setVgap(10);
         mainFormulaList = new ArrayList<>();
         BoxedDRTA mainFormulaBoxedDRTA = newMainFormulaBoxedDRTA();
+        mainFormulaBoxedDRTA.getRTA().getActionFactory().saveNow().execute(new ActionEvent());
         mainFormulaList.add(mainFormulaBoxedDRTA);
         updateMainFormulaGridFromFields();
 

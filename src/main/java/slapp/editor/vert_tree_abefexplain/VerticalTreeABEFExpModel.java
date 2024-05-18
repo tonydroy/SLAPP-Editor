@@ -1,5 +1,6 @@
 package slapp.editor.vert_tree_abefexplain;
 
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
 import slapp.editor.main_window.ExerciseType;
@@ -13,7 +14,9 @@ import java.util.List;
 public class VerticalTreeABEFExpModel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
+    private String explainPrompt ="";
     private ExerciseType exerciseType = ExerciseType.VERTICAL_TREE;
+    private RichTextAreaSkin.KeyMapValue defaultKeyboardType;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
     private double statementPrefHeight = 80;
@@ -125,6 +128,12 @@ public class VerticalTreeABEFExpModel implements ExerciseModel<Document>, Serial
     public boolean iseSelected() { return eSelected; }
     public String getfPrompt() { return fPrompt; }
     public boolean isfSelected() { return fSelected; }
+    public String getExplainPrompt() {    return explainPrompt;  }
+    public void setExplainPrompt(String explainPrompt) {   this.explainPrompt = explainPrompt;  }
+
+    public RichTextAreaSkin.KeyMapValue getDefaultKeyboardType() {     return defaultKeyboardType;  }
+
+    public void setDefaultKeyboardType(RichTextAreaSkin.KeyMapValue defaultKeyboardType) {     this.defaultKeyboardType = defaultKeyboardType;  }
 
     @Override
     public String getExerciseName() { return exerciseName;    }

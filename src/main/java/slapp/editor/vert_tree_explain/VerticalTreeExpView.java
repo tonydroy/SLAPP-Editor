@@ -1,6 +1,7 @@
 package slapp.editor.vert_tree_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -22,6 +23,7 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
 
     private MainWindowView mainView;
     private String exerciseName = new String("");
+    private RichTextAreaSkin.KeyMapValue defaultKeyboard;
     private BorderPane root;
     private ExpRootLayout rootLayout;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
@@ -96,6 +98,10 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
 
     public DecoratedRTA getExplainDRTA() { return explainDRTA; }
     public void setExplainPrompt(String prompt) {this.explainPrompt = prompt;}
+
+    public RichTextAreaSkin.KeyMapValue getDefaultKeyboard() {     return defaultKeyboard;   }
+
+    public void setDefaultKeyboard(RichTextAreaSkin.KeyMapValue defaultKeyboard) {     this.defaultKeyboard = defaultKeyboard;  }
 
     @Override
     public String getExerciseName() { return exerciseName; }

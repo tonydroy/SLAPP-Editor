@@ -211,7 +211,7 @@ public class ABEFGcreate {
         promptFieldG.textProperty().addListener(fieldListenerG);
 
 
-        Label explainPromptLabel = new Label("Content prompt: ");
+        Label explainPromptLabel = new Label("Explain prompt: ");
         explainPromptLabel.setPrefWidth(100);
         explainPromptField = new TextField();
         explainPromptField.setPromptText("(plain text)");

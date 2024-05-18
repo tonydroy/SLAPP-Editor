@@ -45,6 +45,7 @@ public class TruthTableExpCreate {
     private MainWindow mainWindow;
     private MainWindowView mainView;
     private TextField nameField;
+    private TextField explainPromptField;
     private RichTextArea statementRTA;
     private DecoratedRTA statementDRTA;
     private boolean fieldModified = false;
@@ -80,6 +81,7 @@ public class TruthTableExpCreate {
     private ChangeListener choiceLeadListener;
     private ChangeListener aPromptListener;
     private ChangeListener bPromptListener;
+    private ChangeListener explainPromptListener;
     private double formulaBoxHeight = 27;
     private Button lowerSaveButton;
     private Button saveAsButton;
@@ -95,6 +97,7 @@ public class TruthTableExpCreate {
         this(mainWindow);
 
         nameField.setText(originalModel.getExerciseName());
+        explainPromptField.setText(originalModel.getExplainPrompt());
         statementRTA.setDocument(originalModel.getExerciseStatement());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         choiceLeadField.setText(originalModel.getChoiceLead());
@@ -145,7 +148,19 @@ public class TruthTableExpCreate {
             }
         };
         nameField.textProperty().addListener(nameListener);
-        HBox nameBox = new HBox(10, nameLabel, nameField);
+
+        Label explainPromptLabel = new Label("Explain Prompt: ");
+        explainPromptField  = new TextField();
+        explainPromptField.setPromptText("(plain text)");
+        explainPromptListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                fieldModified = true;
+            }
+        };
+        explainPromptField.textProperty().addListener(nameListener);
+
+        HBox nameBox = new HBox(10, nameLabel, nameField, explainPromptLabel, explainPromptField);
         nameBox.setAlignment(Pos.CENTER_LEFT);
 
         //choice fields
@@ -307,6 +322,7 @@ public class TruthTableExpCreate {
         mainFormulasPane.setVgap(10);
         mainFormulaList = new ArrayList<>();
         BoxedDRTA mainFormulaBoxedDRTA = newMainFormulaBoxedDRTA();
+        mainFormulaBoxedDRTA.getRTA().getActionFactory().saveNow().execute(new ActionEvent());
         mainFormulaList.add(mainFormulaBoxedDRTA);
         updateMainFormulaGridFromFields();
 
@@ -355,7 +371,7 @@ public class TruthTableExpCreate {
 
         //center area
         String helpText = "Truth Table Explain Exercise is like Truth Table Exercise except that it requests a choice between some mutually exclusive options (as valid/invalid) along with a short explanation.\n\n" +
-                "For the Truth Table Explain exercise, supply the exercise name and exercise statement.  The Checkbox lead appears prior to the check boxes, the A prompt with the first box, and the B prompt with the second.  " +
+                "For the Truth Table Explain exercise, supply the exercise name and exercise statement.  The explain prompt appears in the explain field.  The checkbox lead appears prior to the check boxes, the A prompt with the first box, and the B prompt with the second.  " +
                 "The preset operator buttons set operators according to the official and abbreviating languages from Symbolic Logic; alternatively, you may edit sentential operator symbols individually. " +
                 "Finally supply formulas to appear across the top of the truth table (not including the base column).  The \"conclusion divider\" merely inserts an extra space and slash ('/') prior to the last formula." ;
 
@@ -440,6 +456,7 @@ public class TruthTableExpCreate {
         centerBox.layout();
         setCenterVgrow();
         Platform.runLater(() -> nameField.requestFocus());
+
 
     }
 
@@ -622,15 +639,15 @@ public class TruthTableExpCreate {
         boolean okcontinue = true;
 
         for (BoxedDRTA bdrta : unaryOperatorList) {
-            if (bdrta.getRTA().isModified()) {fieldModified = true;}
+            if (bdrta.getRTA().isModified()) {fieldModified = true; }
         }
         for (BoxedDRTA bdrta : binaryOperatorList) {
-            if (bdrta.getRTA().isModified()) {fieldModified = true;}
+            if (bdrta.getRTA().isModified()) {fieldModified = true; }
         }
         for (BoxedDRTA bdrta : mainFormulaList) {
             if (bdrta.getRTA().isModified()) {fieldModified = true;  }
         }
-        if (statementRTA.isModified()) {fieldModified = true; }
+        if (statementRTA.isModified()) {fieldModified = true;  }
 
         if (fieldModified) {
             Alert confirm = EditorAlerts.confirmationAlert(title, content);
@@ -670,6 +687,7 @@ public class TruthTableExpCreate {
         TruthTableExpModel model = new TruthTableExpModel();
 
         model.setExerciseName(nameField.getText());
+        model.setExplainPrompt(explainPromptField.getText());
         model.setStarted(false);
         model.setStatementPrefHeight(70.0);
 

@@ -29,6 +29,7 @@ import java.util.function.UnaryOperator;
 public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
     private MainWindowView mainView;
     private String exerciseName = new String();
+    private String explainPrompt = "";
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
@@ -491,7 +492,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         explainRTA.getStylesheets().add("slappTextArea.css");
         explainRTA.setPrefHeight(60.0);
         explainRTA.setMinHeight(60.0);
-        explainRTA.setPromptText("Explain:");
+        explainRTA.setPromptText(explainPrompt);
     }
 
 
@@ -539,6 +540,8 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
     public DecoratedRTA getExplainDRTA() {return explainDRTA; }
     public void setExerciseInterpretation(DecoratedRTA drta) {exerciseInterpretation = drta;}
     public DecoratedRTA getExerciseInterpretation() {return exerciseInterpretation; }
+
+    public void setExplainPrompt(String explainPrompt) {    this.explainPrompt = explainPrompt; }
 
     public void setGeneratePrompt(String generatePrompt) {   this.generatePrompt = generatePrompt; }
 

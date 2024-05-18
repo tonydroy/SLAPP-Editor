@@ -81,6 +81,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         spacerConstraint = new ColumnConstraints(10);
 
         truthTableGenView.setExerciseName(truthTableGenModel.getExerciseName());
+        truthTableGenView.setExplainPrompt(truthTableGenModel.getExplainPrompt());
         truthTableGenView.setGeneratePrompt(truthTableGenModel.getGeneratePrompt());
         truthTableGenView.setTableRows(tableRows);
 
@@ -486,6 +487,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         TruthTableGenModel model = new TruthTableGenModel();
         model.setExerciseName(truthTableGenView.getExerciseName());
         model.setGeneratePrompt(truthTableGenModel.getGeneratePrompt());
+        model.setExplainPrompt(truthTableGenModel.getExplainPrompt());
         model.setOriginalModel(truthTableGenModel.getOriginalModel());
         model.setStarted(truthTableGenModel.isStarted() || exerciseModified);
         model.setStatementPrefHeight(truthTableGenView.getExerciseStatement().getEditor().getPrefHeight());

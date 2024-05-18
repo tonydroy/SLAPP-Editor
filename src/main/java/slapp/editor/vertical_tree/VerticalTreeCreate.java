@@ -35,6 +35,7 @@ import slapp.editor.vertical_tree.object_models.ObjectControlType;
 import java.util.List;
 import java.util.Optional;
 
+import static com.gluonhq.richtextarea.RichTextAreaSkin.KeyMapValue.*;
 import static javafx.scene.control.ButtonType.OK;
 import static slapp.editor.vertical_tree.drag_drop.DragIconType.*;
 import static slapp.editor.vertical_tree.object_models.ObjectControlType.*;
@@ -57,6 +58,9 @@ public class VerticalTreeCreate {
     private CheckBox annotationCheck;
     private CheckBox underlineCheck;
     private CheckBox mappingCheck;
+    private CheckBox baseItalicCheck;
+    private CheckBox italicSansCheck;
+    private RichTextAreaSkin.KeyMapValue keyboardSelector;
     private double scale = 1.0;
     private Stage stage;
     private Scene scene;
@@ -78,6 +82,7 @@ public class VerticalTreeCreate {
         statementRTA.setDocument(originalModel.getExerciseStatement());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         nameField.setText(originalModel.getExerciseName());
+        keyboardSelector = originalModel.getDefaultKeyboardType();
         List<DragIconType> dragIconList = originalModel.getDragIconList();
         treeFormulaBoxCheck.setSelected(dragIconList.contains(tree_field));
         verticalBracketCheck.setSelected(dragIconList.contains(bracket));
@@ -125,6 +130,33 @@ public class VerticalTreeCreate {
         HBox nameBox = new HBox(nameLabel, nameField);
         nameBox.setAlignment(Pos.BASELINE_LEFT);
 
+        Label keyboardLabel = new Label("Default Keyboard: ");
+        keyboardLabel.setPrefWidth(100);
+        baseItalicCheck = new CheckBox("Base/Italic");
+        baseItalicCheck.setSelected(false);
+        baseItalicCheck.selectedProperty().addListener((ob, ov, nv) -> {
+            boolean selected = (boolean) nv;
+            if (selected) {
+                modified = true;
+                keyboardSelector = BASE;
+                italicSansCheck.setSelected(false);
+            }
+        });
+        italicSansCheck = new CheckBox("Italic/Sans");
+        italicSansCheck.setSelected(true);
+        italicSansCheck.selectedProperty().addListener((ob, ov, nv) -> {
+            boolean selected = (boolean) nv;
+            if (selected) {
+                modified = true;
+                keyboardSelector = ITALIC_AND_SANS;
+                baseItalicCheck.setSelected(false);
+            }
+        });
+        HBox keyboardBox = new HBox(20, keyboardLabel, baseItalicCheck, italicSansCheck);
+        keyboardBox.setAlignment(Pos.BASELINE_LEFT);
+
+
+
         //drag bar
         Label dragLabel = new Label("Drag Bar: ");
         dragLabel.setPrefWidth(100);
@@ -169,18 +201,18 @@ public class VerticalTreeCreate {
         HBox controlBox = new HBox(20,controlLabel, boxingFormulaCheck, circleCheck, starCheck, annotationCheck, underlineCheck, mappingCheck);
         controlBox.setAlignment(Pos.BASELINE_LEFT);
 
-        VBox fieldsBox = new VBox(15, nameBox, dragBox, controlBox);
+        VBox fieldsBox = new VBox(15, nameBox, dragBox, controlBox, keyboardBox);
         fieldsBox.setPadding(new Insets(20,0, 0, 20));
 
         //center
         String helpText = "Vertical Tree Exercise is appropriate for any exercise that builds a tree diagram from the top down (or bottom up), as well as for 'mapping' exercises (as from chapter 2 of Symbolic Logic).  It is unlikely that any one exercise will include all the drag and control options -- but the different options make it possible to accomodate a wide variety of exercises.\n\n"+
-                "For the vertical tree exercise, you supply the exercise name.  Use checkboxes to select items that may be dragged into the work area, and then buttons for functions applied to the formula boxes.  As usual, the exercise statement goes in the main statement area."
+                "For the vertical tree exercise, you supply the exercise name and exercise statement.  Use checkboxes to select items that may be dragged into the work area, and then buttons for functions applied to the formula boxes.  The keyboard selector sets the default keyboard for Tree Formula boxes."
                 ;
 
 
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(150);
+        helpArea.setPrefHeight(170);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
@@ -365,6 +397,8 @@ public class VerticalTreeCreate {
     private VerticalTreeModel extractModelFromWindow() {
         VerticalTreeModel model = new VerticalTreeModel();
         model.setExerciseName(nameField.getText());
+        if (italicSansCheck.isSelected()) model.setDefaultKeyboardType(ITALIC_AND_SANS);
+        else model.setDefaultKeyboardType(BASE);
 
         List<DragIconType> dragList = model.getDragIconList();
         if (treeFormulaBoxCheck.isSelected()) dragList.add(tree_field);

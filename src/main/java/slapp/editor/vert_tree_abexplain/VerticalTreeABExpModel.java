@@ -1,5 +1,6 @@
 package slapp.editor.vert_tree_abexplain;
 
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
 import slapp.editor.main_window.ExerciseType;
@@ -14,6 +15,7 @@ public class VerticalTreeABExpModel implements ExerciseModel<Document>, Serializ
 
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.VERTICAL_TREE;
+    private RichTextAreaSkin.KeyMapValue defaultKeyboardType;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
     private double statementPrefHeight = 80;
@@ -35,6 +37,7 @@ public class VerticalTreeABExpModel implements ExerciseModel<Document>, Serializ
     private String bPrompt = new String("");
     private boolean bSelected = false;
     private Document explainDocument = new Document();
+    private String explainPrompt = "";
 
 
     public VerticalTreeABExpModel(){}
@@ -47,6 +50,10 @@ public class VerticalTreeABExpModel implements ExerciseModel<Document>, Serializ
     public void setExplainDocument(Document explainDocument) {this.explainDocument = explainDocument; }
 
     public Document getExplainDocument() {  return explainDocument;  }
+
+    public String getExplainPrompt() {    return explainPrompt;  }
+
+    public void setExplainPrompt(String explainPrompt) { this.explainPrompt = explainPrompt;  }
 
     public void setChoiceLead(String choiceLead) {
         this.choiceLead = choiceLead;
@@ -95,6 +102,10 @@ public class VerticalTreeABExpModel implements ExerciseModel<Document>, Serializ
     public boolean isaSelected() { return aSelected; }
     public String getbPrompt() { return bPrompt; }
     public boolean isbSelected() { return bSelected; }
+
+    public RichTextAreaSkin.KeyMapValue getDefaultKeyboardType() {     return defaultKeyboardType;   }
+
+    public void setDefaultKeyboardType(RichTextAreaSkin.KeyMapValue defaultKeyboardType) {     this.defaultKeyboardType = defaultKeyboardType;   }
 
     @Override
     public String getExerciseName() { return exerciseName;    }

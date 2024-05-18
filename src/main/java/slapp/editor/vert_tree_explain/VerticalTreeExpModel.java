@@ -1,5 +1,6 @@
 package slapp.editor.vert_tree_explain;
 
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
 import slapp.editor.main_window.ExerciseType;
@@ -14,6 +15,7 @@ public class VerticalTreeExpModel implements ExerciseModel<Document>, Serializab
 
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.VERTICAL_TREE;
+    private RichTextAreaSkin.KeyMapValue defaultKeyboardType;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
     private double statementPrefHeight = 80;
@@ -37,6 +39,10 @@ public class VerticalTreeExpModel implements ExerciseModel<Document>, Serializab
 
 
     public void setExerciseName(String exerciseName) { this.exerciseName = exerciseName;    }
+
+    public RichTextAreaSkin.KeyMapValue getDefaultKeyboardType() {     return defaultKeyboardType;  }
+
+    public void setDefaultKeyboardType(RichTextAreaSkin.KeyMapValue defaultKeyboardType) {    this.defaultKeyboardType = defaultKeyboardType;  }
 
     public void setExerciseStatement(Document exerciseStatement) { this.exerciseStatement = exerciseStatement;    }
     public String getExplainPrompt() {return explainPrompt;}

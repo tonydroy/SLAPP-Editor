@@ -1,6 +1,7 @@
 package slapp.editor.vert_tree_abefexplain;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -23,6 +24,8 @@ public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
 
     private MainWindowView mainView;
     private String exerciseName = new String("");
+    private RichTextAreaSkin.KeyMapValue defaultKeyboard;
+    private String explainPrompt = "";
     private Label abChoiceLeadLabel = new Label();
     private CheckBox aCheckBox = new CheckBox();
     private CheckBox bCheckBox = new CheckBox();
@@ -95,7 +98,7 @@ public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
         explainRTA.getStylesheets().add("slappTextArea.css");
         explainRTA.setPrefHeight(80.0);
         explainRTA.setMinHeight(80.0);
-        explainRTA.setPromptText("Explain:");
+        explainRTA.setPromptText(explainPrompt);
     }
 
     public MainWindowView getMainView() {
@@ -124,6 +127,12 @@ public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
     public Label getABChoiceLeadLabel() { return abChoiceLeadLabel;  }
     public CheckBox getaCheckBox() {  return aCheckBox;  }
     public CheckBox getbCheckBox() {  return bCheckBox;  }
+
+    public RichTextAreaSkin.KeyMapValue getDefaultKeyboard() {    return defaultKeyboard;   }
+
+    public void setDefaultKeyboard(RichTextAreaSkin.KeyMapValue defaultKeyboard) {     this.defaultKeyboard = defaultKeyboard;  }
+
+    public void setExplainPrompt(String explainPrompt) {    this.explainPrompt = explainPrompt; }
 
     @Override
     public String getExerciseName() { return exerciseName; }

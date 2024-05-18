@@ -11,6 +11,7 @@ import java.util.List;
 public class TruthTableExpModel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
+    private String explainPrompt = "";
     private ExerciseType exerciseType = ExerciseType.TRUTH_TABLE_ABEXP;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
@@ -141,6 +142,8 @@ public class TruthTableExpModel implements ExerciseModel<Document>, Serializable
     public boolean isaSelected() { return aSelected; }
     public String getbPrompt() { return bPrompt; }
     public boolean isbSelected() { return bSelected; }
+    public String getExplainPrompt() {    return explainPrompt;  }
+    public void setExplainPrompt(String explainPrompt) {    this.explainPrompt = explainPrompt;  }
 
     @Override
     public String getExerciseName() {

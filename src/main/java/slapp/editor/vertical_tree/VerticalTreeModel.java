@@ -1,5 +1,6 @@
 package slapp.editor.vertical_tree;
 
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
 import slapp.editor.main_window.ExerciseType;
@@ -15,6 +16,7 @@ public class VerticalTreeModel implements ExerciseModel<Document>, Serializable 
 
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.VERTICAL_TREE;
+    private RichTextAreaSkin.KeyMapValue defaultKeyboardType;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
     private double statementPrefHeight = 80;
@@ -60,6 +62,10 @@ public class VerticalTreeModel implements ExerciseModel<Document>, Serializable 
     public List<ClickableMapLinkMod> getClickableMapLinks() {  return clickableMapLinks;   }
 
     public List<MapQuestionMarkerMod> getMapQuestionMarkers() {  return mapQuestionMarkers;    }
+
+    public RichTextAreaSkin.KeyMapValue getDefaultKeyboardType() {    return defaultKeyboardType;  }
+
+    public void setDefaultKeyboardType(RichTextAreaSkin.KeyMapValue defaultKeyboardType) {   this.defaultKeyboardType = defaultKeyboardType;  }
 
     @Override
     public String getExerciseName() { return exerciseName;    }

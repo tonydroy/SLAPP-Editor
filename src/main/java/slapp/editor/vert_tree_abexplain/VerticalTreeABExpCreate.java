@@ -36,6 +36,8 @@ import slapp.editor.vertical_tree.object_models.ObjectControlType;
 import java.util.List;
 import java.util.Optional;
 
+import static com.gluonhq.richtextarea.RichTextAreaSkin.KeyMapValue.BASE;
+import static com.gluonhq.richtextarea.RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS;
 import static javafx.scene.control.ButtonType.OK;
 import static slapp.editor.vertical_tree.drag_drop.DragIconType.*;
 import static slapp.editor.vertical_tree.object_models.ObjectControlType.*;
@@ -43,6 +45,7 @@ import static slapp.editor.vertical_tree.object_models.ObjectControlType.*;
 public class VerticalTreeABExpCreate {
     private MainWindow mainWindow;
     private TextField nameField;
+    private TextField explainPromptField;
     private DecoratedRTA statementDRTA;
     private RichTextArea statementRTA;
     private TextArea helpArea;
@@ -53,6 +56,7 @@ public class VerticalTreeABExpCreate {
     ChangeListener choiceLeadListener;
     ChangeListener aPromptListener;
     ChangeListener bPromptListener;
+    ChangeListener explainPromptListener;
     private boolean modified = false;
     private CheckBox treeFormulaBoxCheck;
     private CheckBox verticalBracketCheck;
@@ -64,6 +68,9 @@ public class VerticalTreeABExpCreate {
     private CheckBox annotationCheck;
     private CheckBox underlineCheck;
     private CheckBox mappingCheck;
+    private CheckBox baseItalicCheck;
+    private CheckBox italicSansCheck;
+    private RichTextAreaSkin.KeyMapValue keyboardSelector;
     private double scale = 1.0;
     private Stage stage;
     private Scene scene;
@@ -85,9 +92,11 @@ public class VerticalTreeABExpCreate {
         statementRTA.setDocument(originalModel.getExerciseStatement());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         nameField.setText(originalModel.getExerciseName());
+        keyboardSelector = originalModel.getDefaultKeyboardType();
         choiceLeadField.setText(originalModel.getChoiceLead());
         aPromptField.setText(originalModel.getaPrompt());
         bPromptField.setText(originalModel.getbPrompt());
+        explainPromptField.setText(originalModel.getExplainPrompt());
 
         List<DragIconType> dragIconList = originalModel.getDragIconList();
         treeFormulaBoxCheck.setSelected(dragIconList.contains(tree_field));
@@ -133,8 +142,46 @@ public class VerticalTreeABExpCreate {
             }
         };
         nameField.textProperty().addListener(nameListener);
-        HBox nameBox = new HBox(nameLabel, nameField);
+
+        Label explainPromptLabel = new Label("Explain Prompt: ");
+        explainPromptField  = new TextField();
+        explainPromptField.setPromptText("(plain text)");
+        explainPromptListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                modified = true;
+            }
+        };
+        explainPromptField.textProperty().addListener(nameListener);
+
+
+        HBox nameBox = new HBox(10, nameLabel, nameField, explainPromptLabel, explainPromptField);
         nameBox.setAlignment(Pos.BASELINE_LEFT);
+
+        Label keyboardLabel = new Label("Default Keyboard: ");
+        keyboardLabel.setPrefWidth(100);
+        baseItalicCheck = new CheckBox("Base/Italic");
+        baseItalicCheck.setSelected(false);
+        baseItalicCheck.selectedProperty().addListener((ob, ov, nv) -> {
+            boolean selected = (boolean) nv;
+            if (selected) {
+                modified = true;
+                keyboardSelector = BASE;
+                italicSansCheck.setSelected(false);
+            }
+        });
+        italicSansCheck = new CheckBox("Italic/Sans");
+        italicSansCheck.setSelected(true);
+        italicSansCheck.selectedProperty().addListener((ob, ov, nv) -> {
+            boolean selected = (boolean) nv;
+            if (selected) {
+                modified = true;
+                keyboardSelector = ITALIC_AND_SANS;
+                baseItalicCheck.setSelected(false);
+            }
+        });
+        HBox keyboardBox = new HBox(20, keyboardLabel, baseItalicCheck, italicSansCheck);
+        keyboardBox.setAlignment(Pos.BASELINE_LEFT);
 
         //choice fields
         Label choiceLeadLabel = new Label("Checkbox lead: ");
@@ -222,18 +269,18 @@ public class VerticalTreeABExpCreate {
         HBox controlBox = new HBox(20,controlLabel, boxingFormulaCheck, circleCheck, starCheck, annotationCheck, underlineCheck, mappingCheck);
         controlBox.setAlignment(Pos.BASELINE_LEFT);
 
-        VBox fieldsBox = new VBox(15, nameBox, choicesBox, dragBox, controlBox);
+        VBox fieldsBox = new VBox(15, nameBox, choicesBox, dragBox, controlBox, keyboardBox);
         fieldsBox.setPadding(new Insets(20,0, 0, 20));
 
         //center
-        String helpText = "Vertical Tree AB/Explain Exercise is like Vertical Tree Explain Exercise except that it requires a binary choice.  It is appropriate for any exercise that builds tree or map diagrams and requires a choice together with an explanation of the choice.  As in the simple cases, it is unlikely that any one exercise will include all the drag and control options -- but the different options make it possible to accommodate a wide variety of exercises.\n\n"+
-                "For this exercise, you supply the exercise name and statement.  The checkbox lead introduces the choice, and the A/B prompts label the choices.  Use checkboxes to select items that may be dragged into the work area, and then buttons for functions applied to the formula boxes."
+        String helpText = "Vertical Tree AB/Explain Exercise is like Vertical Tree Explain Exercise except that it requires a binary choice.  It is appropriate for any exercise that builds tree or map diagrams and requires a choice together with an explanation of the choice.  It is unlikely that any one exercise will include all the drag and control options -- but the different options make it possible to accommodate a wide variety of exercises.\n\n"+
+                "For this exercise, you supply the exercise name and statement.  The explain prompt appears in the explain field.  The checkbox lead introduces the choice, and the A/B prompts label the choices.  Use checkboxes to select items that may be dragged into the work area, and then buttons for functions applied to the formula boxes.  The Keyboard check boxes select the default keyboard for a Tree Formula box."
                 ;
 
 
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(180);
+        helpArea.setPrefHeight(200);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
@@ -423,9 +470,12 @@ public class VerticalTreeABExpCreate {
     private VerticalTreeABExpModel extractModelFromWindow() {
         VerticalTreeABExpModel model = new VerticalTreeABExpModel();
         model.setExerciseName(nameField.getText());
+        if (italicSansCheck.isSelected()) model.setDefaultKeyboardType(ITALIC_AND_SANS);
+        else model.setDefaultKeyboardType(BASE);
         model.setChoiceLead(choiceLeadField.getText());
         model.setaPrompt(aPromptField.getText());
         model.setbPrompt(bPromptField.getText());
+        model.setExplainPrompt(explainPromptField.getText());
 
         List<DragIconType> dragList = model.getDragIconList();
         if (treeFormulaBoxCheck.isSelected()) dragList.add(tree_field);

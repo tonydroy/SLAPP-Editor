@@ -62,6 +62,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
 
     private void setVerticalTreeView() {
         verticalTreeView.setExerciseName(verticalTreeModel.getExerciseName());
+        verticalTreeView.setDefaultKeyboard(verticalTreeModel.getDefaultKeyboardType());
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
@@ -451,6 +452,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         VerticalTreeModel model = new VerticalTreeModel();
 
         model.setExerciseName(verticalTreeModel.getExerciseName());
+        model.setDefaultKeyboardType(verticalTreeModel.getDefaultKeyboardType());
         model.setOriginalModel(verticalTreeModel.getOriginalModel());
         model.setDragIconList(verticalTreeModel.getDragIconList());
         model.setObjectControlList(verticalTreeModel.getObjectControlList());

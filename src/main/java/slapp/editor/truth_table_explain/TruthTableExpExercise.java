@@ -82,6 +82,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         spacerConstraint = new ColumnConstraints(10);
 
         truthTableExpView.setExerciseName(truthTableExpModel.getExerciseName());
+        truthTableExpView.setExplainPrompt(truthTableExpModel.getExplainPrompt());
         truthTableExpView.setTableRows(tableRows);
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
@@ -434,6 +435,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
     private TruthTableExpModel getTruthTableExpModelFromView() {
         TruthTableExpModel model = new TruthTableExpModel();
         model.setExerciseName(truthTableExpView.getExerciseName());
+        model.setExplainPrompt(truthTableExpModel.getExplainPrompt());
         model.setOriginalModel(truthTableExpModel.getOriginalModel());
         model.setStarted(truthTableExpModel.isStarted() || exerciseModified);
         model.setStatementPrefHeight(truthTableExpView.getExerciseStatement().getEditor().getPrefHeight());

@@ -161,7 +161,7 @@ public class ABcreate {
 
 
 
-        Label contentPromptLabel = new Label("Content prompt: ");
+        Label contentPromptLabel = new Label("Explain prompt: ");
         contentPromptLabel.setPrefWidth(100);
         contentPromptField = new TextField();
         contentPromptField.setPromptText("(plain text)");

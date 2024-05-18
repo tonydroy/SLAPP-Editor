@@ -65,6 +65,8 @@ public class VerticalTreeABExpExercise implements Exercise<VerticalTreeABExpMode
 
     private void setVerticalTreeView() {
         verticalTreeABExpView.setExerciseName(verticalTreeABExpModel.getExerciseName());
+        verticalTreeABExpView.setExplainPrompt(verticalTreeABExpModel.getExplainPrompt());
+        verticalTreeABExpView.setDefaultKeyboard(verticalTreeABExpModel.getDefaultKeyboardType());
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
@@ -516,6 +518,8 @@ public class VerticalTreeABExpExercise implements Exercise<VerticalTreeABExpMode
         VerticalTreeABExpModel model = new VerticalTreeABExpModel();
 
         model.setExerciseName(verticalTreeABExpModel.getExerciseName());
+        model.setDefaultKeyboardType(verticalTreeABExpModel.getDefaultKeyboardType());
+        model.setExplainPrompt(verticalTreeABExpModel.getExplainPrompt());
         model.setOriginalModel(verticalTreeABExpModel.getOriginalModel());
         model.setChoiceLead(verticalTreeABExpModel.getChoiceLead());
         model.setaPrompt(verticalTreeABExpModel.getaPrompt());
