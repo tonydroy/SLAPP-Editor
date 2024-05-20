@@ -15,7 +15,7 @@ public class VerticalTreeABExpModel implements ExerciseModel<Document>, Serializ
 
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.VERTICAL_TREE;
-    private RichTextAreaSkin.KeyMapValue defaultKeyboardType;
+    private RichTextAreaSkin.KeyMapValue defaultKeyboardType = RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
     private double statementPrefHeight = 80;

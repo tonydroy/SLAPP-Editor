@@ -93,6 +93,8 @@ public class VerticalTreeABExpCreate {
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         nameField.setText(originalModel.getExerciseName());
         keyboardSelector = originalModel.getDefaultKeyboardType();
+        italicSansCheck.setSelected(keyboardSelector == ITALIC_AND_SANS);
+        baseItalicCheck.setSelected(keyboardSelector == RichTextAreaSkin.KeyMapValue.BASE);
         choiceLeadField.setText(originalModel.getChoiceLead());
         aPromptField.setText(originalModel.getaPrompt());
         bPromptField.setText(originalModel.getbPrompt());

@@ -211,8 +211,8 @@ public class PrintUtilities {
         double wScale = 1.0;
         double hScale = 1.0;
         Pair<Double, Double> size = getNodeSize(node);
-        double width = size.getKey();
-        double height = size.getValue();
+        double width = size.getKey() + 5;     //increase height and width to stop right/bottom cutoff on scaled images
+        double height = size.getValue() + 5;
 
         if (width > getPageWidth()) {
             nodeFit = false;
