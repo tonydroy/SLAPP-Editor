@@ -672,7 +672,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             ViewLine viewLine = viewLines.get(row);
             int depth = viewLine.getDepth();
             if (!LineType.isSetupLine(viewLine.getLineType())) {
-                if (depth > 1) {
+//                if (depth > 1) {
                     if (++row < viewLines.size()) {
                         if (!(LineType.isShelfLine(viewLines.get(row).getLineType()) || LineType.isGapLine(viewLines.get(row).getLineType()))) {
                             ViewLine shelfLine = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
@@ -688,9 +688,9 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                     } else {
                         EditorAlerts.fleetingPopup("No shelf under last line.");
                     }
-                } else {
-                    EditorAlerts.fleetingPopup("Cannot modify at leftmost scope depth.");
-                }
+ //               } else {
+ //                   EditorAlerts.fleetingPopup("Cannot modify at leftmost scope depth.");
+ //               }
             } else {
                 EditorAlerts.fleetingPopup("Cannot modify setup line.");
             }
@@ -747,7 +747,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             if (!LineType.isSetupLine(viewLine.getLineType()) || viewLine.getLineType() == LineType.CONCLUSION_LINE) {
                 addEmptyViewContentRow(row, depth);
                 addEmptyViewContentRow(row, depth);
-                addEmptyViewContentRow(row, depth);
+//                addEmptyViewContentRow(row, depth);
                 if (derivationModel.isDefaultShelf()) {
                     ViewLine shelfLine = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
                     derivationView.getViewLines().add(row, shelfLine);
@@ -778,7 +778,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             if (!LineType.isSetupLine(viewLine.getLineType()) || viewLine.getLineType() == LineType.CONCLUSION_LINE) {
                 addEmptyViewContentRow(row, depth);
                 addEmptyViewContentRow(row, depth);
-                addEmptyViewContentRow(row, depth);
+//                addEmptyViewContentRow(row, depth);
                 if (derivationModel.isDefaultShelf()) {
                     ViewLine shelfLine1 = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
                     derivationView.getViewLines().add(row, shelfLine1);
@@ -790,7 +790,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
                 addEmptyViewContentRow(row, depth);
                 addEmptyViewContentRow(row, depth);
-                addEmptyViewContentRow(row, depth);
+ //               addEmptyViewContentRow(row, depth);
                 if (derivationModel.isDefaultShelf()) {
                     ViewLine shelfLine2 = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
                     derivationView.getViewLines().add(row, shelfLine2);

@@ -152,7 +152,7 @@ public class DiskUtilities {
             try (FileInputStream fi = new FileInputStream(fileToOpen); ObjectInputStream oi = new ObjectInputStream(fi);) {
                 exerciseModel = (ExerciseModel) oi.readObject();
             } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+ //               e.printStackTrace();
                 EditorAlerts.showSimpleAlert("Error opening file", e.getClass().getCanonicalName());
             }
         }

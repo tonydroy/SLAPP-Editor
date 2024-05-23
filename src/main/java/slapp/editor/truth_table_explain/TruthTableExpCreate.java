@@ -17,6 +17,8 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -85,6 +87,7 @@ public class TruthTableExpCreate {
     private double formulaBoxHeight = 27;
     private Button lowerSaveButton;
     private Button saveAsButton;
+    private BoxedDRTA focusedBoxedDRTA;
 
 
 
@@ -351,6 +354,25 @@ public class TruthTableExpCreate {
             }
         });
 
+        mainFormulasPane.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            int index = mainFormulaList.indexOf(focusedBoxedDRTA);
+            if (index >= 0) {
+                KeyCode code = e.getCode();
+                if (code == KeyCode.ENTER || code == KeyCode.DOWN) {
+                    if (index + 1 < mainFormulaList.size()) {
+                        mainFormulaList.get(index + 1).getRTA().requestFocus();
+                    }
+                    e.consume();
+                }
+                if (code == KeyCode.UP) {
+                    if (index > 0) {
+                        mainFormulaList.get(index - 1).getRTA().requestFocus();
+                    }
+                    e.consume();
+                }
+            }
+        });
+
         conclusionDividerCheck = new CheckBox("Include Conclusion Divider");
         ChangeListener conclusionDividerCheckListener = new ChangeListener() {
             @Override
@@ -561,6 +583,7 @@ public class TruthTableExpCreate {
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 editorInFocus(drta, ControlType.FIELD);
+                focusedBoxedDRTA = bdrta;
             }
         });
         return bdrta;

@@ -686,7 +686,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             ViewLine viewLine = viewLines.get(row);
             int depth = viewLine.getDepth();
             if (!LineType.isSetupLine(viewLine.getLineType())) {
-                if (depth > 1) {
+//                if (depth > 1) {
                     if (++row < viewLines.size()) {
                         if (!(LineType.isShelfLine(viewLines.get(row).getLineType()) || LineType.isGapLine(viewLines.get(row).getLineType()))) {
                             ViewLine shelfLine = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
@@ -702,9 +702,9 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                     } else {
                         EditorAlerts.fleetingPopup("No shelf under last line.");
                     }
-                } else {
-                    EditorAlerts.fleetingPopup("Cannot modify at leftmost scope depth.");
-                }
+ //               } else {
+ //                   EditorAlerts.fleetingPopup("Cannot modify at leftmost scope depth.");
+  //              }
             } else {
                 EditorAlerts.fleetingPopup("Cannot modify setup line.");
             }
@@ -761,7 +761,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             if (!LineType.isSetupLine(viewLine.getLineType()) || viewLine.getLineType() == LineType.CONCLUSION_LINE) {
                 addEmptyViewContentRow(row, depth);
                 addEmptyViewContentRow(row, depth);
-                addEmptyViewContentRow(row, depth);
+//                addEmptyViewContentRow(row, depth);
                 if (drvtnExpModel.isDefaultShelf()) {
                     ViewLine shelfLine = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
                     drvtnExpView.getViewLines().add(row, shelfLine);
@@ -793,7 +793,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             if (!LineType.isSetupLine(viewLine.getLineType()) || viewLine.getLineType() == LineType.CONCLUSION_LINE) {
                 addEmptyViewContentRow(row, depth);
                 addEmptyViewContentRow(row, depth);
-                addEmptyViewContentRow(row, depth);
+//                addEmptyViewContentRow(row, depth);
                 if (drvtnExpModel.isDefaultShelf()) {
                     ViewLine shelfLine1 = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
                     drvtnExpView.getViewLines().add(row, shelfLine1);
@@ -805,7 +805,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
                 addEmptyViewContentRow(row, depth);
                 addEmptyViewContentRow(row, depth);
-                addEmptyViewContentRow(row, depth);
+ //               addEmptyViewContentRow(row, depth);
                 if (drvtnExpModel.isDefaultShelf()) {
                     ViewLine shelfLine2 = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
                     drvtnExpView.getViewLines().add(row, shelfLine2);

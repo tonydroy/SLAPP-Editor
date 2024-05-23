@@ -156,7 +156,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
             int index = mainFormulasBoxedDRTAs.indexOf(focusedBoxedDRTA);
             if (index >= 0) {
                 KeyCode code = e.getCode();
-                if (code == KeyCode.DOWN) {
+                if (code == KeyCode.ENTER || code == KeyCode.DOWN) {
                     if (index + 1 < mainFormulasBoxedDRTAs.size()) {
                         mainFormulasBoxedDRTAs.get(index + 1).getRTA().requestFocus();
                     }
@@ -206,6 +206,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
 
         tableGrid = new GridPane();
         tableGrid.setPadding(new Insets(20,0,20,0));
+
 
         RichTextArea interpretationRTA = exerciseInterpretation.getEditor();
         centerBox = new VBox(10, interpretationRTA, tableGrid, resultsBox);
@@ -479,7 +480,8 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         RichTextArea interpretationRTA = exerciseInterpretation.getEditor();
         interpretationRTA.getStylesheets().add("slappTextArea.css");
 //        interpretationRTA.setPrefHeight(100.0);
-        interpretationRTA.setMinHeight(100.0);
+        interpretationRTA.setMinHeight(125.0);
+        interpretationRTA.setMaxHeight(125.0);
         interpretationRTA.setPromptText(generatePrompt);
 
         RichTextArea commentRTA = exerciseComment.getEditor();

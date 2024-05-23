@@ -75,6 +75,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
     public void generateEmptyTableModel() {
         setupHeadItemsFromModel();
         truthTableGenModel.setEmptyTableContents(tableColumns);
+        truthTableGenView.getTableGrid().setPrefHeight(100);
     }
 
     private void setTruthTableView() {

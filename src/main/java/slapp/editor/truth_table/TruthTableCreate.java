@@ -17,6 +17,8 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -76,6 +78,7 @@ public class TruthTableCreate {
     private double formulaBoxHeight = 27;
     private Button lowerSaveButton;
     private Button saveAsButton;
+    private BoxedDRTA focusedBoxedDRTA;
 
 
     public TruthTableCreate(MainWindow mainWindow) {
@@ -283,6 +286,25 @@ public class TruthTableCreate {
                 updateMainFormulaGridFromFields();
             } else {
                 EditorAlerts.showSimpleAlert("Cannot Remove", "A truth table must include at least one formula.");
+            }
+        });
+
+        mainFormulasPane.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            int index = mainFormulaList.indexOf(focusedBoxedDRTA);
+            if (index >= 0) {
+                KeyCode code = e.getCode();
+                if (code == KeyCode.ENTER || code == KeyCode.DOWN) {
+                    if (index + 1 < mainFormulaList.size()) {
+                        mainFormulaList.get(index + 1).getRTA().requestFocus();
+                    }
+                    e.consume();
+                }
+                if (code == KeyCode.UP) {
+                    if (index > 0) {
+                        mainFormulaList.get(index - 1).getRTA().requestFocus();
+                    }
+                    e.consume();
+                }
             }
         });
 
@@ -496,6 +518,7 @@ public class TruthTableCreate {
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 editorInFocus(drta, ControlType.FIELD);
+                focusedBoxedDRTA = boxedDRTA;
             }
         });
         return boxedDRTA;

@@ -113,7 +113,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
         redoButton.setPrefWidth(95);
         redoButton.setTooltip(new Tooltip("Redo button action"));
 
-        VBox controlBox = new VBox(20, undoButton, redoButton, insertLineButton, deleteLineButton, indentButton, outdentButton, addShelfButton, addGapButton, insertSubButton, insertSubsButton);
+        VBox controlBox = new VBox(20, undoButton, redoButton, insertLineButton, deleteLineButton, insertSubButton, insertSubsButton, indentButton, outdentButton, addShelfButton, addGapButton);
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
         controlBox.setMargin(insertLineButton, new Insets(0,0,20, 0));
         controlBox.setPadding(new Insets(40,20,30,40));

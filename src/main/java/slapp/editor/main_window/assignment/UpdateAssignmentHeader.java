@@ -119,7 +119,7 @@ public class UpdateAssignmentHeader {
 
 
         String helpText = "Fill in the name field.  Additional information (as student number, course section) may be included by optional fields.\n\n" +
-                "NOTE: Once you click 'Update', you will not be able to return to this window in order to update the header again - without starting the entire assignment over.  Be sure that header fields are filled out completely and correctly!";
+                "NOTE: Once you click 'Create Assignment', you will not be able to return to this window in order to update the header again (without starting the entire assignment over).  Be sure that header fields are filled out completely and correctly!";
 
 
         TextArea helpArea = new TextArea(helpText);
@@ -133,10 +133,10 @@ public class UpdateAssignmentHeader {
 
         borderPane.setBottom(helpArea);
 
-        Button updateButton = new Button("Update");
-        updateButton.setPrefWidth(55);
+        Button updateButton = new Button("Create Assignment");
+        updateButton.setPrefWidth(125);
         Button cancelButton = new Button("Cancel");
-        cancelButton.setPrefWidth(55);
+        cancelButton.setPrefWidth(125);
         updateButton.setOnAction(e -> {
             String name = studentNameField.getText();
             boolean containsAlphanumeric = name.matches(".*[a-zA-Z0-9].*");
@@ -160,7 +160,7 @@ public class UpdateAssignmentHeader {
 
         stage = new Stage();
         stage.setScene(scene);
-        stage.setTitle("Update Assignment Header");
+        stage.setTitle("Create Assignment Header");
         stage.getIcons().addAll(EditorMain.icons);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
