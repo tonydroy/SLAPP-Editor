@@ -451,7 +451,7 @@ public class KeyboardDiagram {
 
         ctrlShiftAltBoard.add(getControlKey("control/\n command",10),0,4,10,1);
         ctrlShiftAltBoard.add(getControlKey("alternate/\n option",9),10,4,9,1);
-        ctrlShiftAltBoard.add(getControlKey("",24),19,4,24,1);
+        ctrlShiftAltBoard.add(getControlKey("unbreakable\nspace",24),19,4,24,1);
         ctrlShiftAltBoard.add(getControlKey("alternate/\n option",8),43,4,8,1);
         ctrlShiftAltBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 

@@ -203,7 +203,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
 
     private ViewLine getContentLineBelow(int row) {
-        ViewLine line = null;
+        ViewLine line = derivationView.getViewLines().get(row);
+//        ViewLine line = null;
         row++;
         for (int i = row; i < derivationView.getViewLines().size(); i++) {
             ViewLine temp = derivationView.getViewLines().get(i);
@@ -216,7 +217,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
 
     private ViewLine getContentLineAbove(int row) {
-        ViewLine line = null;
+        ViewLine line = derivationView.getViewLines().get(row);
+//        ViewLine line = null;
         row--;
         for (int i = row; i >= 0; i--) {
             ViewLine temp = derivationView.getViewLines().get(i);
@@ -290,7 +292,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         flow.setFocusTraversable(true);
         flow.setMouseTransparent(false);
         flow.setMinWidth(100);
-        flow.setMaxWidth(100);
+//        flow.setMaxWidth(100);
         flow.setMaxHeight(20);
         flow.setPadding(new Insets(0,0,0,3));
         flow.setOnMouseClicked(e -> flow.requestFocus());
@@ -307,10 +309,12 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         int rowIndex = derivationView.getGrid().getRowIndex(flow);
         DecoratedRTA drta = new DecoratedRTA();
         RichTextArea rta = drta.getEditor();
-        rta.setContentAreaWidth(110);
+        rta.setContentAreaWidth(200);
         rta.setPrefHeight(20);
-        rta.setMaxWidth(100);
-        rta.setMinWidth(100);
+
+        rta.setPrefWidth(100);
+//        rta.setMaxWidth(100);
+//        rta.setMinWidth(100);
         rta.getStylesheets().add("slappDerivation.css");
         rta.setDocument(new Document(getStringFromJustificationFlow(flow)));
         rta.getActionFactory().saveNow().execute(new ActionEvent());
