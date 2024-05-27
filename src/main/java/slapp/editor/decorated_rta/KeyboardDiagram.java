@@ -455,8 +455,9 @@ public class KeyboardDiagram {
         ctrlShiftAltBoard.add(getControlKey("alternate/\n option",8),43,4,8,1);
         ctrlShiftAltBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 
-        ctrlChars = new Text("\ud83e\udc46 F1, F2, F3, F4, F5 select keyboards (like keyboard dropdown).\n" +
-        "    F7 toggles superscript (+shift, shift back), F8 toggles subscript (+shift, shift back)\n" +
+        ctrlChars = new Text("\ud83e\udc46 F1/home, F2/end, F3, F4, F5 select keyboards (like keyboard dropdown).\n" +
+        "    F7/page up toggles superscript (+shift, shift back)\n" +
+        "    F8/page down toggles subscript (+shift, shift back)\n" +
         "    Ctrl:B bold, :I talic, :U underline, :0 (zero) overline\n" +
         "    Ctrl-A select all, :C copy, :X cut, :V paste, :Z undo, :Z(+shift) redo\n\n");
 
