@@ -41,6 +41,8 @@ public class MainWindowView {
     private double scale = 1.0;
     MenuBar menuBar;
     private VBox topBox = new VBox();
+
+    private Pane spacerPane;
     private ScrollPane centerPane;
     private StackPane centerStackPane;
     private VBox centerBox;
@@ -236,31 +238,39 @@ public class MainWindowView {
 
         centerBox = new VBox();
         centerBox.setSpacing(3);
-
-        //centering interacts wierdly with zoom
- //       centerHBox = new HBox(centerBox);
- //       centerHBox.setAlignment(Pos.CENTER);
+//        centerBox.setStyle("-fx-border-color: red");
 
 
-    /*
+        /*
         When the centerPane has the new Group(centerHBox) as member, zoom works as one would expect - the scroll pane
         responds to the layout bounds of the scaled group.  But, in this case, RTA crashes two ways: Typing any char
         results in ConcurrentModificationException (from ParagraphTile 352). And if the window is dragged with
         HSize Win checked there is a NullPointerException (from ParagraphTile 202).  There are no exceptions when
-        the scroll pane has just center box -- but then zoom doesn't generate properly scroll bars.  Revisit this issue
-        if and whenRTA gets an update.
+        the scroll pane has just center box -- but then zoom doesn't generate properly scroll bars.
+
+        For the current solution, see comment in ScrollPaneTest
      */
-//        centerPane = new ScrollPane(new Group(centerBox));
-        centerPane = new ScrollPane(centerBox);   //or centerHBox
 
-//        centerHBox.minWidthProperty().bind(Bindings.createDoubleBinding(() -> centerPane.getViewportBounds().getWidth(), centerPane.viewportBoundsProperty()));
 
-        centerPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        centerPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        centerPane.setStyle("-fx-background-color: transparent");
+        spacerPane = new Pane();
+        spacerPane.prefHeightProperty().bind(centerBox.heightProperty());
+        spacerPane.prefWidthProperty().bind(centerBox.widthProperty());
+        Group group = new Group(spacerPane);
+        AnchorPane comboPane = new AnchorPane(group, centerBox);
+
+        centerPane = new ScrollPane(comboPane);
+
+
+
+
+
+//        centerPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+//        centerPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+//        centerPane.setStyle("-fx-background-color: transparent");
 
         borderPane.setCenter(centerPane);
         borderPane.setMargin(centerPane, new Insets(10,0,0,0));
+        borderPane.getCenter().setStyle("-fx-background-color: transparent;");
 
 
         hWindowCheck.setOnAction(e -> {
@@ -332,6 +342,10 @@ public class MainWindowView {
 
         centerBox.getChildren().clear();
         centerBox.getChildren().addAll(commentNode, statementNode, contentNode);
+
+
+
+
 
 
 
@@ -530,6 +544,8 @@ public class MainWindowView {
 
         centerBox.getTransforms().clear();
         centerBox.getTransforms().add(new Scale(scale, scale));
+        spacerPane.getTransforms().clear();
+        spacerPane.getTransforms().add(new Scale(scale, scale));
 
         setCenterVgrow();
     }

@@ -242,8 +242,6 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     TextField newSingleCharTextField(int column, int row) {
         TextField singleCharField = new TextField();
 
-    //    singleCharField.setPrefWidth(25);
-
         singleCharField.setPadding(new Insets(0));
         singleCharField.setPrefWidth(15);
 

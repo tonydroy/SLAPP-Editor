@@ -39,7 +39,7 @@ public class EditorMain extends Application {
 
 
 
-//       MainWindow mainWindow = new MainWindow();
+       MainWindow mainWindow = new MainWindow();
 
 
 //        ExtendedDemo demo = new ExtendedDemo(stage); demo.start();
@@ -48,7 +48,8 @@ public class EditorMain extends Application {
 //        ParseTableDocTest test = new ParseTableDocTest(); test.parseTableDocTest(stage);
 //        BoxedRTATest test = new BoxedRTATest(); test.testBoxedDRTA(stage);
 //        TextWidthTest test = new TextWidthTest(); test.testTextWidth(stage);
-        ScrollPaneTest test = new ScrollPaneTest(); test.testScrollPane(stage);
+//        ScrollPaneTest test = new ScrollPaneTest(); test.testScrollPane(stage);
+
     }
 
 

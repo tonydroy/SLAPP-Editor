@@ -23,10 +23,17 @@ public class ExtractSubText {
         StringBuilder sb = new StringBuilder();
         DecorationModel currentDec = getDecorationAtIndex(start, decorations);
 
+        //to stop wrapping on base column
+        double width = 0;
+
         for (int i = start; i < start + length; i++ ) {
             DecorationModel decorationAtIndex = getDecorationAtIndex(i, decorations);
             if (decorationAtIndex != currentDec) {
                 Text text = buildText(sb.toString(), (TextDecoration) currentDec.getDecoration());
+
+                //
+                width = width + text.getLayoutBounds().getWidth();
+
                 flow.getChildren().add(text);
                 sb.delete(0, sb.length());
                 currentDec = decorationAtIndex;
@@ -37,8 +44,15 @@ public class ExtractSubText {
         }
         if (sb.length() != 0) {
             Text text = buildText(sb.toString(), (TextDecoration) currentDec.getDecoration());
+
+            width = width + text.getLayoutBounds().getWidth();
+
             flow.getChildren().add(text);
         }
+
+        //
+        flow.setMinWidth(width + 2);
+
         return flow;
     }
 
