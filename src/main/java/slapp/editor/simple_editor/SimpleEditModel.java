@@ -17,7 +17,7 @@ public class SimpleEditModel implements ExerciseModel<Document>, Serializable {
     private String contentPrompt = "";
     private double statementPrefHeight = 80;
     private Document exerciseStatement = new Document();
-    private Document exerciseComment = new Document();
+    private Document exerciseComment = new Document("");
     private List<Document> exercisePageDocs = new ArrayList<>();
 
     public SimpleEditModel(String name, boolean started, String prompt, double statementPrefHeight, Document exerciseStatement, Document exerciseComment, List<Document> exercisePageDocs) {

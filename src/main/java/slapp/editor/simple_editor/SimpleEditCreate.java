@@ -308,7 +308,8 @@ public class SimpleEditCreate {
         if (statementRTA.isModified()) fieldModified = true;
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document statementDocument = statementRTA.getDocument();
-        SimpleEditModel model = new SimpleEditModel(name, false, prompt, 70.0, statementDocument, new Document(), new ArrayList<Document>());
+        Document commentDoc = new Document();
+        SimpleEditModel model = new SimpleEditModel(name, false, prompt, 70.0, statementDocument, commentDoc, new ArrayList<Document>());
         return model;
     }
 

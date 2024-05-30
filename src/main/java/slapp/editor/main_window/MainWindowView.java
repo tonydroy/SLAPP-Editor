@@ -11,6 +11,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -249,7 +250,7 @@ public class MainWindowView {
         the scroll pane has just center box -- but then zoom doesn't generate properly scroll bars.  Revisit this issue
         if and whenRTA gets an update.
      */
-//        centerPane = new ScrollPane(new Group(centerHBox));
+//        centerPane = new ScrollPane(new Group(centerBox));
         centerPane = new ScrollPane(centerBox);   //or centerHBox
 
 //        centerHBox.minWidthProperty().bind(Bindings.createDoubleBinding(() -> centerPane.getViewportBounds().getWidth(), centerPane.viewportBoundsProperty()));
