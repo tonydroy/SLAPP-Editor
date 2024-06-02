@@ -51,6 +51,12 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
     private void setEditView() {
 
         abView.setExerciseName(abModel.getExerciseName());
+        abView.setContentPrompt(abModel.getContentPrompt());
+        abView.setStatementPrefHeight(abModel.getStatementPrefHeight());
+        abView.setCommentPrefHeight(abModel.getCommentPrefHeight());
+        abView.setPaginationPrefHeight(abModel.getPaginationPrefHeight());
+
+        //choices
         ABmodelExtra modelFields = abModel.getModelFields();
         abView.getLeaderLabel().setText(modelFields.getLeader());
         CheckBox aCheckBox = abView.getCheckBoxA();
@@ -74,13 +80,11 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
             }
         });
 
-
-        abView.setContentPrompt(abModel.getContentPrompt());
-
+        //statement
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
         statementEditor.setDocument(abModel.getExerciseStatement());
-        abView.setStatementPrefHeight(abModel.getStatementPrefHeight());
+
         mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -89,6 +93,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         });
         abView.setExerciseStatement(statementDRTA);
 
+        //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.setDocument(abModel.getExerciseComment());
@@ -101,6 +106,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         });
         abView.setExerciseComment(commentDRTA);
 
+        //pagination
         ArrayList<DecoratedRTA> contentList = new ArrayList<>();
         for (Document doc : abModel.getExercisePageDocs()) {
             DecoratedRTA drta = new DecoratedRTA();
@@ -117,6 +123,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         }
         abView.setContentPageList(contentList);
 
+        //cleanup
         abView.initializeViewDetails();
         abView.getAddPageButton().setOnAction(e -> addPageAction());
         abView.getRemovePageButton().setOnAction(e -> removePageAction());
@@ -335,6 +342,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         Document statementDocument = abModel.getExerciseStatement();
         ABmodel newModel = new ABmodel(name, extra, started, prompt, statementHeight, statementDocument, commentDocument, contentList);
         newModel.setOriginalModel(abModel.getOriginalModel());
+        newModel.setCommentPrefHeight(abView.getCommentPrefHeight());
+        newModel.setPaginationPrefHeight(abView.getPaginationPrefHeight());
 
         return newModel;
     }

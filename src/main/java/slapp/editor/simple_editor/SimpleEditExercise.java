@@ -51,11 +51,15 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
 
         editView.setExerciseName(editModel.getExerciseName());
         editView.setContentPrompt(editModel.getContentPrompt());
+        editView.setStatementPrefHeight(editModel.getStatementPrefHeight());
+        editView.setCommentPrefHeight(editModel.getCommentPrefHeight());
+        editView.setPaginationPrefHeight(editModel.getPaginationPrefHeight());
 
+        //statement
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
         statementEditor.setDocument(editModel.getExerciseStatement());
-        editView.setStatementPrefHeight(editModel.getStatementPrefHeight());
+
         mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -64,6 +68,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         });
         editView.setExerciseStatement(statementDRTA);
 
+        //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.setDocument(editModel.getExerciseComment());
@@ -77,6 +82,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         });
         editView.setExerciseComment(commentDRTA);
 
+        //pagination
         ArrayList<DecoratedRTA> contentList = new ArrayList<>();
         for (Document doc : editModel.getExercisePageDocs()) {
             DecoratedRTA drta = new DecoratedRTA();
@@ -94,6 +100,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         }
         editView.setContentPageList(contentList);
 
+        //cleanup
         editView.initializeViewDetails();
         editView.getAddPageButton().setOnAction(e -> addPageAction());
         editView.getRemovePageButton().setOnAction(e -> removePageAction());
@@ -286,6 +293,9 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         Document statementDocument = editModel.getExerciseStatement();
         SimpleEditModel newModel = new SimpleEditModel(name, started, prompt, statementHeight, statementDocument, commentDocument, contentList);
         newModel.setOriginalModel(editModel.getOriginalModel());
+        newModel.setCommentPrefHeight(editView.getCommentPrefHeight());
+        newModel.setPaginationPrefHeight(editView.getPaginationPrefHeight());
+
         return newModel;
     }
 

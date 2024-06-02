@@ -2,6 +2,7 @@ package slapp.editor.derivation;
 
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
+import slapp.editor.PrintUtilities;
 import slapp.editor.main_window.ExerciseModel;
 import slapp.editor.main_window.ExerciseType;
 
@@ -15,6 +16,9 @@ public class DerivationModel implements ExerciseModel<Document>, Serializable {
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
     private double statementPrefHeight = 80;
+    private double commentPrefHeight = 60;
+    private double splitPanePrefWidth;
+
     private double gridWidth = 0;
     private boolean isLeftmostScopeLine = true;
     private boolean defaultShelf = true;
@@ -36,6 +40,7 @@ public class DerivationModel implements ExerciseModel<Document>, Serializable {
         this.exerciseStatement = exerciseStatement;
         this.exerciseComment = exerciseComment;
         this.derivationLines = derivationLines;
+        this.splitPanePrefWidth = PrintUtilities.getPageWidth();
     }
 
     public boolean isLeftmostScopeLine() { return isLeftmostScopeLine; }
@@ -43,6 +48,10 @@ public class DerivationModel implements ExerciseModel<Document>, Serializable {
     public double getGridWidth() {return gridWidth; }
     public List<ModelLine> getDerivationLines() { return derivationLines; }
     public RichTextAreaSkin.KeyMapValue getKeyboardSelector() {return keyboardSelector;}
+    public double getCommentPrefHeight() { return commentPrefHeight;  }
+    public void setCommentPrefHeight(double commentPrefHeight) { this.commentPrefHeight = commentPrefHeight; }
+    public double getSplitPanePrefWidth() {   return splitPanePrefWidth;  }
+    public void setSplitPanePrefWidth(double splitPanePrefWidth) {  this.splitPanePrefWidth = splitPanePrefWidth;    }
 
     @Override
     public String getExerciseName() { return exerciseName; }

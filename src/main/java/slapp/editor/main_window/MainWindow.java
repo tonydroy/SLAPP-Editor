@@ -164,12 +164,7 @@ public class MainWindow {
 
 
     public void setUpExercise(Exercise exercise) {
-        if (currentExercise != null) {
-            mainView.contentHeightProperty().unbind();
-            mainView.contentWidthProperty().unbind();
-            mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
-            mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
-        }
+
 
 
         mainView.getMainScene().focusOwnerProperty().removeListener(focusListener);
@@ -364,16 +359,6 @@ public class MainWindow {
 
     private void pageSetup() {
         PrintUtilities.updatePageLayout();
-        if (currentExercise != null) {
-            mainView.contentHeightProperty().unbind();
-            mainView.contentWidthProperty().unbind();
-            mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
-            mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
-        }
-        mainView.updateContentHeightProperty();
-        mainView.updateContentWidthProperty();
-
- //       mainView.updateZoom(mainView.getZoomSpinner().getValue());
 
     }
 

@@ -52,7 +52,6 @@ public class DerivationCreate {
     private SimpleDoubleProperty centerHeightProperty;
     private TextArea helpArea;
     private VBox centerBox;
-//    private VBox topBox;
     private CheckBox scopeLineCheck;
     private CheckBox defaultShelfCheck;
     private CheckBox italicAndSansCheck;
@@ -507,9 +506,6 @@ public class DerivationCreate {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-
-//            scopeLineCheck.setSelected(true);
-//            defaultShelfCheck.setSelected(true);
             widthSpinner.getValueFactory().setValue(0.0);
 
             setupLines.clear();
@@ -519,30 +515,9 @@ public class DerivationCreate {
             setupLines.add(firstLine);
             updateGridFromSetupLines();
 
-
-/*
-            statementDRTA = new DecoratedRTA();
-            statementRTA = statementDRTA.getEditor();
-            statementRTA.setPromptText("Exercise Statement:");
-            statementRTA.getStylesheets().add("slappTextArea.css");
-            statementRTA.setPrefWidth(PrintUtilities.getPageWidth() + 20);
-            statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
-            statementRTA.setPrefHeight(100);
-            statementRTA.setMinHeight(50);
-            statementRTA.focusedProperty().addListener((ob, ov, nv) -> {
-                if (nv) {
-                    editorInFocus(statementDRTA, ControlType.AREA);
-                }
-            });
-
- */
-
-
-
             statementRTA.setDocument(new Document());
             statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
-
 
             fieldModified = false;
             viewExercise();
@@ -566,6 +541,7 @@ public class DerivationCreate {
         DerivationExercise exercise = new DerivationExercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
+        rta.prefHeightProperty().unbind();
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
         double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
@@ -587,6 +563,7 @@ public class DerivationCreate {
 
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
+        rta.prefHeightProperty().unbind();
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
         double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);

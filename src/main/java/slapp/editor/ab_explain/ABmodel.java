@@ -12,16 +12,19 @@ import java.util.List;
 public class ABmodel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
-
     private ExerciseModel<Document> originalModel = null;
     private ExerciseType type = ExerciseType.AB_EXPLAIN;
     private ABmodelExtra modelFields = new ABmodelExtra();
     private boolean started = false;
     private String prompt = "";
     private double statementPrefHeight = 80;
+    private double commentPrefHeight = 60;
+    private double paginationPrefHeight = 450;
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
     private List<Document> exercisePageDocs = new ArrayList<>();
+
+
 
     public ABmodel(String name, ABmodelExtra modelFields, boolean started, String prompt, double statementPrefHeight, Document exerciseStatement, Document exerciseComment, List<Document> exercisePageDocs) {
         this.exerciseName = name;
@@ -40,6 +43,14 @@ public class ABmodel implements ExerciseModel<Document>, Serializable {
         return prompt;
     }
     ABmodelExtra getModelFields() { return modelFields; }
+
+    public double getCommentPrefHeight() { return commentPrefHeight;  }
+
+    public void setCommentPrefHeight(double commentPrefHeight) { this.commentPrefHeight = commentPrefHeight;  }
+
+    public double getPaginationPrefHeight() {   return paginationPrefHeight;  }
+
+    public void setPaginationPrefHeight(double paginationPrefHeight) {   this.paginationPrefHeight = paginationPrefHeight;  }
 
     @Override
     public String getExerciseName() { return exerciseName; }

@@ -3,10 +3,8 @@ package slapp.editor.main_window;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -38,6 +36,7 @@ public class MainWindowView {
     private ToolBar paragraphToolbar = new ToolBar();
     private ToolBar insertToolbar = new ToolBar();
     private ToolBar kbdDiaToolBar = new ToolBar();
+    private ToolBar sizeToolBar = new ToolBar();
     private double scale = 1.0;
     MenuBar menuBar;
     private VBox topBox = new VBox();
@@ -67,9 +66,9 @@ public class MainWindowView {
     HBox centerHBox;
     private Button saveButton;
     private CheckBox hWindowCheck;
-    private Spinner<Double> hCustomSpinner;
+    private Spinner<Double> horizontalSizeSpinner;
     private CheckBox vWindowCheck;
-    private Spinner<Double> vCustomSpinner;
+    private Spinner<Double> verticalSizeSpinner;
 
     private ChangeListener verticalListener;
     private ChangeListener horizontalListener;
@@ -206,35 +205,36 @@ public class MainWindowView {
 
         hWindowCheck = new CheckBox("Win");
         hWindowCheck.setTooltip(new Tooltip("Fix width by window"));
-        hCustomSpinner = new Spinner<>(5.0, 999.0, 100.0, 5.0);
-        hCustomSpinner.setPrefWidth(60);
-        hCustomSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
 
-        hCustomSpinner.valueProperty().addListener((obs, ov, nv) -> {
-            Node increment = hCustomSpinner.lookup(".increment-arrow-button");
-            if (increment != null) increment.getOnMouseReleased().handle(null);
-            Node decrement = hCustomSpinner.lookup(".decrement-arrow-button");
-            if (decrement != null) decrement.getOnMouseReleased().handle(null);
-        });
-
-
-
+        horizontalSizeSpinner = new Spinner<>(0.0, 999.0, 0.0, 5.0);
+        horizontalSizeSpinner.setPrefWidth(60);
+        horizontalSizeSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        horizontalSizeSpinner.setDisable(true);
 
 
 
         vWindowCheck = new CheckBox("Win");
         vWindowCheck.setTooltip(new Tooltip("Fix height by window"));
-        vCustomSpinner = new Spinner<>(5.0, 999.0, 100.0, 5.0);
-        vCustomSpinner.setPrefWidth(60);
-        vCustomSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
 
-        vCustomSpinner.valueProperty().addListener((obs, ov, nv) -> {
-            Node increment = vCustomSpinner.lookup(".increment-arrow-button");
-            if (increment != null) increment.getOnMouseReleased().handle(null);
-            Node decrement = vCustomSpinner.lookup(".decrement-arrow-button");
-            if (decrement != null) decrement.getOnMouseReleased().handle(null);
-        });
+        verticalSizeSpinner = new Spinner<>(0.0, 999.0, 0.0, 5.0);
+        verticalSizeSpinner.setPrefWidth(60);
+        verticalSizeSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
+        verticalSizeSpinner.setDisable(true);
+
+
+
+        sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("    V Size:"), verticalSizeSpinner,
+                new Label("    H Size:"), horizontalSizeSpinner, new Label("      "), saveButton);
+
+
+
+        sizeToolBar.setPrefHeight(38);
+
+
+
+
+
 
         centerBox = new VBox();
         centerBox.setSpacing(3);
@@ -260,6 +260,9 @@ public class MainWindowView {
 
         centerPane = new ScrollPane(comboPane);
 
+//        centerBox.setStyle("-fx-border-color: red; -fx-background-color: red; -fx-border-width: 3");
+
+
 
 
 
@@ -273,23 +276,11 @@ public class MainWindowView {
         borderPane.getCenter().setStyle("-fx-background-color: transparent;");
 
 
-        hWindowCheck.setOnAction(e -> {
 
-            updateContentWidthProperty();
- //           if (hWindowCheck.isSelected()) updateWindowH();
- //           else updateCustomH();
-        });
-        hWindowCheck.setSelected(false);
-        hCustomSpinner.setDisable(false);
 
-        vWindowCheck.setOnAction(e -> {
 
-            updateContentHeightProperty();
-//            if (vWindowCheck.isSelected()) updateupdateWindowV();
-  //          else updateCustomV();
-        });
-        vWindowCheck.setSelected(true);
-        vCustomSpinner.setDisable(true);
+
+
 
 
         statusBar = new VBox(5);
@@ -317,7 +308,7 @@ public class MainWindowView {
         stage.setX(mainWindowX);
         stage.setY(mainWindowY);
 
-        stage.setHeight(800); //this added to keep SlappLogoView on screen (adjust with actual logo) ok in general? 800
+        stage.setHeight(860); //this added to keep SlappLogoView on screen (adjust with actual logo) ok in general? 800
         stage.setOnCloseRequest(e -> {
             e.consume();
             closeWindow();
@@ -335,7 +326,7 @@ public class MainWindowView {
         this.commentNode = commentDecoratedRTA.getEditor();
         this.controlNode = currentExerciseView.getExerciseControl();
         this.contentHeightProperty = currentExerciseView.getContentHeightProperty();
-        this.contentWidthProperty = currentExerciseView.getContentWidthProperty();
+//        this.contentWidthProperty = currentExerciseView.getContentWidthProperty();
 
         statementNode.minHeight(currentExerciseView.getStatementHeight());
         commentNode.minHeight(currentExerciseView.getCommentHeight());
@@ -349,7 +340,7 @@ public class MainWindowView {
 
 
 
-        centerBox.setVgrow(contentNode, Priority.ALWAYS);
+ //       centerBox.setVgrow(contentNode, Priority.ALWAYS);
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         upperStatusBox.getChildren().clear();
@@ -361,150 +352,64 @@ public class MainWindowView {
 
 
 
-        verticalListener = new ChangeListener<>() {
-            @Override
-            public void changed(ObservableValue ob, Object ov, Object nv) {
-        //        vCustomSpinner.getValueFactory().setValue(Math.rint((Double) nv / PrintUtilities.getPageHeight() * 100));
-                vCustomSpinner.getValueFactory().setValue((double) (Math.round((Double) nv / PrintUtilities.getPageHeight() * 20 ) * 5));
-            }
-        };
 
-
-        horizontalListener = new ChangeListener<>() {
-            @Override
-            public void changed(ObservableValue ob, Object ov, Object nv) {
-
-                hCustomSpinner.getValueFactory().setValue((double) (Math.round((Double) nv / PrintUtilities.getPageWidth() * 20 ) * 5));
-            }
-        };
 
 
 
         centerBox.layout();
 
 
-        contentHeightProperty.removeListener(verticalListener);
-        contentHeightProperty.unbind();
-        double fixedHeight = (currentExerciseView.getStatementHeight() + currentExerciseView.getCommentHeight() + currentExerciseView.getContentFixedHeight()) * scale + statusBar.getHeight() + 270;
-        contentHeightProperty.setValue((stage.getHeight() - fixedHeight)/scale );
-        vCustomSpinner.getValueFactory().setValue((double) Math.round(contentHeightProperty.getValue()/PrintUtilities.getPageHeight() * 20) * 5);
 
 
-
-        updateExerciseHeight();
-
-
-
-        contentHeightProperty.removeListener(verticalListener);
-        contentHeightProperty.unbind();
-        updateContentHeightProperty();
-
-        contentWidthProperty.removeListener(horizontalListener);
-        contentWidthProperty.unbind();
-        updateContentWidthProperty();
 
         Platform.runLater(() -> contentNode.requestFocus());
     }
 
+    public void updateSizeSpinners(Spinner<Double> height, Spinner<Double> width) {
+        sizeToolBar.getItems().remove(3);
+        sizeToolBar.getItems().add(3, height);
+        sizeToolBar.getItems().remove(5);
+        sizeToolBar.getItems().add(5, width);
+    }
+
 
     public void updateContentHeightProperty() {
-        contentHeightProperty = currentExerciseView.getContentHeightProperty();
-        double contentHeight = currentExerciseView.getContentHeight();
-        double spinnerMin = Math.round(contentHeight/PrintUtilities.getPageHeight() * 20) * 5;
-        double spinnerVal = vCustomSpinner.getValue();
-        vCustomSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(spinnerMin, 999.0, Math.max(spinnerMin, spinnerVal), 5.0));
-        contentHeightProperty().unbind();
-        contentHeightProperty.setValue(Math.max(contentHeight, PrintUtilities.getPageHeight() * vCustomSpinner.getValue()/100.0));
-        updateExerciseHeight();
+
     }
 
     public void updateContentWidthProperty() {
-        contentWidthProperty = currentExerciseView.getContentWidthProperty();
-        double contentWidth = currentExerciseView.getContentWidth();
-        double spinnerMin = Math.max(100, Math.round(contentWidth/PrintUtilities.getPageWidth() * 20.0) * 5);
-        double spinnerVal = hCustomSpinner.getValue();
-//        hCustomSpinner.getValueFactory().setValue(spinnerMin);
-        hCustomSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(spinnerMin, 999.0, Math.max(spinnerMin, spinnerVal), 5.0));
-        contentWidthProperty.unbind();
-        contentWidthProperty.setValue(Math.max(contentWidth, PrintUtilities.getPageWidth() * hCustomSpinner.getValue()/100.0));
-        updateExerciseWidth();
+
     }
 
     public void updateExerciseHeight() {
-        if (vWindowCheck.isSelected()) updateWindowV();
-        else  updateCustomV();
+
     }
 
     public void updateWindowV() {
-        vCustomSpinner.setDisable(true);
-        centerPane.setFitToHeight(true);
-        contentHeightProperty.unbind();
-        setCenterVgrow();
-        vCustomSpinner.getValueFactory().setValue(Math.max(vCustomSpinner.getValue(), (double) (Math.round((Double) contentHeightProperty().getValue() / PrintUtilities.getPageHeight() * 20 ) * 5)));
-        contentHeightProperty.addListener(verticalListener);
+
     }
     public void updateCustomV() {
-        contentHeightProperty.removeListener(verticalListener);
-        vCustomSpinner.setDisable(false);
-        contentHeightProperty.unbind();
-        centerPane.setFitToHeight(false);
-  //      vCustomSpinner.getValueFactory().setValue(rint((contentHeightProperty.getValue() / PrintUtilities.getPageHeight() * 100.0)));
-        vCustomSpinner.getValueFactory().setValue((double) (Math.round((Double) contentHeightProperty.getValue() / PrintUtilities.getPageHeight() * 20 ) * 5));
 
-        contentHeightProperty.bind(Bindings.multiply(PrintUtilities.getPageHeight(), DoubleProperty.doubleProperty(vCustomSpinner.getValueFactory().valueProperty()).divide(100.0)));
     }
 
 
 
     public void updateExerciseWidth() {
-        if (hWindowCheck.isSelected()) updateWindowH();
-        else updateCustomH();
+
     }
     public void updateWindowH(){
-        hCustomSpinner.setDisable(true);
-        centerPane.setFitToWidth(true);
-        contentWidthProperty.unbind();
-        setCenterHgrow();
-        hCustomSpinner.getValueFactory().setValue(Math.max(hCustomSpinner.getValue(), (double) (Math.round((Double) contentWidthProperty().getValue() / PrintUtilities.getPageWidth() * 20 ) * 5)));
-        contentWidthProperty.addListener(horizontalListener);
+
     }
     public void updateCustomH(){
-        contentWidthProperty.removeListener(horizontalListener);
-        hCustomSpinner.setDisable(false);
-        contentWidthProperty.unbind();
-        centerPane.setFitToWidth(false);
-        hCustomSpinner.getValueFactory().setValue((double) (Math.round((Double) contentWidthProperty.getValue() / PrintUtilities.getPageWidth() * 20 ) * 5));
-//        hCustomSpinner.getValueFactory().setValue(rint((contentWidthProperty.getValue() / PrintUtilities.getPageWidth() * 100.0)));
-        contentWidthProperty.bind(Bindings.multiply(PrintUtilities.getPageWidth(), DoubleProperty.doubleProperty(hCustomSpinner.getValueFactory().valueProperty()).divide(100.0)));
-
 
     }
 
     public void setCenterVgrow() {
-        if (vWindowCheck.isSelected()) {
 
-
-            double fixedHeight = (currentExerciseView.getStatementHeight() + currentExerciseView.getCommentHeight() + currentExerciseView.getContentFixedHeight()) * scale + statusBar.getHeight() + 270;
-//            DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
-//            DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
- //           contentHeightProperty.bind(Bindings.divide(stage.heightProperty().subtract(fixedValueProperty), scaleProperty));
-            /*
-            DoubleProperty centerHeightProperty = new SimpleDoubleProperty();
-            centerHeightProperty.bind(Bindings.divide(stage.heightProperty().subtract(fixedHeight), scale));
-            contentHeightProperty.bind(centerHeightProperty);
-
-             */
-
-
-            contentHeightProperty.bind(Bindings.divide(stage.heightProperty().subtract(fixedHeight), scale));
-
-        }
     }
 
     public void setCenterHgrow() {
-        if (hWindowCheck.isSelected()) {
-            contentWidthProperty.bind(Bindings.divide(stage.widthProperty().subtract(controlNode.getLayoutBounds().getWidth() + 30.0), scale ));
-        }
+
     }
 
 
@@ -563,14 +468,10 @@ public class MainWindowView {
         fontsToolbar = decoratedRTA.getFontsToolbar();
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
         kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
-
         editToolbar.setPrefHeight(38);
 
-        if (kbdDiaToolBar.getItems().isEmpty()) {
-
-            kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("    V Size:"), vCustomSpinner, new Label("/"), vWindowCheck,
-                    new Label("    H Size:"), hCustomSpinner, new Label("/"), hWindowCheck, new Label("      "), decoratedRTA.getKeyboardDiagramButton(), new Label("    "), saveButton);
-
+//        if (kbdDiaToolBar.getItems().isEmpty()) {
+//            kbdDiaToolBar.getItems().add(decoratedRTA.getKeyboardDiagramButton());
             kbdDiaToolBar.setPrefHeight(38);
 
             switch (control) {
@@ -586,10 +487,14 @@ public class MainWindowView {
                 }
                 case AREA: { }
             }
-        }
 
-        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
-        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
+            sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
+//        }
+
+        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar, sizeToolBar);
+
+        editAndKbdBox.setHgrow(sizeToolBar, Priority.ALWAYS);
+
 
         topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox);
         topBox.layout();
@@ -730,6 +635,14 @@ public class MainWindowView {
 
     public Scene getMainScene() {
         return mainScene;
+    }
+
+    public void setHorizontalSizeSpinner(Spinner<Double> horizontalSizeSpinner) {   this.horizontalSizeSpinner = horizontalSizeSpinner;  }
+
+    public void setVerticalSizeSpinner(Spinner<Double> verticalSizeSpinner) {
+        System.out.println("before: " + this.verticalSizeSpinner);
+        this.verticalSizeSpinner = verticalSizeSpinner;
+        System.out.println("after: " + this.verticalSizeSpinner);
     }
 
     public Node getStatementNode() {

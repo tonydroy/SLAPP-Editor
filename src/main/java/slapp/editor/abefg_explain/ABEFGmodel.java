@@ -17,6 +17,8 @@ public class ABEFGmodel implements ExerciseModel<Document>, Serializable {
     private boolean started = false;
     private String prompt = "";
     private double statementPrefHeight = 80;
+    private double commentPrefHeight = 60;
+    private double paginationPrefHeight = 450;
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
     private ArrayList<Document> exercisePageDocs = new ArrayList<>();
@@ -38,6 +40,14 @@ public class ABEFGmodel implements ExerciseModel<Document>, Serializable {
         return prompt;
     }
     ABEFGmodelExtra getModelFields() {   return modelFields; }
+
+    public double getCommentPrefHeight() {return commentPrefHeight;  }
+
+    public void setCommentPrefHeight(double commentPrefHeight) { this.commentPrefHeight = commentPrefHeight; }
+
+    public double getPaginationPrefHeight() { return paginationPrefHeight; }
+
+    public void setPaginationPrefHeight(double paginationPrefHeight) { this.paginationPrefHeight = paginationPrefHeight;  }
 
     @Override
     public String getExerciseName() { return exerciseName; }

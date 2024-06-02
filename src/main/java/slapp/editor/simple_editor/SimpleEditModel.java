@@ -16,6 +16,8 @@ public class SimpleEditModel implements ExerciseModel<Document>, Serializable {
     private boolean started = false;
     private String contentPrompt = "";
     private double statementPrefHeight = 80;
+    private double commentPrefHeight = 60;
+    private double paginationPrefHeight = 450.0;
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document("");
     private List<Document> exercisePageDocs = new ArrayList<>();
@@ -38,6 +40,13 @@ public class SimpleEditModel implements ExerciseModel<Document>, Serializable {
     public String getContentPrompt() {
         return contentPrompt;
     }
+
+    public double getCommentPrefHeight() {return commentPrefHeight; }
+    public void setCommentPrefHeight(double height) {this.commentPrefHeight = height; }
+
+    public double getPaginationPrefHeight() { return paginationPrefHeight;   }
+
+    public void setPaginationPrefHeight(double paginationPrefHeight) { this.paginationPrefHeight = paginationPrefHeight; }
 
     @Override
     public String getExerciseName() {return exerciseName; }

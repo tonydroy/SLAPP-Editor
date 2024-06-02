@@ -66,11 +66,15 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         derivationView.setExerciseName(derivationModel.getExerciseName());
         derivationView.setLeftmostScopeLine(derivationModel.isLeftmostScopeLine());
         derivationView.setKeyboardSelector(derivationModel.getKeyboardSelector());
+        derivationView.setStatementPrefHeight(derivationModel.getStatementPrefHeight());
+        derivationView.setCommentPrefHeight(derivationModel.getCommentPrefHeight());
+        derivationView.setSplitPanePrefWidth(derivationModel.getSplitPanePrefWidth());
 
+        //statement
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
         statementEditor.setDocument(derivationModel.getExerciseStatement());
-        derivationView.setStatementPrefHeight(derivationModel.getStatementPrefHeight());
+
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
@@ -78,6 +82,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         });
         derivationView.setExerciseStatement(statementDRTA);
 
+        //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.setDocument(derivationModel.getExerciseComment());
@@ -88,7 +93,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         });
         derivationView.setExerciseComment(commentDRTA);
 
-
+        //buttons
         derivationView.getInsertLineButton().setOnAction(e -> insertLineAction());
         derivationView.getDeleteLineButton().setOnAction(e -> deleteLineAction());
         derivationView.getIndentButton().setOnAction(e -> indentLineAction());
@@ -100,10 +105,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         derivationView.getUndoButton().setOnAction(e -> undoAction());
         derivationView.getRedoButton().setOnAction(e -> redoAction());
 
+        //cleanup
         derivationView.initializeViewDetails();
-
-
-
         derivationView.getContentSplitPane().setDividerPosition(0, derivationModel.getGridWidth());
         derivationView.getContentSplitPane().getDividers().get(0).positionProperty().addListener((ob, ov, nv) -> {
             double diff = (double) nv - (double) ov;
@@ -987,6 +990,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         }
         DerivationModel model = new DerivationModel(name, started, statementHeight,gridWidth, leftmostScopeLine, defaultShelf, keyboardSelector, statementDocument, commentDocument, modelLines);
         model.setOriginalModel(derivationModel.getOriginalModel());
+        model.setCommentPrefHeight(derivationView.getCommentPrefHeight());
+        model.setSplitPanePrefWidth(derivationView.getSplitPanePrefWidth());
 
         return model;
     }

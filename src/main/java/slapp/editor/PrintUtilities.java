@@ -1,6 +1,8 @@
 package slapp.editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.print.*;
@@ -24,6 +26,10 @@ public class PrintUtilities {
 
     private static PageLayout pageLayout;
     //this is the layout visible to the rest of the program for the printable area
+    private static DoubleProperty pageWidth = new SimpleDoubleProperty();
+    private static DoubleProperty pageHeight = new SimpleDoubleProperty();
+
+
     private static PageLayout internalPageLayout;
     // this is the layout with space for footer, for internal use
     private static Printer pdfPrinter = null;
@@ -33,12 +39,13 @@ public class PrintUtilities {
     private static List<Pair<Node, Double>> printBuffer = new ArrayList<>();
 
     private static VBox topBox;
-
     static {
         spacer.setVisible(false);
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null) {
             PageLayout baseLayout = job.getJobSettings().getPageLayout();
+            pageHeight.set(baseLayout.getPrintableHeight());
+            pageWidth.set(baseLayout.getPrintableWidth());
             Printer printer = job.getPrinter();
             double bottomMargin = Math.max(baseLayout.getBottomMargin(), 48);
             pageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), bottomMargin );
@@ -60,6 +67,9 @@ public class PrintUtilities {
                 Printer printer = job.getPrinter();
                 double bottomMargin = Math.max(baseLayout.getBottomMargin(), 48);
                 pageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), bottomMargin );
+                pageHeight.set(pageLayout.getPrintableHeight());
+                pageWidth.set(pageLayout.getPrintableWidth());
+
                 internalPageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), 18.0);
 
             }
@@ -228,6 +238,26 @@ public class PrintUtilities {
         return nodeFit;
     }
 
+
+
+
+    public static double getPageWidth() {
+        return pageWidth.get();
+    }
+
+    public static DoubleProperty pageWidthProperty() {
+        return pageWidth;
+    }
+
+    public static double getPageHeight() {
+        return pageHeight.get();
+    }
+
+    public static DoubleProperty pageHeightProperty() {
+        return pageHeight;
+    }
+
+  /*
     public static double getPageHeight() {
         return pageLayout.getPrintableHeight();
     }
@@ -235,6 +265,8 @@ public class PrintUtilities {
     public static double getPageWidth() {
         return pageLayout.getPrintableWidth();
     }
+
+ */
 
     public static void resetScale() { scale = 1.0; }
     public static void resetPrintBuffer() {

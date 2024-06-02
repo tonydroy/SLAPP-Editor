@@ -207,18 +207,18 @@ public class DecoratedRTA {
         //toolbars
 
         editToolbar = new ToolBar();
-        editToolbar.setStyle("-fx-spacing: 12");
+        editToolbar.setStyle("-fx-spacing: 10");
         editToolbar.setPrefHeight(38);
         editToolbar.getItems().setAll(
                 keyboardSelector,
                 new Label("Size"),
                 fontSize,
-                wideSeparator(1)
+               wideSeparator(1)
         );
 
         kbdDiaToolbar = new ToolBar();
-        kbdDiaToolbar.setStyle("-fx-spacing: 5");
-//        kbdDiaToolbar.getItems().setAll(   );
+        kbdDiaToolbar.setStyle("-fx-spacing: 10");
+        kbdDiaToolbar.getItems().setAll(keyboardDiagramButton, wideSeparator(1), new Label("  "));
 
         fontsToolbar = new ToolBar();
         fontsToolbar.setStyle("-fx-spacing: 12");

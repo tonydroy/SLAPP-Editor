@@ -4,24 +4,27 @@ import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.util.Duration;
+import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
-import slapp.editor.vertical_tree.drag_drop.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +33,18 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
     private String exerciseName = new String("");
     private RichTextAreaSkin.KeyMapValue keyboardSelector;
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
-    private double statementPrefHeight = 80;
+    private double statementPrefHeight = 0;
+    private double commentPrefHeight = 0;
+    private double splitPanePrefWidth = 0;
+    private Spinner<Double> statementHeightSpinner;
+    private Spinner<Double> statementWidthSpinner;
+    private Spinner<Double> commentHeightSpinner;
+    private Spinner<Double> commentWidthSpinner;
+    private Spinner<Double> splitPaneHeightSpinner;
+    private Spinner<Double> splitPaneWidthSpinner;
+
+    private Node currentSpinnerNode;
+
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private boolean isLeftmostScopeLine = true;
     private Node exerciseControlNode = new VBox();
@@ -63,7 +77,6 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
         contentSplitPane.setOrientation(Orientation.HORIZONTAL);
         contentSplitPane.setMinHeight(10.0);
         contentSplitPane.setMinWidth(10.0);
-
 
 
         ColumnConstraints fixedCol = new ColumnConstraints();
@@ -116,27 +129,143 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
         VBox controlBox = new VBox(20, undoButton, redoButton, insertLineButton, deleteLineButton, insertSubButton, insertSubsButton, indentButton, outdentButton, addShelfButton, addGapButton);
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
         controlBox.setMargin(insertLineButton, new Insets(0,0,20, 0));
-        controlBox.setPadding(new Insets(40,20,30,40));
+        controlBox.setPadding(new Insets(40,20,0,40));
         exerciseControlNode = controlBox;
     }
 
     public void initializeViewDetails() {
+
+        //statement
         RichTextArea statementRTA = exerciseStatement.getEditor();
-        statementRTA.setPrefHeight(statementPrefHeight);
-        statementRTA.setMinHeight(statementPrefHeight);
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setEditable(false);
 
+        double statementInitialHeight = Math.round(statementPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
+        statementHeightSpinner.setPrefWidth(60);
+        statementHeightSpinner.setDisable(false);
+        statementHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        statementHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = statementHeightSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = statementHeightSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+
+
+        statementRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
+
+        statementWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
+        statementWidthSpinner.setPrefWidth(60);
+        statementWidthSpinner.setDisable(true);
+        statementWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        statementRTA.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != statementRTA) {
+                currentSpinnerNode = statementRTA;
+                mainView.updateSizeSpinners(statementHeightSpinner, statementWidthSpinner);
+            }
+        });
+
+        //comment
         RichTextArea commentRTA = exerciseComment.getEditor();
         commentRTA.getStylesheets().add("slappTextArea.css");
-        commentRTA.setPrefHeight(70.0);
-        commentRTA.setMinHeight(70.0);
         commentRTA.setPromptText("Comment:");
+
+        double commentInitialHeight = Math.round(commentPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
+        commentHeightSpinner.setPrefWidth(60);
+        commentHeightSpinner.setDisable(false);
+        commentHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        commentHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = commentHeightSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = commentHeightSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+
+        commentRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        commentRTA.minWidthProperty().bind(PrintUtilities.pageWidthProperty());
+
+        /*
+        While rta height spinners were working properly, this one (like others in SLAPP) won't stop spinning.
+        Has something to do with the binding.  Don't have general explanation or solution
+        -- back to the one-click solution at least for now.
+         */
+        commentWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
+        commentWidthSpinner.setPrefWidth(60);
+        commentWidthSpinner.setDisable(true);
+        commentWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        commentRTA.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != commentRTA) {
+                currentSpinnerNode = commentRTA;
+                mainView.updateSizeSpinners(commentHeightSpinner, commentWidthSpinner);
+            }
+        });
+
+        //split pane
+        double splitPaneInitialWidth = Math.round(splitPanePrefWidth / PrintUtilities.getPageWidth() * 20.0) * 5.0;
+        splitPaneWidthSpinner = new Spinner<>(100.0, 999.0, splitPaneInitialWidth, 5.0);
+        splitPaneWidthSpinner.setPrefWidth(60);
+        splitPaneWidthSpinner.setDisable(false);
+        splitPaneWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        contentSplitPane.prefWidthProperty().bind(Bindings.multiply(PrintUtilities.pageWidthProperty(), DoubleProperty.doubleProperty(splitPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0)));
+
+        splitPaneWidthSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = splitPaneWidthSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = splitPaneWidthSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+
+        contentSplitPane.setMinHeight(375);
+        splitPaneHeightSpinner = new Spinner<>(0.0,999.0, 0,1.0);
+        splitPaneHeightSpinner.setPrefWidth(60);
+        splitPaneHeightSpinner.setDisable(true);
+        splitPaneHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
+
+        contentSplitPane.heightProperty().addListener((ob, ov, nv) -> {
+            splitPaneHeightSpinner.getValueFactory().setValue((double) Math.round(contentSplitPane.getHeight() / PrintUtilities.getPageHeight() * 100));
+        });
+
+        contentSplitPane.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != contentSplitPane) {
+                currentSpinnerNode = contentSplitPane;
+                splitPaneHeightSpinner.getValueFactory().setValue((double) Math.round(contentSplitPane.getHeight()/PrintUtilities.getPageHeight() * 100.0));
+                mainView.updateSizeSpinners(splitPaneHeightSpinner, splitPaneWidthSpinner);
+            }
+        });
+
+
+        //page size listeners
+        PrintUtilities.pageHeightProperty().addListener((ob, ov, nv) -> {
+
+            statementRTA.prefHeightProperty().unbind();
+            statementHeightSpinner.getValueFactory().setValue((double) Math.round(statementHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
+            statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+
+            commentRTA.prefHeightProperty().unbind();
+            commentHeightSpinner.getValueFactory().setValue((double) Math.round(commentHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
+            commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+
+            splitPaneHeightSpinner.getValueFactory().setValue((double) Math.round(contentSplitPane.getHeight() / PrintUtilities.getPageHeight() * 100.0));
+        });
+
+        PrintUtilities.pageWidthProperty().addListener((ob, ov, nv) -> {
+            contentSplitPane.prefWidthProperty().unbind();
+            splitPaneWidthSpinner.getValueFactory().setValue((double) Math.round(splitPaneWidthSpinner.getValue() * ov.doubleValue() / nv.doubleValue() / 5.0) * 5.0);
+            contentSplitPane.prefWidthProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(splitPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        });
 
     }
 
     public void setGridFromViewLines() {
+
         grid.getChildren().clear();
+        grid.getRowConstraints().clear();
         ObservableList<RowConstraints> gridRowConstraints = grid.getRowConstraints();
         int lineNumber = 1;
         for (int index = 0; index < viewLines.size(); index++) {
@@ -227,6 +356,13 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
     public List<ViewLine> getViewLines() { return viewLines; }
     public void setViewLines(List<ViewLine> viewLines) {this.viewLines = viewLines; }
     public SplitPane getContentSplitPane() { return contentSplitPane; }
+
+    public void setCommentPrefHeight(double commentPrefHeight) {   this.commentPrefHeight = commentPrefHeight;  }
+    public double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight(); }
+
+    public double getSplitPanePrefWidth() {return contentSplitPane.getPrefWidth(); }
+
+    public void setSplitPanePrefWidth(double splitPanePrefWidth) { this.splitPanePrefWidth = splitPanePrefWidth; }
 
     public Button getInsertLineButton() { return insertLineButton;  }
     public Button getDeleteLineButton() { return deleteLineButton; }
