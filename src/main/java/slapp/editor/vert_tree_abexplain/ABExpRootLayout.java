@@ -31,7 +31,6 @@ public class ABExpRootLayout extends AnchorPane {
 
     VerticalTreeABExpView verticalTreeView;
     SplitPane base_pane;
-    ScrollPane scroll_pane;
     AnchorPane main_pane;
     HBox top_pane;
 
@@ -61,9 +60,7 @@ public class ABExpRootLayout extends AnchorPane {
 
     public ABExpRootLayout(VerticalTreeABExpView verticalTreeView) {
         this.verticalTreeView = verticalTreeView;
-        scroll_pane = new ScrollPane();
         top_pane = new HBox();
-        scroll_pane.setContent(top_pane);
         main_pane = new AnchorPane();
         base_pane = new SplitPane();
         base_pane.getItems().addAll(top_pane, main_pane);
@@ -174,15 +171,13 @@ public class ABExpRootLayout extends AnchorPane {
         main_pane.setStyle("-fx-background-color: white," +
                 "linear-gradient(from 0.5px 0.0px to 24.5px  0.0px, repeat, #f5f5f5 1%, transparent 5%)," +
                 "linear-gradient(from 0.0px 0.5px to  0.0px 24.5px, repeat, #f5f5f5 1%, transparent 5%);");
+        main_pane.setPadding(new Insets(5,5,5,5));
 
 
 
 
         this.setMinWidth(200); this.setMinHeight(200);
         this.setBottomAnchor(base_pane, 0.0); this.setTopAnchor(base_pane, 0.0); this.setLeftAnchor(base_pane, 0.0); this.setRightAnchor(base_pane, 0.0);
-        scroll_pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); scroll_pane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scroll_pane.setPrefWidth(100); scroll_pane.setMinWidth(100); scroll_pane.setMaxWidth(100);
-        scroll_pane.setPadding(new Insets(6,0,0,8));
 
         top_pane.setSpacing(20);
         top_pane.setAlignment(Pos.CENTER_LEFT);

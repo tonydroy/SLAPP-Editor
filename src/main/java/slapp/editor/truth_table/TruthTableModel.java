@@ -15,9 +15,9 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
     private double statementPrefHeight = 80;
+    private double commentPrefHeight = 60;
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
-
     private List<String> unaryOperators = new ArrayList<>();
     private List<String> binaryOperators = new ArrayList<>();
 
@@ -27,7 +27,7 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     private Document[] rowComments; //[h]
     private boolean[] columnHighlights; //[w]
     private boolean conclusionDivider = false;
-    private Document explainDocument = new Document();
+
     private int tableRows = 0;
 
 
@@ -94,10 +94,6 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
         this.conclusionDivider = conclusionDivider;
     }
 
-    public void setExplainDocument(Document explainDocument) {
-        this.explainDocument = explainDocument;
-    }
-
     public void setTableRows(int tableRows) { this.tableRows = tableRows;  }
 
     public int getTableRows() { return tableRows; }
@@ -110,7 +106,11 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     public List<String> getBinaryOperators() { return binaryOperators; }
     public void setBasicFormulas(List<Document> basicFormulas) { this.basicFormulas = basicFormulas;  }
     public List<Document> getBasicFormulas() { return basicFormulas; }
-    public Document getExplainDocument() { return explainDocument; }
+
+    public double getCommentPrefHeight() {    return commentPrefHeight;  }
+
+    public void setCommentPrefHeight(double commentPrefHeight) {  this.commentPrefHeight = commentPrefHeight;  }
+
     @Override
     public String getExerciseName() {
         return exerciseName;

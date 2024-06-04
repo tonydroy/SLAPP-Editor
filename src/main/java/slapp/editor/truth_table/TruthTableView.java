@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextFlow;
@@ -30,9 +31,16 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     private MainWindowView mainView;
     private String exerciseName = new String();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
-    private double statementPrefHeight = 80;
+    private double statementPrefHeight = 0;
+    private double commentPrefHeight = 0;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
-    private DecoratedRTA explainDRTA = new DecoratedRTA();
+    private Spinner<Double> statementHeightSpinner;
+    private Spinner<Double> statementWidthSpinner;
+    private Spinner<Double> commentHeightSpinner;
+    private Spinner<Double> commentWidthSpinner;
+    private Spinner<Double> tableGridHeightSpinner;
+    private Spinner<Double> tableGridWidthSpinner;
+    private Node currentSpinnerNode;
     private GridPane basicFormulasPane;
     private List<BoxedDRTA> basicFormulasBoxedDRTAList;
     private VBox controlBox;
@@ -120,11 +128,11 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         setupTableButton.setPrefWidth(100);
 
         controlBox = new VBox(20, upperControlBox, basicFormulasPane, spinnerBox, setupTableButton);
-        controlBox.setPadding(new Insets(100, 20, 20, 30));
+        controlBox.setPadding(new Insets(100, 20, 00, 30));
 
 
         tableGrid = new GridPane();
-        tableGrid.setPadding(new Insets(20,0,20,0));
+        tableGrid.setPadding(new Insets(20,0,20,10));
         centerBox = new VBox(10, tableGrid);
         tableGrid.setStyle("-fx-border-color: gainsboro");
     }
@@ -188,15 +196,6 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
             }
             tableGrid.add(rowCommentsArray[j].getBoxedRTA(), tableHeadItemsList.size(), j + 2);
         }
-        /*
-        for (int j = 0; j < tableRows; j++) {
-            endPane = new Pane();
-            endPane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
-            tableGrid.add(endPane, tableHeadItemsList.size(), 0);
-            tableGrid.add(rowCommentsArray[j].getBoxedRTA(), tableHeadItemsList.size(), j + 2);
-        }
-
-         */
 
         sizers = new VBox[tableRows + 3];
 
@@ -243,7 +242,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         TextField singleCharField = new TextField();
 
         singleCharField.setPadding(new Insets(0));
-        singleCharField.setPrefWidth(15);
+        singleCharField.setMaxWidth(18);
 
         singleCharField.setAlignment(Pos.CENTER);
         singleCharField.setStyle("-fx-background-radius: 2");
@@ -369,7 +368,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
 
         RichTextAreaSkin rtaSkin = (RichTextAreaSkin) rta.getSkin();
-        rta.minWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 3), 100));
+        rta.prefWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 3), 100));
         rta.addEventFilter(KeyEvent.ANY, e -> {
             if (e.getCode() == KeyCode.ENTER) e.consume();
         });
@@ -385,17 +384,115 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     }
 
     void initializeViewDetails() {
+        //statement
         RichTextArea statementRTA = exerciseStatement.getEditor();
-        statementRTA.setPrefHeight(statementPrefHeight);
-        statementRTA.setMinHeight(statementPrefHeight);
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setEditable(false);
 
+        double statementInitialHeight = Math.round(statementPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
+        statementHeightSpinner.setPrefWidth(60);
+        statementHeightSpinner.setDisable(false);
+        statementHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        statementHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = statementHeightSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = statementHeightSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+
+        statementRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        statementWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
+        statementWidthSpinner.setPrefWidth(60);
+        statementWidthSpinner.setDisable(true);
+        statementWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        statementRTA.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != statementRTA) {
+                currentSpinnerNode = statementRTA;
+                mainView.updateSizeSpinners(statementHeightSpinner, statementWidthSpinner);
+            }
+        });
+
+        //comment
         RichTextArea commentRTA = exerciseComment.getEditor();
         commentRTA.getStylesheets().add("slappTextArea.css");
-        commentRTA.setPrefHeight(70.0);
-        commentRTA.setMinHeight(70.0);
         commentRTA.setPromptText("Comment:");
+
+        double commentInitialHeight = Math.round(commentPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
+        commentHeightSpinner.setPrefWidth(60);
+        commentHeightSpinner.setDisable(false);
+        commentHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        commentHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = commentHeightSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = commentHeightSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+
+        commentRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        commentRTA.minWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        commentWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
+        commentWidthSpinner.setPrefWidth(60);
+        commentWidthSpinner.setDisable(true);
+        commentWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        commentRTA.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != commentRTA) {
+                currentSpinnerNode = commentRTA;
+                mainView.updateSizeSpinners(commentHeightSpinner, commentWidthSpinner);
+            }
+        });
+
+        //table grid
+        tableGridHeightSpinner = new Spinner<>(0.0,999.0, 0,1.0);
+        tableGridHeightSpinner.setPrefWidth(60);
+        tableGridHeightSpinner.setDisable(true);
+        tableGridHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
+        tableGrid.heightProperty().addListener((ob, ov, nv) -> {
+            tableGridHeightSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getHeight() / PrintUtilities.getPageHeight() * 100));
+        });
+
+        tableGridWidthSpinner = new Spinner<>(0.0,999.0, 0,1.0);
+        tableGridWidthSpinner.setPrefWidth(60);
+        tableGridWidthSpinner.setDisable(true);
+        tableGridWidthSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
+        tableGrid.widthProperty().addListener((ob, ov, nv) -> {
+            tableGridWidthSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getWidth() / PrintUtilities.getPageWidth() * 100));
+        });
+
+        tableGrid.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != tableGrid) {
+                currentSpinnerNode = tableGrid;
+                tableGridHeightSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getHeight()/PrintUtilities.getPageHeight() * 100.0));
+                tableGridWidthSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getWidth()/PrintUtilities.getPageWidth() * 100.0));
+                mainView.updateSizeSpinners(tableGridHeightSpinner, tableGridWidthSpinner);
+            }
+        });
+
+
+        //page size listeners
+        PrintUtilities.pageHeightProperty().addListener((ob, ov, nv) -> {
+
+            statementRTA.prefHeightProperty().unbind();
+            statementHeightSpinner.getValueFactory().setValue((double) Math.round(statementHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
+            statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+
+            commentRTA.prefHeightProperty().unbind();
+            commentHeightSpinner.getValueFactory().setValue((double) Math.round(commentHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
+            commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+
+            tableGridHeightSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getHeight() / PrintUtilities.getPageHeight() * 100.0));
+        });
+
+        PrintUtilities.pageWidthProperty().addListener((ob, ov, nv) -> {
+            tableGridWidthSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getWidth() / PrintUtilities.getPageWidth() * 100.0));
+        });
+
+
     }
 
 
@@ -432,7 +529,9 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
     public VBox getCenterBox() {return centerBox; }
 
-    public DecoratedRTA getExplainDRTA() {return explainDRTA; }
+    public double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight();   }
+
+    public void setCommentPrefHeight(double commentPrefHeight) {  this.commentPrefHeight = commentPrefHeight;   }
 
     @Override
     public String getExerciseName() { return exerciseName;  }

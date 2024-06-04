@@ -49,8 +49,6 @@ public class ParseDocForTTable {
             else if (isRelationChar(c)) relationSequence();
             else if (isCloseBracket(c)) {
                 TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
-//                ColumnConstraints constraints = new ColumnConstraints();
-//                constraints.setHalignment(HPos.CENTER);
                 TableHeadItem headItem = new TableHeadItem(flow, constraints);
                 headItems.add(headItem);
                 EditorAlerts.fleetingPopup("Unexpected close bracket.");
@@ -69,8 +67,6 @@ public class ParseDocForTTable {
             flow.getChildren().add(0, new Text(" "));
             flow.getChildren().add(new Text(" "));
         }
-//        ColumnConstraints constraints = new ColumnConstraints();
-//        constraints.setHalignment(HPos.CENTER);
         TableHeadItem headItem = new TableHeadItem(flow, constraints);
         headItems.add(headItem);
         start = start + span;
@@ -86,9 +82,6 @@ public class ParseDocForTTable {
             TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
             flow.setTextAlignment(TextAlignment.CENTER);
 
-//            ColumnConstraints constraints = new ColumnConstraints();
-//            constraints.setHalignment(HPos.CENTER);
-
             TableHeadItem headItem = new TableHeadItem(flow, constraints);
             headItems.add(headItem);
             start = start + span;
@@ -101,9 +94,7 @@ public class ParseDocForTTable {
         TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
         flow.setTextAlignment(TextAlignment.CENTER);
 
- //       ColumnConstraints constraints = new ColumnConstraints();
- //       constraints.setHalignment(HPos.RIGHT);
- //       constraints.setHalignment(HPos.CENTER);
+
         TableHeadItem headItem = new TableHeadItem(flow, constraints);
         headItems.add(headItem);
         start = start + span;
@@ -118,9 +109,6 @@ public class ParseDocForTTable {
             TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
             flow.setTextAlignment(TextAlignment.CENTER);
 
-  //          ColumnConstraints constraints = new ColumnConstraints();
-  //          constraints.setHalignment(HPos.RIGHT);
-  //          constraints.setHalignment(HPos.CENTER);
             TableHeadItem headItem = new TableHeadItem(flow, constraints);
             headItems.add(headItem);
             start = start + span;
@@ -129,12 +117,12 @@ public class ParseDocForTTable {
         while (start + span < formulaLength && isCloseBracket(formulaString.charAt(start + span))) {
             span++;
         }
+
+
         TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
         flow.setTextAlignment(TextAlignment.CENTER);
 
- //       ColumnConstraints constraints = new ColumnConstraints();
- //       constraints.setHalignment(HPos.CENTER);
-  //      constraints.setHalignment(HPos.LEFT);
+
         TableHeadItem headItem = new TableHeadItem(flow, constraints);
         headItems.add(headItem);
         start = start + span;
@@ -182,7 +170,7 @@ public class ParseDocForTTable {
                 if (start + span < formulaLength && formulaString.charAt(start + span) == c) count++;
                 if (start + span < formulaLength && isMatchingBracket(c, formulaString.charAt(start + span)))  count--;
             }
-            span++;
+            if (start + span + 1 < formulaLength) span++;
         }
     }
 

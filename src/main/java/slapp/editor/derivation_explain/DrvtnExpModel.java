@@ -16,6 +16,10 @@ public class DrvtnExpModel implements ExerciseModel<Document>, Serializable {
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
     private double statementPrefHeight = 80;
+    private double commentPrefHeight = 60;
+    private double explanationPrefHeight = 120;
+    private double splitPanePrefWidth;
+
     private double gridWidth = 0;
     private String contentPrompt ="";
     private boolean isLeftmostScopeLine = true;
@@ -50,6 +54,19 @@ public class DrvtnExpModel implements ExerciseModel<Document>, Serializable {
     public List<ModelLine> getDerivationLines() { return derivationLines; }
     public String getContentPrompt() { return contentPrompt; }
     public RichTextAreaSkin.KeyMapValue getKeyboardSelector() {return keyboardSelector;}
+
+    public double getCommentPrefHeight() {
+        return commentPrefHeight;
+    }
+
+    public void setCommentPrefHeight(double commentPrefHeight) {
+        this.commentPrefHeight = commentPrefHeight;
+    }
+
+    public double getExplanationPrefHeight() {    return explanationPrefHeight;  }
+    public void setExplanationPrefHeight(double explanationPrefHeight) {  this.explanationPrefHeight = explanationPrefHeight;   }
+    public double getSplitPanePrefWidth() {    return splitPanePrefWidth;  }
+    public void setSplitPanePrefWidth(double splitPanePrefWidth) {    this.splitPanePrefWidth = splitPanePrefWidth;  }
 
     @Override
     public String getExerciseName() { return exerciseName; }

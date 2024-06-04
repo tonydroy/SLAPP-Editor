@@ -493,6 +493,7 @@ public class VerticalTreeABEFExpCreate {
         VerticalTreeABEFExpExercise exercise = new VerticalTreeABEFExpExercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
+        rta.prefHeightProperty().unbind();
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
         double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
@@ -516,6 +517,7 @@ public class VerticalTreeABEFExpCreate {
         VerticalTreeABEFExpExercise exercise = new VerticalTreeABEFExpExercise(extractModelFromWindow(), mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
+        rta.prefHeightProperty().unbind();
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
         double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);

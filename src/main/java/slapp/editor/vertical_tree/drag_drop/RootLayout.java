@@ -18,7 +18,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import slapp.editor.EditorAlerts;
-import slapp.editor.vertical_tree.VTreeView;
 import slapp.editor.vertical_tree.VerticalTreeView;
 
 import java.util.ArrayList;
@@ -28,9 +27,8 @@ public class RootLayout extends AnchorPane {
 
     VerticalTreeView verticalTreeView;
     SplitPane base_pane;
-    ScrollPane scroll_pane;
-    AnchorPane main_pane;
-    HBox top_pane;
+    AnchorPane mainPane;
+    HBox topPane;
 
 
     EventHandler boxClickFilter;
@@ -58,12 +56,10 @@ public class RootLayout extends AnchorPane {
 
     public RootLayout(VerticalTreeView verticalTreeView) {
         this.verticalTreeView = verticalTreeView;
-        scroll_pane = new ScrollPane();
-        top_pane = new HBox();
-        scroll_pane.setContent(top_pane);
-        main_pane = new AnchorPane();
+        topPane = new HBox();
+        mainPane = new AnchorPane();
         base_pane = new SplitPane();
-        base_pane.getItems().addAll(top_pane, main_pane);
+        base_pane.getItems().addAll(topPane, mainPane);
         base_pane.setOrientation(Orientation.VERTICAL);
 
         this.getChildren().add(base_pane);
@@ -76,8 +72,8 @@ public class RootLayout extends AnchorPane {
     private void setupWindow() {
  //       RightDragResizer.makeResizable(base_pane);
      //   BottomDragResizer.makeResizable(base_pane);
-        top_pane.setStyle("-fx-background-color: #FCFCFC;");
-        top_pane.setPadding(new Insets(0, 0, 0, 20));
+        topPane.setStyle("-fx-background-color: #FCFCFC;");
+        topPane.setPadding(new Insets(0, 0, 0, 20));
 
         boxToggle = new ToggleButton();
         boxToggle.setPrefWidth(64);
@@ -168,31 +164,29 @@ public class RootLayout extends AnchorPane {
 
 
         this.getStylesheets().add("/drag_drop.css");
-        main_pane.setStyle("-fx-background-color: white," +
+        mainPane.setStyle("-fx-background-color: white," +
                 "linear-gradient(from 0.5px 0.0px to 24.5px  0.0px, repeat, #f5f5f5 1%, transparent 5%)," +
                 "linear-gradient(from 0.0px 0.5px to  0.0px 24.5px, repeat, #f5f5f5 1%, transparent 5%);");
+        mainPane.setPadding(new Insets(5,5,5,5));
 
 
 
 
         this.setMinWidth(200); this.setMinHeight(200);
         this.setBottomAnchor(base_pane, 0.0); this.setTopAnchor(base_pane, 0.0); this.setLeftAnchor(base_pane, 0.0); this.setRightAnchor(base_pane, 0.0);
-        scroll_pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); scroll_pane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scroll_pane.setPrefWidth(100); scroll_pane.setMinWidth(100); scroll_pane.setMaxWidth(100);
-        scroll_pane.setPadding(new Insets(6,0,0,8));
 
-        top_pane.setSpacing(20);
-        top_pane.setAlignment(Pos.CENTER_LEFT);
-        top_pane.setMinHeight(32);
-        top_pane.setMaxHeight(32);
+        topPane.setSpacing(20);
+        topPane.setAlignment(Pos.CENTER_LEFT);
+        topPane.setMinHeight(32);
+        topPane.setMaxHeight(32);
 
-        base_pane.setResizableWithParent(main_pane, true);
+        base_pane.setResizableWithParent(mainPane, true);
 
 
         boxClickFilter = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                ObservableList<Node> nodesList = main_pane.getChildren();
+                ObservableList<Node> nodesList = mainPane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
                         if (node instanceof TreeFormulaBox) {
@@ -205,14 +199,14 @@ public class RootLayout extends AnchorPane {
             }
         };
         boxToggle.selectedProperty().addListener((ob, ov, nv) -> {
-            if (nv)  main_pane.addEventFilter(MouseEvent.MOUSE_PRESSED, boxClickFilter );
-            else main_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, boxClickFilter);
+            if (nv)  mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, boxClickFilter );
+            else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, boxClickFilter);
         });
 
         starClickFilter = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                ObservableList<Node> nodesList = main_pane.getChildren();
+                ObservableList<Node> nodesList = mainPane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
                         if (node instanceof TreeFormulaBox) {
@@ -225,14 +219,14 @@ public class RootLayout extends AnchorPane {
             }
         };
         starToggle.selectedProperty().addListener((ob, ov, nv) -> {
-            if (nv)  main_pane.addEventFilter(MouseEvent.MOUSE_PRESSED, starClickFilter );
-            else main_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, starClickFilter);
+            if (nv)  mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, starClickFilter );
+            else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, starClickFilter);
         });
 
         annotationClickFilter = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                ObservableList<Node> nodesList = main_pane.getChildren();
+                ObservableList<Node> nodesList = mainPane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
                         if (node instanceof TreeFormulaBox) {
@@ -245,12 +239,12 @@ public class RootLayout extends AnchorPane {
             }
         };
         annotationToggle.selectedProperty().addListener((ob, ov, nv) -> {
-            if (nv)  main_pane.addEventFilter(MouseEvent.MOUSE_PRESSED, annotationClickFilter );
-            else main_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, annotationClickFilter);
+            if (nv)  mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, annotationClickFilter );
+            else mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, annotationClickFilter);
         });
 
         annotationPlus.setOnAction(e -> {
-            ObservableList<Node> nodesList = main_pane.getChildren();
+            ObservableList<Node> nodesList = mainPane.getChildren();
             for (Node node : nodesList) {
                 if (node instanceof TreeFormulaBox) {
                     ((TreeFormulaBox) node).processAnnotationRequest(true);
@@ -260,7 +254,7 @@ public class RootLayout extends AnchorPane {
         });
 
         annotationMinus.setOnAction(e -> {
-           ObservableList<Node> nodesList = main_pane.getChildren();
+           ObservableList<Node> nodesList = mainPane.getChildren();
            for (Node node : nodesList) {
                if (node instanceof TreeFormulaBox) {
                    ((TreeFormulaBox) node).processAnnotationRequest(false);
@@ -272,7 +266,7 @@ public class RootLayout extends AnchorPane {
         circleClickFilter = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                ObservableList<Node> nodesList = main_pane.getChildren();
+                ObservableList<Node> nodesList = mainPane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
                         if (node instanceof TreeFormulaBox) {
@@ -285,10 +279,10 @@ public class RootLayout extends AnchorPane {
             }
         };
         circleToggle.selectedProperty().addListener((ob, ov, nv) -> {
-            if (nv)  main_pane.addEventFilter(MouseEvent.MOUSE_PRESSED, circleClickFilter );
+            if (nv)  mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, circleClickFilter );
             else {
-                main_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, circleClickFilter);
-                ObservableList<Node> nodesList = main_pane.getChildren();
+                mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, circleClickFilter);
+                ObservableList<Node> nodesList = mainPane.getChildren();
                 for (Node node : nodesList) {
                     if (node instanceof TreeFormulaBox) {
                         ((TreeFormulaBox) node).undoCircleRequest();
@@ -300,7 +294,7 @@ public class RootLayout extends AnchorPane {
         underlineClickFilter = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                ObservableList<Node> nodesList = main_pane.getChildren();
+                ObservableList<Node> nodesList = mainPane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
                         if (node instanceof TreeFormulaBox) {
@@ -313,10 +307,10 @@ public class RootLayout extends AnchorPane {
             }
         };
         underlineToggle.selectedProperty().addListener((ob, ov, nv) -> {
-            if (nv)  main_pane.addEventFilter(MouseEvent.MOUSE_PRESSED, underlineClickFilter );
+            if (nv)  mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, underlineClickFilter );
             else {
-                main_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, underlineClickFilter);
-                ObservableList<Node> nodesList = main_pane.getChildren();
+                mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, underlineClickFilter);
+                ObservableList<Node> nodesList = mainPane.getChildren();
                 for (Node node : nodesList) {
                     if (node instanceof TreeFormulaBox) {
                         ((TreeFormulaBox) node).undoUnderlineRequest();
@@ -328,7 +322,7 @@ public class RootLayout extends AnchorPane {
         mappingClickFilter = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                ObservableList<Node> nodesList = main_pane.getChildren();
+                ObservableList<Node> nodesList = mainPane.getChildren();
                 for (Node node : nodesList) {
                     if (inHierarchy(event.getPickResult().getIntersectedNode(), node)) {
                         if (node instanceof MapFormulaBox) {
@@ -345,7 +339,7 @@ public class RootLayout extends AnchorPane {
             public void handle(KeyEvent e) {
                 KeyCode code = e.getCode();
                 if (code == KeyCode.F10) {
-                    ObservableList<Node> nodesList = main_pane.getChildren();
+                    ObservableList<Node> nodesList = mainPane.getChildren();
                     List<MapFormulaBox> formulaBoxes = new ArrayList<>();
                     for (Node node : nodesList) {
                         if (node instanceof MapFormulaBox) {
@@ -357,7 +351,7 @@ public class RootLayout extends AnchorPane {
                     }
                     if (formulaBoxes.size() == 2) {
                         ClickableMapLink mapLink = new ClickableMapLink(verticalTreeView);
-                        main_pane.getChildren().add(0, mapLink);
+                        mainPane.getChildren().add(0, mapLink);
                         mapLink.bindEnds(formulaBoxes.get(0), formulaBoxes.get(1));
                         verticalTreeView.setUndoRedoFlag(true);
                         verticalTreeView.setUndoRedoFlag(false);
@@ -368,7 +362,7 @@ public class RootLayout extends AnchorPane {
                     }
                     e.consume();
                 } else if (code == KeyCode.F11) {
-                    ObservableList<Node> nodesList = main_pane.getChildren();
+                    ObservableList<Node> nodesList = mainPane.getChildren();
                     for (Node node : nodesList) {
                         if (inHierarchy(verticalTreeView.getMainView().getMainScene().focusOwnerProperty().get(), node)) {
                             if (node instanceof MapFormulaBox) {
@@ -376,7 +370,7 @@ public class RootLayout extends AnchorPane {
                                 if (mapFormulaBox.getMapStage() > 0) {
 
                                     MapQuestionMarker mapQuestionMarker = new MapQuestionMarker(verticalTreeView);
-                                    main_pane.getChildren().add(0, mapQuestionMarker);
+                                    mainPane.getChildren().add(0, mapQuestionMarker);
                                     mapQuestionMarker.bindQuestionLabel(mapFormulaBox);
                                     verticalTreeView.setUndoRedoFlag(true);
                                     verticalTreeView.setUndoRedoFlag(false);
@@ -396,13 +390,13 @@ public class RootLayout extends AnchorPane {
 
         mappingToggle.selectedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
-                main_pane.addEventFilter(MouseEvent.MOUSE_PRESSED, mappingClickFilter);
-                main_pane.addEventFilter(KeyEvent.KEY_PRESSED, mappingKeyFilter);
+                mainPane.addEventFilter(MouseEvent.MOUSE_PRESSED, mappingClickFilter);
+                mainPane.addEventFilter(KeyEvent.KEY_PRESSED, mappingKeyFilter);
             }
             else {
-                main_pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, mappingClickFilter);
-                main_pane.removeEventFilter(KeyEvent.KEY_PRESSED, mappingKeyFilter);
-                ObservableList<Node> nodesList = main_pane.getChildren();
+                mainPane.removeEventFilter(MouseEvent.MOUSE_PRESSED, mappingClickFilter);
+                mainPane.removeEventFilter(KeyEvent.KEY_PRESSED, mappingKeyFilter);
+                ObservableList<Node> nodesList = mainPane.getChildren();
                 for (Node node : nodesList) {
                     if (node instanceof MapFormulaBox) {
                         ((MapFormulaBox) node).undoMappingRequest();
@@ -431,7 +425,7 @@ public class RootLayout extends AnchorPane {
         DragIcon icn = new DragIcon();
         addDragDetection(icn);
         icn.setType(type);
-        top_pane.getChildren().add(icn);
+        topPane.getChildren().add(icn);
     }
 
     public static boolean inHierarchy(Node node, Node potentialHierarchyElement) {
@@ -454,8 +448,8 @@ public class RootLayout extends AnchorPane {
 
                 // set drag event handlers on their respective objects
                 base_pane.setOnDragOver(mIconDragOverRoot);
-                main_pane.setOnDragOver(mIconDragOverRightPane);
-                main_pane.setOnDragDropped(mIconDragDropped);
+                mainPane.setOnDragOver(mIconDragOverRightPane);
+                mainPane.setOnDragDropped(mIconDragDropped);
 
                 // get a reference to the clicked DragIcon object
                 DragIcon icn = (DragIcon) event.getSource();
@@ -485,11 +479,11 @@ public class RootLayout extends AnchorPane {
             @Override
             public void handle(DragEvent event) {
 
-                Point2D p = main_pane.sceneToLocal(event.getSceneX(), event.getSceneY());
+                Point2D p = mainPane.sceneToLocal(event.getSceneX(), event.getSceneY());
 
                 //turn on transfer mode and track in the right-pane's context
                 //if (and only if) the mouse cursor falls within the right pane's bounds.
-                if (!main_pane.boundsInLocalProperty().get().contains(p)) {
+                if (!mainPane.boundsInLocalProperty().get().contains(p)) {
 
                     event.acceptTransferModes(TransferMode.ANY);
                     mDragOverIcon.relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));
@@ -540,8 +534,8 @@ public class RootLayout extends AnchorPane {
             @Override
             public void handle (DragEvent event) {
 
-                main_pane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRightPane);
-                main_pane.removeEventHandler(DragEvent.DRAG_DROPPED, mIconDragDropped);
+                mainPane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRightPane);
+                mainPane.removeEventHandler(DragEvent.DRAG_DROPPED, mIconDragDropped);
                 base_pane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRoot);
 
                 mDragOverIcon.setVisible(false);
@@ -555,7 +549,7 @@ public class RootLayout extends AnchorPane {
 
                         if (container.getValue("type").equals(DragIconType.dashed_line.toString())) {
                             DashedLine line = new DashedLine(verticalTreeView);
-                            main_pane.getChildren().add(line);
+                            mainPane.getChildren().add(line);
                             Point2D cursorPoint = container.getValue("scene_coords");
                             line.relocateToGridPoint(new Point2D(cursorPoint.getX() - 28, cursorPoint.getY()));
                             verticalTreeView.setUndoRedoFlag(true);
@@ -564,7 +558,7 @@ public class RootLayout extends AnchorPane {
 
                         else if (container.getValue("type").equals(DragIconType.bracket.toString())) {
                             VerticalBracket bracket = new VerticalBracket(verticalTreeView);
-                            main_pane.getChildren().add(bracket);
+                            mainPane.getChildren().add(bracket);
                             Point2D cursorPoint = container.getValue("scene_coords");
                             bracket.relocateToGridPoint(new Point2D(cursorPoint.getX(), cursorPoint.getY()));
                             verticalTreeView.setUndoRedoFlag(true);
@@ -573,7 +567,7 @@ public class RootLayout extends AnchorPane {
 
                         else if (container.getValue("type").equals(DragIconType.tree_field.toString())) {
                             TreeFormulaBox treeFormulaBox = new TreeFormulaBox(verticalTreeView);
-                            main_pane.getChildren().add(treeFormulaBox);
+                            mainPane.getChildren().add(treeFormulaBox);
                             Point2D cursorPoint = container.getValue("scene_coords");
                             treeFormulaBox.relocateToGridPoint(new Point2D(cursorPoint.getX(), cursorPoint.getY()));
                             verticalTreeView.setUndoRedoFlag(true);
@@ -582,7 +576,7 @@ public class RootLayout extends AnchorPane {
 
                         else if (container.getValue("type").equals(DragIconType.map_field.toString())) {
                             MapFormulaBox mapFormulaBox = new MapFormulaBox(verticalTreeView);
-                            main_pane.getChildren().add(mapFormulaBox);
+                            mainPane.getChildren().add(mapFormulaBox);
                             Point2D cursorPoint = container.getValue("scene_coords");
                             mapFormulaBox.relocateToGridPoint(new Point2D(cursorPoint.getX(), cursorPoint.getY()));
                             verticalTreeView.setUndoRedoFlag(true);
@@ -597,7 +591,7 @@ public class RootLayout extends AnchorPane {
                             DraggableNode node = new DraggableNode();
 
                             node.setType(DragIconType.valueOf(container.getValue("type")));
-                            main_pane.getChildren().add(node);
+                            mainPane.getChildren().add(node);
 
                             Point2D cursorPoint = container.getValue("scene_coords");
 
@@ -638,12 +632,12 @@ public class RootLayout extends AnchorPane {
 
 
                         //add our link at the top of the rendering order so it's rendered first
-                        main_pane.getChildren().add(0,link);
+                        mainPane.getChildren().add(0,link);
 
                         TreeFormulaBox source = null;
                         TreeFormulaBox target = null;
 
-                        for (Node n: main_pane.getChildren()) {
+                        for (Node n: mainPane.getChildren()) {
 
                             if (n.getId() == null)
                                 continue;
@@ -673,12 +667,12 @@ public class RootLayout extends AnchorPane {
         return base_pane;
     }
 
-    public AnchorPane getMain_pane() {
-        return main_pane;
+    public AnchorPane getMainPane() {
+        return mainPane;
     }
 
-    public HBox getTop_pane() {
-        return top_pane;
+    public HBox getTopPane() {
+        return topPane;
     }
 
 

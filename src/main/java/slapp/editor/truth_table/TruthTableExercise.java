@@ -73,12 +73,16 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
 
     private void setTruthTableView() {
         truthTableView.setExerciseName(truthTableModel.getExerciseName());
+        truthTableView.setStatementPrefHeight(truthTableModel.getStatementPrefHeight());
+        truthTableView.setCommentPrefHeight(truthTableModel.getCommentPrefHeight());
+
+
         truthTableView.setTableRows(tableRows);
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
         statementEditor.setDocument(truthTableModel.getExerciseStatement());
-        truthTableView.setStatementPrefHeight(truthTableModel.getStatementPrefHeight());
+
         mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -101,17 +105,7 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
 
 
 
-        DecoratedRTA explainDRTA = truthTableView.getExplainDRTA();
-        RichTextArea explainEditor = explainDRTA.getEditor();
-        explainEditor.setDocument(truthTableModel.getExplainDocument());
-        explainEditor.setPromptText("Explain:");
-        explainEditor.getActionFactory().saveNow().execute(new ActionEvent());
-        mainView.editorInFocus(explainDRTA, ControlType.AREA);
-        explainEditor.focusedProperty().addListener((o, ov, nv) -> {
-            if (nv) {
-                mainView.editorInFocus(explainDRTA, ControlType.AREA);
-            }
-        });
+
 
         //initialize basic formulas control
         List<Document> basicFormulaDocs = truthTableModel.getBasicFormulas();
@@ -294,6 +288,8 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.setEditable(true);
+        statementRTA.prefHeightProperty().unbind();
+        statementRTA.prefWidthProperty().unbind();
         RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
         double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         statementRTA.setPrefHeight(statementHeight + 35.0);
@@ -329,6 +325,8 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
 
         //comment node
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        commentRTA.prefHeightProperty().unbind();
+        commentRTA.prefWidthProperty().unbind();
         RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
         double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
@@ -357,8 +355,7 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         RichTextArea commentEditor = truthTableView.getExerciseComment().getEditor();
         if (commentEditor.isModified()) exerciseModified = true;
 
-        RichTextArea explanationEditor = truthTableView.getExplainDRTA().getEditor();
-        if (explanationEditor.isModified()) exerciseModified = true;
+
 
         BoxedDRTA[] rowComments = truthTableView.getRowCommentsArray();
         for (int i = 0; i < rowComments.length; i++) {
@@ -383,6 +380,7 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         model.setOriginalModel(truthTableModel.getOriginalModel());
         model.setStarted(truthTableModel.isStarted() || exerciseModified);
         model.setStatementPrefHeight(truthTableView.getExerciseStatement().getEditor().getPrefHeight());
+        model.setCommentPrefHeight(truthTableView.getCommentPrefHeight());
         model.setExerciseStatement(truthTableModel.getExerciseStatement());
 
         RichTextArea commentRTA = truthTableView.getExerciseComment().getEditor();
@@ -438,12 +436,8 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         model.setColumnHighlights(highlightValues);
 
         model.setConclusionDivider(truthTableModel.isConclusionDivider());
-
-
-        RichTextArea explainRTA = truthTableView.getExplainDRTA().getEditor();
-        explainRTA.getActionFactory().saveNow().execute(new ActionEvent());
-        model.setExplainDocument(explainRTA.getDocument());
         model.setTableRows(tableRows);
+
 
         return model;
     }

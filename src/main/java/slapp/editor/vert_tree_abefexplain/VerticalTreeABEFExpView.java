@@ -2,23 +2,25 @@ package slapp.editor.vert_tree_abefexplain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
 import slapp.editor.vert_tree_abefexplain.ABEFExpRootLayout;
+import slapp.editor.vert_tree_explain.ExpRootLayout;
 
 public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
 
@@ -40,7 +42,25 @@ public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
     private ABEFExpRootLayout rootLayout;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
-    private double statementPrefHeight = 80;
+    private double statementPrefHeight = 0;
+    private double commentPrefHeight = 0;
+    private double explainPrefHeight = 0;
+    private double mainPanePrefHeight = 0;
+    private double mainPanePrefWidth = 0;
+    private Spinner<Double> statementHeightSpinner;
+    private Spinner<Double> statementWidthSpinner;
+    private Spinner<Double> commentHeightSpinner;
+    private Spinner<Double> commentWidthSpinner;
+    private Spinner<Double> explainHeightSpinner;
+    private Spinner<Double> explainWidthSpinner;
+    private Spinner<Double> mainPaneHeightSpinner;
+    private Spinner<Double> mainPaneWidthSpinner;
+    private Spinner<Double> choicesHeightSpinner;
+    private Spinner<Double> choicesWidthSpinner;
+    private Node currentSpinnerNode;
+    VBox choicesBox;
+
+
     private DecoratedRTA explainDRTA = new DecoratedRTA();
     private VBox controlBox = new VBox(25);
     private Button undoButton;
@@ -60,12 +80,12 @@ public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
         choiceBox2 = new HBox(20, efChoiceLeadLabel, eCheckBox, fCheckBox);
         choiceBox2.setPadding(new Insets(7,7,7,10));
         choiceBox2.setStyle("-fx-border-color: lightgrey; -fx-background-color: white;");
-        VBox choicesBox = new VBox(choiceBox1, choiceBox2);
+        choicesBox = new VBox(choiceBox1, choiceBox2);
 
         root = new BorderPane();
         rootLayout = new ABEFExpRootLayout(this);
 
-        VBox contentBox = new VBox(10, rootLayout, choicesBox, explainDRTA.getEditor());
+        VBox contentBox = new VBox(3, rootLayout, choicesBox, explainDRTA.getEditor());
         root.setCenter(contentBox);
 
         undoButton = new Button("Undo");
@@ -82,23 +102,190 @@ public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
     }
 
     void initializeViewDetails() {
+        //statement
         RichTextArea statementRTA = exerciseStatement.getEditor();
-        statementRTA.setPrefHeight(statementPrefHeight);
-        statementRTA.setMinHeight(statementPrefHeight);
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setEditable(false);
 
+        double statementInitialHeight = Math.round(statementPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
+        statementHeightSpinner.setPrefWidth(60);
+        statementHeightSpinner.setDisable(false);
+        statementHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        statementHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = statementHeightSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = statementHeightSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+
+        statementRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        statementWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
+        statementWidthSpinner.setPrefWidth(60);
+        statementWidthSpinner.setDisable(true);
+        statementWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        statementRTA.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != statementRTA) {
+                currentSpinnerNode = statementRTA;
+                mainView.updateSizeSpinners(statementHeightSpinner, statementWidthSpinner);
+            }
+        });
+
+        //comment
         RichTextArea commentRTA = exerciseComment.getEditor();
         commentRTA.getStylesheets().add("slappTextArea.css");
-        commentRTA.setPrefHeight(70.0);
-        commentRTA.setMinHeight(70.0);
         commentRTA.setPromptText("Comment:");
 
+        double commentInitialHeight = Math.round(commentPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
+        commentHeightSpinner.setPrefWidth(60);
+        commentHeightSpinner.setDisable(false);
+        commentHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        commentHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = commentHeightSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = commentHeightSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+
+        commentRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        commentRTA.minWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        commentWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
+        commentWidthSpinner.setPrefWidth(60);
+        commentWidthSpinner.setDisable(true);
+        commentWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        commentRTA.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != commentRTA) {
+                currentSpinnerNode = commentRTA;
+                mainView.updateSizeSpinners(commentHeightSpinner, commentWidthSpinner);
+            }
+        });
+
+        //explain
         RichTextArea explainRTA = explainDRTA.getEditor();
         explainRTA.getStylesheets().add("slappTextArea.css");
-        explainRTA.setPrefHeight(80.0);
-        explainRTA.setMinHeight(80.0);
         explainRTA.setPromptText(explainPrompt);
+
+        double explainInitialHeight = Math.round(explainPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        explainHeightSpinner = new Spinner<>(0.0, 999.0, explainInitialHeight, 1.0);
+        explainHeightSpinner.setPrefWidth(60);
+        explainHeightSpinner.setDisable(false);
+        explainHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        explainRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(explainHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        explainHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = explainHeightSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = explainHeightSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+
+        explainRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        explainRTA.minWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        explainWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
+        explainWidthSpinner.setPrefWidth(60);
+        explainWidthSpinner.setDisable(true);
+        explainWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        explainRTA.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != explainRTA) {
+                currentSpinnerNode = explainRTA;
+                mainView.updateSizeSpinners(explainHeightSpinner, explainWidthSpinner);
+            }
+        });
+
+
+        //choices (null spinners)
+        choicesHeightSpinner = new Spinner<>(0.0, 999.0, 0, 1.0);
+        choicesHeightSpinner.setPrefWidth(60);
+        choicesHeightSpinner.setDisable(true);
+        choicesHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        choicesBox.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        choicesWidthSpinner = new Spinner<>(0.0, 999.0, 100.0, 1.0);
+        choicesWidthSpinner.setPrefWidth(60);
+        choicesWidthSpinner.setDisable(true);
+        choicesWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        choicesBox.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != choicesBox) {
+                currentSpinnerNode = choicesBox;
+                double choicesHeightValue = Math.round(choicesBox.getHeight() / PrintUtilities.getPageHeight() * 100);
+                choicesHeightSpinner.getValueFactory().setValue(choicesHeightValue);
+                mainView.updateSizeSpinners(choicesHeightSpinner, choicesWidthSpinner);
+            }
+        });
+
+        //main pane
+        ABEFExpRootLayout mainPane = rootLayout;
+        mainPane.setMinHeight(250.0);
+        double mainPaneInitialHeight = Math.round(mainPanePrefHeight / PrintUtilities.getPageHeight() * 20.0) * 5.0;
+        mainPaneHeightSpinner = new Spinner<>(5, 999.0, mainPaneInitialHeight, 5.0);
+        mainPaneHeightSpinner.setPrefWidth(60);
+        mainPaneHeightSpinner.setDisable(false);
+        mainPaneHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
+        mainPane.prefHeightProperty().bind(Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(mainPaneHeightSpinner.getValueFactory().valueProperty()).divide(100.0)));
+        mainPaneHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = mainPaneHeightSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = mainPaneHeightSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+
+        double mainPaneInitialWidth = Math.round(mainPanePrefWidth / PrintUtilities.getPageWidth() * 20.0) * 5.0;
+        mainPaneWidthSpinner = new Spinner<>(100.0, 999.0, mainPaneInitialWidth, 5.0);
+        mainPaneWidthSpinner.setPrefWidth(60);
+        mainPaneWidthSpinner.setDisable(false);
+        mainPaneWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        mainPane.maxWidthProperty().bind(Bindings.multiply(PrintUtilities.pageWidthProperty(), DoubleProperty.doubleProperty(mainPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0)));
+        mainPane.prefWidthProperty().bind(Bindings.multiply(PrintUtilities.pageWidthProperty(), DoubleProperty.doubleProperty(mainPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0)));
+        mainPaneWidthSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = mainPaneWidthSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = mainPaneWidthSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+
+        mainPane.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != mainPane) {
+                currentSpinnerNode = mainPane;
+                mainView.updateSizeSpinners(mainPaneHeightSpinner, mainPaneWidthSpinner);
+            }
+        });
+
+
+        //page size listeners
+        PrintUtilities.pageHeightProperty().addListener((ob, ov, nv) -> {
+
+            statementRTA.prefHeightProperty().unbind();
+            statementHeightSpinner.getValueFactory().setValue((double) Math.round(statementHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
+            statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+
+            commentRTA.prefHeightProperty().unbind();
+            commentHeightSpinner.getValueFactory().setValue((double) Math.round(commentHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
+            commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+
+            explainRTA.prefHeightProperty().unbind();
+            explainHeightSpinner.getValueFactory().setValue((double) Math.round(explainHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
+            explainRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(explainHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+
+            mainPane.prefHeightProperty().unbind();
+            mainPaneHeightSpinner.getValueFactory().setValue((double) Math.round(mainPaneHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue() / 5.0) * 5.0);
+            mainPane.prefHeightProperty().bind(Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(mainPaneHeightSpinner.getValueFactory().valueProperty()).divide(100.0)));
+
+            double choicesHeightValue = Math.round(choicesBox.getHeight() / PrintUtilities.getPageHeight() * 100);
+            choicesHeightSpinner.getValueFactory().setValue(choicesHeightValue);
+        });
+
+        PrintUtilities.pageWidthProperty().addListener((ob, ov, nv) -> {
+            mainPane.prefWidthProperty().unbind();
+            mainPaneWidthSpinner.getValueFactory().setValue((double) Math.round(mainPaneWidthSpinner.getValue() * ov.doubleValue() / nv.doubleValue() / 5.0) * 5.0);
+            mainPane.prefWidthProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(mainPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        });
+
     }
 
     public MainWindowView getMainView() {
@@ -133,6 +320,24 @@ public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
     public void setDefaultKeyboard(RichTextAreaSkin.KeyMapValue defaultKeyboard) {     this.defaultKeyboard = defaultKeyboard;  }
 
     public void setExplainPrompt(String explainPrompt) {    this.explainPrompt = explainPrompt; }
+
+    public double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight();   }
+
+    public void setCommentPrefHeight(double commentPrefHeight) {   this.commentPrefHeight = commentPrefHeight;  }
+
+    public double getExplainPrefHeight() { return explainDRTA.getEditor().getPrefHeight();    }
+
+    public void setExplainPrefHeight(double explainPrefHeight) {   this.explainPrefHeight = explainPrefHeight;  }
+
+    public double getMainPanePrefHeight() {    return rootLayout.getPrefHeight();    }
+
+    public void setMainPanePrefHeight(double mainPanePrefHeight) { this.mainPanePrefHeight = mainPanePrefHeight;  }
+
+    public double getMainPanePrefWidth() { return rootLayout.getPrefWidth();   }
+
+    public void setMainPanePrefWidth(double mainPanePrefWidth) {   this.mainPanePrefWidth = mainPanePrefWidth;  }
+
+
 
     @Override
     public String getExerciseName() { return exerciseName; }

@@ -20,6 +20,10 @@ public class VerticalTreeABEFExpModel implements ExerciseModel<Document>, Serial
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
     private double statementPrefHeight = 80;
+    private double commentPrefHeight = 60;
+    private double explainPrefHeight = 70;
+    private double mainPanePrefHeight = 250;
+    private double mainPanePrefWidth;
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
 
@@ -134,6 +138,24 @@ public class VerticalTreeABEFExpModel implements ExerciseModel<Document>, Serial
     public RichTextAreaSkin.KeyMapValue getDefaultKeyboardType() {     return defaultKeyboardType;  }
 
     public void setDefaultKeyboardType(RichTextAreaSkin.KeyMapValue defaultKeyboardType) {     this.defaultKeyboardType = defaultKeyboardType;  }
+
+    public double getCommentPrefHeight() {     return commentPrefHeight;  }
+
+    public void setCommentPrefHeight(double commentPrefHeight) {     this.commentPrefHeight = commentPrefHeight;   }
+
+    public double getExplainPrefHeight() {     return explainPrefHeight;  }
+
+    public void setExplainPrefHeight(double explainPrefHeight) {     this.explainPrefHeight = explainPrefHeight;   }
+
+    public double getMainPanePrefHeight() {     return mainPanePrefHeight;   }
+
+    public void setMainPanePrefHeight(double mainPanePrefHeight) {     this.mainPanePrefHeight = mainPanePrefHeight;  }
+
+    public double getMainPanePrefWidth() {     return mainPanePrefWidth;   }
+
+    public void setMainPanePrefWidth(double mainPanePrefWidth) {
+        this.mainPanePrefWidth = mainPanePrefWidth;
+    }
 
     @Override
     public String getExerciseName() { return exerciseName;    }

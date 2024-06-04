@@ -63,11 +63,16 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
     private void setVerticalTreeView() {
         verticalTreeView.setExerciseName(verticalTreeModel.getExerciseName());
         verticalTreeView.setDefaultKeyboard(verticalTreeModel.getDefaultKeyboardType());
+        verticalTreeView.setStatementPrefHeight(verticalTreeModel.getStatementPrefHeight());
+        verticalTreeView.setCommentPrefHeight(verticalTreeModel.getCommentPrefHeight());
+        verticalTreeView.setMainPanePrefHeight(verticalTreeModel.getMainPanePrefHeight());
+        verticalTreeView.setMainPanePrefWidth(verticalTreeModel.getMainPanePrefWidth());
+
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
         statementEditor.setDocument(verticalTreeModel.getExerciseStatement());
-        verticalTreeView.setStatementPrefHeight(verticalTreeModel.getStatementPrefHeight());
+
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
@@ -98,7 +103,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
     }
 
     private void populateMainPaneNodes() {
-        AnchorPane mainPane = verticalTreeView.getRootLayout().getMain_pane();
+        AnchorPane mainPane = verticalTreeView.getRootLayout().getMainPane();
         mainPane.getChildren().clear();
 
         for (VerticalBracketMod bracketMod : verticalTreeModel.getVerticalBrackets()) {
@@ -353,6 +358,8 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.setEditable(true);
+        statementRTA.prefHeightProperty().unbind();
+        statementRTA.prefWidthProperty().unbind();
         RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
         double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         statementRTA.setPrefHeight(statementHeight + 35.0);
@@ -368,7 +375,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         nodeList.add(statementSepBox);
 
         //content node
-        AnchorPane mainPane = exercise.getExerciseView().getRootLayout().getMain_pane();
+        AnchorPane mainPane = exercise.getExerciseView().getRootLayout().getMainPane();
         mainPane.setStyle("-fx-background-color: transparent");
         ObservableList<Node> nodes = mainPane.getChildren();
 
@@ -398,6 +405,8 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
 
         //comment node
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        commentRTA.prefHeightProperty().unbind();
+        commentRTA.prefWidthProperty().unbind();
         RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
         double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
@@ -426,7 +435,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         if (commentEditor.isModified()) {
             exerciseModified = true;
         }
-        ObservableList<Node> nodes = verticalTreeView.getRootLayout().getMain_pane().getChildren();
+        ObservableList<Node> nodes = verticalTreeView.getRootLayout().getMainPane().getChildren();
         for (Node node : nodes) {
             if (node instanceof TreeFormulaBox) {
                 TreeFormulaBox treeBox = (TreeFormulaBox) node;
@@ -458,6 +467,9 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         model.setObjectControlList(verticalTreeModel.getObjectControlList());
         model.setStarted(verticalTreeModel.isStarted() || exerciseModified);
         model.setStatementPrefHeight(verticalTreeView.getExerciseStatement().getEditor().getPrefHeight());
+        model.setCommentPrefHeight(verticalTreeView.getCommentPrefHeight());
+        model.setMainPanePrefHeight(verticalTreeView.getMainPanePrefHeight());
+        model.setMainPanePrefWidth(verticalTreeView.getMainPanePrefWidth());
         model.setExerciseStatement(verticalTreeModel.getExerciseStatement());
 
         RichTextArea commentRTA = verticalTreeView.getExerciseComment().getEditor();
@@ -465,7 +477,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         model.setExerciseComment(commentRTA.getDocument());
 
         RootLayout rootLayout = verticalTreeView.getRootLayout();
-        AnchorPane mainPane = rootLayout.getMain_pane();
+        AnchorPane mainPane = rootLayout.getMainPane();
         ObservableList<Node> nodesList = mainPane.getChildren();
 
         for (Node node : nodesList) {

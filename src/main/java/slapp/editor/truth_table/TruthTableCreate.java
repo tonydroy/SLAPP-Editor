@@ -535,6 +535,7 @@ public class TruthTableCreate {
         exercise.generateEmptyTableModel();
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
+        rta.prefHeightProperty().unbind();
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
         double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
@@ -546,11 +547,6 @@ public class TruthTableCreate {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
 
-//            conclusionDividerCheck.setSelected(false);
-//            unaryOperatorList.clear();
-//            updateUnaryOperatorGridFromFields();
-//            binaryOperatorList.clear();
-//            updateBinaryOperatorGridFromFields();
             mainFormulaList.clear();
             BoxedDRTA mainFormulaBoxedDRTA = newMainFormulaBoxedDRTA();
             mainFormulaList.add(mainFormulaBoxedDRTA);
@@ -574,6 +570,7 @@ public class TruthTableCreate {
 
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
+        rta.prefHeightProperty().unbind();
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
         double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);

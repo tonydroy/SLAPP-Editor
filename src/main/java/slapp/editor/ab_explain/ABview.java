@@ -225,6 +225,9 @@ public class ABview implements ExerciseView<DecoratedRTA> {
             paginationHeightSpinner.getValueFactory().setValue((double) Math.round(paginationHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue() / 5.0) * 5.0);
             pagination.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(paginationHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
 
+            double choicesHeightValue = Math.round(abBox.getHeight() / PrintUtilities.getPageHeight() * 100);
+            choicesHeightSpinner.getValueFactory().setValue(choicesHeightValue);
+
         });
 
     }

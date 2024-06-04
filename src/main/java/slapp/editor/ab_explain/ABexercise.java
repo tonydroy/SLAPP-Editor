@@ -217,6 +217,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.setEditable(true);
+        statementRTA.prefHeightProperty().unbind();
+        statementRTA.prefWidthProperty().unbind();
         RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
         double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         statementRTA.setPrefHeight(statementHeight + 35.0);
@@ -249,6 +251,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         List<DecoratedRTA> pageList = exercise.getExerciseView().getContentPageList();
         for (DecoratedRTA drta : pageList) {
             RichTextArea pageRTA = drta.getEditor();
+            pageRTA.prefHeightProperty().unbind();
             RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
             double pageHeight = pageRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
             pageRTA.setPrefHeight(pageHeight + 35.0);
@@ -267,6 +270,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
 
         //comment node
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        commentRTA.prefHeightProperty().unbind();
+        commentRTA.prefWidthProperty().unbind();
         RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
         double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));

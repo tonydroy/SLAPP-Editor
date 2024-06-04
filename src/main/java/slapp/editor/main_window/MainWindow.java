@@ -283,7 +283,7 @@ public class MainWindow {
                 }
             }
             if (!heightGood && !mainView.isFitToPageSelected()) {
-                String message = "Fit page not selected and exercise " + ((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName() + "includes at least one block that takes up more than a page.  Content exceeding page bounds will be cropped.\n\n Continue export?";
+                String message = "Fit page not selected and exercise " + ((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName() + " includes at least one block that takes up more than a page.  Content exceeding page bounds will be cropped.\n\n Continue export?";
                 Alert confirm = EditorAlerts.confirmationAlert("Page Problem:", message);
                 Optional<ButtonType> result = confirm.showAndWait();
                 if (result.get() == OK) heightGood = true;

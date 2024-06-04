@@ -83,14 +83,15 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
 
         truthTableExpView.setExerciseName(truthTableExpModel.getExerciseName());
         truthTableExpView.setExplainPrompt(truthTableExpModel.getExplainPrompt());
+        truthTableExpView.setStatementPrefHeight(truthTableExpModel.getStatementPrefHeight());
+        truthTableExpView.setCommentPrefHeight(truthTableExpModel.getCommentPrefHeight());
+        truthTableExpView.setExplainPrefHeight(truthTableExpModel.getExplainPrefHeight());
         truthTableExpView.setTableRows(tableRows);
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
-
-
         statementEditor.setDocument(truthTableExpModel.getExerciseStatement());
-        truthTableExpView.setStatementPrefHeight(truthTableExpModel.getStatementPrefHeight());
+
         mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -327,6 +328,8 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.setEditable(true);
+        statementRTA.prefHeightProperty().unbind();
+        statementRTA.prefWidthProperty().unbind();
         RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
         double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         statementRTA.setPrefHeight(statementHeight + 35.0);
@@ -367,6 +370,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         nodeList.add(abBox);
 
         RichTextArea explanationRTA = exercise.getExerciseView().getExplainDRTA().getEditor();
+        explanationRTA.prefHeightProperty().unbind();
         RichTextAreaSkin explanationRTASkin = ((RichTextAreaSkin) explanationRTA.getSkin());
         double explanationHeight = explanationRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         explanationRTA.setPrefHeight(explanationHeight + 35.0);
@@ -384,6 +388,8 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
 
         //comment node
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        commentRTA.prefHeightProperty().unbind();
+        commentRTA.prefWidthProperty().unbind();
         RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
         double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
@@ -439,6 +445,8 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         model.setOriginalModel(truthTableExpModel.getOriginalModel());
         model.setStarted(truthTableExpModel.isStarted() || exerciseModified);
         model.setStatementPrefHeight(truthTableExpView.getExerciseStatement().getEditor().getPrefHeight());
+        model.setCommentPrefHeight(truthTableExpView.getCommentPrefHeight());
+        model.setExplainPrefHeight(truthTableExpView.getExplainPrefHeight());
         model.setExerciseStatement(truthTableExpModel.getExerciseStatement());
 
         RichTextArea commentRTA = truthTableExpView.getExerciseComment().getEditor();

@@ -72,13 +72,16 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         drvtnExpView.setContentPrompt(drvtnExpModel.getContentPrompt());
         drvtnExpView.setLeftmostScopeLine(drvtnExpModel.isLeftmostScopeLine());
         drvtnExpView.setKeyboardSelector(drvtnExpModel.getKeyboardSelector());
-
+        drvtnExpView.setStatementPrefHeight(drvtnExpModel.getStatementPrefHeight());
+        drvtnExpView.setCommentPrefHeight(drvtnExpModel.getCommentPrefHeight());
+        drvtnExpView.setExplanationPrefHeight(drvtnExpModel.getExplanationPrefHeight());
+        drvtnExpView.setSplitPanePrefWidth(drvtnExpModel.getSplitPanePrefWidth());
 
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
         statementEditor.setDocument(drvtnExpModel.getExerciseStatement());
-        drvtnExpView.setStatementPrefHeight(drvtnExpModel.getStatementPrefHeight());
+
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
@@ -1024,6 +1027,10 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
         DrvtnExpModel model = new DrvtnExpModel(name, started, statementHeight, gridWidth, prompt, leftmostScopeLine, defaultShelf, keyboardSelector, statementDocument, commentDocument, explanationDocument, modelLines);
         model.setOriginalModel(drvtnExpModel.getOriginalModel());
+        model.setCommentPrefHeight(drvtnExpView.getCommentPrefHeight());
+        model.setExplanationPrefHeight(drvtnExpView.getExplanationPrefHeight());
+        model.setSplitPanePrefWidth(drvtnExpView.getSplitPanePrefWidth());
+
 
         return model;
     }

@@ -11,10 +11,12 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextFlow;
 import slapp.editor.EditorAlerts;
+import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
@@ -29,9 +31,27 @@ import java.util.function.UnaryOperator;
 public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
     private MainWindowView mainView;
     private String exerciseName = new String();
-    private String explainPrompt = "";
+    private String interpretationPrompt = "";
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 80;
+    private double commentPrefHeight = 0;
+    private double interpretationPrefHeight = 0;
+    private double explainPrefHeight = 0;
+    private Spinner<Double> statementHeightSpinner;
+    private Spinner<Double> statementWidthSpinner;
+    private Spinner<Double> commentHeightSpinner;
+    private Spinner<Double> commentWidthSpinner;
+    private Spinner<Double> explainHeightSpinner;
+    private Spinner<Double> explainWidthSpinner;
+    private Spinner<Double> interpretationHeightSpinner;
+    private Spinner<Double> interpretationWidthSpinner;
+    private Spinner<Double> choicesHeightSpinner;
+    private Spinner<Double> choicesWidthSpinner;
+    private Spinner<Double> tableGridHeightSpinner;
+    private Spinner<Double> tableGridWidthSpinner;
+    private Node currentSpinnerNode;
+
+
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private DecoratedRTA exerciseInterpretation = new DecoratedRTA();
     private DecoratedRTA explainDRTA = new DecoratedRTA();
@@ -50,7 +70,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
     private VBox resultsBox;
     private HBox choiceBox;
     private VBox centerBox;
-    private String generatePrompt;
+    private String explainPrompt;
 
 
     private double contentFixedHeight = 70;
@@ -198,14 +218,18 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         setupTableButton.setPrefWidth(100);
 
         controlBox = new VBox(20, basicFormulaControlBox, basicFormulasPane, mainFormulaControlBox, mainFormulasPane, spinnerBox, setupTableButton);
-        controlBox.setPadding(new Insets(100, 20, 20, 30));
+        controlBox.setPadding(new Insets(100, 20, 0, 30));
 
         choiceBox = new HBox(20, choiceLeadLabel, aCheckBox, bCheckBox);
-        resultsBox = new VBox(10, choiceBox, explainDRTA.getEditor());
-        resultsBox.setPadding(new Insets(0,0,10,0));
+        choiceBox.setPadding(new Insets(5,0,5,5));
+        choiceBox.setStyle("-fx-border-color: lightgrey; -fx-border-width: 1 1 1 1");
+
+
+        resultsBox = new VBox(5, choiceBox, explainDRTA.getEditor());
+        resultsBox.setPadding(new Insets(0,0,0,0));
 
         tableGrid = new GridPane();
-        tableGrid.setPadding(new Insets(20,0,20,0));
+        tableGrid.setPadding(new Insets(20,0,20,10));
 
 
         RichTextArea interpretationRTA = exerciseInterpretation.getEditor();
@@ -259,7 +283,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         }
 
         ColumnConstraints commentConstraints = new ColumnConstraints();
-        commentConstraints.setPrefWidth(100);
+        commentConstraints.setMinWidth(100);
         gridColConstraints.add(commentConstraints);
 
         endPane = new Pane();
@@ -454,7 +478,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         rta.setMinHeight(formulaBoxHeight);
 
         RichTextAreaSkin rtaSkin = (RichTextAreaSkin) rta.getSkin();
-        rta.minWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 3), 100));
+        rta.prefWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 3), 100));
         rta.addEventFilter(KeyEvent.ANY, e -> {
             if (e.getCode() == KeyCode.ENTER) e.consume();
         });
@@ -471,30 +495,206 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
     }
 
     void initializeViewDetails() {
+        //statement
         RichTextArea statementRTA = exerciseStatement.getEditor();
-        statementRTA.setPrefHeight(statementPrefHeight);
-        statementRTA.setMinHeight(statementPrefHeight);
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setEditable(false);
 
-        RichTextArea interpretationRTA = exerciseInterpretation.getEditor();
-        interpretationRTA.getStylesheets().add("slappTextArea.css");
-//        interpretationRTA.setPrefHeight(100.0);
-        interpretationRTA.setMinHeight(125.0);
-        interpretationRTA.setMaxHeight(125.0);
-        interpretationRTA.setPromptText(generatePrompt);
+        double statementInitialHeight = Math.round(statementPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
+        statementHeightSpinner.setPrefWidth(60);
+        statementHeightSpinner.setDisable(false);
+        statementHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        statementHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = statementHeightSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = statementHeightSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
 
+        statementRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        statementWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
+        statementWidthSpinner.setPrefWidth(60);
+        statementWidthSpinner.setDisable(true);
+        statementWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        statementRTA.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != statementRTA) {
+                currentSpinnerNode = statementRTA;
+                mainView.updateSizeSpinners(statementHeightSpinner, statementWidthSpinner);
+            }
+        });
+
+        //comment
         RichTextArea commentRTA = exerciseComment.getEditor();
         commentRTA.getStylesheets().add("slappTextArea.css");
-        commentRTA.setPrefHeight(70.0);
-        commentRTA.setMinHeight(70.0);
         commentRTA.setPromptText("Comment:");
 
+        double commentInitialHeight = Math.round(commentPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
+        commentHeightSpinner.setPrefWidth(60);
+        commentHeightSpinner.setDisable(false);
+        commentHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        commentHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = commentHeightSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = commentHeightSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+
+        commentRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        commentRTA.minWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        commentWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
+        commentWidthSpinner.setPrefWidth(60);
+        commentWidthSpinner.setDisable(true);
+        commentWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        commentRTA.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != commentRTA) {
+                currentSpinnerNode = commentRTA;
+                mainView.updateSizeSpinners(commentHeightSpinner, commentWidthSpinner);
+            }
+        });
+
+        //interpretation
+        RichTextArea interpretationRTA = exerciseInterpretation.getEditor();
+        interpretationRTA.getStylesheets().add("slappTextArea.css");
+        interpretationRTA.setPromptText(interpretationPrompt);
+
+        double interpretationInitialHeight = Math.round(interpretationPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        interpretationHeightSpinner = new Spinner<>(0.0, 999.0, interpretationInitialHeight, 1.0);
+        interpretationHeightSpinner.setPrefWidth(60);
+        interpretationHeightSpinner.setDisable(false);
+        interpretationHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        interpretationRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(interpretationHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        interpretationHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = interpretationHeightSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = interpretationHeightSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+
+        interpretationRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        interpretationRTA.minWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        interpretationWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
+        interpretationWidthSpinner.setPrefWidth(60);
+        interpretationWidthSpinner.setDisable(true);
+        interpretationWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        interpretationRTA.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != interpretationRTA) {
+                currentSpinnerNode = interpretationRTA;
+                mainView.updateSizeSpinners(interpretationHeightSpinner, interpretationWidthSpinner);
+            }
+        });
+
+        //explain
         RichTextArea explainRTA = explainDRTA.getEditor();
         explainRTA.getStylesheets().add("slappTextArea.css");
-        explainRTA.setPrefHeight(60.0);
-        explainRTA.setMinHeight(60.0);
         explainRTA.setPromptText(explainPrompt);
+
+        double explainInitialHeight = Math.round(explainPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        explainHeightSpinner = new Spinner<>(0.0, 999.0, explainInitialHeight, 1.0);
+        explainHeightSpinner.setPrefWidth(60);
+        explainHeightSpinner.setDisable(false);
+        explainHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        explainRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(explainHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        explainHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
+            Node increment = explainHeightSpinner.lookup(".increment-arrow-button");
+            if (increment != null) increment.getOnMouseReleased().handle(null);
+            Node decrement = explainHeightSpinner.lookup(".decrement-arrow-button");
+            if (decrement != null) decrement.getOnMouseReleased().handle(null);
+        });
+
+        explainRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        explainRTA.minWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        explainWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
+        explainWidthSpinner.setPrefWidth(60);
+        explainWidthSpinner.setDisable(true);
+        explainWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        explainRTA.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != explainRTA) {
+                currentSpinnerNode = explainRTA;
+                mainView.updateSizeSpinners(explainHeightSpinner, explainWidthSpinner);
+            }
+        });
+
+
+        //table grid
+        tableGridHeightSpinner = new Spinner<>(0.0,999.0, 0,1.0);
+        tableGridHeightSpinner.setPrefWidth(60);
+        tableGridHeightSpinner.setDisable(true);
+        tableGridHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
+        tableGrid.heightProperty().addListener((ob, ov, nv) -> {
+            tableGridHeightSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getHeight() / PrintUtilities.getPageHeight() * 100));
+        });
+
+        tableGridWidthSpinner = new Spinner<>(0.0,999.0, 0,1.0);
+        tableGridWidthSpinner.setPrefWidth(60);
+        tableGridWidthSpinner.setDisable(true);
+        tableGridWidthSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
+        tableGrid.widthProperty().addListener((ob, ov, nv) -> {
+            tableGridWidthSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getWidth() / PrintUtilities.getPageWidth() * 100));
+        });
+
+        tableGrid.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != tableGrid) {
+                currentSpinnerNode = tableGrid;
+                tableGridHeightSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getHeight()/PrintUtilities.getPageHeight() * 100.0));
+                tableGridWidthSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getWidth()/PrintUtilities.getPageWidth() * 100.0));
+                mainView.updateSizeSpinners(tableGridHeightSpinner, tableGridWidthSpinner);
+            }
+        });
+
+        //choices (null spinners)
+        choicesHeightSpinner = new Spinner<>(0.0, 999.0, 0, 1.0);
+        choicesHeightSpinner.setPrefWidth(60);
+        choicesHeightSpinner.setDisable(true);
+        choicesHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        choiceBox.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        choicesWidthSpinner = new Spinner<>(0.0, 999.0, 100.0, 1.0);
+        choicesWidthSpinner.setPrefWidth(60);
+        choicesWidthSpinner.setDisable(true);
+        choicesWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+
+        choiceBox.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (currentSpinnerNode != choiceBox) {
+                currentSpinnerNode = choiceBox;
+                double choicesHeightValue = Math.round(choiceBox.getHeight() / PrintUtilities.getPageHeight() * 100);
+                choicesHeightSpinner.getValueFactory().setValue(choicesHeightValue);
+                mainView.updateSizeSpinners(choicesHeightSpinner, choicesWidthSpinner);
+            }
+        });
+
+        //page size listeners
+        PrintUtilities.pageHeightProperty().addListener((ob, ov, nv) -> {
+
+            statementRTA.prefHeightProperty().unbind();
+            statementHeightSpinner.getValueFactory().setValue((double) Math.round(statementHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
+            statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+
+            commentRTA.prefHeightProperty().unbind();
+            commentHeightSpinner.getValueFactory().setValue((double) Math.round(commentHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
+            commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+
+            interpretationRTA.prefHeightProperty().unbind();
+            interpretationHeightSpinner.getValueFactory().setValue((double) Math.round(interpretationHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
+            interpretationRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(interpretationHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+
+            tableGridHeightSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getHeight() / PrintUtilities.getPageHeight() * 100.0));
+            choicesHeightSpinner.getValueFactory().setValue((double) Math.round(choiceBox.getHeight() / PrintUtilities.getPageHeight() * 100.0));
+
+        });
+
+        PrintUtilities.pageWidthProperty().addListener((ob, ov, nv) -> {
+            tableGridWidthSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getWidth() / PrintUtilities.getPageWidth() * 100.0));
+        });
+
+
     }
 
 
@@ -543,9 +743,21 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
     public void setExerciseInterpretation(DecoratedRTA drta) {exerciseInterpretation = drta;}
     public DecoratedRTA getExerciseInterpretation() {return exerciseInterpretation; }
 
-    public void setExplainPrompt(String explainPrompt) {    this.explainPrompt = explainPrompt; }
+    public void setInterpretationPrompt(String interpretationPrompt) {    this.interpretationPrompt = interpretationPrompt; }
 
-    public void setGeneratePrompt(String generatePrompt) {   this.generatePrompt = generatePrompt; }
+    public void setExplainPrompt(String explainPrompt) {   this.explainPrompt = explainPrompt; }
+
+    public double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight();  }
+
+    public void setCommentPrefHeight(double commentPrefHeight) { this.commentPrefHeight = commentPrefHeight;  }
+
+    public double getInterpretationPrefHeight() { return explainDRTA.getEditor().getPrefHeight();  }
+
+    public void setInterpretationPrefHeight(double interpretationPrefHeight) { this.interpretationPrefHeight = interpretationPrefHeight;  }
+
+    public double getExplainPrefHeight() { return explainDRTA.getEditor().getPrefHeight();  }
+
+    public void setExplainPrefHeight(double explainPrefHeight) { this.explainPrefHeight = explainPrefHeight;  }
 
     @Override
     public String getExerciseName() { return exerciseName;  }

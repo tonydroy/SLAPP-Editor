@@ -2,6 +2,7 @@ package slapp.editor.vertical_tree;
 
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
+import slapp.editor.PrintUtilities;
 import slapp.editor.main_window.ExerciseModel;
 import slapp.editor.main_window.ExerciseType;
 import slapp.editor.vertical_tree.drag_drop.DragIconType;
@@ -20,6 +21,9 @@ public class VerticalTreeModel implements ExerciseModel<Document>, Serializable 
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
     private double statementPrefHeight = 80;
+    private double commentPrefHeight = 60;
+    private double mainPanePrefHeight = 350;
+    private double mainPanePrefWidth;
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
 
@@ -66,6 +70,18 @@ public class VerticalTreeModel implements ExerciseModel<Document>, Serializable 
     public RichTextAreaSkin.KeyMapValue getDefaultKeyboardType() {    return defaultKeyboardType;  }
 
     public void setDefaultKeyboardType(RichTextAreaSkin.KeyMapValue defaultKeyboardType) {   this.defaultKeyboardType = defaultKeyboardType;  }
+
+    public double getCommentPrefHeight() {     return commentPrefHeight;  }
+
+    public void setCommentPrefHeight(double commentPrefHeight) {      this.commentPrefHeight = commentPrefHeight;  }
+
+    public double getMainPanePrefHeight() { return mainPanePrefHeight;  }
+
+    public void setMainPanePrefHeight(double mainPanePrefHeight) {  this.mainPanePrefHeight = mainPanePrefHeight;  }
+
+    public double getMainPanePrefWidth() {     return mainPanePrefWidth;  }
+
+    public void setMainPanePrefWidth(double mainPanePrefWidth) {    this.mainPanePrefWidth = mainPanePrefWidth; }
 
     @Override
     public String getExerciseName() { return exerciseName;    }

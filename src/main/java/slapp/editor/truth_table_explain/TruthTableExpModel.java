@@ -16,6 +16,8 @@ public class TruthTableExpModel implements ExerciseModel<Document>, Serializable
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
     private double statementPrefHeight = 80;
+    private double commentPrefHeight = 60;
+    private double explainPrefHeight = 60;
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
 
@@ -144,6 +146,10 @@ public class TruthTableExpModel implements ExerciseModel<Document>, Serializable
     public boolean isbSelected() { return bSelected; }
     public String getExplainPrompt() {    return explainPrompt;  }
     public void setExplainPrompt(String explainPrompt) {    this.explainPrompt = explainPrompt;  }
+    public double getCommentPrefHeight() {    return commentPrefHeight;  }
+    public void setCommentPrefHeight(double commentPrefHeight) {  this.commentPrefHeight = commentPrefHeight; }
+    public double getExplainPrefHeight() {  return explainPrefHeight;  }
+    public void setExplainPrefHeight(double explainPrefHeight) { this.explainPrefHeight = explainPrefHeight;   }
 
     @Override
     public String getExerciseName() {

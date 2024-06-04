@@ -83,8 +83,8 @@ public class TruthTableGenCreate {
     private ChangeListener bPromptListener;
     private ChangeListener explainPromptListener;
 
-    private TextField genPromptField;
-    private ChangeListener genPromptListener;
+    private TextField interpPromptField;
+    private ChangeListener interpPromptListener;
 
     private double formulaBoxHeight = 27;
     private Button lowerSaveButton;
@@ -103,7 +103,7 @@ public class TruthTableGenCreate {
 
         nameField.setText(originalModel.getExerciseName());
         explainPromptField.setText(originalModel.getExplainPrompt());
-        genPromptField.setText(originalModel.getGeneratePrompt());
+        interpPromptField.setText(originalModel.getInterpretationPrompt());
         statementRTA.setDocument(originalModel.getExerciseStatement());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         choiceLeadField.setText(originalModel.getChoiceLead());
@@ -157,17 +157,17 @@ public class TruthTableGenCreate {
         HBox nameBox = new HBox(10, nameLabel, nameField);
         nameBox.setAlignment(Pos.CENTER_LEFT);
 
-        Label genPromptLabel = new Label("Gen Prompt: ");
+        Label genPromptLabel = new Label("Interp Prompt: ");
         genPromptLabel.setPrefWidth(95);
-        genPromptField = new TextField();
-        genPromptField.setPromptText("(plain text)");
-        genPromptListener = new ChangeListener() {
+        interpPromptField = new TextField();
+        interpPromptField.setPromptText("(plain text)");
+        interpPromptListener = new ChangeListener() {
             @Override
             public void changed(ObservableValue ob, Object ov, Object nv) {
                 fieldModified = true;
             }
         };
-        genPromptField.textProperty().addListener(genPromptListener);
+        interpPromptField.textProperty().addListener(interpPromptListener);
 
         Label explainPromptLabel = new Label("Explain Prompt: ");
         explainPromptField  = new TextField();
@@ -181,7 +181,7 @@ public class TruthTableGenCreate {
         explainPromptField.textProperty().addListener(nameListener);
 
 
-        HBox genPromptBox = new HBox(10, genPromptLabel, genPromptField, explainPromptLabel, explainPromptField);
+        HBox genPromptBox = new HBox(10, genPromptLabel, interpPromptField, explainPromptLabel, explainPromptField);
         genPromptBox.setAlignment(Pos.CENTER_LEFT);
 
         //choice fields
@@ -413,7 +413,7 @@ public class TruthTableGenCreate {
         //center area
         String helpText = "Truth Table Gen Exercise is like Truth Table Explain Exercise in that it requests a choice between some mutually exclusive options along with an explanation.  " +
                 "In addition it begins with a field for an interpretation/translation, and lets the student generate the premises and conclusion on the table.\n\n" +
-                "For the Truth Table Gen exercise, supply the exercise name and exercise statement.  The Explain Prompt appears in the explain field.  The Gen Prompt appears in the interpretation/translation field.  The Checkbox lead appears prior to the check boxes, the A prompt with the first box, and the B prompt with the second.  " +
+                "For the Truth Table Gen exercise, supply the exercise name and exercise statement.  The Explain Prompt appears in the explain field.  The Interp Prompt appears in the interpretation/translation field.  The Checkbox lead appears prior to the check boxes, the A prompt with the first box, and the B prompt with the second.  " +
                 "The preset operator buttons set operators according to the official and abbreviating languages from Symbolic Logic; alternatively, you may edit sentential operator symbols individually. " +
                 "Finally you will usually leave the formula fields blank, as formulas you enter here may be overwritten by the student working the exercise.  " +
                 "In the ordinary case, you will also leave the \"conclusion divider\" selected as the student is expeceted to provide at least a conclusion sentence." ;
@@ -620,6 +620,7 @@ public class TruthTableGenCreate {
         exercise.generateEmptyTableModel();
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
+        rta.prefHeightProperty().unbind();
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
         double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
@@ -669,6 +670,7 @@ public class TruthTableGenCreate {
 
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
+        rta.prefHeightProperty().unbind();
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
         double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
@@ -735,7 +737,7 @@ public class TruthTableGenCreate {
 
         model.setExerciseName(nameField.getText());
         model.setExplainPrompt(explainPromptField.getText());
-        model.setGeneratePrompt(genPromptField.getText());
+        model.setInterpretationPrompt(interpPromptField.getText());
         model.setStarted(false);
 //        model.setStatementPrefHeight(70.0);
 

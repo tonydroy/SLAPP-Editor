@@ -11,11 +11,14 @@ import java.util.List;
 public class TruthTableGenModel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
-    private String explainPrompt = "";
+    private String interpretationPrompt = "";
     private ExerciseType exerciseType = ExerciseType.TRUTH_TABLE_ABEXP;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
     private double statementPrefHeight = 80;
+    private double commentPrefHeight = 60;
+    private double interpretationPrefHeight = 80;
+    private double explainPrefHeight = 60;
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
     private Document exerciseInterpretation = new Document();
@@ -35,7 +38,7 @@ public class TruthTableGenModel implements ExerciseModel<Document>, Serializable
     private String bPrompt = new String("");
     private boolean bSelected = false;
     private Document explainDocument = new Document();
-    private String generatePrompt = "";
+    private String explainPrompt = "";
     private int tableRows = 0;
 
 
@@ -126,9 +129,9 @@ public class TruthTableGenModel implements ExerciseModel<Document>, Serializable
         this.explainDocument = explainDocument;
     }
 
-    public String getGeneratePrompt() {    return generatePrompt;  }
+    public String getExplainPrompt() {    return explainPrompt;  }
 
-    public void setGeneratePrompt(String generatePrompt) {  this.generatePrompt = generatePrompt;  }
+    public void setExplainPrompt(String explainPrompt) {  this.explainPrompt = explainPrompt;  }
 
     public void setTableRows(int tableRows) { this.tableRows = tableRows;  }
 
@@ -150,10 +153,14 @@ public class TruthTableGenModel implements ExerciseModel<Document>, Serializable
     public boolean isaSelected() { return aSelected; }
     public String getbPrompt() { return bPrompt; }
     public boolean isbSelected() { return bSelected; }
-
-    public String getExplainPrompt() {     return explainPrompt;  }
-
-    public void setExplainPrompt(String explainPrompt) {     this.explainPrompt = explainPrompt;  }
+    public String getInterpretationPrompt() {     return interpretationPrompt;  }
+    public void setInterpretationPrompt(String interpretationPrompt) {     this.interpretationPrompt = interpretationPrompt;  }
+    public double getCommentPrefHeight() {    return commentPrefHeight;  }
+    public void setCommentPrefHeight(double commentPrefHeight) {  this.commentPrefHeight = commentPrefHeight; }
+    public double getInterpretationPrefHeight() {  return interpretationPrefHeight;  }
+    public void setInterpretationPrefHeight(double interpretationPrefHeight) { this.interpretationPrefHeight = interpretationPrefHeight;   }
+    public double getExplainPrefHeight() { return explainPrefHeight; }
+    public void setExplainPrefHeight(double explainPrefHeight) { this.explainPrefHeight = explainPrefHeight; }
 
     @Override
     public String getExerciseName() {

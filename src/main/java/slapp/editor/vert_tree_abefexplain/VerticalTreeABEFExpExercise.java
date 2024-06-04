@@ -67,11 +67,17 @@ public class VerticalTreeABEFExpExercise implements Exercise<VerticalTreeABEFExp
         verticalTreeABEFExpView.setExerciseName(verticalTreeABEFExpModel.getExerciseName());
         verticalTreeABEFExpView.setExplainPrompt(verticalTreeABEFExpModel.getExplainPrompt());
         verticalTreeABEFExpView.setDefaultKeyboard(verticalTreeABEFExpModel.getDefaultKeyboardType());
+        verticalTreeABEFExpView.setStatementPrefHeight(verticalTreeABEFExpModel.getStatementPrefHeight());
+        verticalTreeABEFExpView.setCommentPrefHeight(verticalTreeABEFExpModel.getCommentPrefHeight());
+        verticalTreeABEFExpView.setExplainPrefHeight(verticalTreeABEFExpModel.getExplainPrefHeight());
+        verticalTreeABEFExpView.setMainPanePrefHeight(verticalTreeABEFExpModel.getMainPanePrefHeight());
+        verticalTreeABEFExpView.setMainPanePrefWidth(verticalTreeABEFExpModel.getMainPanePrefWidth());
+
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
         statementEditor.setDocument(verticalTreeABEFExpModel.getExerciseStatement());
-        verticalTreeABEFExpView.setStatementPrefHeight(verticalTreeABEFExpModel.getStatementPrefHeight());
+
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
@@ -421,6 +427,8 @@ public class VerticalTreeABEFExpExercise implements Exercise<VerticalTreeABEFExp
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.setEditable(true);
+        statementRTA.prefHeightProperty().unbind();
+        statementRTA.prefWidthProperty().unbind();
         RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
         double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         statementRTA.setPrefHeight(statementHeight + 35.0);
@@ -483,6 +491,7 @@ public class VerticalTreeABEFExpExercise implements Exercise<VerticalTreeABEFExp
 
 
         RichTextArea explanationRTA = exercise.getExerciseView().getExplainDRTA().getEditor();
+        explanationRTA.prefHeightProperty().unbind();
         RichTextAreaSkin explanationRTASkin = ((RichTextAreaSkin) explanationRTA.getSkin());
         double explanationHeight = explanationRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         explanationRTA.setPrefHeight(explanationHeight + 35.0);
@@ -500,6 +509,8 @@ public class VerticalTreeABEFExpExercise implements Exercise<VerticalTreeABEFExp
 
         //comment node
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        commentRTA.prefHeightProperty().unbind();
+        commentRTA.prefWidthProperty().unbind();
         RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
         double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
@@ -559,6 +570,11 @@ public class VerticalTreeABEFExpExercise implements Exercise<VerticalTreeABEFExp
         model.setExplainPrompt(verticalTreeABEFExpModel.getExplainPrompt());
         model.setOriginalModel(verticalTreeABEFExpModel.getOriginalModel());
         model.setDefaultKeyboardType(verticalTreeABEFExpModel.getDefaultKeyboardType());
+
+        model.setCommentPrefHeight(verticalTreeABEFExpView.getCommentPrefHeight());
+        model.setExplainPrefHeight(verticalTreeABEFExpView.getExplainPrefHeight());
+        model.setMainPanePrefHeight(verticalTreeABEFExpView.getMainPanePrefHeight());
+        model.setMainPanePrefWidth(verticalTreeABEFExpView.getMainPanePrefWidth());
 
         model.setABChoiceLead(verticalTreeABEFExpModel.getABChoiceLead());
         model.setaPrompt(verticalTreeABEFExpModel.getaPrompt());

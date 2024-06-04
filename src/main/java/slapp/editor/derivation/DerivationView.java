@@ -189,11 +189,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
         commentRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
         commentRTA.minWidthProperty().bind(PrintUtilities.pageWidthProperty());
 
-        /*
-        While rta height spinners were working properly, this one (like others in SLAPP) won't stop spinning.
-        Has something to do with the binding.  Don't have general explanation or solution
-        -- back to the one-click solution at least for now.
-         */
+
         commentWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
         commentWidthSpinner.setPrefWidth(60);
         commentWidthSpinner.setDisable(true);
@@ -359,9 +355,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
 
     public void setCommentPrefHeight(double commentPrefHeight) {   this.commentPrefHeight = commentPrefHeight;  }
     public double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight(); }
-
     public double getSplitPanePrefWidth() {return contentSplitPane.getPrefWidth(); }
-
     public void setSplitPanePrefWidth(double splitPanePrefWidth) { this.splitPanePrefWidth = splitPanePrefWidth; }
 
     public Button getInsertLineButton() { return insertLineButton;  }

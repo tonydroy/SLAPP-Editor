@@ -61,11 +61,14 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
     private void setHorizontalTreeView() {
         horizontalTreeView.setExerciseName(horizontalTreeModel.getExerciseName());
+        horizontalTreeView.setStatementPrefHeight(horizontalTreeModel.getStatementPrefHeight());
+        horizontalTreeView.setCommentPrefHeight(horizontalTreeModel.getCommentPrefHeight());
+        horizontalTreeView.setExplainPrefHeight(horizontalTreeModel.getExplainPrefHeight());
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
         statementEditor.setDocument(horizontalTreeModel.getExerciseStatement());
-        horizontalTreeView.setStatementPrefHeight(horizontalTreeModel.getStatementPrefHeight());
+
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
@@ -247,6 +250,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.setEditable(true);
+        statementRTA.prefHeightProperty().unbind();
         RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
         double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         statementRTA.setPrefHeight(statementHeight + 35.0);
@@ -312,6 +316,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
         //comment node
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        commentRTA.prefHeightProperty().unbind();
         RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
         double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
@@ -355,6 +360,10 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         model.setOriginalModel(horizontalTreeModel.getOriginalModel());
         model.setStarted(horizontalTreeModel.isStarted() || exerciseModified);
         model.setStatementPrefHeight(horizontalTreeView.getExerciseStatement().getEditor().getPrefHeight());
+        model.setCommentPrefHeight(horizontalTreeView.getCommentPrefHeight());
+        model.setExplainPrefHeight(horizontalTreeView.getExplainPrefHeight());
+
+
         model.setExerciseStatement(horizontalTreeModel.getExerciseStatement());
 
         RichTextArea commentRTA = horizontalTreeView.getExerciseComment().getEditor();
