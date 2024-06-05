@@ -86,6 +86,7 @@ public class DrvtnExpCreate {
     private ToolBar insertToolbar;
     private ToolBar paragraphToolbar;;
     private ToolBar kbdDiaToolBar;
+    private ToolBar sizeToolBar;
     private Button lowerSaveButton;
     private Button saveAsButton;
 
@@ -402,6 +403,10 @@ public class DrvtnExpCreate {
             setCenterVgrow();
         });
 
+        sizeToolBar = new ToolBar();
+        sizeToolBar.setPrefHeight(38);
+        sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
+
 
 
         stage = new Stage();
@@ -666,7 +671,7 @@ public class DrvtnExpCreate {
 
         if (kbdDiaToolBar.getItems().isEmpty()) {
 
-            kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner,  new Label("    "), decoratedRTA.getKeyboardDiagramButton());
+            kbdDiaToolBar.getItems().addAll(decoratedRTA.getKeyboardDiagramButton());
 
             switch (control) {
                 case NONE: {
@@ -683,7 +688,7 @@ public class DrvtnExpCreate {
             }
         }
 
-        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
+        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
         editAndKbdBox.layout();
 

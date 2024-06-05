@@ -51,6 +51,7 @@ public class SimpleEditCreate {
     private VBox centerBox;
     private Button saveButton;
     private Button saveAsButton;
+    private ToolBar sizeToolBar;
 
 
     public SimpleEditCreate(MainWindow mainWindow) {
@@ -179,6 +180,10 @@ public class SimpleEditCreate {
             setCenterVgrow();
         });
 
+        sizeToolBar = new ToolBar();
+        sizeToolBar.setPrefHeight(38);
+        sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
+
 
 
 
@@ -189,10 +194,10 @@ public class SimpleEditCreate {
         kbdDiaToolBar.setPrefHeight(38);
 
         if (kbdDiaToolBar.getItems().isEmpty()) {
-            kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner,  new Label("    "), statementDRTA.getKeyboardDiagramButton());
+            kbdDiaToolBar.getItems().addAll(statementDRTA.getKeyboardDiagramButton());
         }
 
-        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
+        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, nameNpromptBox);

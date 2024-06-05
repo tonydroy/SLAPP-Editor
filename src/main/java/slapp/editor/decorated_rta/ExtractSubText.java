@@ -51,7 +51,7 @@ public class ExtractSubText {
         }
 
         //
-        flow.setMinWidth(width + 2);
+        flow.setMinWidth(width );
 
         return flow;
     }

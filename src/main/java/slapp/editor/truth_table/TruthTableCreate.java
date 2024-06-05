@@ -79,6 +79,7 @@ public class TruthTableCreate {
     private Button lowerSaveButton;
     private Button saveAsButton;
     private BoxedDRTA focusedBoxedDRTA;
+    private ToolBar sizeToolBar;
 
 
     public TruthTableCreate(MainWindow mainWindow) {
@@ -386,6 +387,10 @@ public class TruthTableCreate {
             updateZoom();
             setCenterVgrow();
         });
+
+        sizeToolBar = new ToolBar();
+        sizeToolBar.setPrefHeight(38);
+        sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
 
 
 
@@ -706,7 +711,7 @@ public class TruthTableCreate {
 
         if (kbdDiaToolBar.getItems().isEmpty()) {
 
-            kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner,  new Label("    "), decoratedRTA.getKeyboardDiagramButton());
+            kbdDiaToolBar.getItems().addAll(decoratedRTA.getKeyboardDiagramButton());
 
             switch (control) {
                 case NONE: {
@@ -723,7 +728,7 @@ public class TruthTableCreate {
             }
         }
 
-        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
+        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
         editAndKbdBox.layout();
 

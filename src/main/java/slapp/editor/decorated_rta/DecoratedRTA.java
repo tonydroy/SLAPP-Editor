@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -21,6 +22,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.skin.ComboBoxListViewSkin;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
@@ -84,6 +87,21 @@ public class DecoratedRTA {
 
     }
     public void setup() {
+
+        //this prevents (strange) scrolling of scrollpanes whenever space is typed.
+        editor.addEventFilter( KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+
+                if (event.getEventType() == KeyEvent.KEY_PRESSED){
+                    // Consume Event before Bubbling Phase, -> otherwise Scrollpane scrolls
+                    if ( event.getCode() == KeyCode.SPACE ){
+                        event.consume();
+                    }
+                }
+            }
+        });
+
         //presets combo box
         ComboBox<Presets> presets = new ComboBox<>();
         presets.setTooltip(new Tooltip("Heading Level"));

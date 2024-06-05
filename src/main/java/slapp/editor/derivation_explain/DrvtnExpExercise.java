@@ -876,6 +876,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.setEditable(true);
+        statementRTA.prefHeightProperty().unbind();
         RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
         double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         statementRTA.setPrefHeight(statementHeight + 35.0);
@@ -902,6 +903,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         nodeList.add(gridBox);
 
         RichTextArea explanationRTA = exercise.getExerciseView().getExplanationDRTA().getEditor();
+        explanationRTA.prefHeightProperty().unbind();
         RichTextAreaSkin explanationRTASkin = ((RichTextAreaSkin) explanationRTA.getSkin());
         double explanationHeight = explanationRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         explanationRTA.setPrefHeight(explanationHeight + 35.0);
@@ -919,6 +921,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
         //comment node
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        commentRTA.prefHeightProperty().unbind();
         RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
         double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));

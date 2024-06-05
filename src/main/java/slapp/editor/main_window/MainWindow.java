@@ -405,12 +405,7 @@ public class MainWindow {
                         TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
                         assignmentIndex = 0;
 
-                        if (currentExercise != null) {
-                            mainView.contentHeightProperty().unbind();
-                            mainView.contentWidthProperty().unbind();
-                            mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
-                            mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
-                        }
+
 
                         currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                         mainView.setupExercise();
@@ -575,13 +570,6 @@ public class MainWindow {
                 assignmentIndex = prevIndex;
                 TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
 
-                if (currentExercise != null) {
-                    mainView.contentHeightProperty().unbind();
-                    mainView.contentWidthProperty().unbind();
-                    mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
-                    mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
-                }
-
                 currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                 mainView.setupExercise();
                 mainView.setUpLowerAssignmentBar();
@@ -601,12 +589,7 @@ public class MainWindow {
                 assignmentIndex = nextIndex;
                 TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
 
-                if (currentExercise != null) {
-                    mainView.contentWidthProperty().unbind();
-                    mainView.contentWidthProperty().unbind();
-                    mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
-                    mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
-                }
+
 
                 currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                 mainView.setupExercise();
@@ -650,12 +633,7 @@ public class MainWindow {
                         assignmentIndex = exerciseList.getItems().indexOf(nv);
                         TypeSelectorFactories typeFactory = new TypeSelectorFactories(mainWindow);
 
-                        if (currentExercise != null) {
-                            mainView.contentHeightProperty().unbind();
-                            mainView.contentWidthProperty().unbind();
-                            mainView.contentHeightProperty().removeListener(mainView.getVerticalListener());
-                            mainView.contentWidthProperty().removeListener(mainView.getHorizontalListener());
-                        }
+
 
                         currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                         mainView.setupExercise();

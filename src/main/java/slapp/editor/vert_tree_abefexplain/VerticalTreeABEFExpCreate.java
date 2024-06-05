@@ -84,6 +84,7 @@ public class VerticalTreeABEFExpCreate {
     private SimpleDoubleProperty centerHeightProperty;
     private Button saveButton;
     private Button saveAsButton;
+    private ToolBar sizeToolBar;
 
 
 
@@ -386,6 +387,10 @@ public class VerticalTreeABEFExpCreate {
             setCenterVgrow();
         });
 
+        sizeToolBar = new ToolBar();
+        sizeToolBar.setPrefHeight(38);
+        sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
+
 
         ToolBar editToolbar = statementDRTA.getEditToolbar();
         ToolBar fontsToolbar = statementDRTA.getFontsToolbar();
@@ -394,10 +399,10 @@ public class VerticalTreeABEFExpCreate {
         kbdDiaToolBar.setPrefHeight(38);
 
         if (kbdDiaToolBar.getItems().isEmpty()) {
-            kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner,  new Label("    "), statementDRTA.getKeyboardDiagramButton());
+            kbdDiaToolBar.getItems().addAll(statementDRTA.getKeyboardDiagramButton());
         }
 
-        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
+        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, fieldsBox);

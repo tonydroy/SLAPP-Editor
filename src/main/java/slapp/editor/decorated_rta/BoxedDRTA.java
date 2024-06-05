@@ -2,6 +2,8 @@ package slapp.editor.decorated_rta;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import javafx.event.EventHandler;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
@@ -15,6 +17,8 @@ public class BoxedDRTA {
         RichTextArea rta = drta.getEditor();
         rta.setContentAreaWidth(2000);
         boxedRTA = new HBox(rta);
+
+
 
 
         EventHandler<MouseEvent> mouseEventHandler = e -> {

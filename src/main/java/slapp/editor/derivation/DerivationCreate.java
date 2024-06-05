@@ -16,7 +16,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
@@ -76,6 +75,7 @@ public class DerivationCreate {
     private VBox upperFieldsBox;
     private ToolBar editToolbar;
     private ToolBar fontsToolbar;
+    private ToolBar sizeToolBar;
     private ToolBar insertToolbar;
     private ToolBar paragraphToolbar;;
     private ToolBar kbdDiaToolBar;
@@ -379,6 +379,10 @@ public class DerivationCreate {
             setCenterVgrow();
         });
 
+        sizeToolBar = new ToolBar();
+        sizeToolBar.setPrefHeight(38);
+        sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
+
 
 
         stage = new Stage();
@@ -642,7 +646,7 @@ public class DerivationCreate {
 
         if (kbdDiaToolBar.getItems().isEmpty()) {
 
-            kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner,  new Label("    "), decoratedRTA.getKeyboardDiagramButton());
+            kbdDiaToolBar.getItems().addAll(decoratedRTA.getKeyboardDiagramButton());
 
             switch (control) {
                 case NONE: {
@@ -659,7 +663,7 @@ public class DerivationCreate {
             }
         }
 
-        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
+        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
         editAndKbdBox.layout();
 

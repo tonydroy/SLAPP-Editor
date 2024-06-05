@@ -314,10 +314,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         RichTextArea rta = drta.getEditor();
         rta.setContentAreaWidth(200);
         rta.setPrefHeight(20);
-
         rta.setPrefWidth(100);
-//        rta.setMaxWidth(100);
-//        rta.setMinWidth(100);
         rta.getStylesheets().add("slappDerivation.css");
         rta.setDocument(new Document(getStringFromJustificationFlow(flow)));
         rta.getActionFactory().saveNow().execute(new ActionEvent());
@@ -328,20 +325,25 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         rta.applyCss();
         rta.layout();
 
+        justificationClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (!inHierarchy(event.getPickResult().getIntersectedNode(), rta)) {
+                    if (editJustification) {
+                        editJustification = false;
+                        saveJustificationRTA(rta, rowIndex);
+
+                        //this stops (strange) scroll pane behavior on mouse click out of justification;
+                        //jumps to top of scroll.  Don't understand.
+                        derivationView.getGrid().requestFocus();
+                    }
+                }
+            }
+        };
+
         rta.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 editJustification = true;
-                justificationClickFilter = new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        if (!inHierarchy(event.getPickResult().getIntersectedNode(), rta)) {
-                            if (editJustification) {
-                                editJustification = false;
-                                saveJustificationRTA(rta, rowIndex);
-                            }
-                        }
-                    }
-                };
                 mainView.getMainScene().addEventFilter(MouseEvent.MOUSE_PRESSED, justificationClickFilter);
             }
             else {
@@ -354,9 +356,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
 
         rta.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
-
             KeyCode code = e.getCode();
-
 
             int row = derivationView.getGrid().getRowIndex(rta);
 
@@ -412,6 +412,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
         TextFlow justificationFlow = getJustificationFlow(justificationString, derivationView.getViewLines());
         derivationView.getViewLines().get(rowIndex).setJustificationFlow(justificationFlow);
+
+
 
         derivationView.setGridFromViewLines();
 
@@ -854,6 +856,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.setEditable(true);
+        statementRTA.prefHeightProperty().unbind();
         RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
         double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         statementRTA.setPrefHeight(statementHeight + 35.0);
@@ -889,6 +892,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
         //comment node
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        commentRTA.prefHeightProperty().unbind();
         RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
         double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));

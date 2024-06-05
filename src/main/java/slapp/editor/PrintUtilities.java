@@ -39,6 +39,7 @@ public class PrintUtilities {
     private static List<Pair<Node, Double>> printBuffer = new ArrayList<>();
 
     private static VBox topBox;
+
     static {
         spacer.setVisible(false);
         PrinterJob job = PrinterJob.createPrinterJob();

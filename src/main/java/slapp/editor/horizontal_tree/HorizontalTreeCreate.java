@@ -51,6 +51,7 @@ public class HorizontalTreeCreate {
     private VBox centerBox;
     private Button saveButton;
     private Button saveAsButton;
+    private ToolBar sizeToolBar;
 
 
     public HorizontalTreeCreate(MainWindow mainWindow) {
@@ -182,6 +183,10 @@ public class HorizontalTreeCreate {
             setCenterVgrow();
         });
 
+        sizeToolBar = new ToolBar();
+        sizeToolBar.setPrefHeight(38);
+        sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
+
         ToolBar editToolbar = statementDRTA.getEditToolbar();
         ToolBar fontsToolbar = statementDRTA.getFontsToolbar();
         ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
@@ -189,10 +194,10 @@ public class HorizontalTreeCreate {
         kbdDiaToolBar.setPrefHeight(38);
 
         if (kbdDiaToolBar.getItems().isEmpty()) {
-            kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner,  new Label("    "), statementDRTA.getKeyboardDiagramButton());
+            kbdDiaToolBar.getItems().addAll(statementDRTA.getKeyboardDiagramButton());
         }
 
-        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
+        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, topFieldsBox);

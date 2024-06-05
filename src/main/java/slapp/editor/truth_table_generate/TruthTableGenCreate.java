@@ -74,7 +74,8 @@ public class TruthTableGenCreate {
     private VBox upperFieldsBox;
     private ToolBar editToolbar;
     private ToolBar fontsToolbar;
-    private ToolBar insertToolbar;
+
+    private ToolBar sizeToolBar;
     private ToolBar paragraphToolbar;
     private ToolBar kbdDiaToolBar;
     private ChangeListener nameListener;
@@ -473,6 +474,10 @@ public class TruthTableGenCreate {
             setCenterVgrow();
         });
 
+        sizeToolBar = new ToolBar();
+        sizeToolBar.setPrefHeight(38);
+        sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
+
         //setup  window
         scene = new Scene(borderPane);
         scene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
@@ -803,7 +808,7 @@ public class TruthTableGenCreate {
 
         if (kbdDiaToolBar.getItems().isEmpty()) {
 
-            kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner,  new Label("    "), decoratedRTA.getKeyboardDiagramButton());
+            kbdDiaToolBar.getItems().addAll(decoratedRTA.getKeyboardDiagramButton());
 
             switch (control) {
                 case NONE: {
@@ -820,7 +825,7 @@ public class TruthTableGenCreate {
             }
         }
 
-        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
+        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
         editAndKbdBox.layout();
 

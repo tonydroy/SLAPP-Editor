@@ -60,8 +60,7 @@ public class MainWindowView {
     private VBox statusBar;
     private HBox upperStatusBox;
     private FlowPane lowerStatusPane;
-    private DoubleProperty contentHeightProperty;
-    private DoubleProperty contentWidthProperty;
+
 
     HBox centerHBox;
     private Button saveButton;
@@ -325,7 +324,7 @@ public class MainWindowView {
         this.commentDecoratedRTA = currentExerciseView.getExerciseComment();
         this.commentNode = commentDecoratedRTA.getEditor();
         this.controlNode = currentExerciseView.getExerciseControl();
-        this.contentHeightProperty = currentExerciseView.getContentHeightProperty();
+
 //        this.contentWidthProperty = currentExerciseView.getContentWidthProperty();
 
         statementNode.minHeight(currentExerciseView.getStatementHeight());
@@ -404,9 +403,7 @@ public class MainWindowView {
 
     }
 
-    public void setCenterVgrow() {
 
-    }
 
     public void setCenterHgrow() {
 
@@ -452,7 +449,6 @@ public class MainWindowView {
         spacerPane.getTransforms().clear();
         spacerPane.getTransforms().add(new Scale(scale, scale));
 
-        setCenterVgrow();
     }
 
 
@@ -565,9 +561,6 @@ public class MainWindowView {
         this.currentExerciseView = currentExerciseView;
     }
 
-    public void setContentHeightProperty(DoubleProperty contentHeight) {
-        this.contentHeightProperty = contentHeight;
-    }
 
     public Spinner<Integer> getZoomSpinner() {
         return zoomSpinner;
@@ -750,15 +743,13 @@ public class MainWindowView {
         return vWindowCheck;
     }
 
-    public DoubleProperty contentHeightProperty() {
-        return contentHeightProperty;
-    }
+
 
     public ChangeListener getVerticalListener() {
         return verticalListener;
     }
 
-    public DoubleProperty contentWidthProperty() { return contentWidthProperty; }
+
     public ChangeListener getHorizontalListener() {return horizontalListener; }
 
     public double getMinStageWidth() {
