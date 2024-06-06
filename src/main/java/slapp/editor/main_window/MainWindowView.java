@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
@@ -111,6 +112,11 @@ public class MainWindowView {
     Menu nextExerciseMenu = new Menu();
     Menu goToExerciseMenu = new Menu();
     Menu assignmentCommentMenu = new Menu();
+//    Label progressLabel;
+//    ProgressIndicator progressIndicator;
+
+    Label processingLabel;
+    Label printingLabel;
 
 
 
@@ -223,14 +229,27 @@ public class MainWindowView {
 
 
 
-        sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("    V Size:"), verticalSizeSpinner,
-                new Label("    H Size:"), horizontalSizeSpinner, new Label("      "), saveButton);
+
+        /*
+        progressLabel = new Label();
+        progressLabel.setTextFill(Color.RED);
+        progressLabel.setVisible(false);
+        progressIndicator = new ProgressIndicator();
+        progressIndicator.setPrefWidth(25);
+        progressIndicator.setPrefHeight(25);
+        progressIndicator.setVisible(false);
+
+         */
 
 
+        sizeToolBar.setStyle("-fx-spacing: 10");
+        sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("V Size:"), verticalSizeSpinner,
+                new Label("H Size:"), horizontalSizeSpinner, saveButton, new Label("  "));
 
         sizeToolBar.setPrefHeight(38);
 
-
+        processingLabel = new Label("processing");
+        printingLabel = new Label("printing");
 
 
 
@@ -370,6 +389,31 @@ public class MainWindowView {
         sizeToolBar.getItems().remove(5);
         sizeToolBar.getItems().add(5, width);
     }
+
+
+    public void setProcessingNotification(boolean on) {
+        if (on) {
+            sizeToolBar.getItems().add(processingLabel);
+        } else {
+            sizeToolBar.getItems().remove(processingLabel);
+        }
+    }
+
+
+/*
+    public void deactivateProgressIndicator() {
+        progressLabel.setVisible(false);
+ //       progressIndicator.setVisible(false);
+    }
+    public void activateProgressIndicator(String text) {
+        String txt = text;
+        if (text.length() > 50) txt = text.substring(0,50);
+        progressLabel.setText(txt);
+ //       progressIndicator.setVisible(true);
+        progressLabel.setVisible(true);
+    }
+
+ */
 
 
     public void updateContentHeightProperty() {

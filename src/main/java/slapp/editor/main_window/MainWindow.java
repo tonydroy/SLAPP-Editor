@@ -1,6 +1,7 @@
 package slapp.editor.main_window;
 
 import com.gluonhq.richtextarea.model.Document;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -14,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import slapp.editor.*;
 import slapp.editor.front_page.FrontPageExercise;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
+
 
 
 public class MainWindow {
@@ -165,14 +168,16 @@ public class MainWindow {
 
     public void setUpExercise(Exercise exercise) {
 
-
-
         mainView.getMainScene().focusOwnerProperty().removeListener(focusListener);
         currentExercise = exercise;
         mainView.setupExercise();
         mainView.getSaveButton().setOnAction(e -> saveAction());
         mainView.getMainScene().focusOwnerProperty().get();
         mainView.getMainScene().focusOwnerProperty().addListener(focusListener);
+    }
+
+    private void showProgressIndicator(String message) {
+
     }
 
 
@@ -275,12 +280,15 @@ public class MainWindow {
     private void exportExerciseToPDF() {
         if (currentExercise != null && !((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
             boolean heightGood = true;
+//            mainView.activateProgressIndicator("processing");
+
             List<Node> printNodes = currentExercise.getPrintNodes();
             PrintUtilities.resetPrintBuffer();
             for (Node node : printNodes) {
                 if (!PrintUtilities.processPrintNode(node) && !mainView.isFitToPageSelected()) {
                     heightGood = false;
                 }
+//                mainView.deactivateProgressIndicator();
             }
             if (!heightGood && !mainView.isFitToPageSelected()) {
                 String message = "Fit page not selected and exercise " + ((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName() + " includes at least one block that takes up more than a page.  Content exceeding page bounds will be cropped.\n\n Continue export?";
@@ -289,8 +297,10 @@ public class MainWindow {
                 if (result.get() == OK) heightGood = true;
             }
             if (heightGood) {
+//                mainView.activateProgressIndicator("printing");
                 if (!mainView.isFitToPageSelected()) PrintUtilities.resetScale();
                 PrintUtilities.sendBufferToPDF(null);
+ //               mainView.deactivateProgressIndicator();
             }
         }
         else EditorAlerts.fleetingPopup("Cannot find exercise to export.");
@@ -497,8 +507,10 @@ public class MainWindow {
             List<ExerciseModel> exerciseModelList = currentAssignment.getExerciseModels();
             for (int i = 0; i < exerciseModelList.size(); i++) {
                 ExerciseModel model = exerciseModelList.get(i);
-                TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
+                TypeSelectorFactories typeFactory = new TypeSelectorFactories(mainWindow);
                 Exercise exercise = typeFactory.getExerciseFromModelObject(model);
+
+
                 List<Node> exerciseNodes = exercise.getPrintNodes();
 
                 for (Node node : exerciseNodes) {
@@ -522,10 +534,16 @@ public class MainWindow {
             }
 
             if (heightGood) {
+//                mainView.activateProgressIndicator("exporting file");
                 if (!mainView.isFitToPageSelected()) PrintUtilities.resetScale();
                 String infoString = currentAssignment.getHeader().getCreationID() + "-" + currentAssignment.getHeader().getWorkingID();
                 PrintUtilities.sendBufferToPDF(infoString);
+//                mainView.deactivateProgressIndicator();
             }
+
+
+
+
         }
 
     }
