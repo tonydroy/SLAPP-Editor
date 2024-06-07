@@ -24,7 +24,26 @@ public class EditorAlerts {
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.initOwner(EditorMain.mainStage);
         alert.showAndWait();
+
     }
+
+    public static void showFleetingAlert(String header, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(header);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.initOwner(EditorMain.mainStage);
+        PauseTransition delay = new PauseTransition(Duration.seconds(2));
+        delay.setOnFinished(e -> alert.hide());
+        delay.play();
+        alert.showAndWait();
+
+    }
+
+
+
+
 
     public static Alert confirmationAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -80,6 +99,8 @@ public class EditorAlerts {
         popup.show(EditorMain.mainStage);
         delay.play();
     }
+
+
 
 
 

@@ -855,10 +855,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
-        statementRTA.setEditable(true);
         statementRTA.prefHeightProperty().unbind();
-        RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
-        double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+        double statementHeight = mainView.getRTATextHeight(statementRTA);
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
         statementRTA.setPrefWidth(nodeWidth);
@@ -893,8 +891,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         //comment node
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
-        RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
-        double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+        double commentHeight = mainView.getRTATextHeight(commentRTA);
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
         commentRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         commentRTA.setPrefWidth(nodeWidth);

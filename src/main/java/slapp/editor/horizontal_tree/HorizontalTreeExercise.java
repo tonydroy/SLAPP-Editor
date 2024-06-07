@@ -249,10 +249,8 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
-        statementRTA.setEditable(true);
         statementRTA.prefHeightProperty().unbind();
-        RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
-        double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+        double statementHeight = mainView.getRTATextHeight(statementRTA);
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
         statementRTA.setPrefWidth(nodeWidth);
@@ -266,18 +264,14 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         nodeList.add(statementSepBox);
 
         //content
-
-
         AnchorPane mainPane = exercise.getExerciseView().getMainPane();
+
 
         Group root = new Group();
         Scene scene = new Scene(root);
         root.getChildren().add(mainPane);
         root.applyCss();
         root.layout();
-
-
-
 
         mainPane.setStyle("-fx-background-color: transparent");
 
@@ -297,16 +291,14 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
             }
         }
 
-//        mainPane.setPrefWidth(nodeWidth - 20);
-
-
-
         HBox contentHBox = new HBox(mainPane);
         contentHBox.setAlignment(Pos.CENTER);
         contentHBox.setPadding(new Insets(0,0,20, 0));
 
-        nodeList.add(contentHBox);
 
+
+        nodeList.add(contentHBox);
+/*
         Separator contentSeparator = new Separator(Orientation.HORIZONTAL);
         contentSeparator.setStyle("-fx-stroke-dash-array:0.1 5.0");
         contentSeparator.setPrefWidth(100);
@@ -314,11 +306,29 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         contentSepBox.setAlignment(Pos.CENTER);
         nodeList.add(contentSepBox);
 
+ */
+
+        //explain node
+        RichTextArea explainRTA = exercise.getExerciseView().getExplainDRTA().getEditor();
+        explainRTA.prefHeightProperty().unbind();
+        double explainHeight = mainView.getRTATextHeight(explainRTA);
+        explainRTA.setPrefHeight(explainHeight + 35.0);
+        explainRTA.setContentAreaWidth(nodeWidth);
+        explainRTA.setPrefWidth(nodeWidth);
+        explainRTA.getStylesheets().clear(); statementRTA.getStylesheets().add("richTextAreaPrinter.css");
+        nodeList.add(explainRTA);
+
+        Separator explainSeparator = new Separator(Orientation.HORIZONTAL);
+        explainSeparator.setPrefWidth(100);
+        HBox explainSepBox = new HBox(explainSeparator);
+        explainSepBox.setAlignment(Pos.CENTER);
+        nodeList.add(explainSepBox);
+
+
         //comment node
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
-        RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
-        double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+        double commentHeight = mainView.getRTATextHeight(commentRTA);
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
         commentRTA.setContentAreaWidth(nodeWidth);
         commentRTA.setPrefWidth(nodeWidth);

@@ -1,6 +1,7 @@
 package slapp.editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
+import slapp.editor.main_window.MainWindowView;
 
 public class PrintUtilities {
 
@@ -39,6 +41,7 @@ public class PrintUtilities {
     private static List<Pair<Node, Double>> printBuffer = new ArrayList<>();
 
     private static VBox topBox;
+
 
     static {
         spacer.setVisible(false);
@@ -96,13 +99,24 @@ public class PrintUtilities {
             if (job != null) {
                 String current = "None";
                 if (pdfPrinter != null) current = pdfPrinter.toString();
-                EditorAlerts.showSimpleAlert("Select Printer", "Please select a PDF printer from the following window.\n\n" +
+
+                boolean proceed = true;
+
+                String message = "Please select a PDF printer from the following window.\n\n" +
                         "There are a variety of such printers, each with slightly different characteristics.  On PC, 'Microsoft Print to PDF' works fine.\nYou will only have to do this once per session.\n\n" +
-                        "Current: " + current);
-                boolean proceed = job.showPrintDialog(EditorMain.mainStage);
+                        "Current: " + current;
+
+                Alert confirm = EditorAlerts.confirmationAlert("Select Printer", message);
+                Optional<ButtonType> result = confirm.showAndWait();
+                if (result.get() != OK) proceed = false;
+
                 if (proceed) {
-                    pdfPrinter = job.getPrinter();
-                    isExportSetup = true;
+                    proceed = job.showPrintDialog(EditorMain.mainStage);
+
+                    if (proceed) {
+                        pdfPrinter = job.getPrinter();
+                        isExportSetup = true;
+                    }
                 }
                 job.endJob();
             }
@@ -111,6 +125,9 @@ public class PrintUtilities {
     }
 
     public static void printNodes(String footerInfo, PrinterJob job) {
+
+        MainWindowView.activateProgressIndicator("printing");
+
         boolean success = true;
         int pageNum = 0;
         VBox pageBox = new VBox();
@@ -119,8 +136,8 @@ public class PrintUtilities {
         int i = 0;
 
         if (topBox != null) {
-            topBox.setMaxWidth(getPageWidth()/scale);
-            topBox.setMinWidth(getPageWidth()/scale);
+            topBox.setMaxWidth(getPageWidth() / scale);
+            topBox.setMinWidth(getPageWidth() / scale);
             Pair<Double, Double> size = getNodeSize(topBox);
             double height = size.getValue();
             printBuffer.add(0, new Pair(topBox, height));
@@ -138,16 +155,16 @@ public class PrintUtilities {
                 i++;
                 //if all the nodes have been added print page
                 if (i == printBuffer.size()) {
-                    spacer.setPrefHeight((internalPageLayout.getPrintableHeight() - (netHeight + 16.0))/scale);
+                    spacer.setPrefHeight((internalPageLayout.getPrintableHeight() - (netHeight + 16.0)) / scale);
                     pageBox.getChildren().addAll(spacer, getFooterBox(++pageNum, footerInfo));
- //                   pageBox.getChildren().addAll(spacer, new Label(Integer.toString(++pageNum)));
+                    //                   pageBox.getChildren().addAll(spacer, new Label(Integer.toString(++pageNum)));
                     success = (job.printPage(internalPageLayout, pageBox) && success);
                 }
                 //if the node does not fit on this page, print page and start new
             } else if (!pageBox.getChildren().isEmpty()) {
-                spacer.setPrefHeight((internalPageLayout.getPrintableHeight() - (netHeight + 16.0))/scale);
+                spacer.setPrefHeight((internalPageLayout.getPrintableHeight() - (netHeight + 16.0)) / scale);
                 pageBox.getChildren().addAll(spacer, getFooterBox(++pageNum, footerInfo));
- //               pageBox.getChildren().addAll(spacer, new Label(Integer.toString(++pageNum)));
+                //               pageBox.getChildren().addAll(spacer, new Label(Integer.toString(++pageNum)));
                 success = (job.printPage(internalPageLayout, pageBox) && success);
                 netHeight = 0;
                 pageBox.getChildren().clear();
@@ -156,7 +173,7 @@ public class PrintUtilities {
                 //the pageBox is too tall with this node, so we need another approach
                 Rectangle nodeBox = new Rectangle(pageLayout.getPrintableWidth(), pageLayout.getPrintableHeight());
                 node.setClip(nodeBox);
- //               Label pageLabel = new Label(Integer.toString(++pageNum));
+                //               Label pageLabel = new Label(Integer.toString(++pageNum));
 
 //                StackPane pane = new StackPane(node, pageLabel);
                 HBox footerBox = getFooterBox(++pageNum, footerInfo);
@@ -169,6 +186,7 @@ public class PrintUtilities {
                 i++;
             }
         }
+        MainWindowView.deactivateProgressIndicator();
         if (success) EditorAlerts.fleetingPopup("Print job complete.");
         else EditorAlerts.fleetingPopup("Print job did not complete.");
     }

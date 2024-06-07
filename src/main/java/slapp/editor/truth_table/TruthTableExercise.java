@@ -287,11 +287,9 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
 
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
-        statementRTA.setEditable(true);
         statementRTA.prefHeightProperty().unbind();
         statementRTA.prefWidthProperty().unbind();
-        RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
-        double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+        double statementHeight = mainView.getRTATextHeight(statementRTA);
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
         statementRTA.setPrefWidth(nodeWidth);
@@ -327,8 +325,7 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
         commentRTA.prefWidthProperty().unbind();
-        RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
-        double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+        double commentHeight = mainView.getRTATextHeight(commentRTA);
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
         commentRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         commentRTA.setPrefWidth(nodeWidth);

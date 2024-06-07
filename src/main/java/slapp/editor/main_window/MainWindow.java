@@ -1,13 +1,16 @@
 package slapp.editor.main_window;
 
 import com.gluonhq.richtextarea.model.Document;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -15,6 +18,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import slapp.editor.*;
@@ -27,6 +32,9 @@ import slapp.editor.simple_editor.SimpleEditModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static javafx.scene.control.ButtonType.OK;
 
@@ -44,6 +52,17 @@ public class MainWindow {
     MediaViewer mediaViewer = new MediaViewer();
 
     boolean isExerciseOpen = false;
+
+
+
+
+
+
+
+
+
+
+
 
 
     public MainWindow() {
@@ -280,7 +299,6 @@ public class MainWindow {
     private void exportExerciseToPDF() {
         if (currentExercise != null && !((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
             boolean heightGood = true;
-//            mainView.activateProgressIndicator("processing");
 
             List<Node> printNodes = currentExercise.getPrintNodes();
             PrintUtilities.resetPrintBuffer();
@@ -288,7 +306,6 @@ public class MainWindow {
                 if (!PrintUtilities.processPrintNode(node) && !mainView.isFitToPageSelected()) {
                     heightGood = false;
                 }
-//                mainView.deactivateProgressIndicator();
             }
             if (!heightGood && !mainView.isFitToPageSelected()) {
                 String message = "Fit page not selected and exercise " + ((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName() + " includes at least one block that takes up more than a page.  Content exceeding page bounds will be cropped.\n\n Continue export?";
@@ -297,10 +314,8 @@ public class MainWindow {
                 if (result.get() == OK) heightGood = true;
             }
             if (heightGood) {
-//                mainView.activateProgressIndicator("printing");
                 if (!mainView.isFitToPageSelected()) PrintUtilities.resetScale();
                 PrintUtilities.sendBufferToPDF(null);
- //               mainView.deactivateProgressIndicator();
             }
         }
         else EditorAlerts.fleetingPopup("Cannot find exercise to export.");
@@ -444,6 +459,9 @@ public class MainWindow {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("There is no open assignment to print.");
         } else {
+            mainView.activateProgressIndicator("processing");
+            EditorAlerts.showFleetingAlert("Notice", "Flicker expected while processing assignment." );
+
             boolean heightGood = true;
             List<String> badExerciseList = new ArrayList<>();
             PrintUtilities.resetPrintBuffer();
@@ -467,6 +485,7 @@ public class MainWindow {
                     }
                 }
             }
+            mainView.deactivateProgressIndicator();
 
             if (!badExerciseList.isEmpty()) {
                 StringBuilder sb = new StringBuilder(badExerciseList.get(0));
@@ -494,11 +513,13 @@ public class MainWindow {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("There is no open assignment to export.");
         } else {
+            mainView.activateProgressIndicator("processing");
+            EditorAlerts.showFleetingAlert("Notice", "Flicker expected while processing assignment." );
+
             boolean heightGood = true;
             List<String> badExerciseList = new ArrayList<>();
             PrintUtilities.resetPrintBuffer();
             PrintUtilities.setTopBox(mainView.getAssignmentHeader());
-
 
             if (currentExercise.isExerciseModified()) assignmentContentModified = true;
             ExerciseModel currentModel = currentExercise.getExerciseModelFromView();
@@ -510,7 +531,6 @@ public class MainWindow {
                 TypeSelectorFactories typeFactory = new TypeSelectorFactories(mainWindow);
                 Exercise exercise = typeFactory.getExerciseFromModelObject(model);
 
-
                 List<Node> exerciseNodes = exercise.getPrintNodes();
 
                 for (Node node : exerciseNodes) {
@@ -520,6 +540,7 @@ public class MainWindow {
                     }
                 }
             }
+            mainView.deactivateProgressIndicator();
 
             if (!badExerciseList.isEmpty()) {
                 StringBuilder sb = new StringBuilder(badExerciseList.get(0));
@@ -534,19 +555,18 @@ public class MainWindow {
             }
 
             if (heightGood) {
-//                mainView.activateProgressIndicator("exporting file");
-                if (!mainView.isFitToPageSelected()) PrintUtilities.resetScale();
-                String infoString = currentAssignment.getHeader().getCreationID() + "-" + currentAssignment.getHeader().getWorkingID();
-                PrintUtilities.sendBufferToPDF(infoString);
-//                mainView.deactivateProgressIndicator();
+
+                    if (!mainView.isFitToPageSelected()) PrintUtilities.resetScale();
+                    String infoString = currentAssignment.getHeader().getCreationID() + "-" + currentAssignment.getHeader().getWorkingID();
+                    PrintUtilities.sendBufferToPDF(infoString);
             }
-
-
-
-
         }
-
     }
+
+
+
+
+
     public void createRevisedAssignment() {
         if (checkContinueAssignment("Confirm Create", "The current assignment appears to have been changed, and will be overwritten in the creation process.\n\nContinue to create assignment?")) {
  //           currentAssignment = null;
@@ -732,4 +752,7 @@ public class MainWindow {
     public void setLastFocusOwner(Node lastFocusOwner) {
         this.lastFocusOwner = lastFocusOwner;
     }
+
+
+
 }

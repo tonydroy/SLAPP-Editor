@@ -437,7 +437,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         });
 
         //main pane
-        mainPane.setMinHeight(350);
+        mainPane.setMinHeight(150);
         mainPaneHeightSpinner = new Spinner<>(0.0,999.0, 0,1.0);
         mainPaneHeightSpinner.setPrefWidth(60);
         mainPaneHeightSpinner.setDisable(true);

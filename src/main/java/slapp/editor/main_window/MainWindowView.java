@@ -2,9 +2,12 @@ package slapp.editor.main_window;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
+import com.gluonhq.richtextarea.model.Document;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -17,9 +20,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.stage.*;
+import javafx.util.Duration;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
@@ -61,7 +63,6 @@ public class MainWindowView {
     private VBox statusBar;
     private HBox upperStatusBox;
     private FlowPane lowerStatusPane;
-
 
     HBox centerHBox;
     private Button saveButton;
@@ -112,29 +113,25 @@ public class MainWindowView {
     Menu nextExerciseMenu = new Menu();
     Menu goToExerciseMenu = new Menu();
     Menu assignmentCommentMenu = new Menu();
-//    Label progressLabel;
-//    ProgressIndicator progressIndicator;
-
-    Label processingLabel;
-    Label printingLabel;
+    private static Label progressLabel;
+//    public static ProgressIndicator progressIndicator;
+    public static Text progressIndicator;
 
 
 
 
 
-    DoubleProperty fixedValueProperty;
-    double windowFraction;
 
 
 
-    public MainWindowView(MainWindow controller) {
-        this.mainWindow = controller;
+
+
+    public MainWindowView(MainWindow mainWindow) {
+        this.mainWindow = mainWindow;
         setupWindow();
     }
 
     private void setupWindow() {
-
-
 
         Menu assignmentMenu = new Menu("Assignment");
         Menu exerciseMenu = new Menu("Exercise");
@@ -230,26 +227,32 @@ public class MainWindowView {
 
 
 
-        /*
+
         progressLabel = new Label();
         progressLabel.setTextFill(Color.RED);
         progressLabel.setVisible(false);
-        progressIndicator = new ProgressIndicator();
-        progressIndicator.setPrefWidth(25);
-        progressIndicator.setPrefHeight(25);
+
+        progressIndicator = new Text("\uf110");
+        progressIndicator.setFill(Color.DEEPSKYBLUE);
+        progressIndicator.setStyle("-fx-font:  28 la-solid-900");
         progressIndicator.setVisible(false);
 
-         */
+
+  //      progressIndicator = new ProgressIndicator();
+  //      progressIndicator.setPrefWidth(25);
+  //      progressIndicator.setPrefHeight(25);
+  //      progressIndicator.setVisible(false);
+
+
 
 
         sizeToolBar.setStyle("-fx-spacing: 10");
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("V Size:"), verticalSizeSpinner,
-                new Label("H Size:"), horizontalSizeSpinner, saveButton, new Label("  "));
+                new Label("H Size:"), horizontalSizeSpinner, saveButton, new Label("  "), progressIndicator, progressLabel);
 
         sizeToolBar.setPrefHeight(38);
 
-        processingLabel = new Label("processing");
-        printingLabel = new Label("printing");
+
 
 
 
@@ -331,7 +334,17 @@ public class MainWindowView {
             e.consume();
             closeWindow();
         });
+
         stage.show();
+    }
+
+
+
+    public double getRTATextHeight(RichTextArea rta) {
+        rta.setEditable(true);
+        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
+        double rtaHeight = rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight(), stage.getX(), stage.getY());
+        return rtaHeight;
     }
 
     public void setupExercise() {
@@ -391,29 +404,22 @@ public class MainWindowView {
     }
 
 
-    public void setProcessingNotification(boolean on) {
-        if (on) {
-            sizeToolBar.getItems().add(processingLabel);
-        } else {
-            sizeToolBar.getItems().remove(processingLabel);
-        }
-    }
 
 
-/*
-    public void deactivateProgressIndicator() {
+
+    public static void deactivateProgressIndicator() {
         progressLabel.setVisible(false);
- //       progressIndicator.setVisible(false);
+        progressIndicator.setVisible(false);
     }
-    public void activateProgressIndicator(String text) {
-        String txt = text;
-        if (text.length() > 50) txt = text.substring(0,50);
-        progressLabel.setText(txt);
- //       progressIndicator.setVisible(true);
+    public static void activateProgressIndicator(String text) {
+        progressLabel.setText(text);
+        progressIndicator.setVisible(true);
         progressLabel.setVisible(true);
     }
 
- */
+
+
+
 
 
     public void updateContentHeightProperty() {
@@ -677,10 +683,10 @@ public class MainWindowView {
     public void setHorizontalSizeSpinner(Spinner<Double> horizontalSizeSpinner) {   this.horizontalSizeSpinner = horizontalSizeSpinner;  }
 
     public void setVerticalSizeSpinner(Spinner<Double> verticalSizeSpinner) {
-        System.out.println("before: " + this.verticalSizeSpinner);
         this.verticalSizeSpinner = verticalSizeSpinner;
-        System.out.println("after: " + this.verticalSizeSpinner);
     }
+
+
 
     public Node getStatementNode() {
         return statementNode;
@@ -801,5 +807,7 @@ public class MainWindowView {
     }
 
     public boolean isFitToPageSelected() {return fitToPageItem.isSelected(); }
+
+
 
 }

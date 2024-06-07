@@ -261,11 +261,9 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
 
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
-        statementRTA.setEditable(true);
         statementRTA.prefHeightProperty().unbind();
         statementRTA.prefWidthProperty().unbind();
-        RichTextAreaSkin statementRTASkin = ((RichTextAreaSkin) statementRTA.getSkin());
-        double statementHeight = statementRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+        double statementHeight = mainView.getRTATextHeight(statementRTA);
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         statementRTA.setPrefWidth(nodeWidth);
@@ -310,8 +308,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         for (DecoratedRTA drta : pageList) {
             RichTextArea pageRTA = drta.getEditor();
             pageRTA.prefHeightProperty().unbind();
-            RichTextAreaSkin pageRTASkin = ((RichTextAreaSkin) pageRTA.getSkin());
-            double pageHeight = pageRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+            double pageHeight = mainView.getRTATextHeight(pageRTA);
             pageRTA.setPrefHeight(pageHeight + 35.0);
             pageRTA.setContentAreaWidth(nodeWidth);
             pageRTA.setPrefWidth(nodeWidth);
@@ -329,8 +326,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
         commentRTA.prefWidthProperty().unbind();
-        RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentRTA.getSkin());
-        double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
+        double commentHeight = mainView.getRTATextHeight(commentRTA);
         commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
         commentRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         commentRTA.setPrefWidth(nodeWidth);
