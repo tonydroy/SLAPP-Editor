@@ -35,6 +35,7 @@ public class PrintUtilities {
     private static PageLayout internalPageLayout;
     // this is the layout with space for footer, for internal use
     private static Printer pdfPrinter = null;
+    private static Printer printer;
     private static Region spacer = new Region();
 
     private static double scale = 1.0;
@@ -50,7 +51,7 @@ public class PrintUtilities {
             PageLayout baseLayout = job.getJobSettings().getPageLayout();
             pageHeight.set(baseLayout.getPrintableHeight());
             pageWidth.set(baseLayout.getPrintableWidth());
-            Printer printer = job.getPrinter();
+            printer = job.getPrinter();
             double bottomMargin = Math.max(baseLayout.getBottomMargin(), 48);
             pageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), bottomMargin );
             internalPageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), 18.0);
@@ -64,7 +65,7 @@ public class PrintUtilities {
     public static void updatePageLayout() {
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null) {
-            job.getJobSettings().setPageLayout(internalPageLayout);
+            job.getJobSettings().setPageLayout(pageLayout);
             boolean proceed = job.showPageSetupDialog(EditorMain.mainStage);
             if (proceed) {
                 PageLayout baseLayout = job.getJobSettings().getPageLayout();
@@ -276,16 +277,22 @@ public class PrintUtilities {
         return pageHeight;
     }
 
-  /*
-    public static double getPageHeight() {
-        return pageLayout.getPrintableHeight();
+    public static PageLayout getPageLayout() {
+        return pageLayout;
     }
 
-    public static double getPageWidth() {
-        return pageLayout.getPrintableWidth();
+    public static void setPageLayout(PageLayout pageLayout) {
+        if (pageLayout != null) {
+            PrintUtilities.pageLayout = pageLayout;
+            pageHeight.set(pageLayout.getPrintableHeight());
+            pageWidth.set(pageLayout.getPrintableWidth());
+            internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), pageLayout.getLeftMargin(), pageLayout.getRightMargin(), pageLayout.getTopMargin(), 18.0);
+        }
     }
 
- */
+    public static Printer getPrinter() {
+        return printer;
+    }
 
     public static void resetScale() { scale = 1.0; }
     public static void resetPrintBuffer() {

@@ -1,19 +1,48 @@
 package slapp.editor.main_window.assignment;
 
 import com.gluonhq.richtextarea.model.Document;
+import javafx.print.PageLayout;
+import javafx.print.Paper;
+import javafx.print.Printer;
+import slapp.editor.PrintUtilities;
 import slapp.editor.main_window.ExerciseModel;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Assignment implements Serializable {
-
     private AssignmentHeader header = new AssignmentHeader();
     private Document comment = new Document();
     private List<ExerciseModel> exerciseModels = new ArrayList<>();
 
-    public Assignment(){  }
+    private double baseScale = 1.0;
+    private boolean fitToPage = false;
+    private PageLayoutValues pageLayoutValues;
+    private transient PageLayout pageLayout;
+
+
+    public Assignment(){
+        this.pageLayout = PrintUtilities.getPageLayout();
+    }
+
+    private void writeObject (ObjectOutputStream stream) throws IOException, ClassNotFoundException {
+        if (pageLayout != null)
+            pageLayoutValues = new PageLayoutValues(pageLayout.getPageOrientation(), pageLayout.getLeftMargin(), pageLayout.getRightMargin(), pageLayout.getTopMargin(), pageLayout.getBottomMargin());
+        stream.defaultWriteObject();
+    }
+
+    private void readObject (ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        Printer printer = PrintUtilities.getPrinter();
+        if (printer != null && pageLayoutValues != null) {
+            Paper paper = printer.getPrinterAttributes().getDefaultPaper();
+            pageLayout = printer.createPageLayout(paper, pageLayoutValues.getOrientation(), pageLayoutValues.getLeftMargin(), pageLayoutValues.getRightMargin(), pageLayoutValues.getTopMargin(), pageLayoutValues.getBottomMargin());
+        }
+    }
 
 
     public ExerciseModel getExercise(int index) {
@@ -49,4 +78,16 @@ public class Assignment implements Serializable {
     public void setExerciseModels(List<ExerciseModel> exerciseModels) {
         this.exerciseModels = exerciseModels;
     }
+
+    public double getBaseScale() { return baseScale; }
+
+    public void setBaseScale(double baseScale) { this.baseScale = baseScale; }
+
+    public boolean isFitToPage() {    return fitToPage;  }
+
+    public void setFitToPage(boolean fitToPage) {   this.fitToPage = fitToPage;  }
+
+    public PageLayout getPageLayout() {     return pageLayout;  }
+
+    public void setPageLayout(PageLayout pageLayout) {     this.pageLayout = pageLayout;  }
 }

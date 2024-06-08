@@ -167,7 +167,7 @@ public class RootLayout extends AnchorPane {
         mainPane.setStyle("-fx-background-color: white," +
                 "linear-gradient(from 0.5px 0.0px to 24.5px  0.0px, repeat, #f5f5f5 1%, transparent 5%)," +
                 "linear-gradient(from 0.0px 0.5px to  0.0px 24.5px, repeat, #f5f5f5 1%, transparent 5%);");
-        mainPane.setPadding(new Insets(5,5,5,5));
+        mainPane.setPadding(new Insets(5,0,0,5));
 
 
 

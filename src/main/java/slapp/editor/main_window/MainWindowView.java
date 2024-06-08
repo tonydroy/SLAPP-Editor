@@ -97,7 +97,9 @@ public class MainWindowView {
     private MenuItem exportAssignmentToPDFItemPM = new MenuItem("Export Assignment");
     private MenuItem pageSetupItem = new MenuItem("Page Setup");
     private MenuItem exportSetupItem = new MenuItem("Export Setup");
-    private CheckMenuItem fitToPageItem = new CheckMenuItem("Fit to Page");
+    private MenuItem scaleSetupItem = new MenuItem("Scale Setup");
+
+
 
     private MenuItem commonElementsTextItem;
     private MenuItem contextualTextItem;
@@ -137,7 +139,6 @@ public class MainWindowView {
         Menu exerciseMenu = new Menu("Exercise");
         Menu printMenu = new Menu("Print");
         Menu helpMenu = new Menu("Help");
-        fitToPageItem.setStyle("-fx-text-fill: green");
 
         Text filmItemGraphic1 = new Text("\uf008");
         filmItemGraphic1.setStyle("-fx-font-family: la-solid-900");
@@ -178,7 +179,7 @@ public class MainWindowView {
         menuBar = new MenuBar(exerciseMenu, assignmentMenu, nextExerciseMenu, previousExerciseMenu, goToExerciseMenu, assignmentCommentMenu, printMenu, helpMenu);
         exerciseMenu.getItems().addAll(saveExerciseItem, saveAsExerciseItem, openExerciseItem, clearExerciseItem, closeExerciseItem, printExerciseItem, exportToPDFExerciseItem, createRevisedExerciseItem, createNewExerciseItem);
         assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, closeAssignmentItem, printAssignmentItem, exportAssignmentToPDFItem, createRevisedAssignmentItem, createNewAssignmentItem);
-        printMenu.getItems().addAll(printExerciseItemPM, exportExerciseToPDFItemPM, printAssignmentItemPM, exportAssignmentToPDFItemPM, pageSetupItem, exportSetupItem, fitToPageItem);
+        printMenu.getItems().addAll(printExerciseItemPM, exportExerciseToPDFItemPM, printAssignmentItemPM, exportAssignmentToPDFItemPM, exportSetupItem, pageSetupItem, scaleSetupItem);
         helpMenu.getItems().addAll(generalIntroItem, verticalTreeItem, truthTableItem, horizontalTreeItem, derivationItem, instructorInfoItem, commonElementsTextItem, contextualTextItem, aboutItem, reportItem);
 
         zoomLabel = new Label(" Zoom ");
@@ -350,7 +351,7 @@ public class MainWindowView {
     public void setupExercise() {
 
 
-        this.currentExerciseView = (ExerciseView) mainWindow.currentExercise.getExerciseView();
+        this.currentExerciseView = (ExerciseView) mainWindow.getCurrentExercise().getExerciseView();
         this.statementNode = currentExerciseView.getExerciseStatementNode();
         this.contentNode = currentExerciseView.getExerciseContentNode();
         this.commentDecoratedRTA = currentExerciseView.getExerciseComment();
@@ -711,6 +712,9 @@ public class MainWindowView {
     public MenuItem getExportSetupItem() {
         return exportSetupItem;
     }
+    public MenuItem getScaleSetupItem() {
+        return scaleSetupItem;
+    }
 
     public MenuItem getCloseAssignmentItem() {
         return closeAssignmentItem;
@@ -806,7 +810,7 @@ public class MainWindowView {
         return minStageWidth;
     }
 
-    public boolean isFitToPageSelected() {return fitToPageItem.isSelected(); }
+
 
 
 

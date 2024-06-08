@@ -41,28 +41,18 @@ import static javafx.scene.control.ButtonType.OK;
 
 
 public class MainWindow {
-    MainWindow mainWindow;
-    MainWindowView mainView;
-    Exercise currentExercise;
-    Assignment currentAssignment = null;
-    int assignmentIndex = 0;
-    boolean assignmentContentModified = false;
-    ChangeListener<Node> focusListener;
-    Node lastFocusOwner;
-    MediaViewer mediaViewer = new MediaViewer();
-
-    boolean isExerciseOpen = false;
-
-
-
-
-
-
-
-
-
-
-
+    private MainWindow mainWindow;
+    private MainWindowView mainView;
+    private Exercise currentExercise;
+    private Assignment currentAssignment = null;
+    private int assignmentIndex = 0;
+    private boolean assignmentContentModified = false;
+    private ChangeListener<Node> focusListener;
+    private Node lastFocusOwner;
+    private MediaViewer mediaViewer = new MediaViewer();
+    private boolean isExerciseOpen = false;
+    private double baseScale = 1.0;
+    private boolean fitToPage = false;
 
 
     public MainWindow() {
@@ -128,6 +118,7 @@ public class MainWindow {
         mainView.getExportAssignmentToPDFItemPM().setOnAction(e -> exportAssignment());
         mainView.getPageSetupItem().setOnAction(e -> pageSetup());
         mainView.getExportSetupItem().setOnAction(e -> exportSetup());
+        mainView.getScaleSetupItem().setOnAction(e -> scaleSetup());
 
         mainView.getGeneralIntroItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4", 700, 725));
         mainView.getVerticalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/vertical_trees.mp4", 600, 900));
@@ -303,18 +294,18 @@ public class MainWindow {
             List<Node> printNodes = currentExercise.getPrintNodes();
             PrintUtilities.resetPrintBuffer();
             for (Node node : printNodes) {
-                if (!PrintUtilities.processPrintNode(node) && !mainView.isFitToPageSelected()) {
+                if (!PrintUtilities.processPrintNode(node) && !fitToPage) {
                     heightGood = false;
                 }
             }
-            if (!heightGood && !mainView.isFitToPageSelected()) {
+            if (!heightGood && !fitToPage) {
                 String message = "Fit page not selected and exercise " + ((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName() + " includes at least one block that takes up more than a page.  Content exceeding page bounds will be cropped.\n\n Continue export?";
                 Alert confirm = EditorAlerts.confirmationAlert("Page Problem:", message);
                 Optional<ButtonType> result = confirm.showAndWait();
                 if (result.get() == OK) heightGood = true;
             }
             if (heightGood) {
-                if (!mainView.isFitToPageSelected()) PrintUtilities.resetScale();
+                if (!fitToPage) PrintUtilities.resetScale();
                 PrintUtilities.sendBufferToPDF(null);
             }
         }
@@ -328,18 +319,18 @@ public class MainWindow {
             List<Node> printNodes = currentExercise.getPrintNodes();
             PrintUtilities.resetPrintBuffer();
             for (Node node : printNodes) {
-                if (!PrintUtilities.processPrintNode(node) && !mainView.isFitToPageSelected()) {
+                if (!PrintUtilities.processPrintNode(node) && !fitToPage) {
                     heightGood = false;
                 }
             }
-            if (!heightGood && !mainView.isFitToPageSelected()) {
+            if (!heightGood && !fitToPage) {
                 String message = "Fit page not selected and exercise " + ((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName() + " includes at least one block that takes up more than a page.  Content exceeding page bounds will be cropped.\n\n Continue to print?";
                 Alert confirm = EditorAlerts.confirmationAlert("Page Problem:", message);
                 Optional<ButtonType> result = confirm.showAndWait();
                 if (result.get() == OK) heightGood = true;
             }
             if (heightGood) {
-                if (!mainView.isFitToPageSelected()) PrintUtilities.resetScale();
+                if (!fitToPage) PrintUtilities.resetScale();
                 PrintUtilities.sendBufferToPrint(null);
             }
         }
@@ -408,6 +399,9 @@ public class MainWindow {
                 currentAssignment.replaceExerciseModel(assignmentIndex, model);
                 currentExercise.setExerciseModified(false);
             }
+            currentAssignment.setBaseScale(baseScale);
+            currentAssignment.setFitToPage(fitToPage);
+            currentAssignment.setPageLayout(PrintUtilities.getPageLayout());
             boolean saved = DiskUtilities.saveAssignment(saveAs, currentAssignment);
 
             if (saved) assignmentContentModified = false;
@@ -429,7 +423,9 @@ public class MainWindow {
                         currentAssignment = assignment;
                         TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
                         assignmentIndex = 0;
-
+                        baseScale = currentAssignment.getBaseScale();
+                        fitToPage = currentAssignment.isFitToPage();
+                        PrintUtilities.setPageLayout(currentAssignment.getPageLayout());
 
 
                         currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
@@ -479,7 +475,7 @@ public class MainWindow {
                 List<Node> exerciseNodes = exercise.getPrintNodes();
 
                 for (Node node : exerciseNodes) {
-                    if (!PrintUtilities.processPrintNode(node) && !mainView.isFitToPageSelected()) {
+                    if (!PrintUtilities.processPrintNode(node) && !fitToPage) {
                         heightGood = false;
                         badExerciseList.add(((ExerciseModel) exercise.getExerciseModel()).getExerciseName());
                     }
@@ -500,7 +496,7 @@ public class MainWindow {
             }
 
             if (heightGood) {
-                if (!mainView.isFitToPageSelected()) PrintUtilities.resetScale();
+                if (!fitToPage) PrintUtilities.resetScale();
                 String infoString = currentAssignment.getHeader().getCreationID() + "-" + currentAssignment.getHeader().getWorkingID();
                 PrintUtilities.sendBufferToPrint(infoString);
             }
@@ -534,7 +530,7 @@ public class MainWindow {
                 List<Node> exerciseNodes = exercise.getPrintNodes();
 
                 for (Node node : exerciseNodes) {
-                    if (!PrintUtilities.processPrintNode(node) && !mainView.isFitToPageSelected()) {
+                    if (!PrintUtilities.processPrintNode(node) && !fitToPage) {
                         heightGood = false;
                         badExerciseList.add(((ExerciseModel) exercise.getExerciseModel()).getExerciseName());
                     }
@@ -556,7 +552,7 @@ public class MainWindow {
 
             if (heightGood) {
 
-                    if (!mainView.isFitToPageSelected()) PrintUtilities.resetScale();
+                    if (!fitToPage) PrintUtilities.resetScale();
                     String infoString = currentAssignment.getHeader().getCreationID() + "-" + currentAssignment.getHeader().getWorkingID();
                     PrintUtilities.sendBufferToPDF(infoString);
             }
@@ -681,8 +677,6 @@ public class MainWindow {
                 }
             });
 
-
-
             Button closeButton = new Button("Close");
             closeButton.setOnAction(e -> exercisePopup.hide());
 
@@ -690,19 +684,51 @@ public class MainWindow {
             buttonBox.setAlignment(Pos.CENTER);
             buttonBox.setStyle("-fx-background-color: white; -fx-border-width: 1 0 0 0; -fx-border-color: lightblue;");
 
-
             VBox jumpBox = new VBox(0, exerciseList, buttonBox);
-
-
             exercisePopup.getContent().add(jumpBox);
-
             jumpBox.setStyle("-fx-border-color: lightblue; -fx-border-width: 5; -fx-opacity: 1.0");
-
-
-
-//            exercisePopup.getContent().addAll(exerciseList, closeButton);
             exercisePopup.show(EditorMain.mainStage);
         }
+    }
+
+
+
+    private void scaleSetup() {
+        Popup scaleSetupPopup = new Popup();
+
+        Button okButton = new Button("OK");
+
+        CheckBox fitToPageCheck = new CheckBox("Fit to Page");
+        fitToPageCheck.setTooltip(new Tooltip("Fit oversize nodes to page"));
+        fitToPageCheck.setPrefHeight(24);
+        fitToPageCheck.setSelected(fitToPage);
+
+        int spinnerInitialValue = (int) Math.round(baseScale * 100);
+        Spinner<Integer> baseScaleSpinner = new Spinner(50, 150, spinnerInitialValue, 1);
+        baseScaleSpinner.setTooltip(new Tooltip("Print at selected percentage of full size"));
+        baseScaleSpinner.setPrefWidth(60);
+        Label baseScaleLabel = new Label("Base Scale");
+        HBox spinnerBox = new HBox(10, baseScaleSpinner, baseScaleLabel);
+        VBox choicesBox = new VBox(15, spinnerBox, fitToPageCheck);
+        choicesBox.setAlignment(Pos.CENTER);
+
+        HBox buttonBox = new HBox(okButton);
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.setPadding(new Insets(10,10,0,10));
+        buttonBox.setStyle("-fx-background-color: white; -fx-border-width: 1 0 0 0; -fx-border-color: lightblue;");
+
+        VBox mainBox = new VBox(10, choicesBox, buttonBox);
+        scaleSetupPopup.getContent().add(mainBox);
+        mainBox.setStyle("-fx-background-color: white; -fx-border-color: lightblue; -fx-border-width: 5; -fx-opacity: 1.0");
+        mainBox.setPadding(new Insets(10));
+        scaleSetupPopup.show(EditorMain.mainStage);
+
+        okButton.setOnAction(e -> {
+            baseScale = baseScaleSpinner.getValue() / 100.0;
+            fitToPage = fitToPageCheck.isSelected();
+            scaleSetupPopup.hide();
+        });
+
     }
 
     public boolean checkCloseWindow() {
@@ -740,6 +766,8 @@ public class MainWindow {
 
     public MainWindowView getMainView() { return mainView; }
     public Assignment getCurrentAssignment() { return currentAssignment; }
+
+    public Exercise getCurrentExercise() {    return currentExercise;  }
 
     public int getAssignmentIndex() {
         return assignmentIndex;
