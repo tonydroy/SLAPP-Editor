@@ -866,6 +866,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         Separator statementSeparator = new Separator(Orientation.HORIZONTAL);
         statementSeparator.setPrefWidth(100);
         HBox statementSepBox = new HBox(statementSeparator);
+        statementSepBox.setMinWidth(PrintUtilities.getPageWidth());
         statementSepBox.setAlignment(Pos.CENTER);
         nodeList.add(statementSepBox);
 
@@ -885,6 +886,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         contentSeparator.setStyle("-fx-stroke-dash-array:0.1 5.0");
         contentSeparator.setPrefWidth(100);
         HBox contentSepBox = new HBox(contentSeparator);
+        contentSepBox.setMinWidth(PrintUtilities.getPageWidth());
         contentSepBox.setAlignment(Pos.CENTER);
         nodeList.add(contentSepBox);
 

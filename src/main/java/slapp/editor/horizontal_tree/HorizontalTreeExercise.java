@@ -260,6 +260,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         Separator statementSeparator = new Separator(Orientation.HORIZONTAL);
         statementSeparator.setPrefWidth(100);
         HBox statementSepBox = new HBox(statementSeparator);
+        statementSepBox.setMinWidth(PrintUtilities.getPageWidth());
         statementSepBox.setAlignment(Pos.CENTER);
         nodeList.add(statementSepBox);
 
@@ -321,6 +322,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         Separator explainSeparator = new Separator(Orientation.HORIZONTAL);
         explainSeparator.setPrefWidth(100);
         HBox explainSepBox = new HBox(explainSeparator);
+        explainSepBox.setMinWidth(PrintUtilities.getPageWidth());
         explainSepBox.setAlignment(Pos.CENTER);
         nodeList.add(explainSepBox);
 

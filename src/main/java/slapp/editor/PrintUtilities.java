@@ -1,7 +1,6 @@
 package slapp.editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
@@ -31,16 +30,13 @@ public class PrintUtilities {
     private static DoubleProperty pageWidth = new SimpleDoubleProperty();
     private static DoubleProperty pageHeight = new SimpleDoubleProperty();
 
-
     private static PageLayout internalPageLayout;
     // this is the layout with space for footer, for internal use
     private static Printer pdfPrinter = null;
     private static Printer printer;
     private static Region spacer = new Region();
-
-    private static double scale = 1.0;
-    private static List<Pair<Node, Double>> printBuffer = new ArrayList<>();
-
+    private static double baseScale = 1.0;
+    private static List<PrintBufferItem> printBuffer = new ArrayList<>();
     private static VBox topBox;
 
 
@@ -132,54 +128,62 @@ public class PrintUtilities {
         boolean success = true;
         int pageNum = 0;
         VBox pageBox = new VBox();
-        pageBox.getTransforms().add(new Scale(scale, scale));
         double netHeight = 0;
         int i = 0;
 
         if (topBox != null) {
-            topBox.setMaxWidth(getPageWidth() / scale);
-            topBox.setMinWidth(getPageWidth() / scale);
-            Pair<Double, Double> size = getNodeSize(topBox);
-            double height = size.getValue();
-            printBuffer.add(0, new Pair(topBox, height));
+            topBox.setMaxWidth(getPageWidth());
+            topBox.setMinWidth(getPageWidth());
+            PrintBufferItem topBoxItem = getNodeSize(topBox);
+            printBuffer.add(0, topBoxItem);
         }
 
         while (i < printBuffer.size()) {
-            Pair<Node, Double> bufferItem = printBuffer.get(i);
-            Node node = bufferItem.getKey();
-            double nodeHeight = bufferItem.getValue() * scale;
+            PrintBufferItem bufferItem = printBuffer.get(i);
+            double scale = bufferItem.getScale();
+            double nodeHeight = bufferItem.getHeight() * scale;
+
+            Node node = bufferItem.getNode();
+            node.getTransforms().clear();
+            node.getTransforms().add(new Scale(scale, scale));
+
+            Group nodeGroup = new Group(bufferItem.getNode());
+
             double newHeight = nodeHeight + netHeight;
+
+
             //if the node fits on the page add to page
             if (newHeight <= pageLayout.getPrintableHeight()) {
-                pageBox.getChildren().add(node);
+                pageBox.getChildren().add(nodeGroup);
                 netHeight = newHeight;
+
+
+
                 i++;
+
                 //if all the nodes have been added print page
                 if (i == printBuffer.size()) {
-                    spacer.setPrefHeight((internalPageLayout.getPrintableHeight() - (netHeight + 16.0)) / scale);
+                    spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 16.0)) ;
                     pageBox.getChildren().addAll(spacer, getFooterBox(++pageNum, footerInfo));
-                    //                   pageBox.getChildren().addAll(spacer, new Label(Integer.toString(++pageNum)));
                     success = (job.printPage(internalPageLayout, pageBox) && success);
                 }
                 //if the node does not fit on this page, print page and start new
             } else if (!pageBox.getChildren().isEmpty()) {
-                spacer.setPrefHeight((internalPageLayout.getPrintableHeight() - (netHeight + 16.0)) / scale);
+                spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 16.0));
                 pageBox.getChildren().addAll(spacer, getFooterBox(++pageNum, footerInfo));
-                //               pageBox.getChildren().addAll(spacer, new Label(Integer.toString(++pageNum)));
                 success = (job.printPage(internalPageLayout, pageBox) && success);
+
                 netHeight = 0;
                 pageBox.getChildren().clear();
                 //node is too big for a page, truncate and print anyway (human check says ok)
             } else {
                 //the pageBox is too tall with this node, so we need another approach
                 Rectangle nodeBox = new Rectangle(pageLayout.getPrintableWidth(), pageLayout.getPrintableHeight());
-                node.setClip(nodeBox);
-                //               Label pageLabel = new Label(Integer.toString(++pageNum));
+                nodeGroup.setClip(nodeBox);
 
-//                StackPane pane = new StackPane(node, pageLabel);
                 HBox footerBox = getFooterBox(++pageNum, footerInfo);
                 footerBox.getTransforms().add(new Scale(scale, scale));
-                StackPane pane = new StackPane(node, footerBox);
+                StackPane pane = new StackPane(nodeGroup, footerBox);
                 pane.setAlignment(footerBox, Pos.TOP_LEFT);
                 footerBox.setTranslateY(internalPageLayout.getPrintableHeight() - 16.0);
                 footerBox.setTranslateX(0.0);
@@ -196,8 +200,9 @@ public class PrintUtilities {
         Region spacer = new Region();
         HBox footerBox = new HBox(new Label(Integer.toString(pageNum)), spacer, new Label(infoString));
         footerBox.setHgrow(spacer, Priority.ALWAYS);
-        footerBox.setMaxWidth(getPageWidth()/scale);
-        footerBox.setMinWidth(getPageWidth()/scale);
+        footerBox.setMaxWidth(getPageWidth());
+        footerBox.setMinWidth(getPageWidth());
+        footerBox.setMaxHeight(16);
         return footerBox;
     }
 
@@ -226,23 +231,24 @@ public class PrintUtilities {
     }
 
 
-    private static Pair<Double, Double> getNodeSize(Node node) {
+    private static PrintBufferItem getNodeSize(Node node) {
         Group root = new Group();
         Scene scene = new Scene(root);
         root.getChildren().add(node);
         root.applyCss();
         root.layout();
         Bounds bounds = node.getLayoutBounds();
-        return new Pair(bounds.getWidth(), bounds.getHeight());
+
+        return new PrintBufferItem(node, bounds.getHeight(), bounds.getWidth());
     }
 
     public static boolean processPrintNode(Node node) {
         boolean nodeFit = true;
         double wScale = 1.0;
         double hScale = 1.0;
-        Pair<Double, Double> size = getNodeSize(node);
-        double width = size.getKey();     //increase height and width to stop right/bottom cutoff on scaled images
-        double height = size.getValue();
+        PrintBufferItem bufferItem = getNodeSize(node);
+        double width = bufferItem.getWidth();
+        double height = bufferItem.getHeight();
 
         if (width > getPageWidth()) {
             nodeFit = false;
@@ -252,8 +258,9 @@ public class PrintUtilities {
             nodeFit = false;
             hScale = getPageHeight()/height;
         }
-        scale = Math.min(Math.min(wScale, hScale), scale);
-        printBuffer.add(new Pair(node, height));
+        double scale = Math.min(Math.min(wScale, hScale), baseScale);
+        bufferItem.setScale(scale);
+        printBuffer.add(bufferItem);
 
         return nodeFit;
     }
@@ -294,10 +301,15 @@ public class PrintUtilities {
         return printer;
     }
 
-    public static void resetScale() { scale = 1.0; }
-    public static void resetPrintBuffer() {
+    public static void resetPrintBufferScale() {
+        for (PrintBufferItem item : printBuffer) {
+            item.setScale(baseScale);
+        }
+
+         }
+    public static void resetPrintBuffer(double baseScale) {
+        PrintUtilities.baseScale = baseScale;
         printBuffer.clear();
-        scale = 1.0;
         topBox = null;
     }
 

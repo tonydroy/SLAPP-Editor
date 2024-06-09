@@ -1,16 +1,12 @@
 package slapp.editor.main_window;
 
 import com.gluonhq.richtextarea.model.Document;
-import javafx.animation.PauseTransition;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -18,9 +14,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import slapp.editor.*;
 import slapp.editor.front_page.FrontPageExercise;
@@ -32,9 +25,6 @@ import slapp.editor.simple_editor.SimpleEditModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static javafx.scene.control.ButtonType.OK;
 
@@ -292,7 +282,7 @@ public class MainWindow {
             boolean heightGood = true;
 
             List<Node> printNodes = currentExercise.getPrintNodes();
-            PrintUtilities.resetPrintBuffer();
+            PrintUtilities.resetPrintBuffer(baseScale);
             for (Node node : printNodes) {
                 if (!PrintUtilities.processPrintNode(node) && !fitToPage) {
                     heightGood = false;
@@ -305,7 +295,7 @@ public class MainWindow {
                 if (result.get() == OK) heightGood = true;
             }
             if (heightGood) {
-                if (!fitToPage) PrintUtilities.resetScale();
+                if (!fitToPage) PrintUtilities.resetPrintBufferScale();
                 PrintUtilities.sendBufferToPDF(null);
             }
         }
@@ -317,7 +307,7 @@ public class MainWindow {
         if (currentExercise != null && !((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
             boolean heightGood = true;
             List<Node> printNodes = currentExercise.getPrintNodes();
-            PrintUtilities.resetPrintBuffer();
+            PrintUtilities.resetPrintBuffer(baseScale);
             for (Node node : printNodes) {
                 if (!PrintUtilities.processPrintNode(node) && !fitToPage) {
                     heightGood = false;
@@ -330,7 +320,7 @@ public class MainWindow {
                 if (result.get() == OK) heightGood = true;
             }
             if (heightGood) {
-                if (!fitToPage) PrintUtilities.resetScale();
+                if (!fitToPage) PrintUtilities.resetPrintBufferScale();
                 PrintUtilities.sendBufferToPrint(null);
             }
         }
@@ -460,7 +450,7 @@ public class MainWindow {
 
             boolean heightGood = true;
             List<String> badExerciseList = new ArrayList<>();
-            PrintUtilities.resetPrintBuffer();
+            PrintUtilities.resetPrintBuffer(baseScale);
             PrintUtilities.setTopBox(mainView.getAssignmentHeader());
 
             if (currentExercise.isExerciseModified()) assignmentContentModified = true;
@@ -496,7 +486,7 @@ public class MainWindow {
             }
 
             if (heightGood) {
-                if (!fitToPage) PrintUtilities.resetScale();
+                if (!fitToPage) PrintUtilities.resetPrintBufferScale();
                 String infoString = currentAssignment.getHeader().getCreationID() + "-" + currentAssignment.getHeader().getWorkingID();
                 PrintUtilities.sendBufferToPrint(infoString);
             }
@@ -514,7 +504,7 @@ public class MainWindow {
 
             boolean heightGood = true;
             List<String> badExerciseList = new ArrayList<>();
-            PrintUtilities.resetPrintBuffer();
+            PrintUtilities.resetPrintBuffer(baseScale);
             PrintUtilities.setTopBox(mainView.getAssignmentHeader());
 
             if (currentExercise.isExerciseModified()) assignmentContentModified = true;
@@ -552,7 +542,7 @@ public class MainWindow {
 
             if (heightGood) {
 
-                    if (!fitToPage) PrintUtilities.resetScale();
+                    if (!fitToPage) PrintUtilities.resetPrintBufferScale();
                     String infoString = currentAssignment.getHeader().getCreationID() + "-" + currentAssignment.getHeader().getWorkingID();
                     PrintUtilities.sendBufferToPDF(infoString);
             }

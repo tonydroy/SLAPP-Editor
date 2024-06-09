@@ -132,14 +132,16 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
         });
 
         //main pane
-        RootLayout mainPane = rootLayout;
-        mainPane.setMinHeight(375.0);
+        AnchorPane mainPane1 = rootLayout.getMainPane();
+//        RootLayout mainPane = rootLayout;
+        SplitPane mainPane = rootLayout.getBase_pane();
+        mainPane1.setMinHeight(350.0);
         double mainPaneInitialHeight = Math.round(mainPanePrefHeight / PrintUtilities.getPageHeight() * 20.0) * 5.0;
         mainPaneHeightSpinner = new Spinner<>(5, 999.0, mainPaneInitialHeight, 5.0);
         mainPaneHeightSpinner.setPrefWidth(60);
         mainPaneHeightSpinner.setDisable(false);
         mainPaneHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
-        mainPane.prefHeightProperty().bind(Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(mainPaneHeightSpinner.getValueFactory().valueProperty()).divide(100.0)));
+        mainPane1.prefHeightProperty().bind(Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(mainPaneHeightSpinner.getValueFactory().valueProperty()).divide(100.0)));
         mainPaneHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = mainPaneHeightSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -181,9 +183,9 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
             commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
 
 
-            mainPane.prefHeightProperty().unbind();
+            mainPane1.prefHeightProperty().unbind();
             mainPaneHeightSpinner.getValueFactory().setValue((double) Math.round(mainPaneHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue() / 5.0) * 5.0);
-            mainPane.prefHeightProperty().bind(Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(mainPaneHeightSpinner.getValueFactory().valueProperty()).divide(100.0)));
+            mainPane1.prefHeightProperty().bind(Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(mainPaneHeightSpinner.getValueFactory().valueProperty()).divide(100.0)));
         });
 
         PrintUtilities.pageWidthProperty().addListener((ob, ov, nv) -> {

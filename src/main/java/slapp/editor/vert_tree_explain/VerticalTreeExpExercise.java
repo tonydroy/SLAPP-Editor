@@ -371,7 +371,9 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
         double boxHeight = hbox.getHeight();
         hbox.setPrefHeight(boxHeight);
         nodeList.add(hbox);
-        nodeList.add(new Separator(Orientation.HORIZONTAL));
+        Separator headerSeparator = new Separator(Orientation.HORIZONTAL);
+        headerSeparator.setPrefWidth(PrintUtilities.getPageWidth());
+        nodeList.add(headerSeparator);
 
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
@@ -387,6 +389,7 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
         Separator statementSeparator = new Separator(Orientation.HORIZONTAL);
         statementSeparator.setPrefWidth(100);
         HBox statementSepBox = new HBox(statementSeparator);
+        statementSepBox.setMinWidth(PrintUtilities.getPageWidth());
         statementSepBox.setAlignment(Pos.CENTER);
         nodeList.add(statementSepBox);
 
@@ -408,7 +411,7 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
 
         HBox contentHBox = new HBox(mainPane);
         contentHBox.setAlignment(Pos.CENTER);
-        contentHBox.setPadding(new Insets(0,0,20, 0));
+        contentHBox.setPadding(new Insets(0,0,0, 0));
 
         nodeList.add(contentHBox);
 
@@ -425,6 +428,7 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
         contentSeparator.setStyle("-fx-stroke-dash-array:0.1 5.0");
         contentSeparator.setPrefWidth(100);
         HBox contentSepBox = new HBox(contentSeparator);
+        contentSepBox.setMinWidth(PrintUtilities.getPageWidth());
         contentSepBox.setAlignment(Pos.CENTER);
         nodeList.add(contentSepBox);
 
