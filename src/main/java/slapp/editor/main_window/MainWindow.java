@@ -1,6 +1,9 @@
 package slapp.editor.main_window;
 
 import com.gluonhq.richtextarea.model.Document;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -41,7 +44,7 @@ public class MainWindow {
     private Node lastFocusOwner;
     private MediaViewer mediaViewer = new MediaViewer();
     private boolean isExerciseOpen = false;
-    private double baseScale = 1.0;
+    private DoubleProperty baseScale = new SimpleDoubleProperty(1.0);
     private boolean fitToPage = false;
 
 
@@ -82,6 +85,9 @@ public class MainWindow {
      */
 
     private void setupMainWindow() {
+
+        mainView.scalePageHeightProperty().bind(Bindings.multiply(PrintUtilities.pageHeightProperty(), mainWindow.baseScaleProperty()));
+        mainView.scalePageWidthProperty().bind(Bindings.multiply(PrintUtilities.pageWidthProperty(), mainWindow.baseScaleProperty()));
 
         mainView.getCreateNewExerciseItem().setOnAction(e -> createNewExercise());
         mainView.getCreateRevisedExerciseItem().setOnAction(e -> createRevisedExercise());
@@ -282,7 +288,7 @@ public class MainWindow {
             boolean heightGood = true;
 
             List<Node> printNodes = currentExercise.getPrintNodes();
-            PrintUtilities.resetPrintBuffer(baseScale);
+            PrintUtilities.resetPrintBuffer(getBaseScale());
             for (Node node : printNodes) {
                 if (!PrintUtilities.processPrintNode(node) && !fitToPage) {
                     heightGood = false;
@@ -307,7 +313,7 @@ public class MainWindow {
         if (currentExercise != null && !((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
             boolean heightGood = true;
             List<Node> printNodes = currentExercise.getPrintNodes();
-            PrintUtilities.resetPrintBuffer(baseScale);
+            PrintUtilities.resetPrintBuffer(getBaseScale());
             for (Node node : printNodes) {
                 if (!PrintUtilities.processPrintNode(node) && !fitToPage) {
                     heightGood = false;
@@ -389,7 +395,7 @@ public class MainWindow {
                 currentAssignment.replaceExerciseModel(assignmentIndex, model);
                 currentExercise.setExerciseModified(false);
             }
-            currentAssignment.setBaseScale(baseScale);
+            currentAssignment.setBaseScale(getBaseScale());
             currentAssignment.setFitToPage(fitToPage);
             currentAssignment.setPageLayout(PrintUtilities.getPageLayout());
             boolean saved = DiskUtilities.saveAssignment(saveAs, currentAssignment);
@@ -413,7 +419,7 @@ public class MainWindow {
                         currentAssignment = assignment;
                         TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
                         assignmentIndex = 0;
-                        baseScale = currentAssignment.getBaseScale();
+                        setBaseScale(currentAssignment.getBaseScale());
                         fitToPage = currentAssignment.isFitToPage();
                         PrintUtilities.setPageLayout(currentAssignment.getPageLayout());
 
@@ -450,7 +456,7 @@ public class MainWindow {
 
             boolean heightGood = true;
             List<String> badExerciseList = new ArrayList<>();
-            PrintUtilities.resetPrintBuffer(baseScale);
+            PrintUtilities.resetPrintBuffer(getBaseScale());
             PrintUtilities.setTopBox(mainView.getAssignmentHeader());
 
             if (currentExercise.isExerciseModified()) assignmentContentModified = true;
@@ -504,7 +510,7 @@ public class MainWindow {
 
             boolean heightGood = true;
             List<String> badExerciseList = new ArrayList<>();
-            PrintUtilities.resetPrintBuffer(baseScale);
+            PrintUtilities.resetPrintBuffer(getBaseScale());
             PrintUtilities.setTopBox(mainView.getAssignmentHeader());
 
             if (currentExercise.isExerciseModified()) assignmentContentModified = true;
@@ -693,7 +699,7 @@ public class MainWindow {
         fitToPageCheck.setPrefHeight(24);
         fitToPageCheck.setSelected(fitToPage);
 
-        int spinnerInitialValue = (int) Math.round(baseScale * 100);
+        int spinnerInitialValue = (int) Math.round(getBaseScale() * 100);
         Spinner<Integer> baseScaleSpinner = new Spinner(50, 150, spinnerInitialValue, 1);
         baseScaleSpinner.setTooltip(new Tooltip("Print at selected percentage of full size"));
         baseScaleSpinner.setPrefWidth(60);
@@ -714,7 +720,7 @@ public class MainWindow {
         scaleSetupPopup.show(EditorMain.mainStage);
 
         okButton.setOnAction(e -> {
-            baseScale = baseScaleSpinner.getValue() / 100.0;
+            setBaseScale(baseScaleSpinner.getValue() / 100.0);
             fitToPage = fitToPageCheck.isSelected();
             scaleSetupPopup.hide();
         });
@@ -771,6 +777,9 @@ public class MainWindow {
         this.lastFocusOwner = lastFocusOwner;
     }
 
+    public double getBaseScale() { return baseScale.get(); }
 
+    public DoubleProperty baseScaleProperty() {   return baseScale; }
 
+    public void setBaseScale(double baseScale) { this.baseScale.set(baseScale); }
 }

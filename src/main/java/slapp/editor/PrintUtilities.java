@@ -4,6 +4,7 @@ import com.gluonhq.richtextarea.RichTextArea;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.print.*;
 import javafx.scene.Group;
@@ -50,7 +51,18 @@ public class PrintUtilities {
             printer = job.getPrinter();
             double bottomMargin = Math.max(baseLayout.getBottomMargin(), 48);
             pageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), bottomMargin );
-            internalPageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), 18.0);
+
+            double top = pageLayout.getTopMargin();
+            double bottom = 18.0;
+            if (pageLayout.getPageOrientation() == PageOrientation.LANDSCAPE) {
+                bottom = top;
+                top = 18.0;
+            }
+            internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), pageLayout.getLeftMargin(), pageLayout.getRightMargin(), top, bottom);
+
+//            internalPageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), 18.0);
+
+
         }
         else {
             EditorAlerts.showSimpleAlert("Print Problem", "Failed to set print and page defaults.");
@@ -71,7 +83,15 @@ public class PrintUtilities {
                 pageHeight.set(pageLayout.getPrintableHeight());
                 pageWidth.set(pageLayout.getPrintableWidth());
 
-                internalPageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), 18.0);
+                double top = pageLayout.getTopMargin();
+                double bottom = 18.0;
+                if (pageLayout.getPageOrientation() == PageOrientation.LANDSCAPE) {
+                    bottom = top;
+                    top = 18.0;
+                }
+                internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), pageLayout.getLeftMargin(), pageLayout.getRightMargin(), top, bottom);
+//                internalPageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), 18.0);
+
 
             }
             job.endJob();
@@ -125,16 +145,20 @@ public class PrintUtilities {
 
         MainWindowView.activateProgressIndicator("printing");
 
+
+
         boolean success = true;
         int pageNum = 0;
         VBox pageBox = new VBox();
+//        pageBox.setPadding(new Insets(25,0,0,0));   // this papers over the fact that top margin is not working (giving about .75 margin); see compensation adding node to page
         double netHeight = 0;
         int i = 0;
 
         if (topBox != null) {
-            topBox.setMaxWidth(getPageWidth());
-            topBox.setMinWidth(getPageWidth());
+            topBox.setMaxWidth(getPageWidth() / baseScale);
+            topBox.setMinWidth(getPageWidth() / baseScale);
             PrintBufferItem topBoxItem = getNodeSize(topBox);
+            topBoxItem.setScale(baseScale);
             printBuffer.add(0, topBoxItem);
         }
 
@@ -146,29 +170,26 @@ public class PrintUtilities {
             Node node = bufferItem.getNode();
             node.getTransforms().clear();
             node.getTransforms().add(new Scale(scale, scale));
-
             Group nodeGroup = new Group(bufferItem.getNode());
 
             double newHeight = nodeHeight + netHeight;
-
 
             //if the node fits on the page add to page
             if (newHeight <= pageLayout.getPrintableHeight()) {
                 pageBox.getChildren().add(nodeGroup);
                 netHeight = newHeight;
-
-
-
                 i++;
 
                 //if all the nodes have been added print page
                 if (i == printBuffer.size()) {
+ //                   spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 25 + 16.0)) ;     //25
                     spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 16.0)) ;
                     pageBox.getChildren().addAll(spacer, getFooterBox(++pageNum, footerInfo));
                     success = (job.printPage(internalPageLayout, pageBox) && success);
                 }
                 //if the node does not fit on this page, print page and start new
             } else if (!pageBox.getChildren().isEmpty()) {
+//                spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 25 + 16.0));         //25
                 spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 16.0));
                 pageBox.getChildren().addAll(spacer, getFooterBox(++pageNum, footerInfo));
                 success = (job.printPage(internalPageLayout, pageBox) && success);
@@ -199,10 +220,11 @@ public class PrintUtilities {
     private static HBox getFooterBox(int pageNum, String infoString) {
         Region spacer = new Region();
         HBox footerBox = new HBox(new Label(Integer.toString(pageNum)), spacer, new Label(infoString));
+        footerBox.getTransforms().add(new Scale(baseScale, baseScale));
         footerBox.setHgrow(spacer, Priority.ALWAYS);
-        footerBox.setMaxWidth(getPageWidth());
-        footerBox.setMinWidth(getPageWidth());
-        footerBox.setMaxHeight(16);
+        footerBox.setMaxWidth(getPageWidth() / baseScale);
+        footerBox.setMinWidth(getPageWidth() / baseScale);
+
         return footerBox;
     }
 
@@ -250,13 +272,13 @@ public class PrintUtilities {
         double width = bufferItem.getWidth();
         double height = bufferItem.getHeight();
 
-        if (width > getPageWidth()) {
+        if (width > getPageWidth() / baseScale) {
             nodeFit = false;
-            wScale = getPageWidth()/width;
+            wScale = getPageWidth() / width;
         }
-        if (height > getPageHeight()) {
+        if (height > getPageHeight() / baseScale) {
             nodeFit = false;
-            hScale = getPageHeight()/height;
+            hScale = getPageHeight() / height;
         }
         double scale = Math.min(Math.min(wScale, hScale), baseScale);
         bufferItem.setScale(scale);
@@ -293,7 +315,19 @@ public class PrintUtilities {
             PrintUtilities.pageLayout = pageLayout;
             pageHeight.set(pageLayout.getPrintableHeight());
             pageWidth.set(pageLayout.getPrintableWidth());
-            internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), pageLayout.getLeftMargin(), pageLayout.getRightMargin(), pageLayout.getTopMargin(), 18.0);
+
+            /*
+            In landscape printing, the top and bottom margins are reversed!!   Is this a feature of my Windows setup?  Revisit on Mac
+             */
+            double top = pageLayout.getTopMargin();
+            double bottom = 18.0;
+            if (pageLayout.getPageOrientation() == PageOrientation.LANDSCAPE) {
+                bottom = top;
+                top = 18.0;
+            }
+            internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), pageLayout.getLeftMargin(), pageLayout.getRightMargin(), top, bottom);
+//           internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), pageLayout.getLeftMargin(), pageLayout.getRightMargin(), pageLayout.getTopMargin(), 18.0);
+
         }
     }
 

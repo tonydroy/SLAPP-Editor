@@ -22,7 +22,7 @@ public class TruthTableGenModel implements ExerciseModel<Document>, Serializable
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
     private Document exerciseInterpretation = new Document();
-
+    private Document explainDocument = new Document();
     private List<String> unaryOperators = new ArrayList<>();
     private List<String> binaryOperators = new ArrayList<>();
 
@@ -37,7 +37,7 @@ public class TruthTableGenModel implements ExerciseModel<Document>, Serializable
     private boolean aSelected = false;
     private String bPrompt = new String("");
     private boolean bSelected = false;
-    private Document explainDocument = new Document();
+
     private String explainPrompt = "";
     private int tableRows = 0;
 

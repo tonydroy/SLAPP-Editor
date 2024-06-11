@@ -34,6 +34,8 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private String exerciseName = new String();
     private String explainPrompt = "";
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
+    private DecoratedRTA exerciseComment = new DecoratedRTA();
+    private DecoratedRTA explainDRTA = new DecoratedRTA();
     private double statementPrefHeight = 0;
     private double commentPrefHeight = 0;
     private double explainPrefHeight = 0;
@@ -48,8 +50,7 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private Spinner<Double> tableGridHeightSpinner;
     private Spinner<Double> tableGridWidthSpinner;
     private Node currentSpinnerNode;
-    private DecoratedRTA exerciseComment = new DecoratedRTA();
-    private DecoratedRTA explainDRTA = new DecoratedRTA();
+
     private GridPane basicFormulasPane;
     private List<BoxedDRTA> basicFormulasBoxedDRTAs;
     private VBox controlBox;
@@ -423,7 +424,7 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
         statementHeightSpinner.setPrefWidth(60);
         statementHeightSpinner.setDisable(false);
-        statementHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        statementHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         statementHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = statementHeightSpinner.lookup(".increment-arrow-button");
@@ -454,7 +455,7 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
         commentHeightSpinner.setPrefWidth(60);
         commentHeightSpinner.setDisable(false);
-        commentHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        commentHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         commentHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = commentHeightSpinner.lookup(".increment-arrow-button");
@@ -486,7 +487,7 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         explainHeightSpinner = new Spinner<>(0.0, 999.0, explainInitialHeight, 1.0);
         explainHeightSpinner.setPrefWidth(60);
         explainHeightSpinner.setDisable(false);
-        explainHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        explainHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         explainRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(explainHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         explainHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = explainHeightSpinner.lookup(".increment-arrow-button");

@@ -20,6 +20,7 @@ public class TruthTableExpModel implements ExerciseModel<Document>, Serializable
     private double explainPrefHeight = 60;
     private Document exerciseStatement = new Document();
     private Document exerciseComment = new Document();
+    private Document explainDocument = new Document();
 
     private List<String> unaryOperators = new ArrayList<>();
     private List<String> binaryOperators = new ArrayList<>();
@@ -35,7 +36,7 @@ public class TruthTableExpModel implements ExerciseModel<Document>, Serializable
     private boolean aSelected = false;
     private String bPrompt = new String("");
     private boolean bSelected = false;
-    private Document explainDocument = new Document();
+
     private int tableRows = 0;
 
 

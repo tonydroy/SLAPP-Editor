@@ -307,7 +307,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         List<Node> nodeList = new ArrayList<>();
         truthTableExpModel = getTruthTableExpModelFromView();
         TruthTableExpExercise exercise = new TruthTableExpExercise(truthTableExpModel, mainWindow);
-        double nodeWidth = PrintUtilities.getPageWidth();
+        double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
         //header node
         Label exerciseName = new Label(truthTableExpModel.getExerciseName());
@@ -323,23 +323,25 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         double boxHeight = hbox.getHeight();
         hbox.setPrefHeight(boxHeight);
         nodeList.add(hbox);
-        nodeList.add(new Separator(Orientation.HORIZONTAL));
+        Separator headerSeparator = new Separator(Orientation.HORIZONTAL);
+        headerSeparator.setPrefWidth(nodeWidth);
+        nodeList.add(headerSeparator);
 
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.prefHeightProperty().unbind();
-        statementRTA.prefWidthProperty().unbind();
+        statementRTA.minWidthProperty().unbind();
         double statementHeight = mainView.getRTATextHeight(statementRTA);
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
-        statementRTA.setPrefWidth(nodeWidth);
+        statementRTA.setMinWidth(nodeWidth);
         statementRTA.getStylesheets().clear(); statementRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(statementRTA);
 
         Separator statementSeparator = new Separator(Orientation.HORIZONTAL);
         statementSeparator.setPrefWidth(100);
         HBox statementSepBox = new HBox(statementSeparator);
-        statementSepBox.setMinWidth(PrintUtilities.getPageWidth());
+        statementSepBox.setMinWidth(nodeWidth);
         statementSepBox.setAlignment(Pos.CENTER);
         nodeList.add(statementSepBox);
 
@@ -370,10 +372,11 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
 
         RichTextArea explanationRTA = exercise.getExerciseView().getExplainDRTA().getEditor();
         explanationRTA.prefHeightProperty().unbind();
+        explanationRTA.minWidthProperty().unbind();
         double explanationHeight = mainView.getRTATextHeight(explanationRTA);
         explanationRTA.setPrefHeight(explanationHeight + 35.0);
         explanationRTA.setContentAreaWidth(nodeWidth);
-        explanationRTA.setPrefWidth(nodeWidth);
+        explanationRTA.setMinWidth(nodeWidth);
         explanationRTA.getStylesheets().clear(); statementRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(explanationRTA);
 
@@ -381,18 +384,18 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         contentSeparator.setStyle("-fx-stroke-dash-array:0.1 5.0");
         contentSeparator.setPrefWidth(100);
         HBox contentSepBox = new HBox(contentSeparator);
-        contentSepBox.setMinWidth(PrintUtilities.getPageWidth());
+        contentSepBox.setMinWidth(nodeWidth);
         contentSepBox.setAlignment(Pos.CENTER);
         nodeList.add(contentSepBox);
 
         //comment node
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
-        commentRTA.prefWidthProperty().unbind();
+        commentRTA.minWidthProperty().unbind();
         double commentHeight = mainView.getRTATextHeight(commentRTA);
-        commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
-        commentRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
-        commentRTA.setPrefWidth(nodeWidth);
+        commentRTA.setPrefHeight(commentHeight + 35.0);
+        commentRTA.setContentAreaWidth(nodeWidth);
+        commentRTA.setMinWidth(nodeWidth);
         commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(commentRTA);
 

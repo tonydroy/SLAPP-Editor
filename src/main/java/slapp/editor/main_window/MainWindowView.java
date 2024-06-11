@@ -2,12 +2,10 @@ package slapp.editor.main_window;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
-import com.gluonhq.richtextarea.model.Document;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -21,7 +19,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.*;
-import javafx.util.Duration;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
@@ -118,6 +115,9 @@ public class MainWindowView {
     private static Label progressLabel;
 //    public static ProgressIndicator progressIndicator;
     public static Text progressIndicator;
+
+    DoubleProperty scalePageHeight = new SimpleDoubleProperty();
+    DoubleProperty scalePageWidth = new SimpleDoubleProperty();
 
 
 
@@ -344,7 +344,7 @@ public class MainWindowView {
     public double getRTATextHeight(RichTextArea rta) {
         rta.setEditable(true);
         RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
-        double rtaHeight = rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight(), stage.getX(), stage.getY());
+        double rtaHeight = rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth() / mainWindow.getBaseScale(), PrintUtilities.getPageHeight() / mainWindow.getBaseScale(), stage.getX(), stage.getY());
         return rtaHeight;
     }
 
@@ -599,8 +599,7 @@ public class MainWindowView {
         commentArea.setContentAreaWidth(PrintUtilities.getPageWidth());
         commentArea.setPrefWidth(PrintUtilities.getPageWidth());
         double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-        commentArea.setPrefHeight(Math.max(70, commentHeight + 35.0));
-        commentArea.requestFocus();
+        commentArea.setPrefHeight(commentHeight + 35.0);
         tempStage.close();
 
         headerBox.getChildren().addAll(nameBox,itemsBox, separator, commentArea );
@@ -810,8 +809,16 @@ public class MainWindowView {
         return minStageWidth;
     }
 
+    public double getScalePageHeight() {   return scalePageHeight.get(); }
 
+    public DoubleProperty scalePageHeightProperty() {   return scalePageHeight;  }
 
+    public void setScalePageHeight(double scalePageHeight) {   this.scalePageHeight.set(scalePageHeight);
+    }
 
+    public double getScalePageWidth() {   return scalePageWidth.get();   }
 
+    public DoubleProperty scalePageWidthProperty() {    return scalePageWidth;  }
+
+    public void setScalePageWidth(double scalePageWidth) {    this.scalePageWidth.set(scalePageWidth);   }
 }

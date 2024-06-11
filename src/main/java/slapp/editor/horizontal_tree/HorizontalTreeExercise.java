@@ -229,7 +229,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         List<Node> nodeList = new ArrayList<>();
         horizontalTreeModel = getHorizontalTreeModelFromView();
         HorizontalTreeExercise exercise = new HorizontalTreeExercise(horizontalTreeModel, mainWindow);
-        double nodeWidth = PrintUtilities.getPageWidth();
+        double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
         //header node
         Label exerciseName = new Label(horizontalTreeModel.getExerciseName());
@@ -245,28 +245,30 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         double boxHeight = hbox.getHeight();
         hbox.setPrefHeight(boxHeight);
         nodeList.add(hbox);
-        nodeList.add(new Separator(Orientation.HORIZONTAL));
+        Separator headerSeparator = new Separator(Orientation.HORIZONTAL);
+        headerSeparator.setPrefWidth(nodeWidth);
+        nodeList.add(headerSeparator);
 
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.prefHeightProperty().unbind();
+        statementRTA.minWidthProperty().unbind();
         double statementHeight = mainView.getRTATextHeight(statementRTA);
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
-        statementRTA.setPrefWidth(nodeWidth);
+        statementRTA.setMinWidth(nodeWidth);
         statementRTA.getStylesheets().clear(); statementRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(statementRTA);
 
         Separator statementSeparator = new Separator(Orientation.HORIZONTAL);
         statementSeparator.setPrefWidth(100);
         HBox statementSepBox = new HBox(statementSeparator);
-        statementSepBox.setMinWidth(PrintUtilities.getPageWidth());
+        statementSepBox.setMinWidth(nodeWidth);
         statementSepBox.setAlignment(Pos.CENTER);
         nodeList.add(statementSepBox);
 
         //content
         AnchorPane mainPane = exercise.getExerciseView().getMainPane();
-
 
         Group root = new Group();
         Scene scene = new Scene(root);
@@ -299,30 +301,23 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
 
         nodeList.add(contentHBox);
-/*
-        Separator contentSeparator = new Separator(Orientation.HORIZONTAL);
-        contentSeparator.setStyle("-fx-stroke-dash-array:0.1 5.0");
-        contentSeparator.setPrefWidth(100);
-        HBox contentSepBox = new HBox(contentSeparator);
-        contentSepBox.setAlignment(Pos.CENTER);
-        nodeList.add(contentSepBox);
 
- */
 
         //explain node
         RichTextArea explainRTA = exercise.getExerciseView().getExplainDRTA().getEditor();
         explainRTA.prefHeightProperty().unbind();
+        explainRTA.minWidthProperty().unbind();
         double explainHeight = mainView.getRTATextHeight(explainRTA);
         explainRTA.setPrefHeight(explainHeight + 35.0);
         explainRTA.setContentAreaWidth(nodeWidth);
-        explainRTA.setPrefWidth(nodeWidth);
+        explainRTA.setMinWidth(nodeWidth);
         explainRTA.getStylesheets().clear(); statementRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(explainRTA);
 
         Separator explainSeparator = new Separator(Orientation.HORIZONTAL);
         explainSeparator.setPrefWidth(100);
         HBox explainSepBox = new HBox(explainSeparator);
-        explainSepBox.setMinWidth(PrintUtilities.getPageWidth());
+        explainSepBox.setMinWidth(nodeWidth);
         explainSepBox.setAlignment(Pos.CENTER);
         nodeList.add(explainSepBox);
 
@@ -330,10 +325,11 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         //comment node
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
+        commentRTA.minWidthProperty().unbind();
         double commentHeight = mainView.getRTATextHeight(commentRTA);
-        commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
+        commentRTA.setPrefHeight(commentHeight + 35.0);
         commentRTA.setContentAreaWidth(nodeWidth);
-        commentRTA.setPrefWidth(nodeWidth);
+        commentRTA.setMinWidth(nodeWidth);
         commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(commentRTA);
 

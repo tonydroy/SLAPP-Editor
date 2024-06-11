@@ -33,8 +33,12 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
     private String exerciseName = new String();
     private String interpretationPrompt = "";
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
-    private double statementPrefHeight = 80;
+    private DecoratedRTA exerciseComment = new DecoratedRTA();
+    private DecoratedRTA interpretationDRTA = new DecoratedRTA();
+    private DecoratedRTA explainDRTA = new DecoratedRTA();
+    private double statementPrefHeight = 0;
     private double commentPrefHeight = 0;
+
     private double interpretationPrefHeight = 0;
     private double explainPrefHeight = 0;
     private Spinner<Double> statementHeightSpinner;
@@ -52,9 +56,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
     private Node currentSpinnerNode;
 
 
-    private DecoratedRTA exerciseComment = new DecoratedRTA();
-    private DecoratedRTA exerciseInterpretation = new DecoratedRTA();
-    private DecoratedRTA explainDRTA = new DecoratedRTA();
+
 
     private GridPane basicFormulasPane;
     private List<BoxedDRTA> basicFormulasBoxedDRTAs;
@@ -210,7 +212,6 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         Label rowNumLabel = new Label("Rows ");
         rowsSpinner = new Spinner<>(0,256,0);
         rowsSpinner.setPrefWidth(65);
-        //rowsSpinner.setEditable(true);  //maybe setup: would need to verify input, update on setup button (rather than 'enter').
         HBox spinnerBox = new HBox(5, rowsSpinner, rowNumLabel);
         spinnerBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -232,11 +233,12 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         tableGrid.setPadding(new Insets(20,0,20,10));
 
 
-        RichTextArea interpretationRTA = exerciseInterpretation.getEditor();
-        centerBox = new VBox(10, interpretationRTA, tableGrid, resultsBox);
+
+        centerBox = new VBox(10, interpretationDRTA.getEditor(), tableGrid, resultsBox);
+
 
         tableGrid.setStyle("-fx-border-color: gainsboro");
-        interpretationRTA.setStyle("-fx-border-width: 2; -fx-border-color: gainsboro;");
+        interpretationDRTA.getEditor().setStyle("-fx-border-width: 2; -fx-border-color: gainsboro;");
 
     }
 
@@ -504,7 +506,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
         statementHeightSpinner.setPrefWidth(60);
         statementHeightSpinner.setDisable(false);
-        statementHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        statementHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         statementHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = statementHeightSpinner.lookup(".increment-arrow-button");
@@ -535,7 +537,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
         commentHeightSpinner.setPrefWidth(60);
         commentHeightSpinner.setDisable(false);
-        commentHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        commentHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         commentHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = commentHeightSpinner.lookup(".increment-arrow-button");
@@ -559,7 +561,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         });
 
         //interpretation
-        RichTextArea interpretationRTA = exerciseInterpretation.getEditor();
+        RichTextArea interpretationRTA = interpretationDRTA.getEditor();
         interpretationRTA.getStylesheets().add("slappTextArea.css");
         interpretationRTA.setPromptText(interpretationPrompt);
 
@@ -567,7 +569,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         interpretationHeightSpinner = new Spinner<>(0.0, 999.0, interpretationInitialHeight, 1.0);
         interpretationHeightSpinner.setPrefWidth(60);
         interpretationHeightSpinner.setDisable(false);
-        interpretationHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        interpretationHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         interpretationRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(interpretationHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         interpretationHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = interpretationHeightSpinner.lookup(".increment-arrow-button");
@@ -599,7 +601,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         explainHeightSpinner = new Spinner<>(0.0, 999.0, explainInitialHeight, 1.0);
         explainHeightSpinner.setPrefWidth(60);
         explainHeightSpinner.setDisable(false);
-        explainHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        explainHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         explainRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(explainHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         explainHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = explainHeightSpinner.lookup(".increment-arrow-button");
@@ -685,6 +687,10 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
             interpretationHeightSpinner.getValueFactory().setValue((double) Math.round(interpretationHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
             interpretationRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(interpretationHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
 
+            explainRTA.prefHeightProperty().unbind();
+            explainHeightSpinner.getValueFactory().setValue((double) Math.round(explainHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
+            explainRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(explainHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+
             tableGridHeightSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getHeight() / PrintUtilities.getPageHeight() * 100.0));
             choicesHeightSpinner.getValueFactory().setValue((double) Math.round(choiceBox.getHeight() / PrintUtilities.getPageHeight() * 100.0));
 
@@ -740,8 +746,11 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
     public CheckBox getbCheckBox() { return bCheckBox; }
 
     public DecoratedRTA getExplainDRTA() {return explainDRTA; }
-    public void setExerciseInterpretation(DecoratedRTA drta) {exerciseInterpretation = drta;}
-    public DecoratedRTA getExerciseInterpretation() {return exerciseInterpretation; }
+
+    public void setExplainDRTA(DecoratedRTA explainDRTA) {    this.explainDRTA = explainDRTA;  }
+
+    public void setInterpretationDRTA(DecoratedRTA drta) { interpretationDRTA = drta; }
+    public DecoratedRTA getInterpretationDRTA() {return interpretationDRTA; }
 
     public void setInterpretationPrompt(String interpretationPrompt) {    this.interpretationPrompt = interpretationPrompt; }
 

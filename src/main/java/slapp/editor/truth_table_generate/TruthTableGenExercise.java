@@ -1,7 +1,6 @@
 package slapp.editor.truth_table_generate;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -83,17 +82,19 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
 
         truthTableGenView.setExerciseName(truthTableGenModel.getExerciseName());
         truthTableGenView.setInterpretationPrompt(truthTableGenModel.getInterpretationPrompt());
+
         truthTableGenView.setStatementPrefHeight(truthTableGenModel.getStatementPrefHeight());
         truthTableGenView.setCommentPrefHeight(truthTableGenModel.getCommentPrefHeight());
         truthTableGenView.setInterpretationPrefHeight(truthTableGenModel.getInterpretationPrefHeight());
         truthTableGenView.setExplainPrefHeight(truthTableGenModel.getExplainPrefHeight());
+
         truthTableGenView.setExplainPrompt(truthTableGenModel.getExplainPrompt());
         truthTableGenView.setTableRows(tableRows);
 
+        //statement
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
         statementEditor.setDocument(truthTableGenModel.getExerciseStatement());
-
         mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -102,10 +103,11 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         });
         truthTableGenView.setExerciseStatement(statementDRTA);
 
+        //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.setDocument(truthTableGenModel.getExerciseComment());
-        commentEditor.getActionFactory().saveNow().execute(new ActionEvent());
+ //       commentEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(commentDRTA, ControlType.AREA);
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -114,6 +116,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         });
         truthTableGenView.setExerciseComment(commentDRTA);
 
+        //choices
         truthTableGenView.getChoiceLeadLabel().setText(truthTableGenModel.getChoiceLead());
         CheckBox aCheckBox = truthTableGenView.getaCheckBox();
         CheckBox bCheckBox = truthTableGenView.getbCheckBox();
@@ -136,8 +139,8 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
             }
         });
 
-
-        DecoratedRTA interpretationDRTA = truthTableGenView.getExerciseInterpretation();
+        //interpretation
+        DecoratedRTA interpretationDRTA = truthTableGenView.getInterpretationDRTA();
         RichTextArea interpretationEditor = interpretationDRTA.getEditor();
         interpretationEditor.setDocument(truthTableGenModel.getExerciseInterpretation());
         interpretationEditor.setPromptText("Interpretation/Translation:");
@@ -148,7 +151,20 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
                 mainView.editorInFocus(interpretationDRTA, ControlType.AREA);
             }
         });
+        truthTableGenView.setInterpretationDRTA(interpretationDRTA);
 
+        //explain
+        DecoratedRTA explainDRTA = truthTableGenView.getExplainDRTA();
+        RichTextArea explainEditor = explainDRTA.getEditor();
+        explainEditor.setDocument(truthTableGenModel.getExplainDocument());
+        explainEditor.getActionFactory().saveNow().execute(new ActionEvent());
+        mainView.editorInFocus(explainDRTA, ControlType.AREA);
+        explainEditor.focusedProperty().addListener((o, ov, nv) -> {
+            if (nv) {
+                mainView.editorInFocus(explainDRTA, ControlType.AREA);
+            }
+        });
+        truthTableGenView.setExplainDRTA(explainDRTA);
 
 
         //initialize basic and main formula controls
@@ -333,7 +349,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         List<Node> nodeList = new ArrayList<>();
         truthTableGenModel = getTruthTableGenModelFromView();
         TruthTableGenExercise exercise = new TruthTableGenExercise(truthTableGenModel, mainWindow);
-        double nodeWidth = PrintUtilities.getPageWidth();
+        double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
         //header node
         Label exerciseName = new Label(truthTableGenModel.getExerciseName());
@@ -349,33 +365,37 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         double boxHeight = hbox.getHeight();
         hbox.setPrefHeight(boxHeight);
         nodeList.add(hbox);
-        nodeList.add(new Separator(Orientation.HORIZONTAL));
+        Separator headerSeparator = new Separator(Orientation.HORIZONTAL);
+        headerSeparator.setPrefWidth(nodeWidth);
+        nodeList.add(headerSeparator);
 
         //statement node
         RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.prefHeightProperty().unbind();
-        statementRTA.prefWidthProperty().unbind();
+        statementRTA.minWidthProperty().unbind();
         double statementHeight = mainView.getRTATextHeight(statementRTA);
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
-        statementRTA.setPrefWidth(nodeWidth);
+        statementRTA.setMinWidth(nodeWidth);
+        statementRTA.setPadding(new Insets(0,0,10,0));
         statementRTA.getStylesheets().clear(); statementRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(statementRTA);
 
         Separator statementSeparator = new Separator(Orientation.HORIZONTAL);
         statementSeparator.setPrefWidth(100);
         HBox statementSepBox = new HBox(statementSeparator);
-        statementSepBox.setMinWidth(PrintUtilities.getPageWidth());
+        statementSepBox.setMinWidth(nodeWidth);
         statementSepBox.setAlignment(Pos.CENTER);
         nodeList.add(statementSepBox);
 
         //interpretation node
-        RichTextArea interpretationRTA = exercise.getExerciseView().getExerciseInterpretation().getEditor();
+        RichTextArea interpretationRTA = exercise.getExerciseView().getInterpretationDRTA().getEditor();
         interpretationRTA.prefHeightProperty().unbind();
+        interpretationRTA.minWidthProperty().unbind();
         double interpretationHeight = mainView.getRTATextHeight(interpretationRTA);
-        interpretationRTA.setPrefHeight(Math.max(70, interpretationHeight + 35.0));
-        interpretationRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
-        interpretationRTA.setPrefWidth(nodeWidth);
+        interpretationRTA.setPrefHeight(interpretationHeight + 35.0);
+        interpretationRTA.setContentAreaWidth(nodeWidth);
+        interpretationRTA.setMinWidth(nodeWidth);
         interpretationRTA.getStylesheets().clear(); interpretationRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(interpretationRTA);
 
@@ -406,10 +426,11 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
 
         RichTextArea explanationRTA = exercise.getExerciseView().getExplainDRTA().getEditor();
         explanationRTA.prefHeightProperty().unbind();
+        explanationRTA.minWidthProperty().unbind();
         double explanationHeight = mainView.getRTATextHeight(explanationRTA);
         explanationRTA.setPrefHeight(explanationHeight + 35.0);
         explanationRTA.setContentAreaWidth(nodeWidth);
-        explanationRTA.setPrefWidth(nodeWidth);
+        explanationRTA.setMinWidth(nodeWidth);
         explanationRTA.getStylesheets().clear(); statementRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(explanationRTA);
 
@@ -417,18 +438,18 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         contentSeparator.setStyle("-fx-stroke-dash-array:0.1 5.0");
         contentSeparator.setPrefWidth(100);
         HBox contentSepBox = new HBox(contentSeparator);
-        contentSepBox.setMinWidth(PrintUtilities.getPageWidth());
+        contentSepBox.setMinWidth(nodeWidth);
         contentSepBox.setAlignment(Pos.CENTER);
         nodeList.add(contentSepBox);
 
         //comment node
         RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
-        commentRTA.prefWidthProperty().unbind();
+        commentRTA.minWidthProperty().unbind();
         double commentHeight = mainView.getRTATextHeight(commentRTA);
-        commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
-        commentRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
-        commentRTA.setPrefWidth(nodeWidth);
+        commentRTA.setPrefHeight(commentHeight + 35.0);
+        commentRTA.setContentAreaWidth(nodeWidth);
+        commentRTA.setMinWidth(nodeWidth);
         commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(commentRTA);
 
@@ -452,7 +473,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         RichTextArea commentEditor = truthTableGenView.getExerciseComment().getEditor();
         if (commentEditor.isModified()) exerciseModified = true;
 
-        RichTextArea interpretationEditor = truthTableGenView.getExerciseInterpretation().getEditor();
+        RichTextArea interpretationEditor = truthTableGenView.getInterpretationDRTA().getEditor();
         if (interpretationEditor.isModified()) exerciseModified = true;
 
         RichTextArea explanationEditor = truthTableGenView.getExplainDRTA().getEditor();
@@ -486,6 +507,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         model.setCommentPrefHeight(truthTableGenView.getCommentPrefHeight());
         model.setInterpretationPrefHeight(truthTableGenView.getInterpretationPrefHeight());
         model.setExplainPrefHeight(truthTableGenView.getExplainPrefHeight());
+
         model.setExerciseStatement(truthTableGenModel.getExerciseStatement());
 
         RichTextArea commentRTA = truthTableGenView.getExerciseComment().getEditor();
@@ -560,13 +582,13 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
 
         RichTextArea interpretationRTA = truthTableGenView.getExplainDRTA().getEditor();
         interpretationRTA.getActionFactory().saveNow().execute(new ActionEvent());
-        model.setExplainDocument(interpretationRTA.getDocument());
+        model.setExerciseInterpretation(interpretationRTA.getDocument());
 
         RichTextArea explainRTA = truthTableGenView.getExplainDRTA().getEditor();
         explainRTA.getActionFactory().saveNow().execute(new ActionEvent());
-        model.setExplainDocument(interpretationRTA.getDocument());
-        model.setTableRows(tableRows);
+        model.setExplainDocument(explainRTA.getDocument());
 
+        model.setTableRows(tableRows);
         return model;
     }
 
