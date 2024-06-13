@@ -145,12 +145,12 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setEditable(false);
 
-        double statementInitialHeight = Math.round(statementPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        double statementInitialHeight = Math.round(statementPrefHeight / mainView.getScalePageHeight() * 100.0 );
         statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
         statementHeightSpinner.setPrefWidth(60);
         statementHeightSpinner.setDisable(false);
         statementHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
-        statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         statementHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = statementHeightSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -158,7 +158,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
             if (decrement != null) decrement.getOnMouseReleased().handle(null);
         });
 
-        statementRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        statementRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
         statementWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
         statementWidthSpinner.setPrefWidth(60);
         statementWidthSpinner.setDisable(true);
@@ -177,12 +177,12 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
         commentRTA.getStylesheets().add("slappTextArea.css");
         commentRTA.setPromptText("Comment:");
 
-        double commentInitialHeight = Math.round(commentPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        double commentInitialHeight = Math.round(commentPrefHeight / mainView.getScalePageHeight() * 100.0 );
         commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
         commentHeightSpinner.setPrefWidth(60);
         commentHeightSpinner.setDisable(false);
         commentHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
-        commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         commentHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = commentHeightSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -190,8 +190,8 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
             if (decrement != null) decrement.getOnMouseReleased().handle(null);
         });
 
-        commentRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
-        commentRTA.minWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        commentRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
+        commentRTA.minWidthProperty().bind(mainView.scalePageWidthProperty());
         commentWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
         commentWidthSpinner.setPrefWidth(60);
         commentWidthSpinner.setDisable(true);
@@ -210,12 +210,12 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
         explanationRTA.setPromptText(contentPrompt);
         contentBox.getChildren().addAll(contentSplitPane, explanationDRTA.getEditor());
 
-        double explanationInitialHeight = Math.round(explanationPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        double explanationInitialHeight = Math.round(explanationPrefHeight / mainView.getScalePageHeight() * 100.0 );
         explanationHeightSpinner = new Spinner<>(0.0, 999.0, explanationInitialHeight, 1.0);
         explanationHeightSpinner.setPrefWidth(60);
         explanationHeightSpinner.setDisable(false);
         explanationHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
-        explanationRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(explanationHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        explanationRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(explanationHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         explanationHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = explanationHeightSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -223,8 +223,8 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
             if (decrement != null) decrement.getOnMouseReleased().handle(null);
         });
 
-        explanationRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
-        explanationRTA.minWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        explanationRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
+        explanationRTA.minWidthProperty().bind(mainView.scalePageWidthProperty());
         explanationWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
         explanationWidthSpinner.setPrefWidth(60);
         explanationWidthSpinner.setDisable(true);
@@ -238,12 +238,12 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
         });
 
         //split pane
-        double splitPaneInitialWidth = Math.round(splitPanePrefWidth / PrintUtilities.getPageWidth() * 20.0) * 5.0;
+        double splitPaneInitialWidth = Math.round(splitPanePrefWidth / mainView.getScalePageWidth() * 20.0) * 5.0;
         splitPaneWidthSpinner = new Spinner<>(100.0, 999.0, splitPaneInitialWidth, 5.0);
         splitPaneWidthSpinner.setPrefWidth(60);
         splitPaneWidthSpinner.setDisable(false);
         splitPaneWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
-        contentSplitPane.prefWidthProperty().bind(Bindings.multiply(PrintUtilities.pageWidthProperty(), DoubleProperty.doubleProperty(splitPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0)));
+        contentSplitPane.prefWidthProperty().bind(Bindings.multiply(mainView.scalePageWidthProperty(), DoubleProperty.doubleProperty(splitPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0)));
         splitPaneWidthSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = splitPaneWidthSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -258,19 +258,19 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
         splitPaneHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
 
         contentSplitPane.heightProperty().addListener((ob, ov, nv) -> {
-            splitPaneHeightSpinner.getValueFactory().setValue((double) Math.round(contentSplitPane.getHeight() / PrintUtilities.getPageHeight() * 100));
+            splitPaneHeightSpinner.getValueFactory().setValue((double) Math.round(contentSplitPane.getHeight() / mainView.getScalePageHeight() * 100));
         });
 
         contentSplitPane.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             if (currentSpinnerNode != contentSplitPane) {
                 currentSpinnerNode = contentSplitPane;
-                splitPaneHeightSpinner.getValueFactory().setValue((double) Math.round(contentSplitPane.getHeight()/PrintUtilities.getPageHeight() * 100.0));
+                splitPaneHeightSpinner.getValueFactory().setValue((double) Math.round(contentSplitPane.getHeight()/mainView.getScalePageHeight() * 100.0));
                 mainView.updateSizeSpinners(splitPaneHeightSpinner, splitPaneWidthSpinner);
             }
         });
 
         //page size listeners
-        PrintUtilities.pageHeightProperty().addListener((ob, ov, nv) -> {
+        mainView.scalePageHeightProperty().addListener((ob, ov, nv) -> {
 
             statementRTA.prefHeightProperty().unbind();
             statementHeightSpinner.getValueFactory().setValue((double) Math.round(statementHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
@@ -284,10 +284,10 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
             explanationHeightSpinner.getValueFactory().setValue((double) Math.round(explanationHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
             explanationRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(explanationHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
 
-            splitPaneHeightSpinner.getValueFactory().setValue((double) Math.round(contentSplitPane.getHeight() / PrintUtilities.getPageHeight() * 100.0));
+            splitPaneHeightSpinner.getValueFactory().setValue((double) Math.round(contentSplitPane.getHeight() / mainView.getScalePageHeight() * 100.0));
         });
 
-        PrintUtilities.pageWidthProperty().addListener((ob, ov, nv) -> {
+        mainView.scalePageWidthProperty().addListener((ob, ov, nv) -> {
             contentSplitPane.prefWidthProperty().unbind();
             splitPaneWidthSpinner.getValueFactory().setValue((double) Math.round(splitPaneWidthSpinner.getValue() * ov.doubleValue() / nv.doubleValue() / 5.0) * 5.0);
             contentSplitPane.prefWidthProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(splitPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0))));

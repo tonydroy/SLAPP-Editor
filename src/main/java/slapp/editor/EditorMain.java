@@ -51,6 +51,7 @@ public class EditorMain extends Application {
 //        TextWidthTest test = new TextWidthTest(); test.testTextWidth(stage);
 //        ScrollPaneTest test = new ScrollPaneTest(); test.testScrollPane(stage);
 //        RoundingTest test = new RoundingTest();
+//        ClipTest test = new ClipTest(); test.testClip(stage);
 
     }
 

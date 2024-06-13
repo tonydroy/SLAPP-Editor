@@ -59,6 +59,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
 
     private AnchorPane mainPane;
+
+
     private VBox centerBox;
 
     private Button undoButton;
@@ -90,7 +92,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     private EventHandler twoBranchTermClickFilter;
 
     private Ruler axisNode;
-//    private Region axisNode;
+
+
     private boolean axis = false;
 
 
@@ -103,6 +106,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         mainPane = new AnchorPane();
         mainPane.setMinHeight(100);
         mainPane.setStyle("-fx-border-width: 2 2 2 2; -fx-border-color: lightgrey; -fx-background-color: white");
+
         centerBox = new VBox(3, mainPane, explainDRTA.getEditor());
         mainPane.setPadding(new Insets(5));
 
@@ -288,7 +292,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         annotationBox.setMaxHeight(30);
 
         axisNode = new Ruler();
-//        axisNode = createClipped();
+        axisNode.setManaged(false);
 
         rulerButton = new ToggleButton();
         rulerButton.setPrefWidth(64);
@@ -346,12 +350,12 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setEditable(false);
 
-        double statementInitialHeight = Math.round(statementPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        double statementInitialHeight = Math.round(statementPrefHeight / mainView.getScalePageHeight() * 100.0 );
         statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
         statementHeightSpinner.setPrefWidth(60);
         statementHeightSpinner.setDisable(false);
         statementHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
-        statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         statementHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = statementHeightSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -359,7 +363,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
             if (decrement != null) decrement.getOnMouseReleased().handle(null);
         });
 
-        statementRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        statementRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
         statementWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
         statementWidthSpinner.setPrefWidth(60);
         statementWidthSpinner.setDisable(true);
@@ -377,12 +381,12 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         commentRTA.getStylesheets().add("slappTextArea.css");
         commentRTA.setPromptText("Comment:");
 
-        double commentInitialHeight = Math.round(commentPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        double commentInitialHeight = Math.round(commentPrefHeight / mainView.getScalePageHeight() * 100.0 );
         commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
         commentHeightSpinner.setPrefWidth(60);
         commentHeightSpinner.setDisable(false);
         commentHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
-        commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         commentHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = commentHeightSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -390,8 +394,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
             if (decrement != null) decrement.getOnMouseReleased().handle(null);
         });
 
-        commentRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
-        commentRTA.minWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        commentRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
+        commentRTA.minWidthProperty().bind(mainView.scalePageWidthProperty());
         commentWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
         commentWidthSpinner.setPrefWidth(60);
         commentWidthSpinner.setDisable(true);
@@ -409,12 +413,12 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         explainRTA.getStylesheets().add("slappTextArea.css");
         explainRTA.setPromptText(explainPrompt);
 
-        double explainInitialHeight = Math.round(explainPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        double explainInitialHeight = Math.round(explainPrefHeight / mainView.getScalePageHeight() * 100.0 );
         explainHeightSpinner = new Spinner<>(0.0, 999.0, explainInitialHeight, 1.0);
         explainHeightSpinner.setPrefWidth(60);
         explainHeightSpinner.setDisable(false);
         explainHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
-        explainRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(explainHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        explainRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(explainHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         explainHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = explainHeightSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -422,8 +426,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
             if (decrement != null) decrement.getOnMouseReleased().handle(null);
         });
 
-        explainRTA.maxWidthProperty().bind(PrintUtilities.pageWidthProperty());
-        explainRTA.minWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        explainRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
+        explainRTA.minWidthProperty().bind(mainView.scalePageWidthProperty());
         explainWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
         explainWidthSpinner.setPrefWidth(60);
         explainWidthSpinner.setDisable(true);
@@ -443,7 +447,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         mainPaneHeightSpinner.setDisable(true);
         mainPaneHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         mainPane.heightProperty().addListener((ob, ov, nv) -> {
-            mainPaneHeightSpinner.getValueFactory().setValue((double) Math.round(mainPane.getHeight() / PrintUtilities.getPageHeight() * 100));
+            mainPaneHeightSpinner.getValueFactory().setValue((double) Math.round(mainPane.getHeight() / mainView.getScalePageHeight() * 100));
         });
 
         mainPaneWidthSpinner = new Spinner<>(0.0,999.0, 0,1.0);
@@ -451,25 +455,23 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         mainPaneWidthSpinner.setDisable(true);
         mainPaneWidthSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         mainPane.widthProperty().addListener((ob, ov, nv) -> {
-            mainPaneWidthSpinner.getValueFactory().setValue((double) Math.round(mainPane.getWidth() / PrintUtilities.getPageWidth() * 100));
+            mainPaneWidthSpinner.getValueFactory().setValue((double) Math.round(mainPane.getWidth() /mainView.getScalePageWidth() * 100));
             axisNode.updateRuler((double) nv);
+
         });
 
         mainPane.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             if (currentSpinnerNode != mainPane) {
                 currentSpinnerNode = mainPane;
-                mainPaneHeightSpinner.getValueFactory().setValue((double) Math.round(mainPane.getHeight()/PrintUtilities.getPageHeight() * 100.0));
-                mainPaneWidthSpinner.getValueFactory().setValue((double) Math.round(mainPane.getWidth()/PrintUtilities.getPageWidth() * 100.0));
+                mainPaneHeightSpinner.getValueFactory().setValue((double) Math.round(mainPane.getHeight()/ mainView.getScalePageHeight() * 100.0));
+                mainPaneWidthSpinner.getValueFactory().setValue((double) Math.round(mainPane.getWidth()/ mainView.getScalePageWidth() * 100.0));
                 mainView.updateSizeSpinners(mainPaneHeightSpinner, mainPaneWidthSpinner);
             }
         });
 
-//        mainPane.prefWidthProperty().addListener((ob, ov, nv) -> {
-//            axisNode.updateRuler(mainPane.getPrefWidth());
-//        });
 
         //page size listeners
-        PrintUtilities.pageHeightProperty().addListener((ob, ov, nv) -> {
+        mainView.scalePageHeightProperty().addListener((ob, ov, nv) -> {
 
             statementRTA.prefHeightProperty().unbind();
             statementHeightSpinner.getValueFactory().setValue((double) Math.round(statementHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
@@ -483,11 +485,11 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
             explainHeightSpinner.getValueFactory().setValue((double) Math.round(explainHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
             explainRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(explainHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
 
-            mainPaneHeightSpinner.getValueFactory().setValue((double) Math.round(mainPane.getHeight() / PrintUtilities.getPageHeight() * 100.0));
+            mainPaneHeightSpinner.getValueFactory().setValue((double) Math.round(mainPane.getHeight() / mainView.getScalePageHeight() * 100.0));
         });
 
-        PrintUtilities.pageWidthProperty().addListener((ob, ov, nv) -> {
-            mainPaneWidthSpinner.getValueFactory().setValue((double) Math.round(mainPane.getWidth() / PrintUtilities.getPageWidth() * 100.0));
+        mainView.scalePageWidthProperty().addListener((ob, ov, nv) -> {
+            mainPaneWidthSpinner.getValueFactory().setValue((double) Math.round(mainPane.getWidth() / mainView.getScalePageWidth() * 100.0));
         });
 
         //click filters
@@ -623,6 +625,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                             branch.setStyle("-fx-border-width: 0 0 0 0");
                             RichTextArea rta = branch.getFormulaBoxedDRTA().getRTA();
                             rta.setDocument(new Document("   \u22ee"));
+                            rta.prefWidthProperty().unbind();
                             rta.setPrefWidth(24);
                             clickNode.getDependents().add(branch);
                             pane.refresh();
@@ -794,41 +797,14 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         axis = true;
         mainPane.getChildren().add(0, axisNode);
         axisNode.setLayoutX(5.0);
+
     }
     void simpleRemoveAxis() {
         axis = false;
         mainPane.getChildren().remove(axisNode);
     }
 
-    NumberAxis createAxis() {
-        NumberAxis axis = new NumberAxis(0,150,5);
-        axis.setMinWidth(Control.USE_PREF_SIZE);
-        axis.setPrefWidth(3000);
-        axis.setMaxWidth(Control.USE_PREF_SIZE);
-        axis.tickLabelFontProperty().set(Font.font(8));
-        axis.setTickLength(6);
 
-        return axis;
-    }
-
-    void clipChildren(Region region) {
-        Rectangle outputClip = new Rectangle();
-        region.setClip(outputClip);
-        region.layoutBoundsProperty().addListener((ov, oldValue, newValue) -> {
-            outputClip.setWidth(newValue.getWidth());
-            outputClip.setHeight(newValue.getHeight());
-        });
-    }
-
-    Region createClipped() {
-        NumberAxis axis = createAxis();
-        final Pane pane = new Pane(axis);
-        axis.setLayoutX(10);
-        pane.prefWidthProperty().bind(mainPane.prefWidthProperty());
-        pane.setPrefHeight(25.0);
-        clipChildren(pane);
-        return pane;
-    }
 
     //dependents empty or all formulaNodes
     boolean formulaDependents(ArrayList<BranchNode> dependentList) {
@@ -892,11 +868,10 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     }
 
     void refreshTreePanes() {
-
         mainPane.getChildren().clear();
+
         for (TreePane pane : treePanes) {
             pane.refresh();
-
             mainPane.getChildren().add(pane);
         }
 

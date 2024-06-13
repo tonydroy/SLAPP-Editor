@@ -86,8 +86,8 @@ public class MainWindow {
 
     private void setupMainWindow() {
 
-        mainView.scalePageHeightProperty().bind(Bindings.multiply(PrintUtilities.pageHeightProperty(), mainWindow.baseScaleProperty()));
-        mainView.scalePageWidthProperty().bind(Bindings.multiply(PrintUtilities.pageWidthProperty(), mainWindow.baseScaleProperty()));
+        mainView.scalePageHeightProperty().bind(Bindings.divide(PrintUtilities.pageHeightProperty(), mainWindow.baseScaleProperty()));
+        mainView.scalePageWidthProperty().bind(Bindings.divide(PrintUtilities.pageWidthProperty(), mainWindow.baseScaleProperty()));
 
         mainView.getCreateNewExerciseItem().setOnAction(e -> createNewExercise());
         mainView.getCreateRevisedExerciseItem().setOnAction(e -> createRevisedExercise());
@@ -292,6 +292,7 @@ public class MainWindow {
             for (Node node : printNodes) {
                 if (!PrintUtilities.processPrintNode(node) && !fitToPage) {
                     heightGood = false;
+                    System.out.println(node);
                 }
             }
             if (!heightGood && !fitToPage) {

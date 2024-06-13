@@ -115,12 +115,12 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setEditable(false);
 
-        double statementInitialHeight = Math.round(statementPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        double statementInitialHeight = Math.round(statementPrefHeight / mainView.getScalePageHeight() * 100.0 );
         statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
         statementHeightSpinner.setPrefWidth(60);
         statementHeightSpinner.setDisable(false);
         statementHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
-        statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         statementHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = statementHeightSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -129,7 +129,7 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
         });
 
 
-        statementRTA.prefWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        statementRTA.prefWidthProperty().bind(mainView.scalePageWidthProperty());
         statementWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
         statementWidthSpinner.setPrefWidth(60);
         statementWidthSpinner.setDisable(true);
@@ -147,12 +147,12 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
         commentRTA.getStylesheets().add("slappTextArea.css");
         commentRTA.setPromptText("Comment:");
 
-        double commentInitialHeight = Math.round(commentPrefHeight / PrintUtilities.getPageHeight() * 100.0 );
+        double commentInitialHeight = Math.round(commentPrefHeight / mainView.getScalePageHeight() * 100.0 );
         commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
         commentHeightSpinner.setPrefWidth(60);
         commentHeightSpinner.setDisable(false);
         commentHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
-        commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         commentHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = commentHeightSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -161,7 +161,7 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
         });
 
 
-        commentRTA.prefWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        commentRTA.prefWidthProperty().bind(mainView.scalePageWidthProperty());
         commentWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
         commentWidthSpinner.setPrefWidth(60);
         commentWidthSpinner.setDisable(true);
@@ -175,12 +175,12 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
         });
 
         //pagination
-        double paginationInitialHeight = Math.round(paginationPrefHeight / PrintUtilities.getPageHeight() * 20.0 ) * 5.0 ;
+        double paginationInitialHeight = Math.round(paginationPrefHeight / mainView.getScalePageHeight() * 20.0 ) * 5.0 ;
         paginationHeightSpinner = new Spinner<>(0.0, 999.0, paginationInitialHeight, 5.0);
         paginationHeightSpinner.setPrefWidth(60);
         paginationHeightSpinner.setDisable(false);
         paginationHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
-        pagination.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(PrintUtilities.pageHeightProperty(), DoubleProperty.doubleProperty(paginationHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        pagination.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(paginationHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         paginationHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = paginationHeightSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -189,7 +189,7 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
         });
 
 
-        pagination.prefWidthProperty().bind(PrintUtilities.pageWidthProperty());
+        pagination.prefWidthProperty().bind(mainView.scalePageWidthProperty());
         paginationWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
         paginationWidthSpinner.setPrefWidth(60);
         paginationWidthSpinner.setDisable(true);
@@ -221,14 +221,14 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
         checksBox.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             if (currentSpinnerNode != checksBox) {
                 currentSpinnerNode = checksBox;
-                double choicesHeightValue = Math.round(checksBox.getHeight() / PrintUtilities.getPageHeight() * 100);
+                double choicesHeightValue = Math.round(checksBox.getHeight() / mainView.getScalePageHeight() * 100);
                 choicesHeightSpinner.getValueFactory().setValue(choicesHeightValue);
                 mainView.updateSizeSpinners(choicesHeightSpinner, choicesWidthSpinner);
             }
         });
 
         //page height listener
-        PrintUtilities.pageHeightProperty().addListener((ob, ov, nv) -> {
+        mainView.scalePageHeightProperty().addListener((ob, ov, nv) -> {
 
             statementRTA.prefHeightProperty().unbind();
             statementHeightSpinner.getValueFactory().setValue((double) Math.round(statementHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue()));
@@ -242,7 +242,7 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
             paginationHeightSpinner.getValueFactory().setValue((double) Math.round(paginationHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue() / 5.0) * 5.0);
             pagination.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(paginationHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
 
-            double choicesHeightValue = Math.round(checksBox.getHeight() / PrintUtilities.getPageHeight() * 100);
+            double choicesHeightValue = Math.round(checksBox.getHeight() / mainView.getScalePageHeight() * 100);
             choicesHeightSpinner.getValueFactory().setValue(choicesHeightValue);
 
         });

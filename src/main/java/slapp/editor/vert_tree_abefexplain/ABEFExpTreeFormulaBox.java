@@ -758,6 +758,9 @@ public class ABEFExpTreeFormulaBox extends AnchorPane {
         annotationField.setPrefHeight(15);
         annotationField.setFont(new Font("Ariel", 10));
         annotationField.setPadding(new Insets(0));
+        annotationField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) verticalTreeView.getMainView().textFieldInFocus();
+        });
 
         mainBox.getChildren().clear();
         mainBox.getChildren().addAll(labelPane, centerBox, annotationField);

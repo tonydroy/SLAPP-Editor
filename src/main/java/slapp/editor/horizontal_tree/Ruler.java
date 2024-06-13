@@ -1,5 +1,7 @@
 package slapp.editor.horizontal_tree;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -9,13 +11,16 @@ import javafx.scene.text.Font;
 public class Ruler extends Pane {
     double tickGap = 20.0;
 
+    DoubleProperty rulerWidth = new SimpleDoubleProperty();
+
     public Ruler() {
-        this.setPadding(new Insets(5, 0, 0, 10));
+        this.setPadding(new Insets(5, 0, 0, 0));
     }
 
 
     public void updateRuler(double width) {
         this.getChildren().clear();
+        width = width - 10;
 
 
         int totalTicks = (int)(width/tickGap);
@@ -24,6 +29,7 @@ public class Ruler extends Pane {
         Line axis = new Line(0,0, width,0);
         axis.setStyle("-fx-stroke-width: 1.2; -fx-stroke: grey");
         this.getChildren().add(axis);
+
 
         for (int tickCount = 0; tickCount <= totalTicks; tickCount++) {
             double xPos = tickCount * tickGap;

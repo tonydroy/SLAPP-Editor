@@ -54,7 +54,8 @@ public class MainWindowView {
     private Node statementNode;
     private Node contentNode;
     private DecoratedRTA commentDecoratedRTA;
-    private DecoratedRTA lastFocussedDRTA;
+    private DecoratedRTA lastFocusedDRTA;
+    private DecoratedRTA dummyDRTA = new DecoratedRTA();
     private Node commentNode;
     private Node controlNode;
     private VBox statusBar;
@@ -295,7 +296,7 @@ public class MainWindowView {
 
         borderPane.setCenter(centerPane);
         borderPane.setMargin(centerPane, new Insets(10,0,0,0));
-        borderPane.getCenter().setStyle("-fx-background-color: transparent;");
+        borderPane.getCenter().setStyle("-fx-background-color: transparent");
 
 
 
@@ -492,7 +493,7 @@ public class MainWindowView {
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
         keyboardDiagram.updateFontSize(scale);
-        keyboardDiagram.initialize(lastFocussedDRTA);
+        keyboardDiagram.initialize(lastFocusedDRTA);
         keyboardDiagram.update();
 
         centerBox.getTransforms().clear();
@@ -504,7 +505,7 @@ public class MainWindowView {
 
 
     public void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
-        lastFocussedDRTA = decoratedRTA;
+        lastFocusedDRTA = decoratedRTA;
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
         keyboardDiagram.initialize(decoratedRTA);
         if (keyboardDiagram.isShowing()) {
@@ -546,6 +547,10 @@ public class MainWindowView {
         topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox);
         topBox.layout();
         borderPane.topProperty().setValue(topBox);
+    }
+
+    public void textFieldInFocus() {
+            editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
 
     private void closeWindow() {

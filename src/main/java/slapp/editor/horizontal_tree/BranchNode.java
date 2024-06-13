@@ -85,7 +85,8 @@ public class BranchNode extends HBox {
         annotationField.setPadding(new Insets(0));
 
         annotationField.focusedProperty().addListener((ob, ov, nv) -> {
-            if (!nv) {
+            if (nv) horizontalTreeView.getMainView().textFieldInFocus();
+            else {
                 horizontalTreeView.setUndoRedoFlag(true);
                 horizontalTreeView.setUndoRedoFlag(false);
             }
@@ -323,8 +324,6 @@ public class BranchNode extends HBox {
 
     public void addAnnotation() {
         if (!annotation) {
-
-
             self.getChildren().add(annotationField);
             self.setMargin(annotationField, new Insets(0, 0, 8, 0));
             annotation = true;

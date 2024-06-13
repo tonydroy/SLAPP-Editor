@@ -18,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.commons.lang3.SerializationUtils;
@@ -116,7 +117,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         populateTreePanes();
         horizontalTreeView.refreshTreePanes();
 
-        if (horizontalTreeModel.isAxis()) {
+        if (horizontalTreeModel.isAxis() && !horizontalTreeView.isAxis()) {
             horizontalTreeView.simpleAddAxis();
             horizontalTreeView.getRulerButton().setSelected(true);
         }
@@ -124,6 +125,8 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
             horizontalTreeView.simpleRemoveAxis();
             horizontalTreeView.getRulerButton().setSelected(false);
         }
+
+
     }
 
 
@@ -269,17 +272,22 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
         //content
         AnchorPane mainPane = exercise.getExerciseView().getMainPane();
-
         Group root = new Group();
         Scene scene = new Scene(root);
         root.getChildren().add(mainPane);
         root.applyCss();
         root.layout();
 
+        Ruler axis = new Ruler();
+        double axisWidth = Math.max(nodeWidth, mainPane.getWidth() - 10);
+        axis.updateRuler(axisWidth);
+
         mainPane.setStyle("-fx-background-color: transparent");
+        exercise.getExerciseView().simpleRemoveAxis();
 
         ObservableList<Node> mainNodes = mainPane.getChildren();
         for (Node mainNode : mainNodes) {
+
             if (mainNode instanceof TreePane) {
                 TreePane treePane = (TreePane) mainNode;
                 ObservableList<Node> paneNodes = treePane.getChildren();
@@ -294,12 +302,14 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
             }
         }
 
-        HBox contentHBox = new HBox(mainPane);
+        AnchorPane mainStack = new AnchorPane(axis, mainPane);
+        mainStack.setLeftAnchor(axis, 5.0);
+
+        if (!horizontalTreeView.isAxis()) mainStack.getChildren().remove(axis);
+        HBox contentHBox = new HBox(mainStack);
         contentHBox.setAlignment(Pos.CENTER);
-        contentHBox.setPadding(new Insets(0,0,20, 0));
-
-
-
+        contentHBox.setPadding(new Insets(10,0,20, 0));
+        contentHBox.setMaxWidth(axisWidth);
         nodeList.add(contentHBox);
 
 
