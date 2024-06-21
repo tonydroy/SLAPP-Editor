@@ -2,6 +2,7 @@ package slapp.editor;
 
 import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
+import javafx.scene.text.Font;
 import javafx.stage.*;
 import javafx.application.*;
 import slapp.editor.main_window.MainWindow;
@@ -34,6 +35,17 @@ public class EditorMain extends Application {
             stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon_purple16x16.png")));
         }
         icons = stage.getIcons();
+
+        Font.loadFont(EditorMain.class.getResource("/fonts/la-solid-900.ttf").toExternalForm(),11);
+        Font.loadFont(EditorMain.class.getResource("/fonts/NotoSans-Bold.ttf").toExternalForm(),11);
+        Font.loadFont(EditorMain.class.getResource("/fonts/NotoSans-BoldItalic.ttf").toExternalForm(),11);
+        Font.loadFont(EditorMain.class.getResource("/fonts/NotoSans-Italic.ttf").toExternalForm(),11);
+        Font.loadFont(EditorMain.class.getResource("/fonts/NotoSans-Regular.ttf").toExternalForm(),11);
+        Font.loadFont(EditorMain.class.getResource("/fonts/NotoSerifCombo-Bold.ttf").toExternalForm(),11);
+        Font.loadFont(EditorMain.class.getResource("/fonts/NotoSerifCombo-BoldItalic.ttf").toExternalForm(),11);
+        Font.loadFont(EditorMain.class.getResource("/fonts/NotoSerifCombo-Italic.ttf").toExternalForm(),11);
+        Font.loadFont(EditorMain.class.getResource("/fonts/NotoSerifCombo-Regular.ttf").toExternalForm(),11);
+
 
 
 

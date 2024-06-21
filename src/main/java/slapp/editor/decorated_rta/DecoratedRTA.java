@@ -174,7 +174,7 @@ public class DecoratedRTA {
         overlineButton = new ToggleButton();
         overlineButton.setTooltip(new Tooltip("Overline (best on symbol fonts)"));
         Font overlineButtonFont = Font.font("Noto Serif Combo", FontWeight.LIGHT, FontPosture.REGULAR, 18);
-        Text overlineButtonText = new Text("\u035e\ud835\uddae");
+        Text overlineButtonText = new Text("\ue03e");
         overlineButtonText.setFont(overlineButtonFont);
         TextFlow overlineButtonTextFlow = new TextFlow(overlineButtonText);
         overlineButtonTextFlow.setMaxHeight(0.0);
