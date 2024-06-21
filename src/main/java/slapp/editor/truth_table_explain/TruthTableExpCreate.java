@@ -212,10 +212,10 @@ public class TruthTableExpCreate {
         Label operatorPresetLabel = new Label("Preset operators: ");
         Button baseLangPresetButton = new Button();
         Button plusLangPresetButton = new Button();
-        baseLangPresetButton.setPrefHeight(25); baseLangPresetButton.setPrefWidth(40);
-        plusLangPresetButton.setPrefHeight(25); plusLangPresetButton.setPrefWidth(40);
+        baseLangPresetButton.setPrefHeight(25); baseLangPresetButton.setPrefWidth(45);
+        plusLangPresetButton.setPrefHeight(25); plusLangPresetButton.setPrefWidth(45);
 
-        Font flowFont = new Font("Noto Sans Combo", 11);
+        Font flowFont = new Font("Noto Serif Combo", 14);
         Text t0 = new Text("\u2112");
         Text t1 = new Text("\u2112");
         Text t2 = new Text("\ud835\udcc8");
@@ -223,7 +223,9 @@ public class TruthTableExpCreate {
         t0.setFont(flowFont); t1.setFont(flowFont); t2.setFont(flowFont); t3.setFont(flowFont);
 
         t2.setTranslateY(t2.getFont().getSize() * 0.2);
+        t2.setTranslateX(-t2.getFont().getSize()*0.1);
         t3.setTranslateY(t3.getFont().getSize() * 0.2);
+        t3.setTranslateX(-t3.getFont().getSize()*0.1);
         TextFlow baseFlow = new TextFlow();
         baseFlow.getChildren().addAll(t0,t2);
         baseFlow.setTextAlignment(TextAlignment.CENTER);

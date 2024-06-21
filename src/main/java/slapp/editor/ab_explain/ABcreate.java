@@ -119,6 +119,7 @@ public class ABcreate {
         };
         nameField.textProperty().addListener(nameListener);
 
+
         Label leaderLabel = new Label("Checkbox Lead: ");
         leaderLabel.setPrefWidth(100);
         leaderField = new TextField();
@@ -131,6 +132,10 @@ public class ABcreate {
             }
         };
         leaderField.textProperty().addListener(leaderListener);
+
+        leaderField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) mainWindow.getMainView().textFieldInFocus();
+        });
 
 
         Label promptLabelA = new Label("A Prompt: ");

@@ -401,8 +401,8 @@ public class KeyboardDiagram {
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.DIGIT9,4),36,0,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.DIGIT0,4),40,0,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.MINUS,4),44,0,4,1);
+        ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.EQUALS,4),48,0,4,1);
 
-        ctrlShiftAltBoard.add(getFixedCharKey("\u035e\ud835\udc5c\u035e\ud835\udc5c",4),48,0,4,1);
         ctrlShiftAltBoard.add(getControlKey("BackDel", 8),52,0,8,1);
         ctrlShiftAltBoard.add(getControlKey("Tab",6),0,1,6,1);
 
@@ -436,17 +436,21 @@ public class KeyboardDiagram {
 
         ctrlShiftAltBoard.add(getControlKey("Shift",9),0,3,9,1);
         //these are "hard coded" - need to fix for modified assignments.
-        ctrlShiftAltBoard.add(getFixedCharKey("\u25cc\u0305",4),9,3,4,1);
-        ctrlShiftAltBoard.add(getFixedCharKey("\u25cc\u033f",4),13,3,4,1);
-        ctrlShiftAltBoard.add(getFixedCharKey("\u25cc\u20d7",4),17,3,4,1);
-        ctrlShiftAltBoard.add(getFixedCharKey("\u25cc\u0302",4),21,3,4,1);
-        ctrlShiftAltBoard.add(getFixedCharKey("\u25cc\u0338",4),25,3,4,1);
-        ctrlShiftAltBoard.add(getFixedCharKey("\u25cc\u030a",4),29,3,4,1);
-        ctrlShiftAltBoard.add(getFixedCharKey("\u25cc\u0303",4),33,3,4,1);
+        ctrlShiftAltBoard.add(getFixedCharKey("\ue06e",4),9,3,4,1);
+        ctrlShiftAltBoard.add(getFixedCharKey("\ue27f",4),13,3,4,1);
+        ctrlShiftAltBoard.add(getFixedCharKey("\ue4ea",4),17,3,4,1);
+        ctrlShiftAltBoard.add(getFixedCharKey("\ue69a",4),21,3,4,1);
+        ctrlShiftAltBoard.add(getFixedCharKey("\uf8dc",4),25,3,4,1);
+
+        ctrlShiftAltBoard.add(getFixedCharKey("\ue841",4),29,3,4,1);
+        ctrlShiftAltBoard.add(getFixedCharKey("\ue851",4),33,3,4,1);
         //
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.COMMA,4),37,3,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.PERIOD,4),41,3,4,1);
-        ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.SLASH,4),45,3,4,1);
+
+        ctrlShiftAltBoard.add(getFixedCharKey("\ue871",4),45,3,4,1);
+
+//        ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.SLASH,4),45,3,4,1);
         ctrlShiftAltBoard.add(getControlKey("Shift",11),49,3,11,1);
 
         ctrlShiftAltBoard.add(getControlKey("control/\n command",10),0,4,10,1);
@@ -456,9 +460,9 @@ public class KeyboardDiagram {
         ctrlShiftAltBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 
         ctrlChars = new Text("\ud83e\udc46 F1/home, F2/end, F3, F4, F5 select keyboards (like keyboard dropdown).\n" +
-        "    F7/page up toggles superscript (+shift, shift back)\n" +
-        "    F8/page down toggles subscript (+shift, shift back)\n" +
-        "    Ctrl:B bold, :I talic, :U underline, :0 (zero) overline\n" +
+        "    F7/page-up toggle superscript (+shift, shift back)\n" +
+        "    F8/page-down toggle subscript (+shift, shift back)\n" +
+        "    Ctrl:B bold, :I italic, :U underline, :0 (zero) overline\n" +
         "    Ctrl-A select all, :C copy, :X cut, :V paste, :Z undo, :Z(+shift) redo\n\n");
 
         ctrlChars.setFont(textFont);

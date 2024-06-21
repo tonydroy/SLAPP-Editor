@@ -163,7 +163,7 @@ public class MainWindowView {
 
         Text textItemGraphic1 = new Text("\uf15c");
         textItemGraphic1.setStyle("-fx-font-family: la-solid-900");
-        commonElementsTextItem = new MenuItem("Common", textItemGraphic1);
+        commonElementsTextItem = new MenuItem("General Intro", textItemGraphic1);
         Text textItemGraphic2 = new Text("\uf15c");
         textItemGraphic2.setStyle("-fx-font-family: la-solid-900");
         contextualTextItem = new MenuItem("Contextual", textItemGraphic2);

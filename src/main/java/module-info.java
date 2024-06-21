@@ -9,10 +9,14 @@ module slapp.editor {
     requires javafx.media;
 
 
-
+/*
     requires org.kordamp.ikonli.lineawesome;
     requires org.kordamp.ikonli.core;
     requires org.kordamp.ikonli.javafx;
+
+
+ */
+
     requires org.apache.commons.lang3;
     requires java.desktop;
     requires jdk.xml.dom;

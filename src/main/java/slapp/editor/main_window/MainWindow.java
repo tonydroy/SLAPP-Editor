@@ -756,7 +756,7 @@ public class MainWindow {
     }
 
     private void makeReport() {
-        String message = "Please be as specific as you can about your concern; if you are reporting an error, include information about the version of SLAPP and of your operating system, and (if possible) whether and how the problem may be repeated (ok to delete this line).";
+        String message = "Please be as specific as you can about your concern; if you are reporting an error, include information about the version of SLAPP and of your operating system, along with (if possible) the relevant file and whether and how the problem may be repeated (ok to delete this line).";
         MailHelper.generate("messaging@slappservices.net", "SLAPP: (your issue)", message);
     }
 

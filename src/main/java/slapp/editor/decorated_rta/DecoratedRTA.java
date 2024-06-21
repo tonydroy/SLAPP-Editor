@@ -30,8 +30,6 @@ import javafx.scene.text.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 import slapp.editor.EditorMain;
 
@@ -577,14 +575,7 @@ public class DecoratedRTA {
         return dialog;
     }
 
-    private MenuItem actionMenuItem(String text, Ikon ikon, Action action) {
-        FontIcon icon = new FontIcon(ikon);
-        icon.setIconSize(16);
-        MenuItem menuItem = new MenuItem(text, icon);
-        menuItem.disableProperty().bind(action.disabledProperty());
-        menuItem.setOnAction(action::execute);
-        return menuItem;
-    }
+
 
 
     private enum Presets {
