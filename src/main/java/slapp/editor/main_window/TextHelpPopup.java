@@ -41,7 +41,7 @@ static {
 
     about = "<body style=\"margin-left:10; margin-right: 20\">"+
             "<h2><p style=\"text-align: center;\">Symbolic Logic Application (SLAPP)</p></h2>" +
-            "<p style = \"text-align: center;\">Version 1.0&#x03b1</p>" +
+            "<p style = \"text-align: center;\">Version 1.00&#x03b1</p>" +
             "<p style=\"text-align: center;\">Copyright (c) 2024, Tony Roy</p>" +
             "<p>This program (SLAPP) is open-source and free software.  An executable install package may be downloaded from <a href=\"https://tonyroyphilosophy.net\">tonyroyphilosophy.net/xxx</a>.  Source code is available at <a href=\"https://github.com\">github.com/xxx</a>.  You may redistribute the software and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.  For the license, see <a href=\"https://www.gnu.org/licenses/licenses.html\">www.gnu.org/licenses.html</a>.</p>" +
             "<p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. </p>" +
