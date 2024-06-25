@@ -80,7 +80,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
-        statementEditor.setDocument(drvtnExpModel.getExerciseStatement());
+        statementEditor.getActionFactory().open(drvtnExpModel.getExerciseStatement()).execute(new ActionEvent());
 
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -91,7 +91,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
-        commentEditor.setDocument(drvtnExpModel.getExerciseComment());
+        commentEditor.getActionFactory().open(drvtnExpModel.getExerciseComment()).execute(new ActionEvent());
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
@@ -102,7 +102,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         DecoratedRTA explanationDRTA = new DecoratedRTA();
         RichTextArea explanationEditor = explanationDRTA.getEditor();
 
-        explanationEditor.setDocument(drvtnExpModel.getExplanationDocument());
+        explanationEditor.getActionFactory().open(drvtnExpModel.getExplanationDocument()).execute(new ActionEvent());
         explanationEditor.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(explanationDRTA, ControlType.AREA);
@@ -156,7 +156,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
                 BoxedDRTA bdrta = new BoxedDRTA();
                 RichTextArea rta = bdrta.getRTA();
-                rta.setDocument(modelLine.getLineContentDoc());
+                rta.getActionFactory().open(modelLine.getLineContentDoc()).execute(new ActionEvent());
                 rta.getActionFactory().saveNow().execute(new ActionEvent());
 
 
@@ -342,7 +342,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
 
         rta.getStylesheets().add("slappDerivation.css");
-        rta.setDocument(new Document(getStringFromJustificationFlow(flow)));
+        rta.getActionFactory().open(new Document(getStringFromJustificationFlow(flow))).execute(new ActionEvent());
         rta.getActionFactory().saveNow().execute(new ActionEvent());
 
         if (drvtnExpView.getViewLines().get(rowIndex).getLineType() == LineType.PREMISE_LINE) rta.setEditable(false);

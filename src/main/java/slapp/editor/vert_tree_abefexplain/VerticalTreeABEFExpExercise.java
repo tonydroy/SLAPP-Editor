@@ -76,7 +76,7 @@ public class VerticalTreeABEFExpExercise implements Exercise<VerticalTreeABEFExp
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
-        statementEditor.setDocument(verticalTreeABEFExpModel.getExerciseStatement());
+        statementEditor.getActionFactory().open(verticalTreeABEFExpModel.getExerciseStatement()).execute(new ActionEvent());
 
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -88,7 +88,7 @@ public class VerticalTreeABEFExpExercise implements Exercise<VerticalTreeABEFExp
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.setPromptText("Comment: ");
-        commentEditor.setDocument(verticalTreeABEFExpModel.getExerciseComment());
+        commentEditor.getActionFactory().open(verticalTreeABEFExpModel.getExerciseComment()).execute(new ActionEvent());
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
@@ -148,7 +148,7 @@ public class VerticalTreeABEFExpExercise implements Exercise<VerticalTreeABEFExp
 
         DecoratedRTA explainDRTA = verticalTreeABEFExpView.getExplainDRTA();
         RichTextArea explainEditor = explainDRTA.getEditor();
-        explainEditor.setDocument(verticalTreeABEFExpModel.getExplainDocument());
+        explainEditor.getActionFactory().open(verticalTreeABEFExpModel.getExplainDocument()).execute(new ActionEvent());
         explainEditor.setPromptText("Explain:");
         explainEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(explainDRTA, ControlType.AREA);
@@ -202,7 +202,7 @@ public class VerticalTreeABEFExpExercise implements Exercise<VerticalTreeABEFExp
             BoxedDRTA formulaBox = mapFormulaBox.getFormulaBox();
             RichTextArea mapBoxRTA = formulaBox.getRTA();
 //            mapBoxRTA.setPrefWidth(mapBoxMod.getWidth());
-            mapBoxRTA.setDocument(mapBoxMod.getText());
+            mapBoxRTA.getActionFactory().open(mapBoxMod.getText()).execute(new ActionEvent());
             mapBoxRTA.getActionFactory().saveNow().execute(new ActionEvent());
         }
 
@@ -217,7 +217,7 @@ public class VerticalTreeABEFExpExercise implements Exercise<VerticalTreeABEFExp
             BoxedDRTA treeFormulaDRTA = treeFormulaBox.getFormulaBox();
             RichTextArea treeBoxRTA = treeFormulaDRTA.getRTA();
  //           treeBoxRTA.setPrefWidth(treeBoxMod.getWidth());
-            treeBoxRTA.setDocument(treeBoxMod.getText());
+            treeBoxRTA.getActionFactory().open(treeBoxMod.getText()).execute(new ActionEvent());
             treeBoxRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
 

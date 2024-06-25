@@ -71,7 +71,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
-        statementEditor.setDocument(verticalTreeModel.getExerciseStatement());
+        statementEditor.getActionFactory().open(verticalTreeModel.getExerciseStatement()).execute(new ActionEvent());
 
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -83,7 +83,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.setPromptText("Comment: ");
-        commentEditor.setDocument(verticalTreeModel.getExerciseComment());
+        commentEditor.getActionFactory().open(verticalTreeModel.getExerciseComment()).execute(new ActionEvent());
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
@@ -133,7 +133,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
             BoxedDRTA formulaBox = mapFormulaBox.getFormulaBox();
             RichTextArea mapBoxRTA = formulaBox.getRTA();
 //            mapBoxRTA.setPrefWidth(mapBoxMod.getWidth());
-            mapBoxRTA.setDocument(mapBoxMod.getText());
+            mapBoxRTA.getActionFactory().open(mapBoxMod.getText()).execute(new ActionEvent());
             mapBoxRTA.getActionFactory().saveNow().execute(new ActionEvent());
         }
 
@@ -148,7 +148,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
             BoxedDRTA treeFormulaDRTA = treeFormulaBox.getFormulaBox();
             RichTextArea treeBoxRTA = treeFormulaDRTA.getRTA();
 //            treeBoxRTA.setPrefWidth(treeBoxMod.getWidth());
-            treeBoxRTA.setDocument(treeBoxMod.getText());
+            treeBoxRTA.getActionFactory().open(treeBoxMod.getText()).execute(new ActionEvent());
             treeBoxRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
 

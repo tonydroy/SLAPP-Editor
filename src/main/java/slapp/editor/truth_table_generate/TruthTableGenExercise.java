@@ -94,7 +94,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         //statement
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
-        statementEditor.setDocument(truthTableGenModel.getExerciseStatement());
+        statementEditor.getActionFactory().open(truthTableGenModel.getExerciseStatement()).execute(new ActionEvent());
         mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -106,7 +106,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
-        commentEditor.setDocument(truthTableGenModel.getExerciseComment());
+        commentEditor.getActionFactory().open(truthTableGenModel.getExerciseComment()).execute(new ActionEvent());
  //       commentEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(commentDRTA, ControlType.AREA);
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
@@ -142,7 +142,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         //interpretation
         DecoratedRTA interpretationDRTA = truthTableGenView.getInterpretationDRTA();
         RichTextArea interpretationEditor = interpretationDRTA.getEditor();
-        interpretationEditor.setDocument(truthTableGenModel.getExerciseInterpretation());
+        interpretationEditor.getActionFactory().open(truthTableGenModel.getExerciseInterpretation()).execute(new ActionEvent());
         interpretationEditor.setPromptText("Interpretation/Translation:");
         interpretationEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(interpretationDRTA, ControlType.AREA);
@@ -156,7 +156,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         //explain
         DecoratedRTA explainDRTA = truthTableGenView.getExplainDRTA();
         RichTextArea explainEditor = explainDRTA.getEditor();
-        explainEditor.setDocument(truthTableGenModel.getExplainDocument());
+        explainEditor.getActionFactory().open(truthTableGenModel.getExplainDocument()).execute(new ActionEvent());
         explainEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(explainDRTA, ControlType.AREA);
         explainEditor.focusedProperty().addListener((o, ov, nv) -> {
@@ -173,7 +173,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         for (Document doc : basicFormulaDocs ) {
             BoxedDRTA bdrta = truthTableGenView.newFormulaBoxedDRTA();
             RichTextArea rta = bdrta.getRTA();
-            rta.setDocument(doc);
+            rta.getActionFactory().open(doc).execute(new ActionEvent());
             truthTableGenView.getBasicFormulasBoxedDRTAs().add(bdrta);
         }
         truthTableGenView.updateBasicFormulasPaneFromList();
@@ -183,7 +183,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         for (Document doc : mainFormulaDocs ) {
             BoxedDRTA bdrta = truthTableGenView.newFormulaBoxedDRTA();
             RichTextArea rta = bdrta.getRTA();
-            rta.setDocument(doc);
+            rta.getActionFactory().open(doc).execute(new ActionEvent());
             truthTableGenView.getMainFormulasBoxedDRTAs().add(bdrta);
         }
         truthTableGenView.updateMainFormulasPaneFromList();
@@ -245,7 +245,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
             Document doc = commentDocs[i];
             BoxedDRTA bdrta = truthTableGenView.newCommentBoxedDRTA();
             RichTextArea rta = bdrta.getRTA();
-            rta.setDocument(doc);
+            rta.getActionFactory().open(doc).execute(new ActionEvent());
             rta.getActionFactory().saveNow().execute(new ActionEvent());
             commentBoxedDRTAs[i] = bdrta;
         }

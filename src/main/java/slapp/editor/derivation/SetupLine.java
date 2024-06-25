@@ -3,6 +3,7 @@ package slapp.editor.derivation;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
+import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -57,7 +58,7 @@ public class SetupLine {
         justificationBoxedDRTA = new BoxedDRTA();
         justificationBoxedDRTA.getDRTA().getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.BASE);
         RichTextArea justificationRTA = justificationBoxedDRTA.getRTA();
-        justificationRTA.setDocument(new Document(""));
+        justificationRTA.getActionFactory().open(new Document("")).execute(new ActionEvent());
         justificationRTA.setMaxHeight(formulaBoxHeight);
         justificationRTA.setMinHeight(formulaBoxHeight);
         justificationRTA.setPrefWidth(100);

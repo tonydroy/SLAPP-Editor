@@ -68,7 +68,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
-        statementEditor.setDocument(horizontalTreeModel.getExerciseStatement());
+        statementEditor.getActionFactory().open(horizontalTreeModel.getExerciseStatement()).execute(new ActionEvent());
 
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -80,7 +80,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.setPromptText("Comment: ");
-        commentEditor.setDocument(horizontalTreeModel.getExerciseComment());
+        commentEditor.getActionFactory().open(horizontalTreeModel.getExerciseComment()).execute(new ActionEvent());
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
@@ -90,7 +90,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
         DecoratedRTA explainDRTA = horizontalTreeView.getExplainDRTA();
         RichTextArea explainEditor = explainDRTA.getEditor();
-        explainEditor.setDocument(horizontalTreeModel.getExplainDocument());
+        explainEditor.getActionFactory().open(horizontalTreeModel.getExplainDocument()).execute(new ActionEvent());
         horizontalTreeView.setExplainPrompt(horizontalTreeModel.getExplainPrompt());
 
         explainEditor.getActionFactory().saveNow().execute(new ActionEvent());
@@ -158,14 +158,14 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         branchNode.getAnnotationField().setText(branchModel.getAnnotationText());
 
         RichTextArea formulaRTA = branchNode.getFormulaBoxedDRTA().getRTA();
-        formulaRTA.setDocument(branchModel.getFormulaDoc());
+        formulaRTA.getActionFactory().open(branchModel.getFormulaDoc()).execute(new ActionEvent());
 
         formulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
 //        formulaRTA.setPrefWidth(branchModel.getFormulaPrefWidth());
 
         RichTextArea connectRTA = branchNode.getConnectorBoxedDRTA().getRTA();
-        connectRTA.setDocument(branchModel.getConnectorDoc());
+        connectRTA.getActionFactory().open(branchModel.getConnectorDoc()).execute(new ActionEvent());
 
         connectRTA.getActionFactory().saveNow().execute(new ActionEvent());
 

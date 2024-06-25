@@ -4,6 +4,7 @@ import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -88,7 +89,8 @@ public class DerivationTest {
         rta.setPrefWidth(100);
         rta.getStylesheets().add("slappDerivation.css");
 
-        rta.setDocument(content);
+        rta.getActionFactory().open(content).execute(new ActionEvent());
+
 
         HBox box = new HBox(rta);
         box.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1;");

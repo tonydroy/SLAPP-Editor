@@ -91,7 +91,7 @@ public class TruthTableCreate {
         this(mainWindow);
 
         nameField.setText(originalModel.getExerciseName());
-        statementRTA.setDocument(originalModel.getExerciseStatement());
+        statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         conclusionDividerCheck.setSelected(originalModel.isConclusionDivider());
         updateOperatorFieldsFromModel(originalModel);
@@ -431,7 +431,7 @@ public class TruthTableCreate {
         for (String str : unaryList) {
             BoxedDRTA bdrta = newOperatorBoxedDRTA();
             RichTextArea rta = bdrta.getRTA();
-            rta.setDocument(new Document(str));
+            rta.getActionFactory().open(new Document(str)).execute(new ActionEvent());
             rta.getActionFactory().saveNow().execute(new ActionEvent());
             unaryOperatorList.add(bdrta);
         }
@@ -440,7 +440,7 @@ public class TruthTableCreate {
        for (String str : binaryList) {
            BoxedDRTA bdrta = newOperatorBoxedDRTA();
            RichTextArea rta = bdrta.getRTA();
-           rta.setDocument(new Document(str));
+           rta.getActionFactory().open(new Document(str)).execute(new ActionEvent());
            rta.getActionFactory().saveNow().execute(new ActionEvent());
            binaryOperatorList.add(bdrta);
        }
@@ -467,7 +467,7 @@ public class TruthTableCreate {
             BoxedDRTA bdrta = newMainFormulaBoxedDRTA();
 
             RichTextArea rta = bdrta.getRTA();
-            rta.setDocument(doc);
+            rta.getActionFactory().open(doc).execute(new ActionEvent());
             rta.getActionFactory().saveNow().execute(new ActionEvent());
             mainFormulaList.add(bdrta);
         }
@@ -506,7 +506,7 @@ public class TruthTableCreate {
     private BoxedDRTA contentOperatorBoxedDRTA(String operator) {
         BoxedDRTA bdrta = newOperatorBoxedDRTA();
         RichTextArea rta = bdrta.getRTA();
-        rta.setDocument(new Document(operator));
+        rta.getActionFactory().open(new Document(operator)).execute(new ActionEvent());
         rta.getActionFactory().saveNow().execute(new ActionEvent());
         return bdrta;
     }
@@ -559,8 +559,8 @@ public class TruthTableCreate {
             mainFormulaList.add(mainFormulaBoxedDRTA);
             updateMainFormulaGridFromFields();
 
-            statementRTA.setDocument(new Document());
-            statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
+            statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
+  //          statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
             viewExercise();

@@ -75,7 +75,7 @@ public class ABEFGcreate {
     public ABEFGcreate(MainWindow mainWindow, ABEFGmodel originalModel) {
         this(mainWindow);
 
-        statementRTA.setDocument(originalModel.getExerciseStatement());
+        statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
         nameField.setText(originalModel.getExerciseName());
@@ -382,8 +382,8 @@ public class ABEFGcreate {
 
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
-            statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
-            statementRTA.setDocument(new Document());
+ //           statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
+            statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             nameField.clear();
             nameField.textProperty().addListener(nameListener);

@@ -61,7 +61,7 @@ public class HorizontalTreeCreate {
     public HorizontalTreeCreate(MainWindow mainWindow, HorizontalTreeModel originalModel) {
         this(mainWindow);
 
-        statementRTA.setDocument(originalModel.getExerciseStatement());
+        statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         nameField.setText(originalModel.getExerciseName());
         promptField.setText(originalModel.getExplainPrompt());
@@ -260,8 +260,8 @@ public class HorizontalTreeCreate {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-            statementRTA.setDocument(new Document());
-            statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
+            statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
+  //          statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
             fieldModified = false;

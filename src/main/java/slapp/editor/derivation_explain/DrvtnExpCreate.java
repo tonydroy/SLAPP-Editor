@@ -98,7 +98,7 @@ public class DrvtnExpCreate {
     public DrvtnExpCreate(MainWindow mainWindow, DrvtnExpModel originalModel) {
         this(mainWindow);
 
-        statementRTA.setDocument(originalModel.getExerciseStatement());
+        statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         nameField.setText(originalModel.getExerciseName());
         promptField.setText(originalModel.getContentPrompt());
@@ -444,12 +444,12 @@ public class DrvtnExpCreate {
 
                 BoxedDRTA formulaBoxedDRTA = setupLine.getFormulaBoxedDRTA();
                 RichTextArea formulaRTA = formulaBoxedDRTA.getRTA();
-                formulaRTA.setDocument(modelLine.getLineContentDoc());
+                formulaRTA.getActionFactory().open(modelLine.getLineContentDoc()).execute(new ActionEvent());
                 formulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
                 BoxedDRTA justificationBoxedDRTA = setupLine.getJustificationBoxedDRTA();
                 RichTextArea justificationRTA = justificationBoxedDRTA.getRTA();
-                justificationRTA.setDocument(new Document(modelLine.getJustification()));
+                justificationRTA.getActionFactory().open(new Document(modelLine.getJustification())).execute(new ActionEvent());
                 justificationRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
                 setupLine.getDepthSpinner().getValueFactory().setValue(modelLine.getDepth());
@@ -548,8 +548,8 @@ public class DrvtnExpCreate {
             setupLines.add(firstLine);
             updateGridFromSetupLines();
 
-            statementRTA.setDocument(new Document());
-            statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
+            statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
+  //          statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
             fieldModified = false;

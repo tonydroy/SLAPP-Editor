@@ -96,7 +96,7 @@ public class VerticalTreeABEFExpCreate {
     public VerticalTreeABEFExpCreate(MainWindow mainWindow, VerticalTreeABEFExpModel originalModel) {
         this(mainWindow);
 
-        statementRTA.setDocument(originalModel.getExerciseStatement());
+        statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         nameField.setText(originalModel.getExerciseName());
         keyboardSelector = originalModel.getDefaultKeyboardType();
@@ -487,8 +487,8 @@ public class VerticalTreeABEFExpCreate {
             ePromptField.textProperty().addListener(ePromptListener);
             fPromptField.textProperty().addListener(fPromptListener);
 
-            statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
-            statementRTA.setDocument(new Document());
+ //           statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
+            statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
             modified = false;

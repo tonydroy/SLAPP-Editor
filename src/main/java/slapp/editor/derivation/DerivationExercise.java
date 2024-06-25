@@ -73,7 +73,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         //statement
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
-        statementEditor.setDocument(derivationModel.getExerciseStatement());
+        statementEditor.getActionFactory().open(derivationModel.getExerciseStatement()).execute(new ActionEvent());
 
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -85,7 +85,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
-        commentEditor.setDocument(derivationModel.getExerciseComment());
+        commentEditor.getActionFactory().open(derivationModel.getExerciseComment()).execute(new ActionEvent());
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
@@ -139,7 +139,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
                 BoxedDRTA bdrta = new BoxedDRTA();
                 RichTextArea rta = bdrta.getRTA();
-                rta.setDocument(modelLine.getLineContentDoc());
+                rta.getActionFactory().open(modelLine.getLineContentDoc()).execute(new ActionEvent());
                 rta.getActionFactory().saveNow().execute(new ActionEvent());
 
 
@@ -316,7 +316,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         rta.setPrefHeight(20);
         rta.setPrefWidth(100);
         rta.getStylesheets().add("slappDerivation.css");
-        rta.setDocument(new Document(getStringFromJustificationFlow(flow)));
+        rta.getActionFactory().open(new Document(getStringFromJustificationFlow(flow))).execute(new ActionEvent());
         rta.getActionFactory().saveNow().execute(new ActionEvent());
 
         if (derivationView.getViewLines().get(rowIndex).getLineType() == LineType.PREMISE_LINE) rta.setEditable(false);

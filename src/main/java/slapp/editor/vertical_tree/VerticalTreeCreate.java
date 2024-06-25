@@ -80,7 +80,7 @@ public class VerticalTreeCreate {
     public VerticalTreeCreate(MainWindow mainWindow, VerticalTreeModel originalModel) {
         this(mainWindow);
 
-        statementRTA.setDocument(originalModel.getExerciseStatement());
+        statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         nameField.setText(originalModel.getExerciseName());
         keyboardSelector = originalModel.getDefaultKeyboardType();
@@ -363,8 +363,8 @@ public class VerticalTreeCreate {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-            statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
-            statementRTA.setDocument(new Document());
+//            statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
+            statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
             modified = false;

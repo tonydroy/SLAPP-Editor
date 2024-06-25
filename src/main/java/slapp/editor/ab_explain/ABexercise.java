@@ -83,7 +83,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         //statement
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
-        statementEditor.setDocument(abModel.getExerciseStatement());
+        statementEditor.getActionFactory().open(abModel.getExerciseStatement()).execute(new ActionEvent());
 
         mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
@@ -96,7 +96,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
-        commentEditor.setDocument(abModel.getExerciseComment());
+        commentEditor.getActionFactory().open(abModel.getExerciseComment()).execute(new ActionEvent());
         commentEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(commentDRTA, ControlType.AREA);
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
@@ -111,7 +111,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         for (Document doc : abModel.getExercisePageDocs()) {
             DecoratedRTA drta = new DecoratedRTA();
             RichTextArea editor = drta.getEditor();
-            editor.setDocument(doc);
+            editor.getActionFactory().open(doc).execute(new ActionEvent());
             editor.getActionFactory().saveNow().execute(new ActionEvent());
             mainView.editorInFocus(drta, ControlType.AREA);
             editor.focusedProperty().addListener((o, ov, nv) -> {

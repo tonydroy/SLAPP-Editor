@@ -2,6 +2,7 @@ package slapp.editor.tests;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.model.Document;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -34,7 +35,7 @@ public class ScrollPaneTest {
     public void testScrollPane(Stage primaryStage) {
 
         RichTextArea rta = new RichTextArea(primaryStage);
-        rta.setDocument(new Document("test"));
+        rta.getActionFactory().open(new Document("test")).execute(new ActionEvent());
         rta.setPrefHeight(400);
         rta.setPrefWidth(400);
 

@@ -5,6 +5,7 @@ import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -67,7 +68,7 @@ public class FrontPageView implements ExerciseView<Label> {
 
 
         RichTextArea commentRTA = exerciseComment.getEditor();
-        commentRTA.setDocument(new Document("Logo Here"));
+        commentRTA.getActionFactory().open(new Document("Logo Here")).execute(new ActionEvent());
         commentRTA.setEditable(false);
         commentRTA.setFocusTraversable(false);
         commentRTA.setMouseTransparent(true);

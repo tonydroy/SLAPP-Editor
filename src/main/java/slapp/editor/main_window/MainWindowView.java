@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -600,7 +601,7 @@ public class MainWindowView {
         tempStage.setScene(tempScene);
         tempStage.show();
         RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentArea.getSkin());
-        commentArea.setDocument(header.getComment());
+        commentArea.getActionFactory().open(header.getComment()).execute(new ActionEvent());
         commentArea.setContentAreaWidth(PrintUtilities.getPageWidth());
         commentArea.setPrefWidth(PrintUtilities.getPageWidth());
         double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());

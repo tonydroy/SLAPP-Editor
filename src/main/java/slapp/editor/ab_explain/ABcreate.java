@@ -71,7 +71,7 @@ public class ABcreate {
 
     public ABcreate(MainWindow mainWindow, ABmodel originalModel) {
         this(mainWindow);
-        statementRTA.setDocument(originalModel.getExerciseStatement());
+        statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
         nameField.setText(originalModel.getExerciseName());
@@ -339,8 +339,8 @@ public class ABcreate {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-            statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
-            statementRTA.setDocument(new Document());
+ //           statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
+            statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
             fieldsModified = false;

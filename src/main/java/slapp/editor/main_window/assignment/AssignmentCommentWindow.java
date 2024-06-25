@@ -55,7 +55,7 @@ public class AssignmentCommentWindow {
 
         commentDRTA = new DecoratedRTA();
         commentEditor = commentDRTA.getEditor();
-        commentEditor.setDocument(header.getComment());
+        commentEditor.getActionFactory().open(header.getComment()).execute(new ActionEvent());
         commentEditor.setPromptText("Assignment Comment:");
         commentEditor.getStylesheets().add("slappTextArea.css");
         commentEditor.setPrefWidth(PrintUtilities.getPageWidth() + 20);

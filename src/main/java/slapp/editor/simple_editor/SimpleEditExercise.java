@@ -58,7 +58,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         //statement
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
-        statementEditor.setDocument(editModel.getExerciseStatement());
+        statementEditor.getActionFactory().open(editModel.getExerciseStatement()).execute(new ActionEvent());
 
         mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
@@ -71,7 +71,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
-        commentEditor.setDocument(editModel.getExerciseComment());
+        commentEditor.getActionFactory().open(editModel.getExerciseComment()).execute(new ActionEvent());
         commentEditor.getActionFactory().saveNow().execute(new ActionEvent());
 
         mainView.editorInFocus(commentDRTA, ControlType.AREA);
@@ -87,7 +87,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         for (Document doc : editModel.getExercisePageDocs()) {
             DecoratedRTA drta = new DecoratedRTA();
             RichTextArea editor = drta.getEditor();
-            editor.setDocument(doc);
+            editor.getActionFactory().open(doc).execute(new ActionEvent());
             editor.getActionFactory().saveNow().execute(new ActionEvent());
 
             mainView.editorInFocus(drta, ControlType.AREA);

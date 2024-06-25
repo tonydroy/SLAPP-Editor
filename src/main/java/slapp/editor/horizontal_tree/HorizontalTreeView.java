@@ -6,6 +6,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -624,7 +625,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
                             branch.setIndefiniteNode(true);
                             branch.setStyle("-fx-border-width: 0 0 0 0");
                             RichTextArea rta = branch.getFormulaBoxedDRTA().getRTA();
-                            rta.setDocument(new Document("   \u22ee"));
+                            rta.getActionFactory().open(new Document("   \u22ee")).execute(new ActionEvent());
                             rta.prefWidthProperty().unbind();
                             rta.setPrefWidth(24);
                             clickNode.getDependents().add(branch);

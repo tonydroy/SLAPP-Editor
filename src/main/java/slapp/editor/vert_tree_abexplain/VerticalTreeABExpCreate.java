@@ -90,7 +90,7 @@ public class VerticalTreeABExpCreate {
     public VerticalTreeABExpCreate(MainWindow mainWindow, VerticalTreeABExpModel originalModel) {
         this(mainWindow);
 
-        statementRTA.setDocument(originalModel.getExerciseStatement());
+        statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         nameField.setText(originalModel.getExerciseName());
         keyboardSelector = originalModel.getDefaultKeyboardType();
@@ -435,8 +435,8 @@ public class VerticalTreeABExpCreate {
             aPromptField.textProperty().addListener(aPromptListener);
             bPromptField.textProperty().addListener(bPromptListener);
 
-            statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
-            statementRTA.setDocument(new Document());
+ //           statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
+            statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
             statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
             modified = false;
