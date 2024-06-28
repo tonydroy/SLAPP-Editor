@@ -17,6 +17,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -38,6 +39,7 @@ public class SimpleEditCreate {
     private MainWindow mainWindow;
     private RichTextArea statementRTA;
     private DecoratedRTA statementDRTA;
+    private double statementTextHeight;
     private TextField nameField;
     private TextField promptField;
     private boolean fieldModified = false;
@@ -85,6 +87,10 @@ public class SimpleEditCreate {
         statementRTA.setPrefWidth(PrintUtilities.getPageWidth() + 20);
         statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         statementRTA.setPrefHeight(200);
+
+        statementRTA.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            statementTextHeight = mainWindow.getMainView().getRTATextHeight(statementRTA);
+        });
 
 
         Label nameLabel = new Label("Exercise Name: ");
@@ -262,7 +268,7 @@ public class SimpleEditCreate {
             nameField.textProperty().addListener(nameListener);
             statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
 //            statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
-            statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
+//            statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
             fieldModified = false;
         }
@@ -279,32 +285,31 @@ public class SimpleEditCreate {
     }
 
     private void viewExercise() {
-        SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
+        SimpleEditModel model = extractModelFromWindow();
+        SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
-        rta.setEditable(true);
         rta.prefHeightProperty().unbind();
-        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
-        double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
+        exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         mainWindow.setUpExercise(exercise);
     }
 
     private void saveExercise(boolean saveAs) {
         saveButton.setDisable(true);
         saveAsButton.setDisable(true);
-
         nameField.textProperty().addListener(nameListener);
-        SimpleEditExercise exercise = new SimpleEditExercise(extractModelFromWindow(), mainWindow);
+
+        SimpleEditModel model = extractModelFromWindow();
+        SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
+
+
+
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
-        rta.setEditable(true);
         rta.prefHeightProperty().unbind();
-        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
-        double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
-        exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
+        exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         exercise.saveExercise(saveAs);
+
         saveButton.setDisable(false);
         saveAsButton.setDisable(false);
         fieldModified = false;
@@ -316,7 +321,9 @@ public class SimpleEditCreate {
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document statementDocument = statementRTA.getDocument();
         Document commentDoc = new Document();
-        SimpleEditModel model = new SimpleEditModel(name, false, prompt, 70.0, statementDocument, commentDoc, new ArrayList<Document>());
+        double statementPrefHeight = statementTextHeight + 25;
+        SimpleEditModel model = new SimpleEditModel(name, false, prompt, statementPrefHeight, statementDocument, commentDoc, new ArrayList<PageContent>());
+        model.setStatementTextHeight(statementTextHeight);
         return model;
     }
 

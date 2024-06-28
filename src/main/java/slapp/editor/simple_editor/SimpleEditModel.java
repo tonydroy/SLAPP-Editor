@@ -14,28 +14,36 @@ public class SimpleEditModel implements ExerciseModel<Document>, Serializable {
     private ExerciseType exerciseType = ExerciseType.SIMPLE_EDITOR;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
-    private String contentPrompt = "";
-    private double statementPrefHeight = 80;
-    private double commentPrefHeight = 60;
-    private double paginationPrefHeight = 450.0;
-    private Document exerciseStatement = new Document();
-    private Document exerciseComment = new Document("");
-    private List<Document> exercisePageDocs = new ArrayList<>();
 
-    public SimpleEditModel(String name, boolean started, String prompt, double statementPrefHeight, Document exerciseStatement, Document exerciseComment, List<Document> exercisePageDocs) {
+
+    private Document exerciseStatement = new Document();
+    private double statementPrefHeight = 80;
+    private double statementTextHeight = 0;
+
+    private Document exerciseComment = new Document("");
+    private double commentPrefHeight = 60;
+    private double commentTextHeight = 0;
+    private List<PageContent> pageContents = new ArrayList<>();
+    private double paginationPrefHeight = 450.0;
+
+
+
+    private String contentPrompt = "";
+
+    public SimpleEditModel(String name, boolean started, String prompt, double statementPrefHeight, Document exerciseStatement, Document exerciseComment, List<PageContent> pageContents) {
         this.exerciseName = name;
         this.started = started;
         this.contentPrompt = prompt;
         this.statementPrefHeight = statementPrefHeight;
         this.exerciseStatement = exerciseStatement;
         this.exerciseComment = exerciseComment;
-        this.exercisePageDocs = exercisePageDocs;
-        if (exercisePageDocs.isEmpty()) exercisePageDocs.add(new Document());
+        this.pageContents = pageContents;
+        if (pageContents.isEmpty()) pageContents.add(new PageContent(new Document(), 0.0));
     }
 
-    void addBlankContentPage(int position) { exercisePageDocs.add(position, new Document());  }
-    public List<Document> getExercisePageDocs() {
-        return exercisePageDocs;
+    void addBlankContentPage(int position) { pageContents.add(position, new PageContent(new Document(), 0.0));  }
+    public List<PageContent> getPageContents() {
+        return pageContents;
     }
     public String getContentPrompt() {
         return contentPrompt;
@@ -47,6 +55,24 @@ public class SimpleEditModel implements ExerciseModel<Document>, Serializable {
     public double getPaginationPrefHeight() { return paginationPrefHeight;   }
 
     public void setPaginationPrefHeight(double paginationPrefHeight) { this.paginationPrefHeight = paginationPrefHeight; }
+
+
+
+    public double getCommentTextHeight() {
+        return commentTextHeight;
+    }
+
+    public void setCommentTextHeight(double commentTextHeight) {
+        this.commentTextHeight = commentTextHeight;
+    }
+
+    public double getStatementTextHeight() {
+        return statementTextHeight;
+    }
+
+    public void setStatementTextHeight(double statementTextHeight) {
+        this.statementTextHeight = statementTextHeight;
+    }
 
     @Override
     public String getExerciseName() {return exerciseName; }

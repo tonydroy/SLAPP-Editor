@@ -1,10 +1,8 @@
 package slapp.editor.simple_editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -13,7 +11,6 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
@@ -47,6 +44,9 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
     public SimpleEditView(MainWindowView mainView) {
         this.mainView = mainView;
         this.pagination = new Pagination();
+
+
+
         pagination.setMaxPageIndicatorCount(5);
         pagination.setPageFactory((index) -> {
             DecoratedRTA drtaPage = contentPageList.get(index);
@@ -69,6 +69,9 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
         controlBox.setPadding(new Insets(200,20,0,30));
         controlBox.getChildren().addAll(addPageButton, removePageButton);
     }
+
+
+
 
     void initializeViewDetails() {
 

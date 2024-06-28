@@ -234,7 +234,8 @@ public class DecoratedRTA {
 
         kbdDiaToolbar = new ToolBar();
         kbdDiaToolbar.setStyle("-fx-spacing: 10");
-        kbdDiaToolbar.getItems().setAll(keyboardDiagramButton, wideSeparator(1), new Label("  "));
+//        kbdDiaToolbar.getItems().setAll(keyboardDiagramButton, wideSeparator(1), new Label("  "));
+        kbdDiaToolbar.getItems().setAll(keyboardDiagramButton, new Label("  "));
 
         fontsToolbar = new ToolBar();
         fontsToolbar.setStyle("-fx-spacing: 12");

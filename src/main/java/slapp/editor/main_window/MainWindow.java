@@ -52,6 +52,8 @@ public class MainWindow {
         mainWindow = this;
         mainView = new MainWindowView(this);
         setupMainWindow();
+        mainView.setupDummyWindowRTASize();
+
 
         focusListener = (ob, ov, nv) ->  {
             if (nv != null) {
@@ -273,7 +275,11 @@ public class MainWindow {
 
                     TypeSelectorFactories typeFactories = new TypeSelectorFactories(this);
                     Exercise exercise = typeFactories.getExerciseFromModelObject(exerciseModelObject);
+
+
+
                     if (exercise != null) {
+
                         setUpExercise(exercise);
                         isExerciseOpen = true;
                         currentAssignment = null;
@@ -292,7 +298,6 @@ public class MainWindow {
             for (Node node : printNodes) {
                 if (!PrintUtilities.processPrintNode(node) && !fitToPage) {
                     heightGood = false;
-                    System.out.println(node);
                 }
             }
             if (!heightGood && !fitToPage) {
@@ -306,7 +311,7 @@ public class MainWindow {
                 PrintUtilities.sendBufferToPDF(null);
             }
         }
-        else EditorAlerts.fleetingPopup("Cannot find exercise to export.");
+        else EditorAlerts.fleetingPopup("Cannot find named exercise to export.");
 
     }
 
@@ -331,7 +336,7 @@ public class MainWindow {
                 PrintUtilities.sendBufferToPrint(null);
             }
         }
-        else EditorAlerts.fleetingPopup("Cannot find exercise to print.");
+        else EditorAlerts.fleetingPopup("Cannot find named exercise to print.");
     }
 
     private boolean checkContinueExercise(String title, String content) {
@@ -452,8 +457,8 @@ public class MainWindow {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("There is no open assignment to print.");
         } else {
-            mainView.activateProgressIndicator("processing");
-            EditorAlerts.showFleetingAlert("Notice", "Flicker expected while processing assignment." );
+            mainView.activateProgressIndicator("Processing for print");
+//            EditorAlerts.showFleetingAlert("Notice", "Flicker expected while processing assignment." );
 
             boolean heightGood = true;
             List<String> badExerciseList = new ArrayList<>();
@@ -507,7 +512,8 @@ public class MainWindow {
             EditorAlerts.fleetingPopup("There is no open assignment to export.");
         } else {
             mainView.activateProgressIndicator("processing");
-            EditorAlerts.showFleetingAlert("Notice", "Flicker expected while processing assignment." );
+            mainView.getStatementNode().requestFocus();
+            EditorAlerts.showFleetingAlert("Notice", "Processing for export." );
 
             boolean heightGood = true;
             List<String> badExerciseList = new ArrayList<>();

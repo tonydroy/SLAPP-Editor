@@ -2,19 +2,19 @@ package slapp.editor.main_window;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
+import com.gluonhq.richtextarea.model.Document;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
+import javafx.geometry.*;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -62,7 +62,6 @@ public class MainWindowView {
     private VBox statusBar;
     private HBox upperStatusBox;
     private FlowPane lowerStatusPane;
-
     HBox centerHBox;
     private Button saveButton;
     private CheckBox hWindowCheck;
@@ -72,6 +71,14 @@ public class MainWindowView {
 
     private ChangeListener verticalListener;
     private ChangeListener horizontalListener;
+
+    private RichTextArea dummyRTA;
+    private Group dummyRoot;
+    private Scene dummyScene;
+    private Stage dummyStage;
+    private RichTextAreaSkin dummyRTASkin;
+
+
 
     private MenuItem createNewExerciseItem = new MenuItem("Create New");
     private MenuItem createRevisedExerciseItem = new MenuItem("Create Revised");
@@ -115,9 +122,10 @@ public class MainWindowView {
     Menu goToExerciseMenu = new Menu();
     Menu assignmentCommentMenu = new Menu();
     private static Label progressLabel;
-//    public static ProgressIndicator progressIndicator;
-    public static Text progressIndicator;
+    public static ProgressIndicator progressIndicator;
+//    public static Text progressIndicator;
 
+    public static TextField txtHeightIndicator;
     DoubleProperty scalePageHeight = new SimpleDoubleProperty();
     DoubleProperty scalePageWidth = new SimpleDoubleProperty();
 
@@ -136,6 +144,11 @@ public class MainWindowView {
     }
 
     private void setupWindow() {
+
+        setUpDummyWindow();
+
+
+
 
         Menu assignmentMenu = new Menu("Assignment");
         Menu exerciseMenu = new Menu("Exercise");
@@ -235,23 +248,33 @@ public class MainWindowView {
         progressLabel.setTextFill(Color.RED);
         progressLabel.setVisible(false);
 
+/*
         progressIndicator = new Text("\uf110");
         progressIndicator.setFill(Color.DEEPSKYBLUE);
         progressIndicator.setStyle("-fx-font:  28 la-solid-900");
         progressIndicator.setVisible(false);
 
+ */
+        txtHeightIndicator = new TextField("100");
+        txtHeightIndicator.setPrefWidth(40);
+        txtHeightIndicator.setDisable(true);
 
-  //      progressIndicator = new ProgressIndicator();
-  //      progressIndicator.setPrefWidth(25);
-  //      progressIndicator.setPrefHeight(25);
-  //      progressIndicator.setVisible(false);
+
+
+
+
+
+        progressIndicator = new ProgressIndicator();
+        progressIndicator.setPrefWidth(25);
+        progressIndicator.setPrefHeight(25);
+        progressIndicator.setVisible(false);
 
 
 
 
         sizeToolBar.setStyle("-fx-spacing: 10");
-        sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("V Size:"), verticalSizeSpinner,
-                new Label("H Size:"), horizontalSizeSpinner, saveButton, new Label("  "), progressIndicator, progressLabel);
+        sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label(" T Ht:"), txtHeightIndicator,  new Label("V Sz:"), verticalSizeSpinner,
+                new Label("H Sz:"), horizontalSizeSpinner, new Label(" "), saveButton, progressIndicator);
 
         sizeToolBar.setPrefHeight(38);
 
@@ -338,16 +361,48 @@ public class MainWindowView {
             closeWindow();
         });
 
+//        stage.setIconified(false);
         stage.show();
     }
 
 
+    public void setupDummyWindowRTASize() {
+        dummyRTA.prefHeightProperty().bind(Bindings.multiply(scalePageHeight, 5.0));
+        dummyRTA.prefWidthProperty().bind(scalePageWidth);
+    }
+    private void setUpDummyWindow() {
+        dummyRTA = new RichTextArea(EditorMain.mainStage);
+        dummyRTA.getStylesheets().add("slappTextArea.css");
+
+
+        dummyRoot = new Group();
+        dummyRoot.getChildren().add(dummyRTA);
+        dummyScene = new Scene(dummyRoot);
+        dummyStage = new Stage();
+        dummyStage.setScene(dummyScene);
+
+        dummyStage.initOwner(EditorMain.mainStage);
+        dummyStage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon32x32.png")));
+        dummyStage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));
+
+        dummyStage.toBack();
+        dummyStage.setOnCloseRequest(e -> {e.consume();});
+        dummyStage.setOpacity(0);
+        dummyStage.show();
+        dummyRTASkin = ((RichTextAreaSkin) dummyRTA.getSkin());
+    }
 
     public double getRTATextHeight(RichTextArea rta) {
-        rta.setEditable(true);
-        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
-        double rtaHeight = rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth() / mainWindow.getBaseScale(), PrintUtilities.getPageHeight() / mainWindow.getBaseScale(), stage.getX(), stage.getY());
-        return rtaHeight;
+        rta.getActionFactory().saveNow().execute(new ActionEvent());
+        Document doc = rta.getDocument();
+        dummyRTA.getActionFactory().open(doc).execute(new ActionEvent());
+        dummyRoot.applyCss();
+        dummyRoot.layout();
+        double height = dummyRTASkin.getComputedHeight();
+        double scaledHeight = 5.0 +  100 * (height / scalePageHeight.get());
+        String strHeight = String.valueOf(Math.round(scaledHeight));
+        txtHeightIndicator.setText(strHeight);
+        return height;
     }
 
     public void setupExercise() {
@@ -400,10 +455,10 @@ public class MainWindowView {
     }
 
     public void updateSizeSpinners(Spinner<Double> height, Spinner<Double> width) {
-        sizeToolBar.getItems().remove(3);
-        sizeToolBar.getItems().add(3, height);
         sizeToolBar.getItems().remove(5);
-        sizeToolBar.getItems().add(5, width);
+        sizeToolBar.getItems().add(5, height);
+        sizeToolBar.getItems().remove(7);
+        sizeToolBar.getItems().add(7, width);
     }
 
 
@@ -557,6 +612,7 @@ public class MainWindowView {
     private void closeWindow() {
         if (mainWindow.checkCloseWindow()) {
             KeyboardDiagram.getInstance().close();
+            dummyStage.close();
             stage.close();
         }
     }
