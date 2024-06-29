@@ -1,7 +1,6 @@
 package slapp.editor.ab_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -14,6 +13,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import slapp.editor.EditorAlerts;
@@ -24,8 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import slapp.editor.DiskUtilities;
-import slapp.editor.vertical_tree.VerticalTreeExercise;
-import slapp.editor.vertical_tree.VerticalTreeModel;
+import slapp.editor.simple_editor.PageContent;
 
 import static javafx.scene.control.ButtonType.OK;
 
@@ -96,8 +95,14 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
+
+        commentEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            exerciseModified = true;
+            double commentTextHeight = mainView.getRTATextHeight(commentEditor);
+            abModel.setCommentTextHeight(commentTextHeight);
+        });
         commentEditor.getActionFactory().open(abModel.getExerciseComment()).execute(new ActionEvent());
-        commentEditor.getActionFactory().saveNow().execute(new ActionEvent());
+
         mainView.editorInFocus(commentDRTA, ControlType.AREA);
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -108,13 +113,23 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
 
         //pagination
         ArrayList<DecoratedRTA> contentList = new ArrayList<>();
-        for (Document doc : abModel.getExercisePageDocs()) {
+        List<PageContent> pageContents = abModel.getPageContents();
+        for (int i = 0; i < pageContents.size(); i++) {
+            PageContent pageContent = pageContents.get(i);
+            Document doc = pageContent.getPageDoc();
             DecoratedRTA drta = new DecoratedRTA();
-            RichTextArea editor = drta.getEditor();
-            editor.getActionFactory().open(doc).execute(new ActionEvent());
-            editor.getActionFactory().saveNow().execute(new ActionEvent());
+            RichTextArea pageEditor = drta.getEditor();
+
+            pageEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+                exerciseModified = true;
+                double pageTextHeight = mainView.getRTATextHeight(pageEditor);
+                pageContent.setTextHeight(pageTextHeight);
+            });
+
+            pageEditor.getActionFactory().open(doc).execute(new ActionEvent());
+            pageEditor.getActionFactory().saveNow().execute(new ActionEvent());
             mainView.editorInFocus(drta, ControlType.AREA);
-            editor.focusedProperty().addListener((o, ov, nv) -> {
+            pageEditor.focusedProperty().addListener((o, ov, nv) -> {
                 if (nv) {
                     mainView.editorInFocus(drta, ControlType.AREA);
                 }
@@ -131,11 +146,18 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
 
     private void addPageAction() {
         int newPageIndex = abView.getContentPageIndex() + 1;
-        abModel.addBlankExercisePage(newPageIndex);
+        abModel.addBlankContentPage(newPageIndex);
 
         DecoratedRTA drta = new DecoratedRTA();
         RichTextArea editor = drta.getEditor();
         editor.getActionFactory().saveNow().execute(new ActionEvent());
+
+        editor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            exerciseModified = true;
+            double textHeight = mainView.getRTATextHeight(editor);
+            abModel.getPageContents().get(newPageIndex).setTextHeight(textHeight);
+        });
+
         mainView.editorInFocus(drta, ControlType.AREA);
         editor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -150,7 +172,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
     }
 
     private void removePageAction() {
-        if (abModel.getExercisePageDocs().size() <= 1) {
+        if (abModel.getPageContents().size() <= 1) {
             EditorAlerts.showSimpleAlert("Cannot Remove", "Your response must include at least one page.");
         }
         else {
@@ -162,7 +184,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
                 if (result.get() != OK) okContinue = false;
             }
             if (okContinue) {
-                abModel.getExercisePageDocs().remove(currentPageIndex);
+                abModel.getPageContents().remove(currentPageIndex);
                 abView.removeContentPage(currentPageIndex);
                 exerciseModified = true;
                 Platform.runLater(() -> {
@@ -192,8 +214,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        abModel = getABmodelFromView();
-        ABexercise exercise = new ABexercise(abModel, mainWindow);
+        ABmodel workingModel = getABmodelFromView();
+        ABexercise workingExercise = new ABexercise(workingModel, mainWindow);
         double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
         //header node
@@ -215,13 +237,12 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         nodeList.add(headerSeparator);
 
 
-
-
         //statement node
-        RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextArea statementRTA = workingExercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.prefHeightProperty().unbind();
         statementRTA.minWidthProperty().unbind();
-        double statementHeight = mainView.getRTATextHeight(statementRTA);
+        double statementHeight = workingModel.getStatementTextHeight();
+
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
         statementRTA.setMinWidth(nodeWidth);
@@ -250,12 +271,15 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         abBox.getChildren().addAll(leaderLabel, boxA, boxB);
         nodeList.add(abBox);
 
-        List<DecoratedRTA> pageList = exercise.getExerciseView().getContentPageList();
-        for (DecoratedRTA drta : pageList) {
+        List<DecoratedRTA> pageList = workingExercise.getExerciseView().getContentPageList();
+        List<PageContent> pageContents = workingModel.getPageContents();
+        for (int i = 0; i < pageList.size(); i++) {
+            DecoratedRTA drta = pageList.get(i);
             RichTextArea pageRTA = drta.getEditor();
             pageRTA.prefHeightProperty().unbind();
-            double pageHeight = mainView.getRTATextHeight(pageRTA);
-            pageRTA.setPrefHeight(pageHeight + 35.0);
+
+            pageRTA.setPrefHeight(pageContents.get(i).getTextHeight() + 35);
+
             pageRTA.setContentAreaWidth(nodeWidth);
             pageRTA.setPrefWidth(nodeWidth);
             nodeList.add(pageRTA);
@@ -271,11 +295,11 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
 
 
         //comment node
-        RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextArea commentRTA = workingExercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
         commentRTA.minWidthProperty().unbind();
-        double commentHeight = mainView.getRTATextHeight(commentRTA);
-        commentRTA.setPrefHeight(commentHeight + 35.0);
+        commentRTA.setPrefHeight(workingModel.getCommentTextHeight() + 35.0);
+
         commentRTA.setContentAreaWidth(nodeWidth);
         commentRTA.setMinWidth(nodeWidth);
         commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
@@ -325,13 +349,20 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         Document commentDocument = commentRTA.getDocument();
 
         List<DecoratedRTA> exerciseContent = abView.getContentPageList();
-        List<Document> contentList = new ArrayList<>();
-        for (DecoratedRTA drta : exerciseContent) {
+        List<PageContent> currentContents = abModel.getPageContents();
+        List<PageContent> contentList = new ArrayList<>();
+
+        for (int i = 0; i < exerciseContent.size(); i++) {
+            DecoratedRTA drta = exerciseContent.get(i);
             RichTextArea editor = drta.getEditor();
             if (editor.isModified()) exerciseModified = true;
             editor.getActionFactory().saveNow().execute(new ActionEvent());
-            contentList.add(editor.getDocument());
+            Document doc = editor.getDocument();
+            double textHeight = currentContents.get(i).getTextHeight();
+            PageContent pageContent = new PageContent(doc, textHeight);
+            contentList.add(pageContent);
         }
+
         String name = abModel.getExerciseName();
         String prompt = abModel.getContentPrompt();
 
@@ -350,6 +381,8 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         newModel.setOriginalModel(abModel.getOriginalModel());
         newModel.setCommentPrefHeight(abView.getCommentPrefHeight());
         newModel.setPaginationPrefHeight(abView.getPaginationPrefHeight());
+        newModel.setCommentTextHeight(abModel.getCommentTextHeight());
+        newModel.setStatementTextHeight(abModel.getStatementTextHeight());
 
         return newModel;
     }

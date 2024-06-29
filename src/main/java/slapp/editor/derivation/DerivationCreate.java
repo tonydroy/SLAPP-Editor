@@ -16,6 +16,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
@@ -40,6 +41,7 @@ public class DerivationCreate {
     private MainWindow mainWindow;
     private RichTextArea statementRTA;
     private DecoratedRTA statementDRTA;
+    private double statementTextHeight;
     private TextField nameField;
     private boolean fieldModified = false;
     private ChangeListener nameListener;
@@ -126,6 +128,12 @@ public class DerivationCreate {
         statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         statementRTA.setPrefHeight(100);
         statementRTA.setMinHeight(50);
+
+        statementRTA.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            fieldModified = true;
+            statementTextHeight = mainWindow.getMainView().getRTATextHeight(statementRTA);
+        });
+
         statementRTA.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 editorInFocus(statementDRTA, ControlType.AREA);
@@ -542,14 +550,12 @@ public class DerivationCreate {
     }
 
     private void viewExercise() {
-        DerivationExercise exercise = new DerivationExercise(extractModelFromWindow(), mainWindow);
+        DerivationModel model = extractModelFromWindow();
+        DerivationExercise exercise = new DerivationExercise(model, mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
-        rta.setEditable(true);
-        rta.prefHeightProperty().unbind();
-        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
-        double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
+        rta.prefHeightProperty().unbind();
+        exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         mainWindow.setUpExercise(exercise);
     }
 
@@ -561,18 +567,15 @@ public class DerivationCreate {
         scopeLineCheck.selectedProperty().addListener(leftmostScopeListner);
         defaultShelfCheck.selectedProperty().addListener(defaultShelfListener);
 
-        DerivationExercise exercise = new DerivationExercise(extractModelFromWindow(), mainWindow);
+        DerivationModel model = extractModelFromWindow();
+        DerivationExercise exercise = new DerivationExercise(model, mainWindow);
 
         for (SetupLine line : setupLines) { line.setModified(false); }
 
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
-        rta.setEditable(true);
-        rta.prefHeightProperty().unbind();
-        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
-        double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
-        exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
+        rta.prefHeightProperty().unbind();
+        exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         exercise.saveExercise(saveAs);
         lowerSaveButton.setDisable(false);
         saveAsButton.setDisable(false);
@@ -589,6 +592,8 @@ public class DerivationCreate {
         if (statementRTA.isModified()) fieldModified = true;
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document statementDocument = statementRTA.getDocument();
+        double statementPrefHeight = statementTextHeight + 25;
+        Document commentDocument = new Document();
 
         List<ModelLine> modelLines = new ArrayList<>();
         for (int i = 0; i < setupLines.size(); i++) {
@@ -621,7 +626,7 @@ public class DerivationCreate {
            }
         }
 
-        DerivationModel model = new DerivationModel(name, false, 70.0, gridWidth, leftmostScope, defaultShelf, keyboardSelector, statementDocument, new Document(), modelLines);
+        DerivationModel model = new DerivationModel(name, false, statementPrefHeight, gridWidth, leftmostScope, defaultShelf, keyboardSelector, statementDocument, commentDocument, modelLines);
         return model;
     }
 

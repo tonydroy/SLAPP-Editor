@@ -4,6 +4,7 @@ package slapp.editor.ab_explain;
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
 import slapp.editor.main_window.ExerciseType;
+import slapp.editor.simple_editor.PageContent;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,16 +18,20 @@ public class ABmodel implements ExerciseModel<Document>, Serializable {
     private ABmodelExtra modelFields = new ABmodelExtra();
     private boolean started = false;
     private String prompt = "";
-    private double statementPrefHeight = 80;
-    private double commentPrefHeight = 60;
-    private double paginationPrefHeight = 450;
+
+
     private Document exerciseStatement = new Document();
+    private double statementPrefHeight = 80;
+    private double statementTextHeight = 0;
     private Document exerciseComment = new Document();
-    private List<Document> exercisePageDocs = new ArrayList<>();
+    private double commentPrefHeight = 60;
+    private double commentTextHeight = 0;
+
+    private List<PageContent> pageContents = new ArrayList<>();
+    private double paginationPrefHeight = 450;
 
 
-
-    public ABmodel(String name, ABmodelExtra modelFields, boolean started, String prompt, double statementPrefHeight, Document exerciseStatement, Document exerciseComment, List<Document> exercisePageDocs) {
+    public ABmodel(String name, ABmodelExtra modelFields, boolean started, String prompt, double statementPrefHeight, Document exerciseStatement, Document exerciseComment, List<PageContent> pageContents) {
         this.exerciseName = name;
         this.modelFields = modelFields;
         this.started = started;
@@ -34,11 +39,11 @@ public class ABmodel implements ExerciseModel<Document>, Serializable {
         this.statementPrefHeight = statementPrefHeight;
         this.exerciseStatement = exerciseStatement;
         this.exerciseComment = exerciseComment;
-        this.exercisePageDocs = exercisePageDocs;
-        if (exercisePageDocs.isEmpty()) exercisePageDocs.add(new Document());
+        this.pageContents = pageContents;
+        if (pageContents.isEmpty()) pageContents.add(new PageContent(new Document(), 0.0));
     }
 
-    void addBlankExercisePage(int position) { exercisePageDocs.add(position, new Document());  }
+    void addBlankContentPage(int position) { pageContents.add(position, new PageContent(new Document(), 0.0));  }
     public String getContentPrompt() {
         return prompt;
     }
@@ -51,6 +56,14 @@ public class ABmodel implements ExerciseModel<Document>, Serializable {
     public double getPaginationPrefHeight() {   return paginationPrefHeight;  }
 
     public void setPaginationPrefHeight(double paginationPrefHeight) {   this.paginationPrefHeight = paginationPrefHeight;  }
+
+    public double getStatementTextHeight() {     return statementTextHeight;  }
+
+    public void setStatementTextHeight(double statementTextHeight) {   this.statementTextHeight = statementTextHeight;   }
+
+    public double getCommentTextHeight() {    return commentTextHeight;   }
+
+    public void setCommentTextHeight(double commentTextHeight) {   this.commentTextHeight = commentTextHeight;  }
 
     @Override
     public String getExerciseName() { return exerciseName; }
@@ -71,7 +84,7 @@ public class ABmodel implements ExerciseModel<Document>, Serializable {
     @Override
     public void setStatementPrefHeight(double statementPrefHeight) { this.statementPrefHeight = statementPrefHeight; }
 
-    public List<Document> getExercisePageDocs() {  return exercisePageDocs; }
+    public List<PageContent> getPageContents() {  return pageContents; }
 
     public ExerciseModel<Document> getOriginalModel() { return originalModel;  }
 

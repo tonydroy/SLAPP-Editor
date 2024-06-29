@@ -17,6 +17,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
@@ -45,6 +46,7 @@ public class DrvtnExpCreate {
     private MainWindow mainWindow;
     private RichTextArea statementRTA;
     private DecoratedRTA statementDRTA;
+    private double statementTextHeight;
     private TextField nameField;
     private TextField promptField;
     private boolean fieldModified = false;
@@ -135,6 +137,12 @@ public class DrvtnExpCreate {
         statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         statementRTA.setPrefHeight(100);
         statementRTA.setMinHeight(50);
+
+        statementRTA.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            fieldModified = true;
+            statementTextHeight = mainWindow.getMainView().getRTATextHeight(statementRTA);
+        });
+
         statementRTA.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 editorInFocus(statementDRTA, ControlType.AREA);
@@ -570,14 +578,12 @@ public class DrvtnExpCreate {
     }
 
     private void viewExercise() {
-        DrvtnExpExercise exercise = new DrvtnExpExercise(extractModelFromWindow(), mainWindow);
+        DrvtnExpModel model = extractModelFromWindow();
+        DrvtnExpExercise exercise = new DrvtnExpExercise(model, mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
-        rta.setEditable(true);
-        rta.prefHeightProperty().unbind();
-        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
-        double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
+        rta.prefHeightProperty().unbind();
+        exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         mainWindow.setUpExercise(exercise);
     }
 
@@ -589,18 +595,15 @@ public class DrvtnExpCreate {
         scopeLineCheck.selectedProperty().addListener(leftmostScopeListner);
         defaultShelfCheck.selectedProperty().addListener(defaultShelfListener);
 
-        DrvtnExpExercise exercise = new DrvtnExpExercise(extractModelFromWindow(), mainWindow);
+        DrvtnExpModel model = extractModelFromWindow();
+        DrvtnExpExercise exercise = new DrvtnExpExercise(model, mainWindow);
 
         for (DrvtnExpSetupLine line : setupLines) { line.setModified(false); }
 
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
-        rta.setEditable(true);
-        rta.prefHeightProperty().unbind();
-        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
-        double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
-        exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
+        rta.prefHeightProperty().unbind();
+        exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         exercise.saveExercise(saveAs);
         lowerSaveButton.setDisable(false);
         saveAsButton.setDisable(false);
@@ -618,6 +621,10 @@ public class DrvtnExpCreate {
         if (statementRTA.isModified()) fieldModified = true;
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document statementDocument = statementRTA.getDocument();
+        double statementPrefHeight = statementTextHeight + 25;
+        Document commentDocument = new Document();
+        Document explainDocument = new Document();
+
 
         List<ModelLine> modelLines = new ArrayList<>();
         for (int i = 0; i < setupLines.size(); i++) {
@@ -651,7 +658,7 @@ public class DrvtnExpCreate {
         }
 
 
-        DrvtnExpModel model = new DrvtnExpModel(name, false, 70.0, gridWidth, prompt, leftmostScope, defaultShelf, keyboardSelector, statementDocument, new Document(), new Document(), modelLines);
+        DrvtnExpModel model = new DrvtnExpModel(name, false, statementPrefHeight, gridWidth, prompt, leftmostScope, defaultShelf, keyboardSelector, statementDocument, commentDocument, commentDocument, modelLines);
         return model;
     }
 

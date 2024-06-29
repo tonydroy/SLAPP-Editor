@@ -15,8 +15,8 @@ public class DerivationModel implements ExerciseModel<Document>, Serializable {
     private ExerciseType exerciseType = ExerciseType.DERIVATION;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
-    private double statementPrefHeight = 80;
-    private double commentPrefHeight = 60;
+
+
     private double splitPanePrefWidth;
 
     private double gridWidth = 0;
@@ -24,7 +24,11 @@ public class DerivationModel implements ExerciseModel<Document>, Serializable {
     private boolean defaultShelf = true;
     private RichTextAreaSkin.KeyMapValue keyboardSelector;
     private Document exerciseStatement = new Document();
+    private double statementPrefHeight = 80;
+    private double statementTextHeight = 0;
     private Document exerciseComment = new Document();
+    private double commentPrefHeight = 60;
+    private double commentTextHeight = 0;
     private List<ModelLine> derivationLines = new ArrayList<>();
 
 
@@ -52,6 +56,14 @@ public class DerivationModel implements ExerciseModel<Document>, Serializable {
     public void setCommentPrefHeight(double commentPrefHeight) { this.commentPrefHeight = commentPrefHeight; }
     public double getSplitPanePrefWidth() {   return splitPanePrefWidth;  }
     public void setSplitPanePrefWidth(double splitPanePrefWidth) {  this.splitPanePrefWidth = splitPanePrefWidth;    }
+
+    public double getStatementTextHeight() {     return statementTextHeight;   }
+
+    public void setStatementTextHeight(double statementTextHeight) {     this.statementTextHeight = statementTextHeight;   }
+
+    public double getCommentTextHeight() {     return commentTextHeight;   }
+
+    public void setCommentTextHeight(double commentTextHeight) {     this.commentTextHeight = commentTextHeight;   }
 
     @Override
     public String getExerciseName() { return exerciseName; }

@@ -72,11 +72,11 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         RichTextArea commentEditor = commentDRTA.getEditor();
 
         commentEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            exerciseModified = true;
             double commentTextHeight = mainView.getRTATextHeight(commentEditor);
             editModel.setCommentTextHeight(commentTextHeight);
         });
         commentEditor.getActionFactory().open(editModel.getExerciseComment()).execute(new ActionEvent());
- //       commentEditor.getActionFactory().saveNow().execute(new ActionEvent());
 
         mainView.editorInFocus(commentDRTA, ControlType.AREA);
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
@@ -87,7 +87,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         editView.setExerciseComment(commentDRTA);
 
         //pagination
-        ArrayList<DecoratedRTA> contentList = new ArrayList<>();
+        List<DecoratedRTA> contentList = new ArrayList<>();
         List<PageContent> pageContents = editModel.getPageContents();
         for (int i = 0; i < pageContents.size(); i++) {
             PageContent pageContent = pageContents.get(i);
@@ -95,10 +95,14 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
             DecoratedRTA drta = new DecoratedRTA();
             RichTextArea pageEditor = drta.getEditor();
 
+
             pageEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+                exerciseModified = true;
                 double pageTextHeight = mainView.getRTATextHeight(pageEditor);
                 pageContent.setTextHeight(pageTextHeight);
             });
+
+
 
             pageEditor.getActionFactory().open(doc).execute(new ActionEvent());
             pageEditor.getActionFactory().saveNow().execute(new ActionEvent());
@@ -128,6 +132,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         editor.getActionFactory().saveNow().execute(new ActionEvent());
 
         editor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            exerciseModified = true;
             double textHeight = mainView.getRTATextHeight(editor);
             editModel.getPageContents().get(newPageIndex).setTextHeight(textHeight);
         });
@@ -256,7 +261,6 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         commentRTA.prefHeightProperty().unbind();
         commentRTA.minWidthProperty().unbind();
 
-
         commentRTA.setPrefHeight(workingModel.getCommentTextHeight() + 35.0);
 
         commentRTA.setContentAreaWidth(nodeWidth);
@@ -332,8 +336,6 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
 
 
         Document statementDocument = editModel.getExerciseStatement();
-
-
         double statementHeight = editView.getExerciseStatement().getEditor().getPrefHeight();
 
         SimpleEditModel newModel = new SimpleEditModel(name, started, prompt, statementHeight, statementDocument, commentDocument, contentList);

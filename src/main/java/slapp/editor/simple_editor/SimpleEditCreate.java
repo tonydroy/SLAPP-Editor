@@ -89,9 +89,9 @@ public class SimpleEditCreate {
         statementRTA.setPrefHeight(200);
 
         statementRTA.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            fieldModified = true;
             statementTextHeight = mainWindow.getMainView().getRTATextHeight(statementRTA);
         });
-
 
         Label nameLabel = new Label("Exercise Name: ");
         nameLabel.setPrefWidth(95);
@@ -301,9 +301,6 @@ public class SimpleEditCreate {
 
         SimpleEditModel model = extractModelFromWindow();
         SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
-
-
-
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.prefHeightProperty().unbind();
         rta.setEditable(false);

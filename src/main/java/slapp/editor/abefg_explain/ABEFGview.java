@@ -19,6 +19,7 @@ import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ABEFGview implements ExerciseView<DecoratedRTA> {
 
@@ -33,7 +34,7 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
     private CheckBox checkBoxG = new CheckBox("");
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private DecoratedRTA exerciseComment = new DecoratedRTA();
-    private ArrayList<DecoratedRTA> contentPageList = new ArrayList<>();
+    private List<DecoratedRTA> contentPageList = new ArrayList<>();
     private String contentPrompt = new String();
     private Pagination pagination;
     private Button addPageButton;
@@ -287,10 +288,10 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
     int getContentPageIndex() {return pagination.getCurrentPageIndex();  }
     Button getAddPageButton() { return addPageButton; }
     Button getRemovePageButton() { return removePageButton; }
-    public ArrayList<DecoratedRTA> getContentPageList() {
+    public List<DecoratedRTA> getContentPageList() {
         return contentPageList;
     }
-    public void setContentPageList(ArrayList<DecoratedRTA> contentPageList) { this.contentPageList = contentPageList; }
+    public void setContentPageList(List<DecoratedRTA> contentPageList) { this.contentPageList = contentPageList; }
     public void setContentPrompt(String prompt) {
         contentPrompt = prompt;
     }

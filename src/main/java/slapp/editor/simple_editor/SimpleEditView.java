@@ -45,8 +45,6 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
         this.mainView = mainView;
         this.pagination = new Pagination();
 
-
-
         pagination.setMaxPageIndicatorCount(5);
         pagination.setPageFactory((index) -> {
             DecoratedRTA drtaPage = contentPageList.get(index);

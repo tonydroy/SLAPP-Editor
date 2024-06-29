@@ -77,7 +77,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         drvtnExpView.setExplanationPrefHeight(drvtnExpModel.getExplanationPrefHeight());
         drvtnExpView.setSplitPanePrefWidth(drvtnExpModel.getSplitPanePrefWidth());
 
-
+        //statement
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
         statementEditor.getActionFactory().open(drvtnExpModel.getExerciseStatement()).execute(new ActionEvent());
@@ -89,9 +89,17 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         });
         drvtnExpView.setExerciseStatement(statementDRTA);
 
+        //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
+
+        commentEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            exerciseModified = true;
+            double commentTextHeight = mainView.getRTATextHeight(commentEditor);
+            drvtnExpModel.setCommentTextHeight(commentTextHeight);
+        });
         commentEditor.getActionFactory().open(drvtnExpModel.getExerciseComment()).execute(new ActionEvent());
+
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
@@ -99,10 +107,17 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         });
         drvtnExpView.setExerciseComment(commentDRTA);
 
+        //explain
         DecoratedRTA explanationDRTA = new DecoratedRTA();
         RichTextArea explanationEditor = explanationDRTA.getEditor();
 
+        explanationEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            exerciseModified = true;
+            double explanationTextHeight = mainView.getRTATextHeight(commentEditor);
+            drvtnExpModel.setExplanationTextHeight(explanationTextHeight);
+        });
         explanationEditor.getActionFactory().open(drvtnExpModel.getExplanationDocument()).execute(new ActionEvent());
+
         explanationEditor.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(explanationDRTA, ControlType.AREA);
@@ -110,7 +125,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         });
         drvtnExpView.setExplanationDRTA(explanationDRTA);
 
-
+        //buttons
         drvtnExpView.getInsertLineButton().setOnAction(e -> insertLineAction());
         drvtnExpView.getDeleteLineButton().setOnAction(e -> deleteLineAction());
         drvtnExpView.getIndentButton().setOnAction(e -> indentLineAction());
@@ -122,6 +137,8 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         drvtnExpView.getUndoButton().setOnAction(e -> undoAction());
         drvtnExpView.getRedoButton().setOnAction(e -> redoAction());
 
+
+        //cleanup
         drvtnExpView.initializeViewDetails();
         drvtnExpView.getSplitPane().setDividerPosition(0, drvtnExpModel.getGridWidth());
         drvtnExpView.getSplitPane().getDividers().get(0).positionProperty().addListener((ob, ov, nv) -> {
@@ -131,7 +148,6 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
         setViewLinesFromModel();
         drvtnExpView.setGridFromViewLines();
-
         setContentFocusListeners();
     }
 
@@ -853,8 +869,8 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        drvtnExpModel = getDrvtnExpModelFromView();
-        DrvtnExpExercise exercise = new DrvtnExpExercise(drvtnExpModel, mainWindow);
+        DrvtnExpModel workingModel = getDrvtnExpModelFromView();
+        DrvtnExpExercise workingExercise = new DrvtnExpExercise(workingModel, mainWindow);
         double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
         //header node
@@ -876,9 +892,9 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         nodeList.add(headerSeparator);
 
         //statement node
-        RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextArea statementRTA = workingExercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.prefHeightProperty().unbind();
-        double statementHeight = mainView.getRTATextHeight(statementRTA);
+        double statementHeight = workingModel.getStatementTextHeight();
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
         statementRTA.setMinWidth(nodeWidth);
@@ -893,20 +909,20 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         nodeList.add(statementSepBox);
 
         //content node
-        GridPane derivationPane = exercise.getExerciseView().getGrid();
+        GridPane derivationPane = workingExercise.getExerciseView().getGrid();
         derivationPane.setPadding(new Insets(15,0,15,0));
 
-        double width = drvtnExpModel.getGridWidth() * nodeWidth;
+        double width = workingModel.getGridWidth() * nodeWidth;
         derivationPane.setMaxWidth(width);
         derivationPane.setMinWidth(width);
         HBox gridBox = new HBox(derivationPane);
         gridBox.setAlignment(Pos.CENTER);
         nodeList.add(gridBox);
 
-        RichTextArea explanationRTA = exercise.getExerciseView().getExplanationDRTA().getEditor();
+        RichTextArea explanationRTA = workingExercise.getExerciseView().getExplanationDRTA().getEditor();
         explanationRTA.prefHeightProperty().unbind();
         explanationRTA.minWidthProperty().unbind();
-        double explanationHeight = mainView.getRTATextHeight(explanationRTA);
+        double explanationHeight = workingModel.getExplanationTextHeight();
         explanationRTA.setPrefHeight(explanationHeight + 35.0);
         explanationRTA.setContentAreaWidth(nodeWidth);
         explanationRTA.setMinWidth(nodeWidth);
@@ -922,11 +938,10 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         nodeList.add(contentSepBox);
 
         //comment node
-        RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextArea commentRTA = workingExercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
         commentRTA.minWidthProperty().unbind();
-        double commentHeight = mainView.getRTATextHeight(commentRTA);
-        commentRTA.setPrefHeight(commentHeight + 35.0);
+        commentRTA.setPrefHeight(workingModel.getCommentTextHeight() + 35.0);
         commentRTA.setContentAreaWidth(nodeWidth);
         commentRTA.setMinWidth(nodeWidth);
         commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
@@ -981,14 +996,9 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         String name = drvtnExpView.getExerciseName();
         String prompt = drvtnExpView.getContentPrompt();
         Boolean started = (drvtnExpModel.isStarted() || exerciseModified);
-        double statementHeight = drvtnExpView.getExerciseStatement().getEditor().getPrefHeight();
-        double gridWidth = drvtnExpView.getSplitPane().getDividerPositions()[0];
 
-
-        boolean leftmostScopeLine = drvtnExpModel.isLeftmostScopeLine();
-        boolean defaultShelf = drvtnExpModel.isDefaultShelf();
-        RichTextAreaSkin.KeyMapValue keyboardSelector = drvtnExpModel.getKeyboardSelector();
         Document statementDocument = drvtnExpModel.getExerciseStatement();
+        double statementHeight = drvtnExpView.getExerciseStatement().getEditor().getPrefHeight();
 
         RichTextArea commentRTA = drvtnExpView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
@@ -998,6 +1008,10 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         explanationRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document explanationDocument = explanationRTA.getDocument();
 
+        double gridWidth = drvtnExpView.getSplitPane().getDividerPositions()[0];
+        boolean leftmostScopeLine = drvtnExpModel.isLeftmostScopeLine();
+        boolean defaultShelf = drvtnExpModel.isDefaultShelf();
+        RichTextAreaSkin.KeyMapValue keyboardSelector = drvtnExpModel.getKeyboardSelector();
 
         List<ModelLine> modelLines = new ArrayList<>();
         List<ViewLine> viewLines = drvtnExpView.getViewLines();
@@ -1030,14 +1044,17 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         }
 
 
-        DrvtnExpModel model = new DrvtnExpModel(name, started, statementHeight, gridWidth, prompt, leftmostScopeLine, defaultShelf, keyboardSelector, statementDocument, commentDocument, explanationDocument, modelLines);
-        model.setOriginalModel(drvtnExpModel.getOriginalModel());
-        model.setCommentPrefHeight(drvtnExpView.getCommentPrefHeight());
-        model.setExplanationPrefHeight(drvtnExpView.getExplanationPrefHeight());
-        model.setSplitPanePrefWidth(drvtnExpView.getSplitPanePrefWidth());
+        DrvtnExpModel newModel = new DrvtnExpModel(name, started, statementHeight, gridWidth, prompt, leftmostScopeLine, defaultShelf, keyboardSelector, statementDocument, commentDocument, explanationDocument, modelLines);
+        newModel.setOriginalModel(drvtnExpModel.getOriginalModel());
+        newModel.setCommentPrefHeight(drvtnExpView.getCommentPrefHeight());
+        newModel.setExplanationPrefHeight(drvtnExpView.getExplanationPrefHeight());
+        newModel.setSplitPanePrefWidth(drvtnExpView.getSplitPanePrefWidth());
+        newModel.setCommentTextHeight(drvtnExpModel.getCommentTextHeight());
+        newModel.setStatementTextHeight(drvtnExpModel.getStatementTextHeight());
+        newModel.setExplanationTextHeight(drvtnExpModel.getExplanationTextHeight());
 
 
-        return model;
+        return newModel;
     }
 
 

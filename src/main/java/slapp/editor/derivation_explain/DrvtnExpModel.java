@@ -15,19 +15,23 @@ public class DrvtnExpModel implements ExerciseModel<Document>, Serializable {
     private ExerciseType exerciseType  = ExerciseType.DRVTN_EXP;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
-    private double statementPrefHeight = 80;
-    private double commentPrefHeight = 60;
-    private double explanationPrefHeight = 120;
-    private double splitPanePrefWidth;
 
+    private double splitPanePrefWidth;
     private double gridWidth = 0;
     private String contentPrompt ="";
     private boolean isLeftmostScopeLine = true;
     private boolean defaultShelf = true;
     private RichTextAreaSkin.KeyMapValue keyboardSelector;
     private Document exerciseStatement = new Document();
+    private double statementPrefHeight = 80;
+    private double statementTextHeight = 0;
     private Document exerciseComment = new Document();
+    private double commentPrefHeight = 60;
+    private double commentTextHeight = 0;
     private Document explanationDocument = new Document();
+    private double explanationPrefHeight = 120;
+    private double explanationTextHeight = 0;
+
     private List<ModelLine> derivationLines = new ArrayList<>();
 
 
@@ -67,6 +71,18 @@ public class DrvtnExpModel implements ExerciseModel<Document>, Serializable {
     public void setExplanationPrefHeight(double explanationPrefHeight) {  this.explanationPrefHeight = explanationPrefHeight;   }
     public double getSplitPanePrefWidth() {    return splitPanePrefWidth;  }
     public void setSplitPanePrefWidth(double splitPanePrefWidth) {    this.splitPanePrefWidth = splitPanePrefWidth;  }
+
+    public double getStatementTextHeight() {    return statementTextHeight;  }
+
+    public void setStatementTextHeight(double statementTextHeight) {  this.statementTextHeight = statementTextHeight;  }
+
+    public double getCommentTextHeight() {    return commentTextHeight;  }
+
+    public void setCommentTextHeight(double commentTextHeight) {    this.commentTextHeight = commentTextHeight;   }
+
+    public double getExplanationTextHeight() {     return explanationTextHeight;  }
+
+    public void setExplanationTextHeight(double explanationTextHeight) {   this.explanationTextHeight = explanationTextHeight;   }
 
     @Override
     public String getExerciseName() { return exerciseName; }

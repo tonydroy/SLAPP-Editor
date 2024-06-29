@@ -18,6 +18,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -30,6 +31,7 @@ import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.MainWindow;
+import slapp.editor.simple_editor.PageContent;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -40,6 +42,7 @@ public class ABcreate {
     private MainWindow mainWindow;
     private RichTextArea statementRTA;
     private DecoratedRTA statementDRTA;
+    private double statementTextHeight;
     private TextField nameField;
     private TextField leaderField;
     private TextField promptFieldA;
@@ -105,6 +108,11 @@ public class ABcreate {
         statementRTA.setPrefWidth(PrintUtilities.getPageWidth() + 20);
         statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         statementRTA.setPrefHeight(200);
+
+        statementRTA.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            fieldsModified = true;
+            statementTextHeight = mainWindow.getMainView().getRTATextHeight(statementRTA);
+        });
 
         Label nameLabel = new Label("Exercise Name: ");
         nameLabel.setPrefWidth(100);
@@ -279,10 +287,6 @@ public class ABcreate {
 //        topBox.layout();
         borderPane.topProperty().setValue(topBox);
 
-
-
-
-
         borderPane.setTop(topBox);
 
         stage = new Stage();
@@ -358,31 +362,28 @@ public class ABcreate {
     }
 
     private void viewExercise() {
-        ABexercise exercise = new ABexercise(extractModelFromWindow(), mainWindow);
+        ABmodel model = extractModelFromWindow();
+        ABexercise exercise = new ABexercise(model, mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
-        rta.setEditable(true);
         rta.prefHeightProperty().unbind();
-        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
-        double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
+        exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         mainWindow.setUpExercise(exercise);
     }
 
     private void saveExercise(boolean saveAs) {
         saveButton.setDisable(true);
         saveAsButton.setDisable(true);
-
         nameField.textProperty().addListener(nameListener);
-        ABexercise exercise = new ABexercise(extractModelFromWindow(), mainWindow);
+
+        ABmodel model = extractModelFromWindow();
+        ABexercise exercise = new ABexercise(model, mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(true);
         rta.prefHeightProperty().unbind();
-        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
-        double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
-        exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
+        exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
+
         exercise.saveExercise(saveAs);
         saveButton.setDisable(false);
         saveAsButton.setDisable(false);
@@ -398,7 +399,10 @@ public class ABcreate {
         if (statementRTA.isModified()) fieldsModified = true;
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document statementDocument = statementRTA.getDocument();
-        ABmodel model = new ABmodel(name, fields,  false, prompt, 70.0, statementDocument, new Document(), new ArrayList<Document>());
+        Document commentDoc = new Document();
+        double statementPrefHeight = statementTextHeight + 25;
+        ABmodel model = new ABmodel(name, fields,  false, prompt, statementPrefHeight, statementDocument, commentDoc, new ArrayList<PageContent>());
+        model.setStatementTextHeight(statementTextHeight);
         return model;
     }
 

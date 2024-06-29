@@ -1,7 +1,6 @@
 package slapp.editor.abefg_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -14,6 +13,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -22,8 +22,7 @@ import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
-import slapp.editor.vertical_tree.VerticalTreeExercise;
-import slapp.editor.vertical_tree.VerticalTreeModel;
+import slapp.editor.simple_editor.PageContent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -143,8 +142,14 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
+
+        commentEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            exerciseModified = true;
+            double commentTextHeight = mainView.getRTATextHeight(commentEditor);
+            abefgModel.setCommentTextHeight(commentTextHeight);
+        });
         commentEditor.getActionFactory().open(abefgModel.getExerciseComment()).execute(new ActionEvent());
-        commentEditor.getActionFactory().saveNow().execute(new ActionEvent());
+
         mainView.editorInFocus(commentDRTA, ControlType.AREA);
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -154,14 +159,25 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         abefgView.setExerciseComment(commentDRTA);
 
         //pagination
-        ArrayList<DecoratedRTA> contentList = new ArrayList<>();
-        for (Document doc : abefgModel.getExercisePageDocs()) {
+        List<DecoratedRTA> contentList = new ArrayList<>();
+        List<PageContent> pageContents = abefgModel.getPageContents();
+
+        for (int i = 0; i < pageContents.size(); i++) {
+            PageContent pageContent = pageContents.get(i);
+            Document doc = pageContent.getPageDoc();
             DecoratedRTA drta = new DecoratedRTA();
-            RichTextArea editor = drta.getEditor();
-            editor.getActionFactory().open(doc).execute(new ActionEvent());
-            editor.getActionFactory().saveNow().execute(new ActionEvent());
+            RichTextArea pageEditor = drta.getEditor();
+
+            pageEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+                exerciseModified = true;
+                double pageTextHeight = mainView.getRTATextHeight(pageEditor);
+                pageContent.setTextHeight(pageTextHeight);
+            });
+
+            pageEditor.getActionFactory().open(doc).execute(new ActionEvent());
+            pageEditor.getActionFactory().saveNow().execute(new ActionEvent());
             mainView.editorInFocus(drta, ControlType.AREA);
-            editor.focusedProperty().addListener((o, ov, nv) -> {
+            pageEditor.focusedProperty().addListener((o, ov, nv) -> {
                 if (nv) {
                     mainView.editorInFocus(drta, ControlType.AREA);
                 }
@@ -178,11 +194,18 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
 
     private void addPageAction() {
         int newPageIndex = abefgView.getContentPageIndex() + 1;
-        abefgModel.addBlankExercisePage(newPageIndex);
+        abefgModel.addBlankContentPage(newPageIndex);
 
         DecoratedRTA drta = new DecoratedRTA();
         RichTextArea editor = drta.getEditor();
         editor.getActionFactory().saveNow().execute(new ActionEvent());
+
+        editor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            exerciseModified = true;
+            double textHeight = mainView.getRTATextHeight(editor);
+            abefgModel.getPageContents().get(newPageIndex).setTextHeight(textHeight);
+        });
+
         mainView.editorInFocus(drta, ControlType.AREA);
         editor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
@@ -197,7 +220,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
     }
 
     private void removePageAction() {
-        if (abefgModel.getExercisePageDocs().size() <= 1) {
+        if (abefgModel.getPageContents().size() <= 1) {
             EditorAlerts.showSimpleAlert("Cannot Remove", "Your response must include at least one page.");
         }
         else {
@@ -209,7 +232,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
                 if (result.get() != OK) okContinue = false;
             }
             if (okContinue) {
-                abefgModel.getExercisePageDocs().remove(currentPageIndex);
+                abefgModel.getPageContents().remove(currentPageIndex);
                 abefgView.removeContentPage(currentPageIndex);
                 exerciseModified = true;
                 Platform.runLater(() -> {
@@ -237,8 +260,8 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        abefgModel = getABEFGmodelFromView();
-        ABEFGexercise exercise = new ABEFGexercise(abefgModel, mainWindow);
+        ABEFGmodel workingModel = getABEFGmodelFromView();
+        ABEFGexercise workingExercise = new ABEFGexercise(workingModel, mainWindow);
         double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
         //header node
@@ -263,10 +286,10 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
 
 
         //statement node
-        RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextArea statementRTA = workingExercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.prefHeightProperty().unbind();
         statementRTA.prefWidthProperty().unbind();
-        double statementHeight = mainView.getRTATextHeight(statementRTA);
+        double statementHeight = workingModel.getStatementTextHeight();
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
         statementRTA.setMinWidth(nodeWidth);
@@ -308,12 +331,13 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
 
         nodeList.add(checksBox);
 
-        ArrayList<DecoratedRTA> pageList = exercise.getExerciseView().getContentPageList();
-        for (DecoratedRTA drta : pageList) {
+        List<DecoratedRTA> pageList = workingExercise.getExerciseView().getContentPageList();
+        List<PageContent> pageContents = workingModel.getPageContents();
+        for (int i = 0; i < pageList.size(); i++) {
+            DecoratedRTA drta = pageList.get(i);
             RichTextArea pageRTA = drta.getEditor();
             pageRTA.prefHeightProperty().unbind();
-            double pageHeight = mainView.getRTATextHeight(pageRTA);
-            pageRTA.setPrefHeight(pageHeight + 35.0);
+            pageRTA.setPrefHeight(pageContents.get(i).getTextHeight() + 35);
             pageRTA.setContentAreaWidth(nodeWidth);
             pageRTA.setPrefWidth(nodeWidth);
             nodeList.add(pageRTA);
@@ -328,11 +352,10 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         nodeList.add(contentSepBox);
 
         //comment node
-        RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextArea commentRTA = workingExercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
         commentRTA.minWidthProperty().unbind();
-        double commentHeight = mainView.getRTATextHeight(commentRTA);
-        commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
+        commentRTA.setPrefHeight(workingModel.getCommentTextHeight() + 35.0);
         commentRTA.setContentAreaWidth(nodeWidth);
         commentRTA.setMinWidth(nodeWidth);
         commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
@@ -356,7 +379,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         RichTextArea commentEditor = abefgView.getExerciseComment().getEditor();
         if (commentEditor.isModified()) exerciseModified = true;
 
-        ArrayList<DecoratedRTA> exerciseContent = abefgView.getContentPageList();
+        List<DecoratedRTA> exerciseContent = abefgView.getContentPageList();
         for (DecoratedRTA drta : exerciseContent) {
             RichTextArea editor = drta.getEditor();
             if (editor.isModified()) {
@@ -381,13 +404,19 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
 
-        ArrayList<DecoratedRTA> exerciseContent = abefgView.getContentPageList();
-        ArrayList<Document> contentList = new ArrayList<>();
-        for (DecoratedRTA drta : exerciseContent) {
+        List<DecoratedRTA> exerciseContent = abefgView.getContentPageList();
+        List<PageContent> currentContents = abefgModel.getPageContents();
+        List<PageContent> contentList = new ArrayList<>();
+
+        for (int i = 0; i < exerciseContent.size(); i++) {
+            DecoratedRTA drta = exerciseContent.get(i);
             RichTextArea editor = drta.getEditor();
             if (editor.isModified()) exerciseModified = true;
             editor.getActionFactory().saveNow().execute(new ActionEvent());
-            contentList.add(editor.getDocument());
+            Document doc = editor.getDocument();
+            double textHeight = currentContents.get(i).getTextHeight();
+            PageContent pageContent = new PageContent(doc, textHeight);
+            contentList.add(pageContent);
         }
         String name = abefgModel.getExerciseName();
         String prompt = abefgModel.getContentPrompt();
@@ -412,12 +441,16 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
 
         boolean started = (abefgModel.isStarted() || exerciseModified);
         abefgModel.setStarted(started);
-        double statementHeight = abefgView.getExerciseStatement().getEditor().getPrefHeight();
+
         Document statementDocument = abefgModel.getExerciseStatement();
+        double statementHeight = abefgView.getExerciseStatement().getEditor().getPrefHeight();
+
         ABEFGmodel newModel = new ABEFGmodel(name, extra, started, prompt, statementHeight, statementDocument, commentDocument, contentList);
         newModel.setOriginalModel(abefgModel.getOriginalModel());
         newModel.setCommentPrefHeight(abefgView.getCommentPrefHeight());
         newModel.setPaginationPrefHeight(abefgView.getPaginationPrefHeight());
+        newModel.setCommentTextHeight(abefgModel.getCommentTextHeight());
+        newModel.setStatementTextHeight(abefgModel.getStatementTextHeight());
 
         return newModel;
     }

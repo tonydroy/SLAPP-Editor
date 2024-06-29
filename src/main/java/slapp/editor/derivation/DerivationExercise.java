@@ -85,7 +85,14 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
+
+        commentEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            exerciseModified = true;
+            double commentTextHeight = mainView.getRTATextHeight(commentEditor);
+            derivationModel.setCommentTextHeight(commentTextHeight);
+        });
         commentEditor.getActionFactory().open(derivationModel.getExerciseComment()).execute(new ActionEvent());
+
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
@@ -833,8 +840,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        derivationModel = getDerivationModelFromView();
-        DerivationExercise exercise = new DerivationExercise(derivationModel, mainWindow);
+        DerivationModel workingModel = getDerivationModelFromView();
+        DerivationExercise workingExercise = new DerivationExercise(workingModel, mainWindow);
         double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
         //header node
@@ -856,9 +863,9 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         nodeList.add(headerSeparator);
 
         //statement node
-        RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextArea statementRTA = workingExercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.prefHeightProperty().unbind();
-        double statementHeight = mainView.getRTATextHeight(statementRTA);
+        double statementHeight = workingModel.getStatementTextHeight();
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
         statementRTA.setMinWidth(nodeWidth);
@@ -873,10 +880,10 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         nodeList.add(statementSepBox);
 
         //content node
-        GridPane derivationPane = exercise.getExerciseView().getGrid();
+        GridPane derivationPane = workingExercise.getExerciseView().getGrid();
         derivationPane.setPadding(new Insets(15,0,15,0));
 
-        double width = derivationModel.getGridWidth() * nodeWidth;
+        double width = workingModel.getGridWidth() * nodeWidth;
         derivationPane.setMaxWidth(width);
         derivationPane.setMinWidth(width);
         HBox gridBox = new HBox(derivationPane);
@@ -893,11 +900,12 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         nodeList.add(contentSepBox);
 
         //comment node
-        RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextArea commentRTA = workingExercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
         commentRTA.minWidthProperty().unbind();
-        double commentHeight = mainView.getRTATextHeight(commentRTA);
-        commentRTA.setPrefHeight(commentHeight + 35.0);
+
+        commentRTA.setPrefHeight(workingModel.getCommentTextHeight() + 35.0);
+
         commentRTA.setContentAreaWidth(nodeWidth);
         commentRTA.setMinWidth(nodeWidth);
         commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
@@ -950,20 +958,21 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
     private DerivationModel getDerivationModelFromView() {
         String name = derivationView.getExerciseName();
-
         Boolean started = (derivationModel.isStarted() || exerciseModified);
-        double statementHeight = derivationView.getExerciseStatement().getEditor().getPrefHeight();
-        double gridWidth = derivationView.getContentSplitPane().getDividerPositions()[0];
 
-
-        boolean leftmostScopeLine = derivationModel.isLeftmostScopeLine();
-        boolean defaultShelf = derivationModel.isDefaultShelf();
-        RichTextAreaSkin.KeyMapValue keyboardSelector = derivationModel.getKeyboardSelector();
         Document statementDocument = derivationModel.getExerciseStatement();
+        double statementHeight = derivationView.getExerciseStatement().getEditor().getPrefHeight();
+
 
         RichTextArea commentRTA = derivationView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
+
+        double gridWidth = derivationView.getContentSplitPane().getDividerPositions()[0];
+        boolean leftmostScopeLine = derivationModel.isLeftmostScopeLine();
+        boolean defaultShelf = derivationModel.isDefaultShelf();
+        RichTextAreaSkin.KeyMapValue keyboardSelector = derivationModel.getKeyboardSelector();
+
 
         List<ModelLine> modelLines = new ArrayList<>();
         List<ViewLine> viewLines = derivationView.getViewLines();
@@ -994,12 +1003,14 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             ModelLine modelLine = new ModelLine(depth, lineContentDocument, justification, lineType);
             modelLines.add(modelLine);
         }
-        DerivationModel model = new DerivationModel(name, started, statementHeight,gridWidth, leftmostScopeLine, defaultShelf, keyboardSelector, statementDocument, commentDocument, modelLines);
-        model.setOriginalModel(derivationModel.getOriginalModel());
-        model.setCommentPrefHeight(derivationView.getCommentPrefHeight());
-        model.setSplitPanePrefWidth(derivationView.getSplitPanePrefWidth());
+        DerivationModel newModel = new DerivationModel(name, started, statementHeight,gridWidth, leftmostScopeLine, defaultShelf, keyboardSelector, statementDocument, commentDocument, modelLines);
+        newModel.setOriginalModel(derivationModel.getOriginalModel());
+        newModel.setCommentPrefHeight(derivationView.getCommentPrefHeight());
+        newModel.setSplitPanePrefWidth(derivationView.getSplitPanePrefWidth());
+        newModel.setCommentTextHeight(derivationModel.getCommentTextHeight());
+        newModel.setStatementTextHeight(derivationModel.getStatementTextHeight());
 
-        return model;
+        return newModel;
     }
 
 
