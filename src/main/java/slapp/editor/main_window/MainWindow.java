@@ -293,7 +293,13 @@ public class MainWindow {
         if (currentExercise != null && !((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
             boolean heightGood = true;
 
-            List<Node> printNodes = currentExercise.getPrintNodes();
+
+            ExerciseModel printModel = currentExercise.getExerciseModelFromView();
+            TypeSelectorFactories typeFactory = new TypeSelectorFactories(mainWindow);
+            Exercise printExercise = typeFactory.getExerciseFromModelObject(printModel);
+
+
+            List<Node> printNodes = printExercise.getPrintNodes();
             PrintUtilities.resetPrintBuffer(getBaseScale());
             for (Node node : printNodes) {
                 if (!PrintUtilities.processPrintNode(node) && !fitToPage) {
@@ -318,7 +324,13 @@ public class MainWindow {
     private void printExercise() {
         if (currentExercise != null && !((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
             boolean heightGood = true;
-            List<Node> printNodes = currentExercise.getPrintNodes();
+
+            //isolate printExercise from currentExercise
+            ExerciseModel printModel = currentExercise.getExerciseModelFromView();
+            TypeSelectorFactories typeFactory = new TypeSelectorFactories(mainWindow);
+            Exercise printExercise = typeFactory.getExerciseFromModelObject(printModel);
+
+            List<Node> printNodes = printExercise.getPrintNodes();
             PrintUtilities.resetPrintBuffer(getBaseScale());
             for (Node node : printNodes) {
                 if (!PrintUtilities.processPrintNode(node) && !fitToPage) {
@@ -385,7 +397,7 @@ public class MainWindow {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("There is no open assignment on which to comment.");
         } else {
-            AssignmentCommentWindow commentWindow = new AssignmentCommentWindow(currentAssignment.getHeader());
+            AssignmentCommentWindow commentWindow = new AssignmentCommentWindow(currentAssignment.getHeader(), mainView);
             AssignmentHeader header = commentWindow.getHeaderComment();
             if (!(header.getComment().equals(currentAssignment.getComment()))) assignmentContentModified = true;
             currentAssignment.setHeader(header);
@@ -457,8 +469,8 @@ public class MainWindow {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("There is no open assignment to print.");
         } else {
-            mainView.activateProgressIndicator("Processing for print");
-//            EditorAlerts.showFleetingAlert("Notice", "Flicker expected while processing assignment." );
+            mainView.activateProgressIndicator("");
+            EditorAlerts.showFleetingAlert("Notice", "Processing for print." );
 
             boolean heightGood = true;
             List<String> badExerciseList = new ArrayList<>();
@@ -483,7 +495,7 @@ public class MainWindow {
                     }
                 }
             }
-            mainView.deactivateProgressIndicator();
+//            mainView.deactivateProgressIndicator();
 
             if (!badExerciseList.isEmpty()) {
                 StringBuilder sb = new StringBuilder(badExerciseList.get(0));
@@ -511,8 +523,7 @@ public class MainWindow {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("There is no open assignment to export.");
         } else {
-            mainView.activateProgressIndicator("processing");
-            mainView.getStatementNode().requestFocus();
+            mainView.activateProgressIndicator("");
             EditorAlerts.showFleetingAlert("Notice", "Processing for export." );
 
             boolean heightGood = true;

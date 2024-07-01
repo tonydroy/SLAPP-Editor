@@ -48,6 +48,7 @@ public class TruthTableCreate {
     private TextField nameField;
     private RichTextArea statementRTA;
     private DecoratedRTA statementDRTA;
+    private double statementTextHeight;
     private boolean fieldModified = false;
     private double scale = 1.0;
     private Scene scene;
@@ -93,6 +94,7 @@ public class TruthTableCreate {
         nameField.setText(originalModel.getExerciseName());
         statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        statementTextHeight = originalModel.getStatementTextHeight();
         conclusionDividerCheck.setSelected(originalModel.isConclusionDivider());
         updateOperatorFieldsFromModel(originalModel);
         updateUnaryOperatorGridFromFields();
@@ -119,6 +121,10 @@ public class TruthTableCreate {
         statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         statementRTA.setPrefHeight(100);
         statementRTA.setMinHeight(50);
+        statementRTA.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            fieldModified = true;
+            statementTextHeight = mainWindow.getMainView().getRTATextHeight(statementRTA);
+        });
         statementRTA.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 editorInFocus(statementDRTA, ControlType.AREA);
@@ -538,15 +544,13 @@ public class TruthTableCreate {
         }
     }
     private void viewExercise() {
-        TruthTableExercise exercise = new TruthTableExercise(extractModelFromWindow(), mainWindow, true);
+        TruthTableModel model = extractModelFromWindow();
+        TruthTableExercise exercise = new TruthTableExercise(model, mainWindow, true);
         exercise.generateEmptyTableModel();
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
-        rta.setEditable(true);
-        rta.prefHeightProperty().unbind();
-        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
-        double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
+        rta.prefHeightProperty().unbind();
+        exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         mainWindow.setUpExercise(exercise);
     }
     private void clearExercise() {
@@ -570,20 +574,15 @@ public class TruthTableCreate {
     private void saveExercise(boolean saveAs) {
         lowerSaveButton.setDisable(true);
         saveAsButton.setDisable(true);
-
         nameField.textProperty().addListener(nameListener);
 
-        TruthTableExercise exercise = new TruthTableExercise(extractModelFromWindow(), mainWindow, true);
+        TruthTableModel model = extractModelFromWindow();
+        TruthTableExercise exercise = new TruthTableExercise(model, mainWindow, true);
 
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
-        rta.setEditable(true);
-        rta.prefHeightProperty().unbind();
-        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
-        double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
-        exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
-
+        rta.prefHeightProperty().unbind();
+        exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         exercise.saveExercise(saveAs);
         lowerSaveButton.setDisable(false);
         saveAsButton.setDisable(false);
@@ -651,11 +650,12 @@ public class TruthTableCreate {
 
         model.setExerciseName(nameField.getText());
         model.setStarted(false);
-        model.setStatementPrefHeight(70.0);
 
         if (statementRTA.isModified()) fieldModified = true;
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setExerciseStatement(statementRTA.getDocument());
+        model.setStatementPrefHeight(statementTextHeight + 25);
+        model.setStatementTextHeight(statementTextHeight);
 
         List<String> unaryOperatorStrings = new ArrayList<>();
         for (BoxedDRTA bdrta : unaryOperatorList) {

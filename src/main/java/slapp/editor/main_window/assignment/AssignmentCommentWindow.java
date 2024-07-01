@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -24,10 +25,12 @@ import javafx.stage.StageStyle;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
+import slapp.editor.main_window.MainWindowView;
 
 public class AssignmentCommentWindow {
 
     private AssignmentHeader header;
+    private MainWindowView mainView;
     private DecoratedRTA commentDRTA;
     private RichTextArea commentEditor;
     private double scale = 1.0;
@@ -37,8 +40,9 @@ public class AssignmentCommentWindow {
     private VBox centerBox;
     private SimpleDoubleProperty centerHeightProperty;
 
-    public AssignmentCommentWindow(AssignmentHeader header) {
+    public AssignmentCommentWindow(AssignmentHeader header, MainWindowView mainView) {
         this.header = header;
+        this.mainView = mainView;
         setUpWindow();
     }
     public AssignmentHeader getHeaderComment() {
@@ -61,6 +65,10 @@ public class AssignmentCommentWindow {
         commentEditor.setPrefWidth(PrintUtilities.getPageWidth() + 20);
         commentEditor.setContentAreaWidth(PrintUtilities.getPageWidth());
         commentEditor.setPrefHeight(200);
+
+        commentEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            header.setCommentTextHeight(mainView.getRTATextHeight(commentEditor));
+        });
 
         String helpText = "You may comment on the assignment as a whole.  Comment will not show on main screen, but does appear at top of your printed assignment.";
 

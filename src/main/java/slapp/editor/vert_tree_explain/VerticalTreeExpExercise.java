@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -71,11 +72,10 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
         verticalTreeExpView.setMainPanePrefHeight(verticalTreeExpModel.getMainPanePrefHeight());
         verticalTreeExpView.setMainPanePrefWidth(verticalTreeExpModel.getMainPanePrefWidth());
 
-
+        //statement
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
         statementEditor.getActionFactory().open(verticalTreeExpModel.getExerciseStatement()).execute(new ActionEvent());
-
         statementEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(statementDRTA, ControlType.STATEMENT);
@@ -83,10 +83,17 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
         });
         verticalTreeExpView.setExerciseStatement(statementDRTA);
 
+        //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.setPromptText("Comment: ");
         commentEditor.getActionFactory().open(verticalTreeExpModel.getExerciseComment()).execute(new ActionEvent());
+        mainView.editorInFocus(commentDRTA, ControlType.AREA);
+        commentEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            exerciseModified = true;
+            double commentTextHeight = mainView.getRTATextHeight(commentEditor);
+            verticalTreeExpModel.setCommentTextHeight(commentTextHeight);
+        });
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
@@ -94,21 +101,25 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
         });
         verticalTreeExpView.setExerciseComment(commentDRTA);
 
+        //explain
         DecoratedRTA explainDRTA = verticalTreeExpView.getExplainDRTA();
         RichTextArea explainEditor = explainDRTA.getEditor();
         explainEditor.getActionFactory().open(verticalTreeExpModel.getExplainDocument()).execute(new ActionEvent());
         verticalTreeExpView.setExplainPrompt(verticalTreeExpModel.getExplainPrompt());
-
         explainEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(explainDRTA, ControlType.AREA);
+        explainEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            exerciseModified = true;
+            double explainTextHeight = mainView.getRTATextHeight(commentEditor);
+            verticalTreeExpModel.setExplainTextHeight(explainTextHeight);
+        });
         explainEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(explainDRTA, ControlType.AREA);
             }
         });
 
-
-
+        //cleanup
         verticalTreeExpView.getUndoButton().setOnAction(e -> undoAction());
         verticalTreeExpView.getRedoButton().setOnAction(e -> redoAction());
 
@@ -353,12 +364,13 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        verticalTreeExpModel = getVerticalTreeModelFromView();
-        VerticalTreeExpExercise exercise = new VerticalTreeExpExercise(verticalTreeExpModel, mainWindow);
+        VerticalTreeExpModel printModel = verticalTreeExpModel;
+        VerticalTreeExpExercise printExercise = this;
+
         double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
         //header node
-        Label exerciseName = new Label(verticalTreeExpModel.getExerciseName());
+        Label exerciseName = new Label(printModel.getExerciseName());
         exerciseName.setStyle("-fx-font-weight: bold;");
         HBox hbox = new HBox(exerciseName);
         hbox.setPadding(new Insets(0,0,10,0));
@@ -376,10 +388,10 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
         nodeList.add(headerSeparator);
 
         //statement node
-        RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextArea statementRTA = printExercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.prefHeightProperty().unbind();
         statementRTA.prefWidthProperty().unbind();
-        double statementHeight = mainView.getRTATextHeight(statementRTA);
+        double statementHeight = printModel.getStatementTextHeight();
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
         statementRTA.setMinWidth(nodeWidth);
@@ -394,7 +406,7 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
         nodeList.add(statementSepBox);
 
         //content node
-        AnchorPane mainPane = exercise.getExerciseView().getRootLayout().getMain_pane();
+        AnchorPane mainPane = printExercise.getExerciseView().getRootLayout().getMain_pane();
         mainPane.setStyle("-fx-background-color: transparent");
         ObservableList<Node> nodes = mainPane.getChildren();
 
@@ -415,11 +427,10 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
 
         nodeList.add(contentHBox);
 
-        RichTextArea explanationRTA = exercise.getExerciseView().getExplainDRTA().getEditor();
+        RichTextArea explanationRTA = printExercise.getExerciseView().getExplainDRTA().getEditor();
         explanationRTA.prefHeightProperty().unbind();
         explanationRTA.minWidthProperty().unbind();
-        double explanationHeight = mainView.getRTATextHeight(explanationRTA);
-        explanationRTA.setPrefHeight(explanationHeight + 35.0);
+        explanationRTA.setPrefHeight(printModel.getExplainTextHeight() + 35.0);
         explanationRTA.setContentAreaWidth(nodeWidth);
         explanationRTA.setMinWidth(nodeWidth);
         explanationRTA.getStylesheets().clear(); statementRTA.getStylesheets().add("richTextAreaPrinter.css");
@@ -434,12 +445,11 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
         nodeList.add(contentSepBox);
 
         //comment node
-        RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextArea commentRTA = printExercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
         commentRTA.prefWidthProperty().unbind();
         commentRTA.minWidthProperty().unbind();
-        double commentHeight = mainView.getRTATextHeight(commentRTA);
-        commentRTA.setPrefHeight(Math.max(70, commentHeight + 35.0));
+        commentRTA.setPrefHeight(printModel.getCommentTextHeight() + 35.0);
         commentRTA.setContentAreaWidth(nodeWidth);
         commentRTA.setMinWidth(nodeWidth);
         commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
@@ -499,12 +509,18 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
         model.setDragIconList(verticalTreeExpModel.getDragIconList());
         model.setObjectControlList(verticalTreeExpModel.getObjectControlList());
         model.setStarted(verticalTreeExpModel.isStarted() || exerciseModified);
+
+
         model.setStatementPrefHeight(verticalTreeExpView.getExerciseStatement().getEditor().getPrefHeight());
         model.setCommentPrefHeight(verticalTreeExpView.getCommentPrefHeight());
         model.setExplainPrefHeight(verticalTreeExpView.getExplainPrefHeight());
+        model.setStatementTextHeight(verticalTreeExpModel.getStatementTextHeight());
+        model.setCommentTextHeight(verticalTreeExpModel.getCommentTextHeight());
+        model.setExplainTextHeight(verticalTreeExpModel.getExplainTextHeight());
+        model.setExerciseStatement(verticalTreeExpModel.getExerciseStatement());
+
         model.setMainPanePrefHeight(verticalTreeExpView.getMainPanePrefHeight());
         model.setMainPanePrefWidth(verticalTreeExpView.getMainPanePrefWidth());
-        model.setExerciseStatement(verticalTreeExpModel.getExerciseStatement());
 
         RichTextArea commentRTA = verticalTreeExpView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());

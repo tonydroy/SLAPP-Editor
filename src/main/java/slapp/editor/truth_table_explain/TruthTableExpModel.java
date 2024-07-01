@@ -15,12 +15,16 @@ public class TruthTableExpModel implements ExerciseModel<Document>, Serializable
     private ExerciseType exerciseType = ExerciseType.TRUTH_TABLE_ABEXP;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
-    private double statementPrefHeight = 80;
-    private double commentPrefHeight = 60;
-    private double explainPrefHeight = 60;
+
     private Document exerciseStatement = new Document();
+    private double statementPrefHeight = 80;
+    private double statementTextHeight = 0;
     private Document exerciseComment = new Document();
+    private double commentPrefHeight = 60;
+    private double commentTextHeight = 0;
     private Document explainDocument = new Document();
+    private double explainPrefHeight = 60;
+    private double explainTextHeight = 0;
 
     private List<String> unaryOperators = new ArrayList<>();
     private List<String> binaryOperators = new ArrayList<>();
@@ -151,6 +155,18 @@ public class TruthTableExpModel implements ExerciseModel<Document>, Serializable
     public void setCommentPrefHeight(double commentPrefHeight) {  this.commentPrefHeight = commentPrefHeight; }
     public double getExplainPrefHeight() {  return explainPrefHeight;  }
     public void setExplainPrefHeight(double explainPrefHeight) { this.explainPrefHeight = explainPrefHeight;   }
+
+    public double getStatementTextHeight() {    return statementTextHeight;  }
+
+    public void setStatementTextHeight(double statementTextHeight) {    this.statementTextHeight = statementTextHeight;  }
+
+    public double getCommentTextHeight() {     return commentTextHeight;  }
+
+    public void setCommentTextHeight(double commentTextHeight) {     this.commentTextHeight = commentTextHeight;  }
+
+    public double getExplainTextHeight() {    return explainTextHeight;  }
+
+    public void setExplainTextHeight(double explainTextHeight) {    this.explainTextHeight = explainTextHeight;  }
 
     @Override
     public String getExerciseName() {

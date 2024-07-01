@@ -76,7 +76,7 @@ public class ABcreate {
         this(mainWindow);
         statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
-
+        statementTextHeight = originalModel.getStatementTextHeight();
         nameField.setText(originalModel.getExerciseName());
         contentPromptField.setText(originalModel.getContentPrompt());
         ABmodelExtra fields = originalModel.getModelFields();

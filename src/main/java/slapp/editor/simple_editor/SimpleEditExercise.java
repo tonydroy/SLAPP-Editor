@@ -192,13 +192,15 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        SimpleEditModel workingModel = getSimpleEditModelFromView();
-        SimpleEditExercise workingExercise = new SimpleEditExercise(workingModel, mainWindow);
+
+
+        SimpleEditModel printModel = editModel;
+        SimpleEditExercise printExercise = this;
 
         double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
         //header node
-        Label exerciseName = new Label(workingModel.getExerciseName());
+        Label exerciseName = new Label(printModel.getExerciseName());
         exerciseName.setStyle("-fx-font-weight: bold;");
         HBox hbox = new HBox(exerciseName);
         hbox.setPadding(new Insets(0,0,10,0));
@@ -216,10 +218,10 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         nodeList.add(headerSeparator);
 
         //statement node
-        RichTextArea statementRTA = workingExercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextArea statementRTA = printExercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.prefHeightProperty().unbind();
         statementRTA.minWidthProperty().unbind();
-        double statementHeight = workingModel.getStatementTextHeight();
+        double statementHeight = printModel.getStatementTextHeight();
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
         statementRTA.setMinWidth(nodeWidth);
@@ -235,8 +237,8 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
 
 
         //content nodes
-        List<DecoratedRTA> pageList = workingExercise.getExerciseView().getContentPageList();
-        List<PageContent> pageContents = workingModel.getPageContents();
+        List<DecoratedRTA> pageList = printExercise.getExerciseView().getContentPageList();
+        List<PageContent> pageContents = printModel.getPageContents();
         for (int i = 0; i < pageList.size(); i++) {
             DecoratedRTA drta = pageList.get(i);
             RichTextArea pageRTA = drta.getEditor();
@@ -257,11 +259,11 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         nodeList.add(contentSepBox);
 
         //comment node
-        RichTextArea commentRTA = workingExercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextArea commentRTA = printExercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
         commentRTA.minWidthProperty().unbind();
 
-        commentRTA.setPrefHeight(workingModel.getCommentTextHeight() + 35.0);
+        commentRTA.setPrefHeight(printModel.getCommentTextHeight() + 35.0);
 
         commentRTA.setContentAreaWidth(nodeWidth);
         commentRTA.setMinWidth(nodeWidth);

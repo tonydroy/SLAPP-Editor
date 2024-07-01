@@ -92,14 +92,12 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
-
+        commentEditor.getActionFactory().open(drvtnExpModel.getExerciseComment()).execute(new ActionEvent());
         commentEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
             exerciseModified = true;
             double commentTextHeight = mainView.getRTATextHeight(commentEditor);
             drvtnExpModel.setCommentTextHeight(commentTextHeight);
         });
-        commentEditor.getActionFactory().open(drvtnExpModel.getExerciseComment()).execute(new ActionEvent());
-
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
@@ -110,13 +108,13 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         //explain
         DecoratedRTA explanationDRTA = new DecoratedRTA();
         RichTextArea explanationEditor = explanationDRTA.getEditor();
+        explanationEditor.getActionFactory().open(drvtnExpModel.getExplanationDocument()).execute(new ActionEvent());
 
         explanationEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
             exerciseModified = true;
             double explanationTextHeight = mainView.getRTATextHeight(commentEditor);
             drvtnExpModel.setExplanationTextHeight(explanationTextHeight);
         });
-        explanationEditor.getActionFactory().open(drvtnExpModel.getExplanationDocument()).execute(new ActionEvent());
 
         explanationEditor.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
@@ -869,8 +867,9 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        DrvtnExpModel workingModel = getDrvtnExpModelFromView();
-        DrvtnExpExercise workingExercise = new DrvtnExpExercise(workingModel, mainWindow);
+        DrvtnExpExercise printExercise = this;
+        DrvtnExpModel printModel = drvtnExpModel;
+
         double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
         //header node
@@ -892,9 +891,9 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         nodeList.add(headerSeparator);
 
         //statement node
-        RichTextArea statementRTA = workingExercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextArea statementRTA = printExercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.prefHeightProperty().unbind();
-        double statementHeight = workingModel.getStatementTextHeight();
+        double statementHeight = printModel.getStatementTextHeight();
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
         statementRTA.setMinWidth(nodeWidth);
@@ -909,20 +908,20 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         nodeList.add(statementSepBox);
 
         //content node
-        GridPane derivationPane = workingExercise.getExerciseView().getGrid();
+        GridPane derivationPane = printExercise.getExerciseView().getGrid();
         derivationPane.setPadding(new Insets(15,0,15,0));
 
-        double width = workingModel.getGridWidth() * nodeWidth;
+        double width = printModel.getGridWidth() * nodeWidth;
         derivationPane.setMaxWidth(width);
         derivationPane.setMinWidth(width);
         HBox gridBox = new HBox(derivationPane);
         gridBox.setAlignment(Pos.CENTER);
         nodeList.add(gridBox);
 
-        RichTextArea explanationRTA = workingExercise.getExerciseView().getExplanationDRTA().getEditor();
+        RichTextArea explanationRTA = printExercise.getExerciseView().getExplanationDRTA().getEditor();
         explanationRTA.prefHeightProperty().unbind();
         explanationRTA.minWidthProperty().unbind();
-        double explanationHeight = workingModel.getExplanationTextHeight();
+        double explanationHeight = printModel.getExplanationTextHeight();
         explanationRTA.setPrefHeight(explanationHeight + 35.0);
         explanationRTA.setContentAreaWidth(nodeWidth);
         explanationRTA.setMinWidth(nodeWidth);
@@ -938,10 +937,10 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         nodeList.add(contentSepBox);
 
         //comment node
-        RichTextArea commentRTA = workingExercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextArea commentRTA = printExercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
         commentRTA.minWidthProperty().unbind();
-        commentRTA.setPrefHeight(workingModel.getCommentTextHeight() + 35.0);
+        commentRTA.setPrefHeight(printModel.getCommentTextHeight() + 35.0);
         commentRTA.setContentAreaWidth(nodeWidth);
         commentRTA.setMinWidth(nodeWidth);
         commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");

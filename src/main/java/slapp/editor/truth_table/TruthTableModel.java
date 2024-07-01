@@ -14,10 +14,13 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     private ExerciseType exerciseType = ExerciseType.TRUTH_TABLE;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
-    private double statementPrefHeight = 80;
-    private double commentPrefHeight = 60;
+
     private Document exerciseStatement = new Document();
+    private double statementPrefHeight = 80;
+    private double statementTextHeight = 0;
     private Document exerciseComment = new Document();
+    private double commentPrefHeight = 60;
+    private double commentTextHeight = 0;
     private List<String> unaryOperators = new ArrayList<>();
     private List<String> binaryOperators = new ArrayList<>();
 
@@ -110,6 +113,16 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     public double getCommentPrefHeight() {    return commentPrefHeight;  }
 
     public void setCommentPrefHeight(double commentPrefHeight) {  this.commentPrefHeight = commentPrefHeight;  }
+
+    public double getStatementTextHeight() {     return statementTextHeight;  }
+
+    public void setStatementTextHeight(double statementTextHeight) {    this.statementTextHeight = statementTextHeight;  }
+
+    public double getCommentTextHeight() {    return commentTextHeight;  }
+
+    public void setCommentTextHeight(double commentTextHeight) {
+        this.commentTextHeight = commentTextHeight;
+    }
 
     @Override
     public String getExerciseName() {

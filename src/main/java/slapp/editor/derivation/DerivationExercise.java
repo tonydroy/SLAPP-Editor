@@ -840,8 +840,9 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        DerivationModel workingModel = getDerivationModelFromView();
-        DerivationExercise workingExercise = new DerivationExercise(workingModel, mainWindow);
+        DerivationExercise printExercise = this;
+        DerivationModel printModel = derivationModel;
+
         double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
         //header node
@@ -863,9 +864,9 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         nodeList.add(headerSeparator);
 
         //statement node
-        RichTextArea statementRTA = workingExercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextArea statementRTA = printExercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.prefHeightProperty().unbind();
-        double statementHeight = workingModel.getStatementTextHeight();
+        double statementHeight = printModel.getStatementTextHeight();
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
         statementRTA.setMinWidth(nodeWidth);
@@ -880,10 +881,10 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         nodeList.add(statementSepBox);
 
         //content node
-        GridPane derivationPane = workingExercise.getExerciseView().getGrid();
+        GridPane derivationPane = printExercise.getExerciseView().getGrid();
         derivationPane.setPadding(new Insets(15,0,15,0));
 
-        double width = workingModel.getGridWidth() * nodeWidth;
+        double width = printModel.getGridWidth() * nodeWidth;
         derivationPane.setMaxWidth(width);
         derivationPane.setMinWidth(width);
         HBox gridBox = new HBox(derivationPane);
@@ -900,11 +901,11 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         nodeList.add(contentSepBox);
 
         //comment node
-        RichTextArea commentRTA = workingExercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextArea commentRTA = printExercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
         commentRTA.minWidthProperty().unbind();
 
-        commentRTA.setPrefHeight(workingModel.getCommentTextHeight() + 35.0);
+        commentRTA.setPrefHeight(printModel.getCommentTextHeight() + 35.0);
 
         commentRTA.setContentAreaWidth(nodeWidth);
         commentRTA.setMinWidth(nodeWidth);

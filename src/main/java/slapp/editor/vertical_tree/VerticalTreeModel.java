@@ -20,12 +20,16 @@ public class VerticalTreeModel implements ExerciseModel<Document>, Serializable 
     private RichTextAreaSkin.KeyMapValue defaultKeyboardType;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
+    private Document exerciseStatement = new Document();
     private double statementPrefHeight = 80;
+    private double statementTextHeight = 0;
+    private Document exerciseComment = new Document();
     private double commentPrefHeight = 60;
+    private double commentTextHeight = 0;
     private double mainPanePrefHeight = 350;
     private double mainPanePrefWidth;
-    private Document exerciseStatement = new Document();
-    private Document exerciseComment = new Document();
+
+
 
     private List<DragIconType> dragIconList = new ArrayList<>();
     private List<ObjectControlType> objectControlList = new ArrayList<>();
@@ -82,6 +86,14 @@ public class VerticalTreeModel implements ExerciseModel<Document>, Serializable 
     public double getMainPanePrefWidth() {     return mainPanePrefWidth;  }
 
     public void setMainPanePrefWidth(double mainPanePrefWidth) {    this.mainPanePrefWidth = mainPanePrefWidth; }
+
+    public double getStatementTextHeight() {  return statementTextHeight;  }
+
+    public void setStatementTextHeight(double statementTextHeight) {    this.statementTextHeight = statementTextHeight;  }
+
+    public double getCommentTextHeight() {    return commentTextHeight; }
+
+    public void setCommentTextHeight(double commentTextHeight) {    this.commentTextHeight = commentTextHeight;  }
 
     @Override
     public String getExerciseName() { return exerciseName;    }

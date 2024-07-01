@@ -102,6 +102,7 @@ public class DrvtnExpCreate {
 
         statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        statementTextHeight = originalModel.getStatementTextHeight();
         nameField.setText(originalModel.getExerciseName());
         promptField.setText(originalModel.getContentPrompt());
 
@@ -659,6 +660,7 @@ public class DrvtnExpCreate {
 
 
         DrvtnExpModel model = new DrvtnExpModel(name, false, statementPrefHeight, gridWidth, prompt, leftmostScope, defaultShelf, keyboardSelector, statementDocument, commentDocument, commentDocument, modelLines);
+        model.setStatementTextHeight(statementTextHeight);
         return model;
     }
 

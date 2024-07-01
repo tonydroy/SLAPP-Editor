@@ -66,6 +66,7 @@ public class SimpleEditCreate {
 
         statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        statementTextHeight = originalModel.getStatementTextHeight();
         nameField.setText(originalModel.getExerciseName());
         promptField.setText(originalModel.getContentPrompt());
         nameField.textProperty().addListener(nameListener);

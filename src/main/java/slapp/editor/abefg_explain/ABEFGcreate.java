@@ -80,7 +80,7 @@ public class ABEFGcreate {
 
         statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
-
+        statementTextHeight = originalModel.getStatementTextHeight();
         nameField.setText(originalModel.getExerciseName());
         explainPromptField.setText(originalModel.getContentPrompt());
         ABEFGmodelExtra fields = originalModel.getModelFields();

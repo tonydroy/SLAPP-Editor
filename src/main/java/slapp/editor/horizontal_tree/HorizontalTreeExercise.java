@@ -16,6 +16,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -66,6 +67,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         horizontalTreeView.setCommentPrefHeight(horizontalTreeModel.getCommentPrefHeight());
         horizontalTreeView.setExplainPrefHeight(horizontalTreeModel.getExplainPrefHeight());
 
+        //statenebt
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
         statementEditor.getActionFactory().open(horizontalTreeModel.getExerciseStatement()).execute(new ActionEvent());
@@ -77,10 +79,18 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         });
         horizontalTreeView.setExerciseStatement(statementDRTA);
 
+        //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.setPromptText("Comment: ");
         commentEditor.getActionFactory().open(horizontalTreeModel.getExerciseComment()).execute(new ActionEvent());
+
+        commentEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            exerciseModified = true;
+            double commentTextHeight = mainView.getRTATextHeight(commentEditor);
+            horizontalTreeModel.setCommentTextHeight(commentTextHeight);
+        });
+
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
@@ -88,10 +98,17 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         });
         horizontalTreeView.setExerciseComment(commentDRTA);
 
+        //explain
         DecoratedRTA explainDRTA = horizontalTreeView.getExplainDRTA();
         RichTextArea explainEditor = explainDRTA.getEditor();
         explainEditor.getActionFactory().open(horizontalTreeModel.getExplainDocument()).execute(new ActionEvent());
         horizontalTreeView.setExplainPrompt(horizontalTreeModel.getExplainPrompt());
+
+        explainEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            exerciseModified = true;
+            double explanationTextHeight = mainView.getRTATextHeight(commentEditor);
+            horizontalTreeModel.setExplainTextHeight(explanationTextHeight);
+        });
 
         explainEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(explainDRTA, ControlType.AREA);
@@ -101,8 +118,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
             }
         });
 
-
-
+        //buttons and cleanup
         horizontalTreeView.getUndoButton().setOnAction(e -> undoAction());
         horizontalTreeView.getRedoButton().setOnAction(e -> redoAction());
 
@@ -230,8 +246,9 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        horizontalTreeModel = getHorizontalTreeModelFromView();
-        HorizontalTreeExercise exercise = new HorizontalTreeExercise(horizontalTreeModel, mainWindow);
+        HorizontalTreeExercise printExercise = this;
+        HorizontalTreeModel printModel = horizontalTreeModel;
+
         double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
         //header node
@@ -253,10 +270,10 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         nodeList.add(headerSeparator);
 
         //statement node
-        RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextArea statementRTA = printExercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.prefHeightProperty().unbind();
         statementRTA.minWidthProperty().unbind();
-        double statementHeight = mainView.getRTATextHeight(statementRTA);
+        double statementHeight = printModel.getStatementTextHeight();
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
         statementRTA.setMinWidth(nodeWidth);
@@ -271,7 +288,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         nodeList.add(statementSepBox);
 
         //content
-        AnchorPane mainPane = exercise.getExerciseView().getMainPane();
+        AnchorPane mainPane = printExercise.getExerciseView().getMainPane();
         Group root = new Group();
         Scene scene = new Scene(root);
         root.getChildren().add(mainPane);
@@ -283,7 +300,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         axis.updateRuler(axisWidth);
 
         mainPane.setStyle("-fx-background-color: transparent");
-        exercise.getExerciseView().simpleRemoveAxis();
+        printExercise.getExerciseView().simpleRemoveAxis();
 
         ObservableList<Node> mainNodes = mainPane.getChildren();
         for (Node mainNode : mainNodes) {
@@ -314,10 +331,10 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
 
         //explain node
-        RichTextArea explainRTA = exercise.getExerciseView().getExplainDRTA().getEditor();
+        RichTextArea explainRTA = printExercise.getExerciseView().getExplainDRTA().getEditor();
         explainRTA.prefHeightProperty().unbind();
         explainRTA.minWidthProperty().unbind();
-        double explainHeight = mainView.getRTATextHeight(explainRTA);
+        double explainHeight = printModel.getExplainTextHeight();
         explainRTA.setPrefHeight(explainHeight + 35.0);
         explainRTA.setContentAreaWidth(nodeWidth);
         explainRTA.setMinWidth(nodeWidth);
@@ -333,11 +350,10 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
 
         //comment node
-        RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextArea commentRTA = printExercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
         commentRTA.minWidthProperty().unbind();
-        double commentHeight = mainView.getRTATextHeight(commentRTA);
-        commentRTA.setPrefHeight(commentHeight + 35.0);
+        commentRTA.setPrefHeight(printModel.getCommentTextHeight() + 35.0);
         commentRTA.setContentAreaWidth(nodeWidth);
         commentRTA.setMinWidth(nodeWidth);
         commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
@@ -377,20 +393,22 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         model.setExplainPrompt(horizontalTreeModel.getExplainPrompt());
         model.setOriginalModel(horizontalTreeModel.getOriginalModel());
         model.setStarted(horizontalTreeModel.isStarted() || exerciseModified);
-        model.setStatementPrefHeight(horizontalTreeView.getExerciseStatement().getEditor().getPrefHeight());
-        model.setCommentPrefHeight(horizontalTreeView.getCommentPrefHeight());
-        model.setExplainPrefHeight(horizontalTreeView.getExplainPrefHeight());
-
 
         model.setExerciseStatement(horizontalTreeModel.getExerciseStatement());
+        model.setStatementPrefHeight(horizontalTreeView.getExerciseStatement().getEditor().getPrefHeight());
+        model.setStatementTextHeight(horizontalTreeModel.getStatementTextHeight());
 
         RichTextArea commentRTA = horizontalTreeView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setExerciseComment(commentRTA.getDocument());
+        model.setCommentPrefHeight(horizontalTreeView.getCommentPrefHeight());
+        model.setCommentTextHeight(horizontalTreeModel.getCommentTextHeight());
 
         RichTextArea explainRTA = horizontalTreeView.getExplainDRTA().getEditor();
         explainRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setExplainDocument(explainRTA.getDocument());
+        model.setExplainPrefHeight(horizontalTreeView.getExplainPrefHeight());
+        model.setExplainTextHeight(horizontalTreeModel.getExplainTextHeight());
 
         model.setAxis(horizontalTreeView.isAxis());
 

@@ -260,8 +260,8 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        ABEFGmodel workingModel = getABEFGmodelFromView();
-        ABEFGexercise workingExercise = new ABEFGexercise(workingModel, mainWindow);
+        ABEFGmodel printModel = abefgModel;
+        ABEFGexercise printExercise = this;
         double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
         //header node
@@ -286,10 +286,10 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
 
 
         //statement node
-        RichTextArea statementRTA = workingExercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextArea statementRTA = printExercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.prefHeightProperty().unbind();
         statementRTA.prefWidthProperty().unbind();
-        double statementHeight = workingModel.getStatementTextHeight();
+        double statementHeight = printModel.getStatementTextHeight();
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
         statementRTA.setMinWidth(nodeWidth);
@@ -331,8 +331,8 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
 
         nodeList.add(checksBox);
 
-        List<DecoratedRTA> pageList = workingExercise.getExerciseView().getContentPageList();
-        List<PageContent> pageContents = workingModel.getPageContents();
+        List<DecoratedRTA> pageList = printExercise.getExerciseView().getContentPageList();
+        List<PageContent> pageContents = printModel.getPageContents();
         for (int i = 0; i < pageList.size(); i++) {
             DecoratedRTA drta = pageList.get(i);
             RichTextArea pageRTA = drta.getEditor();
@@ -352,10 +352,10 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         nodeList.add(contentSepBox);
 
         //comment node
-        RichTextArea commentRTA = workingExercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextArea commentRTA = printExercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
         commentRTA.minWidthProperty().unbind();
-        commentRTA.setPrefHeight(workingModel.getCommentTextHeight() + 35.0);
+        commentRTA.setPrefHeight(printModel.getCommentTextHeight() + 35.0);
         commentRTA.setContentAreaWidth(nodeWidth);
         commentRTA.setMinWidth(nodeWidth);
         commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");

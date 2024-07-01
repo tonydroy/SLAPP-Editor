@@ -1,7 +1,6 @@
 package slapp.editor.truth_table;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -14,6 +13,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -24,8 +24,6 @@ import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
-import slapp.editor.vertical_tree.VerticalTreeExercise;
-import slapp.editor.vertical_tree.VerticalTreeModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,9 +74,9 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         truthTableView.setStatementPrefHeight(truthTableModel.getStatementPrefHeight());
         truthTableView.setCommentPrefHeight(truthTableModel.getCommentPrefHeight());
 
-
         truthTableView.setTableRows(tableRows);
 
+        //statement
         DecoratedRTA statementDRTA = new DecoratedRTA();
         RichTextArea statementEditor = statementDRTA.getEditor();
         statementEditor.getActionFactory().open(truthTableModel.getExerciseStatement()).execute(new ActionEvent());
@@ -91,21 +89,23 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         });
         truthTableView.setExerciseStatement(statementDRTA);
 
+        //comment
         DecoratedRTA commentDRTA = new DecoratedRTA();
         RichTextArea commentEditor = commentDRTA.getEditor();
         commentEditor.getActionFactory().open(truthTableModel.getExerciseComment()).execute(new ActionEvent());
         commentEditor.getActionFactory().saveNow().execute(new ActionEvent());
         mainView.editorInFocus(commentDRTA, ControlType.AREA);
+        commentEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            exerciseModified = true;
+            double commentTextHeight = mainView.getRTATextHeight(commentEditor);
+            truthTableModel.setCommentTextHeight(commentTextHeight);
+        });
         commentEditor.focusedProperty().addListener((o, ov, nv) -> {
             if (nv) {
                 mainView.editorInFocus(commentDRTA, ControlType.AREA);
             }
         });
         truthTableView.setExerciseComment(commentDRTA);
-
-
-
-
 
         //initialize basic formulas control
         List<Document> basicFormulaDocs = truthTableModel.getBasicFormulas();
@@ -255,7 +255,7 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
 
     @Override
     public void saveExercise(boolean saveAs) {
-        boolean success = DiskUtilities.saveExercise(saveAs, getTruthTableExpModelFromView());
+        boolean success = DiskUtilities.saveExercise(saveAs, getTruthTableModelFromView());
         if (success) exerciseModified = false;
     }
 
@@ -265,12 +265,13 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        truthTableModel = getTruthTableExpModelFromView();
-        TruthTableExercise exercise = new TruthTableExercise(truthTableModel, mainWindow);
+        TruthTableModel printModel = truthTableModel;
+        TruthTableExercise printExercise = this;
+
         double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
         //header node
-        Label exerciseName = new Label(truthTableModel.getExerciseName());
+        Label exerciseName = new Label(printModel.getExerciseName());
         exerciseName.setStyle("-fx-font-weight: bold;");
         HBox hbox = new HBox(exerciseName);
         hbox.setPadding(new Insets(0,0,10,0));
@@ -288,10 +289,10 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         nodeList.add(headerSeparator);
 
         //statement node
-        RichTextArea statementRTA = exercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextArea statementRTA = printExercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.prefHeightProperty().unbind();
         statementRTA.minWidthProperty().unbind();
-        double statementHeight = mainView.getRTATextHeight(statementRTA);
+        double statementHeight = printModel.getStatementTextHeight();
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
         statementRTA.setMinWidth(nodeWidth);
@@ -307,9 +308,9 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         nodeList.add(statementSepBox);
 
         //content node
-        GridPane tablePane = exercise.getExerciseView().getTableGrid();
+        GridPane tablePane = printExercise.getExerciseView().getTableGrid();
         ObservableList<Node> gridItems = tablePane.getChildren();
-        ToggleButton[] buttons = exercise.getExerciseView().getHighlightButtons();
+        ToggleButton[] buttons = printExercise.getExerciseView().getHighlightButtons();
         for (int i = 0; i < buttons.length; i ++) {
             tablePane.getChildren().remove(buttons[i]);
         }
@@ -328,11 +329,10 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         nodeList.add(contentSepBox);
 
         //comment node
-        RichTextArea commentRTA = exercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextArea commentRTA = printExercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
         commentRTA.minWidthProperty().unbind();
-        double commentHeight = mainView.getRTATextHeight(commentRTA);
-        commentRTA.setPrefHeight(commentHeight + 35.0);
+        commentRTA.setPrefHeight(printModel.getCommentTextHeight() + 35.0);
         commentRTA.setContentAreaWidth(nodeWidth);
         commentRTA.setMinWidth(nodeWidth);
         commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
@@ -374,17 +374,21 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
 
     @Override
     public ExerciseModel<TruthTableModel> getExerciseModelFromView() {
-        return (ExerciseModel) getTruthTableExpModelFromView();
+        return (ExerciseModel) getTruthTableModelFromView();
     }
 
-    private TruthTableModel getTruthTableExpModelFromView() {
+    private TruthTableModel getTruthTableModelFromView() {
         TruthTableModel model = new TruthTableModel();
         model.setExerciseName(truthTableView.getExerciseName());
         model.setOriginalModel(truthTableModel.getOriginalModel());
         model.setStarted(truthTableModel.isStarted() || exerciseModified);
+
         model.setStatementPrefHeight(truthTableView.getExerciseStatement().getEditor().getPrefHeight());
         model.setCommentPrefHeight(truthTableView.getCommentPrefHeight());
         model.setExerciseStatement(truthTableModel.getExerciseStatement());
+        model.setStatementTextHeight(truthTableModel.getStatementTextHeight());
+        model.setCommentTextHeight(truthTableModel.getCommentTextHeight());
+
 
         RichTextArea commentRTA = truthTableView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());

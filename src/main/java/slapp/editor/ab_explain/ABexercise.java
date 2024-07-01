@@ -211,11 +211,13 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
 
 
 
+
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
-        ABmodel workingModel = getABmodelFromView();
-        ABexercise workingExercise = new ABexercise(workingModel, mainWindow);
+        ABexercise printExercise = this;
+        ABmodel printModel = abModel;
+
         double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
         //header node
@@ -238,10 +240,10 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
 
 
         //statement node
-        RichTextArea statementRTA = workingExercise.getExerciseView().getExerciseStatement().getEditor();
+        RichTextArea statementRTA = printExercise.getExerciseView().getExerciseStatement().getEditor();
         statementRTA.prefHeightProperty().unbind();
         statementRTA.minWidthProperty().unbind();
-        double statementHeight = workingModel.getStatementTextHeight();
+        double statementHeight = printModel.getStatementTextHeight();
 
         statementRTA.setPrefHeight(statementHeight + 35.0);
         statementRTA.setContentAreaWidth(nodeWidth);
@@ -271,15 +273,14 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         abBox.getChildren().addAll(leaderLabel, boxA, boxB);
         nodeList.add(abBox);
 
-        List<DecoratedRTA> pageList = workingExercise.getExerciseView().getContentPageList();
-        List<PageContent> pageContents = workingModel.getPageContents();
+        List<DecoratedRTA> pageList = printExercise.getExerciseView().getContentPageList();
+        List<PageContent> pageContents = printModel.getPageContents();
         for (int i = 0; i < pageList.size(); i++) {
             DecoratedRTA drta = pageList.get(i);
             RichTextArea pageRTA = drta.getEditor();
             pageRTA.prefHeightProperty().unbind();
 
             pageRTA.setPrefHeight(pageContents.get(i).getTextHeight() + 35);
-
             pageRTA.setContentAreaWidth(nodeWidth);
             pageRTA.setPrefWidth(nodeWidth);
             nodeList.add(pageRTA);
@@ -295,11 +296,10 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
 
 
         //comment node
-        RichTextArea commentRTA = workingExercise.getExerciseView().getExerciseComment().getEditor();
+        RichTextArea commentRTA = printExercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
         commentRTA.minWidthProperty().unbind();
-        commentRTA.setPrefHeight(workingModel.getCommentTextHeight() + 35.0);
-
+        commentRTA.setPrefHeight(printModel.getCommentTextHeight() + 35.0);
         commentRTA.setContentAreaWidth(nodeWidth);
         commentRTA.setMinWidth(nodeWidth);
         commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");

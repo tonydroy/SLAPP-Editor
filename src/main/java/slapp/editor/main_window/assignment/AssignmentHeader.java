@@ -12,6 +12,7 @@ public class AssignmentHeader implements Serializable {
     private String assignmentName = "";
     private String studentName = "";
     private Document comment = new Document();
+    private double commentTextHeight = 0;
 
 
     private List<AssignmentHeaderItem> instructorItems = new ArrayList<>();
@@ -76,4 +77,7 @@ public class AssignmentHeader implements Serializable {
         this.comment = comment;
     }
 
+    public double getCommentTextHeight() {     return commentTextHeight;  }
+
+    public void setCommentTextHeight(double commentTextHeight) {     this.commentTextHeight = commentTextHeight;  }
 }

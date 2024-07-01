@@ -16,6 +16,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -45,6 +46,7 @@ public class VerticalTreeCreate {
     private TextField nameField;
     private DecoratedRTA statementDRTA;
     private RichTextArea statementRTA;
+    private double statementTextHeight;
     private TextArea helpArea;
     private ChangeListener nameListener;
     private boolean modified = false;
@@ -82,6 +84,7 @@ public class VerticalTreeCreate {
 
         statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        statementTextHeight = originalModel.getStatementTextHeight();
         nameField.setText(originalModel.getExerciseName());
         keyboardSelector = originalModel.getDefaultKeyboardType();
         italicSansCheck.setSelected(keyboardSelector == ITALIC_AND_SANS);
@@ -116,6 +119,10 @@ public class VerticalTreeCreate {
         statementRTA.setPrefWidth(PrintUtilities.getPageWidth() + 20);
         statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         statementRTA.setPrefHeight(200);
+        statementRTA.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            modified = true;
+            statementTextHeight = mainWindow.getMainView().getRTATextHeight(statementRTA);
+        });
 
         //name
         Label nameLabel = new Label("Exercise Name: ");
@@ -371,32 +378,26 @@ public class VerticalTreeCreate {
         }
     }
     private void viewExercise() {
-        VerticalTreeExercise exercise = new VerticalTreeExercise(extractModelFromWindow(), mainWindow);
+        VerticalTreeModel model = extractModelFromWindow();
+        VerticalTreeExercise exercise = new VerticalTreeExercise(model, mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
-        rta.setEditable(true);
-        rta.prefHeightProperty().unbind();
-        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
-        double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
+        rta.prefHeightProperty().unbind();
+        exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         mainWindow.setUpExercise(exercise);
 
     }
     private void saveExercise(boolean saveAs) {
         saveButton.setDisable(true);
         saveAsButton.setDisable(true);
-
-
         nameField.textProperty().addListener(nameListener);
-        VerticalTreeExercise exercise = new VerticalTreeExercise(extractModelFromWindow(), mainWindow);
+
+        VerticalTreeModel model = extractModelFromWindow();
+        VerticalTreeExercise exercise = new VerticalTreeExercise(model, mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
-        rta.setEditable(true);
-        rta.prefHeightProperty().unbind();
-        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
-        double height = Math.min(PrintUtilities.getPageHeight(), rtaSkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight()));
         rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(height + 25.0);
-        exercise.getExerciseModel().setStatementPrefHeight(height + 25.0);
+        rta.prefHeightProperty().unbind();
+        exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         exercise.saveExercise(saveAs);
         saveButton.setDisable(false);
         saveAsButton.setDisable(false);
@@ -426,6 +427,8 @@ public class VerticalTreeCreate {
         if (statementRTA.isModified()) modified = true;
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setExerciseStatement(statementRTA.getDocument());
+        model.setStatementPrefHeight(statementTextHeight + 25);
+        model.setStatementTextHeight(statementTextHeight);
 
         return model;
     }

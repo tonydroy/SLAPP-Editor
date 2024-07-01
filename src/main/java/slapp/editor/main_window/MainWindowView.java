@@ -191,7 +191,7 @@ public class MainWindowView {
 
 
 
-        menuBar = new MenuBar(exerciseMenu, assignmentMenu, nextExerciseMenu, previousExerciseMenu, goToExerciseMenu, assignmentCommentMenu, printMenu, helpMenu);
+        menuBar = new MenuBar(exerciseMenu, assignmentMenu, previousExerciseMenu, nextExerciseMenu, goToExerciseMenu, assignmentCommentMenu, printMenu, helpMenu);
         exerciseMenu.getItems().addAll(saveExerciseItem, saveAsExerciseItem, openExerciseItem, clearExerciseItem, closeExerciseItem, printExerciseItem, exportToPDFExerciseItem, createRevisedExerciseItem, createNewExerciseItem);
         assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, closeAssignmentItem, printAssignmentItem, exportAssignmentToPDFItem, createRevisedAssignmentItem, createNewAssignmentItem);
         printMenu.getItems().addAll(printExerciseItemPM, exportExerciseToPDFItemPM, printAssignmentItemPM, exportAssignmentToPDFItemPM, exportSetupItem, pageSetupItem, scaleSetupItem);
@@ -244,9 +244,9 @@ public class MainWindowView {
 
 
 
-        progressLabel = new Label();
-        progressLabel.setTextFill(Color.RED);
-        progressLabel.setVisible(false);
+        progressLabel = new Label("");
+//        progressLabel.setTextFill(Color.RED);
+//        progressLabel.setVisible(false);
 
 /*
         progressIndicator = new Text("\uf110");
@@ -268,6 +268,7 @@ public class MainWindowView {
         progressIndicator.setPrefWidth(25);
         progressIndicator.setPrefHeight(25);
         progressIndicator.setVisible(false);
+
 
 
 
@@ -649,20 +650,10 @@ public class MainWindowView {
         separator.setOrientation(Orientation.HORIZONTAL);
 
         RichTextArea commentArea = new RichTextArea(EditorMain.mainStage);
-
-        Scene tempScene = new Scene(commentArea);
-        Stage tempStage = new Stage();
-        tempStage.initStyle(StageStyle.TRANSPARENT);
-        tempStage.toBack();
-        tempStage.setScene(tempScene);
-        tempStage.show();
-        RichTextAreaSkin commentRTASkin = ((RichTextAreaSkin) commentArea.getSkin());
         commentArea.getActionFactory().open(header.getComment()).execute(new ActionEvent());
         commentArea.setContentAreaWidth(PrintUtilities.getPageWidth());
         commentArea.setPrefWidth(PrintUtilities.getPageWidth());
-        double commentHeight = commentRTASkin.getContentAreaHeight(PrintUtilities.getPageWidth(), PrintUtilities.getPageHeight());
-        commentArea.setPrefHeight(commentHeight + 35.0);
-        tempStage.close();
+        commentArea.setPrefHeight(header.getCommentTextHeight() + 35);
 
         headerBox.getChildren().addAll(nameBox,itemsBox, separator, commentArea );
         headerBox.setPadding(new Insets(0,0,20,0));

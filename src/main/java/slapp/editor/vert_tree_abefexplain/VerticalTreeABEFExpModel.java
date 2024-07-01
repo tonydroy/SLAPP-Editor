@@ -19,13 +19,19 @@ public class VerticalTreeABEFExpModel implements ExerciseModel<Document>, Serial
     private RichTextAreaSkin.KeyMapValue defaultKeyboardType;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
+    private Document exerciseStatement = new Document();
     private double statementPrefHeight = 80;
+    private double statementTextHeight = 0;
+    private Document exerciseComment = new Document();
     private double commentPrefHeight = 60;
+    private double commentTextHeight = 0;
+    private Document explainDocument = new Document();
     private double explainPrefHeight = 70;
+    private double explainTextHeight = 0;
     private double mainPanePrefHeight = 250;
     private double mainPanePrefWidth;
-    private Document exerciseStatement = new Document();
-    private Document exerciseComment = new Document();
+
+
 
     private List<DragIconType> dragIconList = new ArrayList<>();
     private List<ObjectControlType> objectControlList = new ArrayList<>();
@@ -47,7 +53,7 @@ public class VerticalTreeABEFExpModel implements ExerciseModel<Document>, Serial
     private boolean eSelected = false;
     private String fPrompt = new String("");
     private boolean fSelected = false;
-    private Document explainDocument = new Document();
+
 
 
     public VerticalTreeABEFExpModel(){}
@@ -156,6 +162,18 @@ public class VerticalTreeABEFExpModel implements ExerciseModel<Document>, Serial
     public void setMainPanePrefWidth(double mainPanePrefWidth) {
         this.mainPanePrefWidth = mainPanePrefWidth;
     }
+
+    public double getStatementTextHeight() {  return statementTextHeight;  }
+
+    public void setStatementTextHeight(double statementTextHeight) {  this.statementTextHeight = statementTextHeight;  }
+
+    public double getCommentTextHeight() {   return commentTextHeight;  }
+
+    public void setCommentTextHeight(double commentTextHeight) {   this.commentTextHeight = commentTextHeight;  }
+
+    public double getExplainTextHeight() {   return explainTextHeight;  }
+
+    public void setExplainTextHeight(double explainTextHeight) {   this.explainTextHeight = explainTextHeight;  }
 
     @Override
     public String getExerciseName() { return exerciseName;    }

@@ -96,6 +96,7 @@ public class DerivationCreate {
         statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         nameField.setText(originalModel.getExerciseName());
+        statementTextHeight = originalModel.getStatementTextHeight();
 
         RichTextAreaSkin.KeyMapValue keyboardSelector = originalModel.getKeyboardSelector();
         if (keyboardSelector == ITALIC_AND_SANS) {italicAndSansCheck.setSelected(true); scriptAndSansCheck.setSelected(false); italicAndBlackboardCheck.setSelected(false); greekAndFrakturCheck.setSelected(false);}
@@ -627,6 +628,7 @@ public class DerivationCreate {
         }
 
         DerivationModel model = new DerivationModel(name, false, statementPrefHeight, gridWidth, leftmostScope, defaultShelf, keyboardSelector, statementDocument, commentDocument, modelLines);
+        model.setStatementTextHeight(statementTextHeight);
         return model;
     }
 
