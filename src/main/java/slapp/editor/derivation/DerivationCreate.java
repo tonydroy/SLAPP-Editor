@@ -21,12 +21,14 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
+import slapp.editor.derivation_explain.DrvtnExpSetupLine;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
 
@@ -569,19 +571,16 @@ public class DerivationCreate {
         defaultShelfCheck.selectedProperty().addListener(defaultShelfListener);
 
         DerivationModel model = extractModelFromWindow();
-        DerivationExercise exercise = new DerivationExercise(model, mainWindow);
 
-        for (SetupLine line : setupLines) { line.setModified(false); }
+        boolean success = DiskUtilities.saveExercise(saveAs, model);
+        if (success) {
+            fieldModified = false;
+            for (SetupLine line : setupLines) { line.setModified(false); }
+        }
 
-        RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
-        rta.setEditable(false);
-        rta.prefHeightProperty().unbind();
-        exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
-        exercise.saveExercise(saveAs);
         lowerSaveButton.setDisable(false);
         saveAsButton.setDisable(false);
 
-        fieldModified = false;
     }
     private DerivationModel extractModelFromWindow() {
         String name = nameField.getText();

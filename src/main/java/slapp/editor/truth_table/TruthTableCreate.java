@@ -26,6 +26,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
@@ -577,13 +578,22 @@ public class TruthTableCreate {
         nameField.textProperty().addListener(nameListener);
 
         TruthTableModel model = extractModelFromWindow();
+
+
+
+
         TruthTableExercise exercise = new TruthTableExercise(model, mainWindow, true);
 
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(false);
         rta.prefHeightProperty().unbind();
         exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
+
+
         exercise.saveExercise(saveAs);
+
+
+
         lowerSaveButton.setDisable(false);
         saveAsButton.setDisable(false);
         fieldModified = false;

@@ -342,6 +342,7 @@ public class MainWindowView {
 
         borderPane.setLeft(controlNode);
 
+
         mainScene = new Scene(borderPane);
         mainScene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
 
@@ -364,7 +365,13 @@ public class MainWindowView {
 
 //        stage.setIconified(false);
         stage.show();
+
+
+
+
     }
+
+
 
 
     public void setupDummyWindowRTASize() {

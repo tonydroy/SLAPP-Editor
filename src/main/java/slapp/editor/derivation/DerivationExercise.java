@@ -131,6 +131,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         List<ViewLine> viewLines = new ArrayList<>();
         int lineNumber = 1;
         for (int rowIndex = 0; rowIndex < modelLines.size(); rowIndex++) {
+
             ModelLine modelLine = modelLines.get(rowIndex);
             ViewLine viewLine = new ViewLine();
 
@@ -832,6 +833,11 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     public DerivationView getExerciseView() { return derivationView; }
     @Override
     public void saveExercise(boolean saveAs) {
+
+//        DerivationModel model = getDerivationModelFromView();
+//        List<ModelLine> modelLines = model.getDerivationLines();
+//        for (ModelLine line : modelLines) System.out.println("exer save: " + line.getLineContentDoc().getText());
+
         boolean success = DiskUtilities.saveExercise(saveAs, getDerivationModelFromView());
         if (success) exerciseModified = false;
     }

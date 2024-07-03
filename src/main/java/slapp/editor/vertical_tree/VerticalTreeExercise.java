@@ -481,6 +481,9 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         model.setStatementTextHeight(verticalTreeModel.getStatementTextHeight());
         model.setCommentTextHeight(verticalTreeModel.getCommentTextHeight());
         model.setMainPanePrefHeight(verticalTreeView.getMainPanePrefHeight());
+
+
+
         model.setMainPanePrefWidth(verticalTreeView.getMainPanePrefWidth());
         model.setExerciseStatement(verticalTreeModel.getExerciseStatement());
 

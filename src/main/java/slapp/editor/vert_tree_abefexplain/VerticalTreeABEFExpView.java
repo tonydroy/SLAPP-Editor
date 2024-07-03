@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -220,14 +221,16 @@ public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
         });
 
         //main pane
-        ABEFExpRootLayout mainPane = rootLayout;
-        mainPane.setMinHeight(250.0);
+        AnchorPane mainPane1 = rootLayout.getMain_pane();
+        mainPane1.setMinHeight(10.0);
+        SplitPane mainPane = rootLayout.getBase_pane();
         double mainPaneInitialHeight = Math.round(mainPanePrefHeight / mainView.getScalePageHeight() * 20.0) * 5.0;
         mainPaneHeightSpinner = new Spinner<>(5, 999.0, mainPaneInitialHeight, 5.0);
         mainPaneHeightSpinner.setPrefWidth(60);
         mainPaneHeightSpinner.setDisable(false);
         mainPaneHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
-        mainPane.prefHeightProperty().bind(Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(mainPaneHeightSpinner.getValueFactory().valueProperty()).divide(100.0)));
+        mainPane1.prefHeightProperty().bind(Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(mainPaneHeightSpinner.getValueFactory().valueProperty()).divide(100.0)));
+        mainPane1.maxHeightProperty().bind(mainPane1.prefHeightProperty());
         mainPaneHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = mainPaneHeightSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -240,8 +243,8 @@ public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
         mainPaneWidthSpinner.setPrefWidth(60);
         mainPaneWidthSpinner.setDisable(false);
         mainPaneWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
-        mainPane.maxWidthProperty().bind(Bindings.multiply(mainView.scalePageWidthProperty(), DoubleProperty.doubleProperty(mainPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0)));
-        mainPane.prefWidthProperty().bind(Bindings.multiply(mainView.scalePageWidthProperty(), DoubleProperty.doubleProperty(mainPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0)));
+        mainPane1.maxWidthProperty().bind(Bindings.multiply(mainView.scalePageWidthProperty(), DoubleProperty.doubleProperty(mainPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0)));
+        mainPane.prefWidthProperty().bind(mainPane1.maxWidthProperty());
         mainPaneWidthSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = mainPaneWidthSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -329,11 +332,11 @@ public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
 
     public void setExplainPrefHeight(double explainPrefHeight) {   this.explainPrefHeight = explainPrefHeight;  }
 
-    public double getMainPanePrefHeight() {    return rootLayout.getPrefHeight();    }
+    public double getMainPanePrefHeight() {    return rootLayout.getMain_pane().getPrefHeight();    }
 
     public void setMainPanePrefHeight(double mainPanePrefHeight) { this.mainPanePrefHeight = mainPanePrefHeight;  }
 
-    public double getMainPanePrefWidth() { return rootLayout.getPrefWidth();   }
+    public double getMainPanePrefWidth() { return rootLayout.getMain_pane().getPrefWidth();   }
 
     public void setMainPanePrefWidth(double mainPanePrefWidth) {   this.mainPanePrefWidth = mainPanePrefWidth;  }
 

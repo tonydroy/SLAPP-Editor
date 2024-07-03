@@ -418,7 +418,8 @@ public class KeyboardDiagram {
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.P,4),42,1,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.OPEN_BRACKET,4),46,1,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.CLOSE_BRACKET,4),50,1,4,1);
-        ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.BACK_SLASH,6),54,1,6,1);
+
+        ctrlShiftAltBoard.add(getControlKey("NoBreak\nSpace", 6),54,1,6,1);
 
         ctrlShiftAltBoard.add(getControlKey("Cap Lock",7),0,2,7,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.A,4),7,2,4,1);
@@ -455,7 +456,7 @@ public class KeyboardDiagram {
 
         ctrlShiftAltBoard.add(getControlKey("control/\n command",10),0,4,10,1);
         ctrlShiftAltBoard.add(getControlKey("alternate/\n option",9),10,4,9,1);
-        ctrlShiftAltBoard.add(getControlKey("unbreakable\nspace",24),19,4,24,1);
+        ctrlShiftAltBoard.add(getControlKey("",24),19,4,24,1);
         ctrlShiftAltBoard.add(getControlKey("alternate/\n option",8),43,4,8,1);
         ctrlShiftAltBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 

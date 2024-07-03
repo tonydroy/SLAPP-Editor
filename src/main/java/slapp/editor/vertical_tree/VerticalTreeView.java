@@ -54,6 +54,7 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
         rootLayout = new RootLayout(this);
         root.setCenter(rootLayout);
 
+
         undoButton = new Button("Undo");
         redoButton = new Button("Redo");
         undoButton.setPrefWidth(64);
@@ -63,7 +64,7 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
 
         controlBox.getChildren().addAll(undoButton, redoButton);
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
-        controlBox.setPadding(new Insets(100,10,0,80));
+        controlBox.setPadding(new Insets(50,10,0,80));
         exerciseControlNode = controlBox;
     }
 
@@ -135,13 +136,17 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
         AnchorPane mainPane1 = rootLayout.getMainPane();
 //        RootLayout mainPane = rootLayout;
         SplitPane mainPane = rootLayout.getBase_pane();
-        mainPane1.setMinHeight(350.0);
-        double mainPaneInitialHeight = Math.round(mainPanePrefHeight / mainView.getScalePageHeight() * 20.0) * 5.0;
+        mainPane1.setMinHeight(10.0);
+        double mainPaneInitialHeight = Math.round((mainPanePrefHeight / mainView.getScalePageHeight()) * 20.0) * 5.0;
+
+
+
         mainPaneHeightSpinner = new Spinner<>(5, 999.0, mainPaneInitialHeight, 5.0);
         mainPaneHeightSpinner.setPrefWidth(60);
         mainPaneHeightSpinner.setDisable(false);
         mainPaneHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         mainPane1.prefHeightProperty().bind(Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(mainPaneHeightSpinner.getValueFactory().valueProperty()).divide(100.0)));
+        mainPane1.maxHeightProperty().bind(mainPane1.prefHeightProperty());
         mainPaneHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = mainPaneHeightSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -154,8 +159,12 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
         mainPaneWidthSpinner.setPrefWidth(60);
         mainPaneWidthSpinner.setDisable(false);
         mainPaneWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
-        mainPane.maxWidthProperty().bind(Bindings.multiply(mainView.scalePageWidthProperty(), DoubleProperty.doubleProperty(mainPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0)));
-        mainPane.prefWidthProperty().bind(Bindings.multiply(mainView.scalePageWidthProperty(), DoubleProperty.doubleProperty(mainPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0)));
+
+
+        mainPane1.maxWidthProperty().bind(Bindings.multiply(mainView.scalePageWidthProperty(), DoubleProperty.doubleProperty(mainPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0)));
+ //       mainPane.maxWidthProperty().bind(mainPane.prefWidthProperty());
+        mainPane.prefWidthProperty().bind(mainPane1.maxWidthProperty());
+ //       mainPane1.prefWidthProperty().bind(mainPane.prefWidthProperty());
         mainPaneWidthSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = mainPaneWidthSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -222,9 +231,14 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
     public double getCommentPrefHeight() {   return exerciseComment.getEditor().getPrefHeight();   }
 
     public void setCommentPrefHeight(double commentPrefHeight) {     this.commentPrefHeight = commentPrefHeight;  }
-    public double getMainPanePrefHeight() { return rootLayout.getPrefHeight(); }
+
+
+    public double getMainPanePrefHeight() { return rootLayout.getMainPane().getPrefHeight(); }
     public void setMainPanePrefHeight(double mainPanePrefHeight) { this.mainPanePrefHeight = mainPanePrefHeight; }
-    public double getMainPanePrefWidth() { return rootLayout.getPrefWidth(); }
+
+
+
+    public double getMainPanePrefWidth() { return rootLayout.getMainPane().getPrefWidth(); }
     public void setMainPanePrefWidth(double mainPanePrefWidth) { this.mainPanePrefWidth = mainPanePrefWidth; }
 
     @Override

@@ -172,7 +172,7 @@ public class RootLayout extends AnchorPane {
 
 
 
-        this.setMinWidth(200); this.setMinHeight(200);
+        this.setMinWidth(200); this.setMinHeight(100);
         this.setBottomAnchor(base_pane, 0.0); this.setTopAnchor(base_pane, 0.0); this.setLeftAnchor(base_pane, 0.0); this.setRightAnchor(base_pane, 0.0);
 
         topPane.setSpacing(20);

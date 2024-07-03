@@ -22,6 +22,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
@@ -597,19 +598,30 @@ public class DrvtnExpCreate {
         defaultShelfCheck.selectedProperty().addListener(defaultShelfListener);
 
         DrvtnExpModel model = extractModelFromWindow();
+
+        boolean success = DiskUtilities.saveExercise(saveAs, model);
+        if (success) {
+            fieldModified = false;
+            for (DrvtnExpSetupLine line : setupLines) { line.setModified(false); }
+        }
+
+        /*
         DrvtnExpExercise exercise = new DrvtnExpExercise(model, mainWindow);
 
-        for (DrvtnExpSetupLine line : setupLines) { line.setModified(false); }
+
 
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.setEditable(false);
         rta.prefHeightProperty().unbind();
         exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         exercise.saveExercise(saveAs);
+
+         */
+
         lowerSaveButton.setDisable(false);
         saveAsButton.setDisable(false);
 
-        fieldModified = false;
+ //       fieldModified = false;
     }
     private DrvtnExpModel extractModelFromWindow() {
         String name = nameField.getText();
