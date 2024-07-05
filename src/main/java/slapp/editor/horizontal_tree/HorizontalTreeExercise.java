@@ -300,6 +300,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         axis.updateRuler(axisWidth);
 
         mainPane.setStyle("-fx-background-color: transparent");
+        mainPane.setPrefWidth(printModel.getMainPaneWidth());
         printExercise.getExerciseView().simpleRemoveAxis();
 
         ObservableList<Node> mainNodes = mainPane.getChildren();
@@ -410,6 +411,8 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         model.setExplainPrefHeight(horizontalTreeView.getExplainPrefHeight());
         model.setExplainTextHeight(horizontalTreeModel.getExplainTextHeight());
 
+        model.setMainPaneWidth(horizontalTreeView.getMainPane().getWidth());
+
         model.setAxis(horizontalTreeView.isAxis());
 
         List<TreePane> treePanes = horizontalTreeView.getTreePanes();
@@ -429,6 +432,8 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
             treeModels.add(treeModel);
         }
+
+
         return model;
     }
 

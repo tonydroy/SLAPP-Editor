@@ -424,6 +424,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
             tablePane.getChildren().remove(buttons[i]);
         }
         tablePane.setPadding(new Insets(15, 0, 15, 0));
+        tablePane.setPrefWidth(printModel.getGridWidth());
         HBox gridBox = new HBox(tablePane);
         gridBox.setAlignment(Pos.CENTER);
         nodeList.add(gridBox);
@@ -526,6 +527,7 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         model.setCommentTextHeight(truthTableGenModel.getCommentTextHeight());
         model.setExplainTextHeight(truthTableGenModel.getExplainTextHeight());
         model.setInterpretationTextHeight(truthTableGenModel.getInterpretationTextHeight());
+        model.setGridWidth(truthTableGenView.getTableGrid().getWidth());
 
         model.setExerciseStatement(truthTableGenModel.getExerciseStatement());
 

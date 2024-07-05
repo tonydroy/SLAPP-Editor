@@ -755,7 +755,7 @@ public class ABExpTreeFormulaBox extends AnchorPane {
         annotationField = new TextField();
         annotationField.setPrefWidth(28);
         annotationField.setPrefHeight(15);
-        annotationField.setFont(new Font("Ariel", 10));
+        annotationField.setFont(new Font("NotoSans", 10));
         annotationField.setPadding(new Insets(0));
         annotationField.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) verticalTreeView.getMainView().textFieldInFocus();

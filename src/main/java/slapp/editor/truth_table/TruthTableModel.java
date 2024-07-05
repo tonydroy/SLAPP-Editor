@@ -27,10 +27,11 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     private List<Document> mainFormulas = new ArrayList<>();
     private List<Document> basicFormulas = new ArrayList<>();
     private String[][]  tableValues;   //[w][h]
+    private double gridWidth;
+
     private Document[] rowComments; //[h]
     private boolean[] columnHighlights; //[w]
     private boolean conclusionDivider = false;
-
     private int tableRows = 0;
 
 
@@ -123,6 +124,12 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     public void setCommentTextHeight(double commentTextHeight) {
         this.commentTextHeight = commentTextHeight;
     }
+
+    public void setExerciseType(ExerciseType exerciseType) {     this.exerciseType = exerciseType;  }
+
+    public double getGridWidth() {    return gridWidth;   }
+
+    public void setGridWidth(double gridWidth) {     this.gridWidth = gridWidth;  }
 
     @Override
     public String getExerciseName() {

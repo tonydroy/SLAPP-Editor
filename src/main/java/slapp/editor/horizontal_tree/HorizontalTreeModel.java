@@ -27,6 +27,7 @@ public class HorizontalTreeModel implements ExerciseModel<Document>, Serializabl
     private String explainPrompt = "";
 
     private List<TreeModel> treeModels = new ArrayList<>();
+    private double mainPaneWidth;
     private boolean axis = false;
 
     public HorizontalTreeModel() {}
@@ -69,6 +70,10 @@ public class HorizontalTreeModel implements ExerciseModel<Document>, Serializabl
     public double getExplainTextHeight() {     return explainTextHeight;  }
 
     public void setExplainTextHeight(double explainTextHeight) {     this.explainTextHeight = explainTextHeight;   }
+
+    public double getMainPaneWidth() {     return mainPaneWidth;  }
+
+    public void setMainPaneWidth(double mainPaneWidth) {     this.mainPaneWidth = mainPaneWidth;  }
 
     @Override
     public String getExerciseName() { return exerciseName; }

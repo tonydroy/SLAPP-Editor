@@ -32,6 +32,7 @@ public class TruthTableExpModel implements ExerciseModel<Document>, Serializable
     private List<Document> mainFormulas = new ArrayList<>();
     private List<Document> basicFormulas = new ArrayList<>();
     private String[][]  tableValues;   //[w][h]
+    private double gridWidth;
     private Document[] rowComments; //[h]
     private boolean[] columnHighlights; //[w]
     private boolean conclusionDivider = false;
@@ -167,6 +168,10 @@ public class TruthTableExpModel implements ExerciseModel<Document>, Serializable
     public double getExplainTextHeight() {    return explainTextHeight;  }
 
     public void setExplainTextHeight(double explainTextHeight) {    this.explainTextHeight = explainTextHeight;  }
+
+    public double getGridWidth() {    return gridWidth;  }
+
+    public void setGridWidth(double gridWidth) {     this.gridWidth = gridWidth;  }
 
     @Override
     public String getExerciseName() {

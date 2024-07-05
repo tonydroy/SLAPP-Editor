@@ -14,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
+import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -256,9 +257,11 @@ public class PrintUtilities {
     private static PrintBufferItem getNodeSize(Node node) {
         Group root = new Group();
         Scene scene = new Scene(root);
+
         root.getChildren().add(node);
         root.applyCss();
         root.layout();
+
         Bounds bounds = node.getLayoutBounds();
 
         return new PrintBufferItem(node, bounds.getHeight(), bounds.getWidth());

@@ -367,6 +367,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
             tablePane.getChildren().remove(buttons[i]);
         }
         tablePane.setPadding(new Insets(15, 0, 15, 0));
+        tablePane.setPrefWidth(printModel.getGridWidth());
         HBox gridBox = new HBox(tablePane);
         gridBox.setAlignment(Pos.CENTER);
         nodeList.add(gridBox);
@@ -464,6 +465,7 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
         model.setCommentTextHeight(truthTableExpModel.getCommentTextHeight());
         model.setExplainTextHeight(truthTableExpModel.getExplainTextHeight());
         model.setExerciseStatement(truthTableExpModel.getExerciseStatement());
+        model.setGridWidth(truthTableExpView.getTableGrid().getWidth());
 
         RichTextArea commentRTA = truthTableExpView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());

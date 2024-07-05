@@ -448,6 +448,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         });
 
         //table grid
+
         tableGridHeightSpinner = new Spinner<>(0.0,999.0, 0,1.0);
         tableGridHeightSpinner.setPrefWidth(60);
         tableGridHeightSpinner.setDisable(true);
@@ -459,7 +460,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         tableGridWidthSpinner = new Spinner<>(0.0,999.0, 0,1.0);
         tableGridWidthSpinner.setPrefWidth(60);
         tableGridWidthSpinner.setDisable(true);
-        tableGridWidthSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
+        tableGridWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
         tableGrid.widthProperty().addListener((ob, ov, nv) -> {
             tableGridWidthSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getWidth() / mainView.getScalePageWidth() * 100));
         });
