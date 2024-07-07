@@ -110,7 +110,7 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
         mainView.editorInFocus(explainDRTA, ControlType.AREA);
         explainEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
             exerciseModified = true;
-            double explainTextHeight = mainView.getRTATextHeight(commentEditor);
+            double explainTextHeight = mainView.getRTATextHeight(explainEditor);
             verticalTreeExpModel.setExplainTextHeight(explainTextHeight);
         });
         explainEditor.focusedProperty().addListener((o, ov, nv) -> {

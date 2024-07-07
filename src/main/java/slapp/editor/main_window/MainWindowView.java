@@ -535,8 +535,8 @@ public class MainWindowView {
         int exerciseNum = mainWindow.getAssignmentIndex() + 1;
 
         upperStatusBox.getChildren().addAll(new Label("Student Name: " + header.getStudentName()),
-                new Label("Exercise: " + currentExerciseView.getExerciseName() + " (" + exerciseNum + "/" + mainWindow.getCurrentAssignment().getExerciseModels().size() + ")"),
                 new Label("Assignment: " + header.getAssignmentName()),
+                new Label("Exercise: " + currentExerciseView.getExerciseName() + " (" + exerciseNum + "/" + mainWindow.getCurrentAssignment().getExerciseModels().size() + ")"),
                 new Label("ID: " + header.getCreationID() + "-" + header.getWorkingID()) );
         lowerStatusPane.getChildren().add(new Label("Date: " + dtf.format(LocalDateTime.now())));
         for (int i = 0; i < header.getInstructorItems().size(); i++) {
