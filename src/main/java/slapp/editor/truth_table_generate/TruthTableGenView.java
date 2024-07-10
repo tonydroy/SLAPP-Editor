@@ -760,7 +760,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
 
     public void setCommentPrefHeight(double commentPrefHeight) { this.commentPrefHeight = commentPrefHeight;  }
 
-    public double getInterpretationPrefHeight() { return explainDRTA.getEditor().getPrefHeight();  }
+    public double getInterpretationPrefHeight() { return interpretationDRTA.getEditor().getPrefHeight();  }
 
     public void setInterpretationPrefHeight(double interpretationPrefHeight) { this.interpretationPrefHeight = interpretationPrefHeight;  }
 

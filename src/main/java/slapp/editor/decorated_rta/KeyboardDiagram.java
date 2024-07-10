@@ -29,6 +29,7 @@ public class KeyboardDiagram {
     private double mapFontSize = 11;
     private Font textFont;
     private Font symbolFont;
+    private Font iconFont;
     private Text title1;
     private GridPane normalBoard;
     private Text title2;
@@ -97,6 +98,8 @@ public class KeyboardDiagram {
  //       this.mapFontSize = decoratedRTA.getPrimaryFontSize() * scale;
         textFont = Font.font("Noto Serif Combo", FontWeight.NORMAL, FontPosture.REGULAR, mapFontSize);
         symbolFont = Font.font("Noto Serif Combo", FontWeight.NORMAL, FontPosture.REGULAR, mapFontSize);
+        iconFont = Font.font("la-solid-900", FontWeight.NORMAL, FontPosture.REGULAR, 14);
+
         stage.setOnCloseRequest(e -> {
             e.consume();
             hide();
@@ -406,7 +409,8 @@ public class KeyboardDiagram {
         ctrlShiftAltBoard.add(getControlKey("BackDel", 8),52,0,8,1);
         ctrlShiftAltBoard.add(getControlKey("Tab",6),0,1,6,1);
 
-        ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.Q,4),6,1,4,1);
+        ctrlShiftAltBoard.add(getIconKey("\uf05e",4),6,1,4,1);
+   //     ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.Q,4),6,1,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.W,4),10,1,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.E,4),14,1,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.R,4),18,1,4,1);
@@ -494,6 +498,21 @@ public class KeyboardDiagram {
         pane.setMinWidth(baseKeyWidth * width);
         return pane;
     }
+
+    StackPane getIconKey(String name, int width) {
+        Text text = new Text(name);
+        text.setFont(iconFont);
+        text.setFill(Color.RED);
+        TextFlow flow = new TextFlow(text);
+        flow.setPadding(new Insets(4,0,0,0));
+        flow.setTextAlignment(TextAlignment.CENTER);
+        StackPane pane = new StackPane(flow);
+        pane.setBorder(new Border(new BorderStroke(Color.GREY, BorderStrokeStyle.SOLID, new CornerRadii(3),new BorderWidths(2.0))));
+        pane.setAlignment(Pos.CENTER);
+        pane.setMinWidth(baseKeyWidth * width);
+        return pane;
+    }
+
     StackPane getTypedKey(Character key, int width) {
         Text text = keyTypedTextMap.get(key);
         text.setFont(textFont);

@@ -23,7 +23,7 @@ public class TruthTableGenModel implements ExerciseModel<Document>, Serializable
     private double commentPrefHeight = 60;
     private double commentTextHeight = 0;
     private Document exerciseInterpretation = new Document();
-    private double interpretationPrefHeight = 80;
+    private double interpretationPrefHeight = 125;
     private double interpretationTextHeight = 0;
     private Document explainDocument = new Document();
     private double explainPrefHeight = 60;

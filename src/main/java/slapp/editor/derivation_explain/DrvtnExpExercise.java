@@ -112,7 +112,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
         explanationEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
             exerciseModified = true;
-            double explanationTextHeight = mainView.getRTATextHeight(commentEditor);
+            double explanationTextHeight = mainView.getRTATextHeight(explanationEditor);
             drvtnExpModel.setExplanationTextHeight(explanationTextHeight);
         });
 
