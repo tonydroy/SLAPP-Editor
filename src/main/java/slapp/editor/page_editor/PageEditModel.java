@@ -1,4 +1,4 @@
-package slapp.editor.simple_editor;
+package slapp.editor.page_editor;
 
 import com.gluonhq.richtextarea.model.Document;
 import slapp.editor.main_window.ExerciseModel;
@@ -8,10 +8,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleEditModel implements ExerciseModel<Document>, Serializable {
+public class PageEditModel implements ExerciseModel<Document>, Serializable {
 
     private String exerciseName = new String("");
-    private ExerciseType exerciseType = ExerciseType.SIMPLE_EDITOR;
+    private ExerciseType exerciseType = ExerciseType.PAGE_EDIT;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
 
@@ -25,12 +25,9 @@ public class SimpleEditModel implements ExerciseModel<Document>, Serializable {
     private double commentTextHeight = 0;
     private List<PageContent> pageContents = new ArrayList<>();
     private double paginationPrefHeight = 450.0;
-
-
-
     private String contentPrompt = "";
 
-    public SimpleEditModel(String name, boolean started, String prompt, double statementPrefHeight, Document exerciseStatement, Document exerciseComment, List<PageContent> pageContents) {
+    public PageEditModel(String name, boolean started, String prompt, double statementPrefHeight, Document exerciseStatement, Document exerciseComment, List<PageContent> pageContents) {
         this.exerciseName = name;
         this.started = started;
         this.contentPrompt = prompt;

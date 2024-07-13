@@ -1,4 +1,4 @@
-package slapp.editor.simple_editor;
+package slapp.editor.page_editor;
 
 import com.gluonhq.richtextarea.model.Document;
 

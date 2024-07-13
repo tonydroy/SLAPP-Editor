@@ -16,9 +16,12 @@ import slapp.editor.derivation_explain.DrvtnExpModel;
 import slapp.editor.horizontal_tree.HorizontalTreeCreate;
 import slapp.editor.horizontal_tree.HorizontalTreeExercise;
 import slapp.editor.horizontal_tree.HorizontalTreeModel;
-import slapp.editor.simple_editor.SimpleEditCreate;
-import slapp.editor.simple_editor.SimpleEditExercise;
-import slapp.editor.simple_editor.SimpleEditModel;
+import slapp.editor.page_editor.PageEditCreate;
+import slapp.editor.page_editor.PageEditExercise;
+import slapp.editor.page_editor.PageEditModel;
+import slapp.editor.simple_edit.SimpleEditCreate;
+import slapp.editor.simple_edit.SimpleEditExercise;
+import slapp.editor.simple_edit.SimpleEditModel;
 import slapp.editor.truth_table.TruthTableCreate;
 import slapp.editor.truth_table.TruthTableExercise;
 import slapp.editor.truth_table.TruthTableModel;
@@ -56,6 +59,10 @@ public class TypeSelectorFactories {
             case "SimpleEditModel": {
                 SimpleEditModel editModel = (SimpleEditModel) objectModel;
                 return new SimpleEditExercise(editModel, mainWindow);
+            }
+            case "PageEditModel": {
+                PageEditModel editModel = (PageEditModel) objectModel;
+                return new PageEditExercise(editModel, mainWindow);
             }
             case "ABmodel": {
                 ABmodel abModel = (ABmodel) objectModel;
@@ -124,6 +131,15 @@ public class TypeSelectorFactories {
                     break;
                 }
                 SimpleEditCreate simpleEditCreate = new SimpleEditCreate(mainWindow, editModel);
+                break;
+            }
+            case "PageEditModel": {
+                PageEditModel editModel = (PageEditModel) objectModel;
+                if (editModel.isStarted()) {
+                    EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
+                    break;
+                }
+                PageEditCreate pageEditCreate = new PageEditCreate(mainWindow, editModel);
                 break;
             }
             case "ABmodel": {
@@ -266,8 +282,11 @@ public class TypeSelectorFactories {
                HorizontalTreeCreate horizontalTreeCreate = new HorizontalTreeCreate(mainWindow);
                 break;
             }
-
-            case SIMPLE_EDITOR: {
+            case PAGE_EDIT: {
+                PageEditCreate pageEditCreate = new PageEditCreate(mainWindow);
+                break;
+            }
+            case SIMPLE_EDIT: {
                 SimpleEditCreate simpleEditCreate = new SimpleEditCreate(mainWindow);
                 break;
             }

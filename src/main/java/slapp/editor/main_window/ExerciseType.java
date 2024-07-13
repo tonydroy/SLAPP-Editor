@@ -1,7 +1,9 @@
 package slapp.editor.main_window;
 
 public enum ExerciseType {
-    SIMPLE_EDITOR("Simple editor", "Exercise requires a text response -- anywhere from short answer, to paragraph, to essay."),
+
+    SIMPLE_EDIT("Simple Edit", "Exercise with simple edit area box (mainly for use in the 'free-form' exercise)."),
+    PAGE_EDIT("Page Edit", "Exercise requires a text response -- anywhere from short answer, to multiple pages."),
     AB_EXPLAIN("AB explain", "Exercise requires binary choice with an explanation."),
     ABEFG_EXPLAIN("AB/EFG explain", "Exercise requires both binary and tertiary choice with an explanation"),
     DERIVATION("Derivation", "Exercise requires a derivation"),

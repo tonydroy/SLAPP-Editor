@@ -22,7 +22,7 @@ import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
-import slapp.editor.simple_editor.PageContent;
+import slapp.editor.page_editor.PageContent;
 
 import java.util.ArrayList;
 import java.util.List;

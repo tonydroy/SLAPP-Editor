@@ -24,8 +24,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.awt.Desktop;
 
-import static slapp.editor.main_window.ExerciseType.HORIZONTAL_TREE;
-
 
 public class TextHelpPopup {
 
@@ -157,7 +155,7 @@ static {
         switch(type) {
             case AB_EXPLAIN: { }
             case ABEFG_EXPLAIN: { }
-            case SIMPLE_EDITOR: {
+            case PAGE_EDIT: {
                 showHelp(simpleEdit);
                 break;
             }

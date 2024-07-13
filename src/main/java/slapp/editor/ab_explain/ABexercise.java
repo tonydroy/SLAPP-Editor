@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import slapp.editor.DiskUtilities;
-import slapp.editor.simple_editor.PageContent;
+import slapp.editor.page_editor.PageContent;
 
 import static javafx.scene.control.ButtonType.OK;
 

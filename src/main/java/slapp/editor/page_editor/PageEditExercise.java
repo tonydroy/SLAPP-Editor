@@ -1,10 +1,9 @@
-package slapp.editor.simple_editor;
+package slapp.editor.page_editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -28,20 +27,20 @@ import slapp.editor.DiskUtilities;
 
 import static javafx.scene.control.ButtonType.OK;
 
-public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditView> {
+public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
     private MainWindow mainWindow;
-    private SimpleEditModel editModel;
-    private SimpleEditView editView;
+    private PageEditModel editModel;
+    private PageEditView editView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
     private int lastPageNum = -1;
 
-    public SimpleEditExercise(SimpleEditModel model, MainWindow mainWindow) {
+    public PageEditExercise(PageEditModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.editModel = model;
         if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
         this.mainView = mainWindow.getMainView();
-        this.editView = new SimpleEditView(mainView);
+        this.editView = new PageEditView(mainView);
 
         setEditView();
     }
@@ -176,16 +175,16 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
 
 
     @Override
-    public SimpleEditModel getExerciseModel() {
+    public PageEditModel getExerciseModel() {
         return editModel;
     }
     @Override
-    public SimpleEditView getExerciseView() {
+    public PageEditView getExerciseView() {
         return editView;
     }
     @Override
     public void saveExercise(boolean saveAs) {
-        boolean success = DiskUtilities.saveExercise(saveAs, getSimpleEditModelFromView());
+        boolean success = DiskUtilities.saveExercise(saveAs, getPageEditModelFromView());
         if (success) exerciseModified = false;
     }
 
@@ -194,8 +193,8 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         List<Node> nodeList = new ArrayList<>();
 
 
-        SimpleEditModel printModel = editModel;
-        SimpleEditExercise printExercise = this;
+        PageEditModel printModel = editModel;
+        PageEditExercise printExercise = this;
 
         double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
 
@@ -274,13 +273,13 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         return nodeList;
     }
     @Override
-    public SimpleEditExercise resetExercise() {
+    public PageEditExercise resetExercise() {
         RichTextArea commentRTA = editView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
-        SimpleEditModel originalModel = (SimpleEditModel) (editModel.getOriginalModel());
+        PageEditModel originalModel = (PageEditModel) (editModel.getOriginalModel());
         originalModel.setExerciseComment(commentDocument);
-        SimpleEditExercise clearExercise = new SimpleEditExercise(originalModel, mainWindow);
+        PageEditExercise clearExercise = new PageEditExercise(originalModel, mainWindow);
         return clearExercise;
     }
 
@@ -305,10 +304,10 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
 
     @Override
     public ExerciseModel getExerciseModelFromView() {
-        return (ExerciseModel) getSimpleEditModelFromView();
+        return (ExerciseModel) getPageEditModelFromView();
     }
 
-    private SimpleEditModel getSimpleEditModelFromView() {
+    private PageEditModel getPageEditModelFromView() {
         RichTextArea commentRTA = editView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document commentDocument = commentRTA.getDocument();
@@ -340,7 +339,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         Document statementDocument = editModel.getExerciseStatement();
         double statementHeight = editView.getExerciseStatement().getEditor().getPrefHeight();
 
-        SimpleEditModel newModel = new SimpleEditModel(name, started, prompt, statementHeight, statementDocument, commentDocument, contentList);
+        PageEditModel newModel = new PageEditModel(name, started, prompt, statementHeight, statementDocument, commentDocument, contentList);
         newModel.setOriginalModel(editModel.getOriginalModel());
         newModel.setCommentPrefHeight(editView.getCommentPrefHeight());
         newModel.setPaginationPrefHeight(editView.getPaginationPrefHeight());

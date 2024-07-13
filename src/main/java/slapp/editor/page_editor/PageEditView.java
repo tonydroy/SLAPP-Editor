@@ -1,4 +1,4 @@
-package slapp.editor.simple_editor;
+package slapp.editor.page_editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import javafx.beans.binding.Bindings;
@@ -17,7 +17,7 @@ import slapp.editor.main_window.MainWindowView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleEditView implements ExerciseView<DecoratedRTA> {
+public class PageEditView implements ExerciseView<DecoratedRTA> {
 
     private MainWindowView mainView;
     private String exerciseName = new String();
@@ -41,7 +41,7 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
     private Node currentSpinnerNode;
 
 
-    public SimpleEditView(MainWindowView mainView) {
+    public PageEditView(MainWindowView mainView) {
         this.mainView = mainView;
         this.pagination = new Pagination();
 
@@ -62,7 +62,7 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
         removePageButton.setTooltip(new Tooltip("Remove current page"));
         removePageButton.setPrefWidth(90.0);
 
-        VBox controlBox = (VBox) exerciseControlNode;        ;
+        VBox controlBox = (VBox) exerciseControlNode;
         controlBox.setSpacing(30.0);
         controlBox.setPadding(new Insets(200,20,0,30));
         controlBox.getChildren().addAll(addPageButton, removePageButton);
@@ -82,7 +82,7 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
         statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
         statementHeightSpinner.setPrefWidth(60);
         statementHeightSpinner.setDisable(false);
-        statementHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        statementHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         statementHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = statementHeightSpinner.lookup(".increment-arrow-button");

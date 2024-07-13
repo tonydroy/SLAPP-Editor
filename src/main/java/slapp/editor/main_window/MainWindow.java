@@ -22,8 +22,8 @@ import slapp.editor.*;
 import slapp.editor.front_page.FrontPageExercise;
 import slapp.editor.main_window.assignment.*;
 import slapp.editor.main_window.media_player.MediaViewer;
-import slapp.editor.simple_editor.SimpleEditExercise;
-import slapp.editor.simple_editor.SimpleEditModel;
+import slapp.editor.page_editor.PageEditExercise;
+import slapp.editor.page_editor.PageEditModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -249,8 +249,8 @@ public class MainWindow {
 
     private Exercise getEmptyExercise() {
         //revert to empty simple edit exercise
-        SimpleEditModel emptyModel = new SimpleEditModel("",false,"",80,new Document(), new Document(), new ArrayList<>());
-        SimpleEditExercise emptyExercise = new SimpleEditExercise(emptyModel, mainWindow);
+        PageEditModel emptyModel = new PageEditModel("",false,"",80,new Document(), new Document(), new ArrayList<>());
+        PageEditExercise emptyExercise = new PageEditExercise(emptyModel, mainWindow);
         return emptyExercise;
     }
 

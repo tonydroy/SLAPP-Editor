@@ -1,8 +1,6 @@
-package slapp.editor.abefg_explain;
-
+package slapp.editor.page_editor;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -18,7 +16,10 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import slapp.editor.EditorAlerts;
@@ -27,37 +28,21 @@ import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.MainWindow;
-import slapp.editor.page_editor.PageContent;
-
 import java.util.ArrayList;
 import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
-public class ABEFGcreate {
+public class PageEditCreate {
     private MainWindow mainWindow;
     private RichTextArea statementRTA;
     private DecoratedRTA statementDRTA;
     private double statementTextHeight;
     private TextField nameField;
-    private TextField leaderABfield;
-    private TextField promptFieldA;
-    private TextField promptFieldB;
-    private TextField leaderEFGfield;
-    private TextField promptFieldE;
-    private TextField promptFieldF;
-    private TextField promptFieldG;
-    private TextField explainPromptField;
-    private boolean fieldsModified = false;
+    private TextField promptField;
+    private boolean fieldModified = false;
     private ChangeListener nameListener;
-    private ChangeListener leaderListenerAB;
-    private ChangeListener leaderListenerEFG;
-    private ChangeListener fieldListenerA;
-    private ChangeListener fieldListenerB;
-    private ChangeListener fieldListenerE;
-    private ChangeListener fieldListenerF;
-    private ChangeListener fieldListenerG;
-    private ChangeListener explainPromptListener;
+    private ChangeListener promptListener;
     private double scale =1.0;
     private Scene scene;
     private Stage stage;
@@ -69,37 +54,22 @@ public class ABEFGcreate {
     private ToolBar sizeToolBar;
 
 
-    public ABEFGcreate(MainWindow mainWindow) {
+    public PageEditCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
-    public ABEFGcreate(MainWindow mainWindow, ABEFGmodel originalModel) {
+    public PageEditCreate(MainWindow mainWindow, PageEditModel originalModel) {
         this(mainWindow);
 
         statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         statementTextHeight = originalModel.getStatementTextHeight();
         nameField.setText(originalModel.getExerciseName());
-        explainPromptField.setText(originalModel.getContentPrompt());
-        ABEFGmodelExtra fields = originalModel.getModelFields();
-        leaderABfield.setText(fields.getLeaderAB());
-        promptFieldA.setText(fields.getPromptA());
-        promptFieldB.setText(fields.getPromptB());
-        leaderEFGfield.setText(fields.getLeaderEFG());
-        promptFieldE.setText(fields.getPromptE());
-        promptFieldF.setText(fields.getPromptF());
-        promptFieldG.setText(fields.getPromptG());
+        promptField.setText(originalModel.getContentPrompt());
         nameField.textProperty().addListener(nameListener);
-        explainPromptField.textProperty().addListener(explainPromptListener);
-        leaderABfield.textProperty().addListener(leaderListenerAB);
-        promptFieldA.textProperty().addListener(fieldListenerA);
-        promptFieldB.textProperty().addListener(fieldListenerB);
-        leaderEFGfield.textProperty().addListener(leaderListenerEFG);
-        promptFieldE.textProperty().addListener(fieldListenerE);
-        promptFieldF.textProperty().addListener(fieldListenerF);
-        promptFieldG.textProperty().addListener(fieldListenerG);
-        fieldsModified = false;
+        promptField.textProperty().addListener(promptListener);
+        fieldModified = false;
     }
 
     private void setupWindow() {
@@ -111,150 +81,53 @@ public class ABEFGcreate {
 
         statementDRTA = new DecoratedRTA();
         statementRTA = statementDRTA.getEditor();
-        statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setPromptText("Exercise Statement:");
+        statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setPrefWidth(PrintUtilities.getPageWidth() + 20);
         statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
         statementRTA.setPrefHeight(200);
 
         statementRTA.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
-            fieldsModified = true;
+            fieldModified = true;
             statementTextHeight = mainWindow.getMainView().getRTATextHeight(statementRTA);
         });
 
         Label nameLabel = new Label("Exercise Name: ");
+        nameLabel.setPrefWidth(95);
         nameField  = new TextField();
         nameField.setPromptText("(plain text)");
         nameListener = new ChangeListener() {
             @Override
             public void changed(ObservableValue ob, Object ov, Object nv) {
-                fieldsModified = true;
+                fieldModified = true;
                 nameField.textProperty().removeListener(nameListener);
             }
         };
         nameField.textProperty().addListener(nameListener);
 
-        Label leaderLabelAB = new Label("AB Checkbox Lead: ");
-        leaderABfield = new TextField();
-        leaderABfield.setPromptText("(plain text)");
-        leaderListenerAB = new ChangeListener() {
+        Label promptLabel = new Label("Content prompt: ");
+        promptLabel.setPrefWidth(95);
+        promptField = new TextField();
+        promptField.setPromptText("(plain text)");
+        promptListener = new ChangeListener() {
             @Override
             public void changed(ObservableValue ob, Object ov, Object nv) {
-                fieldsModified = true;
-                leaderABfield.textProperty().removeListener(leaderListenerAB);
+                fieldModified = true;
+                promptField.textProperty().removeListener(nameListener);
             }
         };
-        leaderABfield.textProperty().addListener(leaderListenerAB);
-
-        Label promptLabelA = new Label("A Prompt: ");
-        promptFieldA = new TextField();
-        promptFieldA.setPromptText("(plain text)");
-        fieldListenerA = new ChangeListener() {
-            @Override
-            public void changed(ObservableValue ob, Object ov, Object nv) {
-                fieldsModified = true;
-                promptFieldA.textProperty().removeListener(fieldListenerA);
-            }
-        };
-        promptFieldA.textProperty().addListener(fieldListenerA);
-
-        Label promptLabelB = new Label("B Prompt: ");
-        promptFieldB = new TextField();
-        promptFieldB.setPromptText("(plain text)");
-        fieldListenerB = new ChangeListener() {
-            @Override
-            public void changed(ObservableValue ob, Object ov, Object nv) {
-                fieldsModified = true;
-                promptFieldB.textProperty().removeListener(fieldListenerB);
-            }
-        };
-        promptFieldB.textProperty().addListener(fieldListenerB);
-
-        Label leaderLabelEFG = new Label("EFG Checkbox Lead: ");
-        leaderEFGfield = new TextField();
-        leaderEFGfield.setPromptText("(plain text)");
-        leaderListenerEFG = new ChangeListener() {
-            @Override
-            public void changed(ObservableValue ob, Object ov, Object nv) {
-                fieldsModified = true;
-                leaderEFGfield.textProperty().removeListener(leaderListenerEFG);
-            }
-        };
-        leaderEFGfield.textProperty().addListener(leaderListenerEFG);
-
-        Label promptLabelE = new Label("E Prompt: ");
-        promptFieldE = new TextField();
-        promptFieldE.setPromptText("(plain text)");
-        fieldListenerE = new ChangeListener() {
-            @Override
-            public void changed(ObservableValue ob, Object ov, Object nv) {
-                fieldsModified = true;
-                promptFieldE.textProperty().removeListener(fieldListenerE);
-            }
-        };
-        promptFieldE.textProperty().addListener(fieldListenerE);
-
-        Label promptLabelF = new Label("F Prompt: ");
-        promptFieldF = new TextField();
-        promptFieldF.setPromptText("(plain text)");
-        fieldListenerF = new ChangeListener() {
-            @Override
-            public void changed(ObservableValue ob, Object ov, Object nv) {
-                fieldsModified = true;
-                promptFieldF.textProperty().removeListener(fieldListenerF);
-            }
-        };
-        promptFieldF.textProperty().addListener(fieldListenerF);
-
-        Label promptLabelG = new Label("G Prompt: ");
-        promptFieldG = new TextField();
-        promptFieldG.setPromptText("(plain text)");
-        fieldListenerG = new ChangeListener() {
-            @Override
-            public void changed(ObservableValue ob, Object ov, Object nv) {
-                fieldsModified = true;
-                promptFieldG.textProperty().removeListener(fieldListenerG);
-            }
-        };
-        promptFieldG.textProperty().addListener(fieldListenerG);
+        promptField.textProperty().addListener(nameListener);
 
 
-        Label explainPromptLabel = new Label("Explain prompt: ");
-        explainPromptLabel.setPrefWidth(100);
-        explainPromptField = new TextField();
-        explainPromptField.setPromptText("(plain text)");
-        explainPromptListener = new ChangeListener() {
-            @Override
-            public void changed(ObservableValue ob, Object ov, Object nv) {
-                fieldsModified = true;
-                explainPromptField.textProperty().removeListener(explainPromptListener);
-            }
-        };
-        explainPromptField.textProperty().addListener(explainPromptListener);
+        HBox nameBox = new HBox(nameLabel, nameField);
+        nameBox.setAlignment(Pos.BASELINE_LEFT);
+        HBox promptBox = new HBox(promptLabel, promptField);
+        promptBox.setAlignment(Pos.BASELINE_LEFT);
+        VBox nameNpromptBox = new VBox(10,nameBox,promptBox);
+        nameNpromptBox.setPadding(new Insets(20,0,20,70));
 
-
-
-
-        GridPane checkboxPane = new GridPane();
-        checkboxPane.addColumn(0, nameLabel, leaderLabelAB, promptLabelA, promptLabelB);
-        checkboxPane.addColumn(1, nameField, leaderABfield, promptFieldA, promptFieldB);
-        checkboxPane.addColumn(5, explainPromptLabel, leaderLabelEFG, promptLabelE, promptLabelF, promptLabelG);
-        checkboxPane.addColumn(6, explainPromptField, leaderEFGfield, promptFieldE, promptFieldF, promptFieldG);
-        checkboxPane.setPadding(new Insets(20));
-        checkboxPane.setHgap(10);
-        checkboxPane.setVgap(10);
-
-        HBox gridBox = new HBox(checkboxPane);
-        gridBox.setAlignment(Pos.CENTER);
-
-
-
-
-
-        String helpText = "AB/EFG Explain is appropriate for exercises that require choices from among two groups of mutually exclusive items: first, between some A and B, then between E, F and G, together with an explanation or justification.\n\n" +
-                "For the AB/EFG Explain exercise you supply the exercise name and, if desired, a prompt to appear in the explanation field.  Then each set of options has a Lead that appears prior to the check boxes, and labels to appear with the check boxes.";
-
-
+        String helpText = "Page Edit Exercise is appropriate for any exercise that calls for a text response which may range from short answer to multiple pages. All the usual keyboard and edit commands apply.\n\n" +
+                "For the Page Edit Exercise, you need only provide the exercise name, exercise statement and, if desired, a prompt that will appear in an empty content area (you may not see the prompt until the content area gains focus).";
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
         helpArea.setPrefHeight(130);
@@ -317,6 +190,8 @@ public class ABEFGcreate {
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
 
 
+
+
         ToolBar editToolbar = statementDRTA.getEditToolbar();
         ToolBar fontsToolbar = statementDRTA.getFontsToolbar();
         ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
@@ -330,17 +205,16 @@ public class ABEFGcreate {
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
 
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, gridBox);
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, nameNpromptBox);
 //        topBox.layout();
         borderPane.topProperty().setValue(topBox);
-
 
         borderPane.setTop(topBox);
 
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
-        stage.setTitle("Create AB/EFG Explain Exercise:");
+        stage.setTitle("Create Page Edit Exercise:");
         stage.getIcons().addAll(EditorMain.icons);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
@@ -371,7 +245,7 @@ public class ABEFGcreate {
     }
 
     private void setCenterVgrow() {
-        double fixedHeight = helpArea.getHeight() * scale + 500;
+        double fixedHeight = helpArea.getHeight() * scale + 400;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
         DoubleProperty maximumHeightProperty = new SimpleDoubleProperty(PrintUtilities.getPageHeight() );
         DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
@@ -389,19 +263,19 @@ public class ABEFGcreate {
 
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
- //           statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
-            statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
-            statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
+            statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
+//            statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
+//            statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
-            fieldsModified = false;
+            fieldModified = false;
         }
     }
 
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
-        if (fieldsModified || statementRTA.isModified()) {
+        if (fieldModified || statementRTA.isModified()) {
             Alert confirm = EditorAlerts.confirmationAlert(title, content);
             Optional<ButtonType> result = confirm.showAndWait();
             if (result.get() != OK) okcontinue = false;
@@ -410,12 +284,11 @@ public class ABEFGcreate {
     }
 
     private void viewExercise() {
-        ABEFGmodel model = extractModelFromWindow();
-        ABEFGexercise exercise = new ABEFGexercise(model, mainWindow);
+        PageEditModel model = extractModelFromWindow();
+        PageEditExercise exercise = new PageEditExercise(model, mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.prefHeightProperty().unbind();
         rta.setEditable(false);
-        RichTextAreaSkin rtaSkin = ((RichTextAreaSkin) rta.getSkin());
         exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         mainWindow.setUpExercise(exercise);
     }
@@ -425,40 +298,29 @@ public class ABEFGcreate {
         saveAsButton.setDisable(true);
         nameField.textProperty().addListener(nameListener);
 
-        ABEFGmodel model = extractModelFromWindow();
-        ABEFGexercise exercise = new ABEFGexercise(model, mainWindow);
+        PageEditModel model = extractModelFromWindow();
+        PageEditExercise exercise = new PageEditExercise(model, mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
-        rta.setEditable(false);
         rta.prefHeightProperty().unbind();
+        rta.setEditable(false);
         exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         exercise.saveExercise(saveAs);
 
         saveButton.setDisable(false);
         saveAsButton.setDisable(false);
-        fieldsModified = false;
+        fieldModified = false;
     }
-    private ABEFGmodel extractModelFromWindow() {
+    private PageEditModel extractModelFromWindow() {
         String name = nameField.getText();
-        String leaderAB = leaderABfield.getText();
-        String promptA = promptFieldA.getText();
-        String promptB = promptFieldB.getText();
-        String leaderEFG = leaderEFGfield.getText();
-        String promptE = promptFieldE.getText();
-        String promptF = promptFieldF.getText();
-        String promptG = promptFieldG.getText();
-
-        ABEFGmodelExtra fields = new ABEFGmodelExtra(leaderAB, promptA, false, promptB, false, leaderEFG, promptE, false, promptF, false, promptG, false);
-        String prompt = explainPromptField.getText();
-        if (statementRTA.isModified()) fieldsModified = true;
+        String prompt = promptField.getText();
+        if (statementRTA.isModified()) fieldModified = true;
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document statementDocument = statementRTA.getDocument();
         Document commentDoc = new Document();
         double statementPrefHeight = statementTextHeight + 25;
-
-        ABEFGmodel model = new ABEFGmodel(name, fields,  false, prompt, statementPrefHeight, statementDocument, commentDoc, new ArrayList<PageContent>());
+        PageEditModel model = new PageEditModel(name, false, prompt, statementPrefHeight, statementDocument, commentDoc, new ArrayList<PageContent>());
         model.setStatementTextHeight(statementTextHeight);
         return model;
     }
 
 }
-

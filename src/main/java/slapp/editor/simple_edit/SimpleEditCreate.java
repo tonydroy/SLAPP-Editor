@@ -1,7 +1,6 @@
-package slapp.editor.simple_editor;
+package slapp.editor.simple_edit;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -16,7 +15,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -30,6 +28,8 @@ import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.MainWindow;
+
+
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -68,13 +68,13 @@ public class SimpleEditCreate {
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         statementTextHeight = originalModel.getStatementTextHeight();
         nameField.setText(originalModel.getExerciseName());
-        promptField.setText(originalModel.getContentPrompt());
+        promptField.setText(originalModel.getResponsePrompt());
         nameField.textProperty().addListener(nameListener);
         promptField.textProperty().addListener(promptListener);
         fieldModified = false;
     }
-
     private void setupWindow() {
+
         BorderPane borderPane = new BorderPane();
 
         //empty bar for consistent look
@@ -128,7 +128,7 @@ public class SimpleEditCreate {
         VBox nameNpromptBox = new VBox(10,nameBox,promptBox);
         nameNpromptBox.setPadding(new Insets(20,0,20,70));
 
-        String helpText = "Simple Edit Exercise is appropriate for any exercise that calls for a text response (which may include special symbols).  The response may range from short answer to multiple pages. All the usual edit commands apply.\n\n" +
+        String helpText = "Simple Edit Exercise is appropriate for any exercise that calls for a single text box.  (In the usual case, these appear as elements of the 'free form' exercise -- where Simple Edit is superseded by Page Edit for stand-alone exercises.)  All the usual keyboard and edit commands apply.\n\n" +
                 "For the Simple Edit Exercise, you need only provide the exercise name, exercise statement and, if desired, a prompt that will appear in an empty content area (you may not see the prompt until the content area gains focus).";
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
@@ -208,9 +208,7 @@ public class SimpleEditCreate {
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, nameNpromptBox);
-//        topBox.layout();
         borderPane.topProperty().setValue(topBox);
-
         borderPane.setTop(topBox);
 
         stage = new Stage();
@@ -268,8 +266,6 @@ public class SimpleEditCreate {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
             statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
-//            statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
-//            statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
             fieldModified = false;
         }
@@ -312,17 +308,18 @@ public class SimpleEditCreate {
         saveAsButton.setDisable(false);
         fieldModified = false;
     }
+
     private SimpleEditModel extractModelFromWindow() {
-        String name = nameField.getText();
-        String prompt = promptField.getText();
+        SimpleEditModel model = new SimpleEditModel(nameField.getText(), promptField.getText());
+
         if (statementRTA.isModified()) fieldModified = true;
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
-        Document statementDocument = statementRTA.getDocument();
-        Document commentDoc = new Document();
-        double statementPrefHeight = statementTextHeight + 25;
-        SimpleEditModel model = new SimpleEditModel(name, false, prompt, statementPrefHeight, statementDocument, commentDoc, new ArrayList<PageContent>());
+        model.setExerciseStatement(statementRTA.getDocument());
         model.setStatementTextHeight(statementTextHeight);
+        model.setStatementPrefHeight(statementTextHeight + 25);
         return model;
     }
+
+
 
 }
