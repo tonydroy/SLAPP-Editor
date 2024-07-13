@@ -501,6 +501,19 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             }
         });
 
+        DecoratedRTA drta = bdrta.getDRTA();
+        mainView.editorInFocus(drta, ControlType.FIELD);
+        rta.focusedProperty().addListener((o, ov, nv) -> {
+            if (nv) {
+                mainView.editorInFocus(drta, ControlType.FIELD);
+            } else {
+                if (rta.isModified()) {
+                    pushUndoRedo();
+                    exerciseModified = true;
+                }
+            }
+        });
+
         TextFlow flow = new TextFlow();
         TextFlow justificationFlow = getStyledJustificationFlow(flow);
         ViewLine viewLine = new ViewLine(numLabel, depth, LineType.MAIN_CONTENT_LINE, bdrta, justificationFlow, new ArrayList<Label>());
@@ -565,6 +578,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                 rta.layout();
                 exerciseModified = true;
 
+                /*
                 mainView.editorInFocus(drta, ControlType.FIELD);
                 rta.focusedProperty().addListener((o, ov, nv) -> {
                     if (nv) {
@@ -576,6 +590,8 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                         }
                     }
                 });
+
+                 */
             } else {
                 EditorAlerts.fleetingPopup("Cannot modify setup lines.");
             }
