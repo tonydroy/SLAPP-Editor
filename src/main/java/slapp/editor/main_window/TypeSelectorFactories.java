@@ -13,6 +13,9 @@ import slapp.editor.derivation.DerivationModel;
 import slapp.editor.derivation_explain.DrvtnExpCreate;
 import slapp.editor.derivation_explain.DrvtnExpExercise;
 import slapp.editor.derivation_explain.DrvtnExpModel;
+import slapp.editor.free_form.FreeFormCreate;
+import slapp.editor.free_form.FreeFormExercise;
+import slapp.editor.free_form.FreeFormModel;
 import slapp.editor.horizontal_tree.HorizontalTreeCreate;
 import slapp.editor.horizontal_tree.HorizontalTreeExercise;
 import slapp.editor.horizontal_tree.HorizontalTreeModel;
@@ -111,6 +114,10 @@ public class TypeSelectorFactories {
             case "HorizontalTreeModel": {
                 HorizontalTreeModel horizontalTreeModel = (HorizontalTreeModel) objectModel;
                 return new HorizontalTreeExercise(horizontalTreeModel, mainWindow);
+            }
+            case "FreeFormModel": {
+                FreeFormModel freeFormModel = (FreeFormModel) objectModel;
+                return new FreeFormExercise(freeFormModel, mainWindow);
             }
 
             default: {
@@ -250,6 +257,15 @@ public class TypeSelectorFactories {
                 HorizontalTreeCreate horizontalTreeCreate = new HorizontalTreeCreate(mainWindow, horizontalTreeModel);
                 break;
             }
+            case "FreeFormModel": {
+                FreeFormModel freeFormModel = (FreeFormModel) objectModel;
+                if (freeFormModel.isStarted()) {
+                    EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
+                    break;
+                }
+                FreeFormCreate freeFormCreate = new FreeFormCreate(mainWindow, freeFormModel);
+                break;
+            }
 
             default: {
                 EditorAlerts.showSimpleAlert("Cannot Open", "I do not recognize this as a SLAPP exercise file.");
@@ -316,6 +332,10 @@ public class TypeSelectorFactories {
             }
             case VERTICAL_TREE_ABEFEXP: {
                 VerticalTreeABEFExpCreate verticalTreeABEFExpCreate = new VerticalTreeABEFExpCreate(mainWindow);
+                break;
+            }
+            case FREE_FORM: {
+                FreeFormCreate freeFormCreate = new FreeFormCreate(mainWindow);
                 break;
             }
 

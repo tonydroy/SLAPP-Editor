@@ -129,6 +129,8 @@ public class FrontPageView implements ExerciseView<Label> {
     @Override
     public Node getExerciseControl() { return exerciseControl; }
     @Override
+    public Node getRightControl() { return null; }
+    @Override
     public double getContentWidth() {
         return 0;
     }

@@ -14,5 +14,7 @@ public interface Exercise<T,U> {
     boolean isExerciseModified();
     void setExerciseModified(boolean modified);
     ExerciseModel<T> getExerciseModelFromView();
+    Node getFFViewNode();
+    Node getFFPrintNode();
 
 }

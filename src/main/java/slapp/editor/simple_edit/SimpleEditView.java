@@ -59,7 +59,7 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
         statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
         statementHeightSpinner.setPrefWidth(60);
         statementHeightSpinner.setDisable(false);
-        statementHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        statementHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         statementHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = statementHeightSpinner.lookup(".increment-arrow-button");
@@ -90,7 +90,7 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
         commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
         commentHeightSpinner.setPrefWidth(60);
         commentHeightSpinner.setDisable(false);
-        commentHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        commentHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         commentHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = commentHeightSpinner.lookup(".increment-arrow-button");
@@ -117,12 +117,14 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
         responseRTA.getStylesheets().add("slappTextArea.css");
         responseRTA.setPromptText(responsePrompt);
 
-        double responseInitialHeight = Math.round(responsePrefHeight / mainView.getScalePageHeight() * 100.0);
-        responseHeightSpinner = new Spinner<>(0.0, 999.0, responseInitialHeight, 1.0);
+        double responseInitialHeight = Math.round(responsePrefHeight / mainView.getScalePageHeight() * 20.0 ) * 5;
+
+
+        responseHeightSpinner = new Spinner<>(0.0, 999.0, responseInitialHeight, 5.0);
         responseHeightSpinner.setPrefWidth(60);
         responseHeightSpinner.setDisable(false);
         responseHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
-        responseRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(responseHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+        responseRTA.prefHeightProperty().bind(Bindings.max(15.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(responseHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         responseHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = responseHeightSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -131,7 +133,7 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
         });
 
         responseRTA.prefWidthProperty().bind(mainView.scalePageWidthProperty());
-        responseWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
+        responseWidthSpinner = new Spinner<>(0.0, 999.0, 100, 5.0);
         responseWidthSpinner.setPrefWidth(60);
         responseWidthSpinner.setDisable(true);
         responseWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
@@ -156,20 +158,32 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
 
             responseRTA.prefHeightProperty().unbind();
             responseHeightSpinner.getValueFactory().setValue((double) Math.round(responseHeightSpinner.getValue() * ov.doubleValue() / nv.doubleValue() / 5.0) * 5.0);
-            responseRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(responseHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+            responseRTA.prefHeightProperty().bind(Bindings.max(15.0, Bindings.multiply(nv.doubleValue(), DoubleProperty.doubleProperty(responseHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
 
         });
     }
 
     public void setResponsePrompt(String prompt) {   responsePrompt = prompt;  }
-    public double getCommentPrefHeight() {     return commentPrefHeight;  }
+    public double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight();     }
     public void setCommentPrefHeight(double commentPrefHeight) {     this.commentPrefHeight = commentPrefHeight;   }
-    public double getResponsePrefHeight() {      return responsePrefHeight;   }
+    public double getResponsePrefHeight() {    return exerciseResponse.getEditor().getPrefHeight();   }
     public void setResponsePrefHeight(double responsePrefHeight) {     this.responsePrefHeight = responsePrefHeight;  }
 
     public DecoratedRTA getExerciseResponse() {    return exerciseResponse;   }
 
     public void setExerciseResponse(DecoratedRTA exerciseResponse) {   this.exerciseResponse = exerciseResponse;  }
+
+    public Node getFFViewNode() {
+        RichTextArea responseRTA = exerciseResponse.getEditor();
+        /*
+        double responseInitialHeight = Math.round(120.0 / mainView.getScalePageHeight() * 100.0);
+        responseRTA.prefHeightProperty().unbind();
+        responseHeightSpinner.getValueFactory().setValue((double) Math.round(responseInitialHeight));
+        responseRTA.prefHeightProperty().bind(Bindings.max(15.0, Bindings.multiply(mainView.scalePageHeightProperty().doubleValue(), DoubleProperty.doubleProperty(responseHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
+
+         */
+        return responseRTA;
+    }
 
     @Override
     public String getExerciseName() {return exerciseName; }
@@ -195,10 +209,12 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
     }
     @Override
     public Node getExerciseContentNode() {     return exerciseResponse.getEditor();  }
-
-//this is all vestigal:
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
+    @Override
+    public Node getRightControl() { return null; }
+
+    //this is all vestigal need to rip:
     @Override
     public DoubleProperty getContentHeightProperty() { return exerciseResponse.getEditor().prefHeightProperty(); }
     @Override

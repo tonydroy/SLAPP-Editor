@@ -144,7 +144,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
         statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
         statementHeightSpinner.setPrefWidth(60);
         statementHeightSpinner.setDisable(false);
-        statementHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        statementHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         statementHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = statementHeightSpinner.lookup(".increment-arrow-button");
@@ -177,7 +177,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
         commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
         commentHeightSpinner.setPrefWidth(60);
         commentHeightSpinner.setDisable(false);
-        commentHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        commentHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
         commentHeightSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = commentHeightSpinner.lookup(".increment-arrow-button");
@@ -402,6 +402,8 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
     public double getContentFixedHeight() { return -50.0; }
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
+    @Override
+    public Node getRightControl() { return null; }
     @Override
     public double getContentWidth() { return 200.0;  }
     @Override

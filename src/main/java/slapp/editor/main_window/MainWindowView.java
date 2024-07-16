@@ -16,7 +16,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.*;
@@ -58,7 +57,8 @@ public class MainWindowView {
     private DecoratedRTA lastFocusedDRTA;
     private DecoratedRTA dummyDRTA = new DecoratedRTA();
     private Node commentNode;
-    private Node controlNode;
+    private Node leftControlNode;
+    private Node rightControlNode;
     private VBox statusBar;
     private HBox upperStatusBox;
     private FlowPane lowerStatusPane;
@@ -331,6 +331,8 @@ public class MainWindowView {
 
 
 
+
+
         statusBar = new VBox(5);
         upperStatusBox = new HBox(40);
         lowerStatusPane = new FlowPane();
@@ -340,7 +342,8 @@ public class MainWindowView {
         statusBar.getChildren().addAll(upperStatusBox, lowerStatusPane);
         borderPane.setBottom(statusBar);
 
-        borderPane.setLeft(controlNode);
+        borderPane.setLeft(leftControlNode);
+        borderPane.setRight(rightControlNode);
 
 
         mainScene = new Scene(borderPane);
@@ -413,6 +416,10 @@ public class MainWindowView {
         return height;
     }
 
+    public void setUpLeftControl(Node leftControl) {
+        borderPane.setLeft(leftControl);
+    }
+
     public void setupExercise() {
 
 
@@ -421,7 +428,8 @@ public class MainWindowView {
         this.contentNode = currentExerciseView.getExerciseContentNode();
         this.commentDecoratedRTA = currentExerciseView.getExerciseComment();
         this.commentNode = commentDecoratedRTA.getEditor();
-        this.controlNode = currentExerciseView.getExerciseControl();
+        this.leftControlNode = currentExerciseView.getExerciseControl();
+        this.rightControlNode = currentExerciseView.getRightControl();
 
 //        this.contentWidthProperty = currentExerciseView.getContentWidthProperty();
 
@@ -445,7 +453,8 @@ public class MainWindowView {
         upperStatusBox.getChildren().add(new Label("Exercise: " + currentExerciseView.getExerciseName()));
         lowerStatusPane.getChildren().add(new Label("Date: " + dtf.format(LocalDateTime.now())));
 
-        borderPane.setLeft(controlNode);
+        borderPane.setLeft(leftControlNode);
+        borderPane.setRight(rightControlNode);
 
 
 

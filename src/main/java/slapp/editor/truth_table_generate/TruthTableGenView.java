@@ -655,7 +655,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         choicesHeightSpinner = new Spinner<>(0.0, 999.0, 0, 1.0);
         choicesHeightSpinner.setPrefWidth(60);
         choicesHeightSpinner.setDisable(true);
-        choicesHeightSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
+        choicesHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
 
         choiceBox.maxWidthProperty().bind(mainView.scalePageWidthProperty());
         choicesWidthSpinner = new Spinner<>(0.0, 999.0, 100.0, 1.0);
@@ -822,6 +822,8 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
 
     @Override
     public Node getExerciseControl() { return controlBox; }
+    @Override
+    public Node getRightControl() { return null; }
 
     @Override
     public double getContentWidth() { return endPane.getBoundsInParent().getMaxX();  }

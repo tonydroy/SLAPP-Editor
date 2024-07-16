@@ -381,7 +381,10 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
     @Override
     public void setExerciseModified(boolean modified) { exerciseModified = modified;   }
-
+    @Override
+    public Node getFFViewNode() {return horizontalTreeView.getMainPane();}
+    @Override
+    public Node getFFPrintNode() {return null;}
     @Override
     public ExerciseModel<HorizontalTreeModel> getExerciseModelFromView() {
         return (ExerciseModel) getHorizontalTreeModelFromView();

@@ -21,6 +21,10 @@ public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView
     }
 
     @Override
+    public Node getFFViewNode() {return null;}
+    @Override
+    public Node getFFPrintNode() {return null;}
+    @Override
     public FrontPageModel getExerciseModel() {return model; }
     @Override
     public FrontPageView getExerciseView() { return view; }

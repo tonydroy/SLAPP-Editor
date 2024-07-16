@@ -218,7 +218,10 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     public void setExerciseModified(boolean modified) {
         this.exerciseModified = modified;
     }
-
+    @Override
+    public Node getFFViewNode() {   return editView.getFFViewNode();}
+    @Override
+    public Node getFFPrintNode() {return null;}
     @Override
     public ExerciseModel getExerciseModelFromView() {
         return (ExerciseModel) getSimpleEditModelFromView();

@@ -1001,7 +1001,10 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
     @Override
     public void setExerciseModified(boolean modified) { this.exerciseModified = modified; }
-
+    @Override
+    public Node getFFViewNode() {return null;}
+    @Override
+    public Node getFFPrintNode() {return null;}
     @Override
     public ExerciseModel<DrvtnExpModel> getExerciseModelFromView() {
         return (ExerciseModel) getDrvtnExpModelFromView();

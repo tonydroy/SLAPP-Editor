@@ -533,7 +533,10 @@ public class VerticalTreeABExpExercise implements Exercise<VerticalTreeABExpMode
 
     @Override
     public void setExerciseModified(boolean modified) { exerciseModified = modified; }
-
+    @Override
+    public Node getFFViewNode() {return null;}
+    @Override
+    public Node getFFPrintNode() {return null;}
     @Override
     public ExerciseModel<VerticalTreeABExpModel> getExerciseModelFromView() {
         return (ExerciseModel) getVerticalTreeModelFromView();

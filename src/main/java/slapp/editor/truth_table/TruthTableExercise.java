@@ -374,7 +374,10 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
 
     @Override
     public void setExerciseModified(boolean modified) { exerciseModified = modified; }
-
+    @Override
+    public Node getFFViewNode() {return truthTableView.getExerciseContentNode();}
+    @Override
+    public Node getFFPrintNode() {return null;}
     @Override
     public ExerciseModel<TruthTableModel> getExerciseModelFromView() {
         return (ExerciseModel) getTruthTableModelFromView();

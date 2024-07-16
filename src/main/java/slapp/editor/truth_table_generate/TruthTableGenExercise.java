@@ -506,7 +506,10 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
 
     @Override
     public void setExerciseModified(boolean modified) { exerciseModified = modified; }
-
+    @Override
+    public Node getFFViewNode() {return null;}
+    @Override
+    public Node getFFPrintNode() {return null;}
     @Override
     public ExerciseModel<TruthTableGenModel> getExerciseModelFromView() {
         return (ExerciseModel) getTruthTableGenModelFromView();

@@ -301,7 +301,10 @@ public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
     public void setExerciseModified(boolean modified) {
         this.exerciseModified = modified;
     }
-
+    @Override
+    public Node getFFViewNode() {return null;}
+    @Override
+    public Node getFFPrintNode() {return null;}
     @Override
     public ExerciseModel getExerciseModelFromView() {
         return (ExerciseModel) getPageEditModelFromView();

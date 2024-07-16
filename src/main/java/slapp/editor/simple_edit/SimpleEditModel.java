@@ -22,7 +22,7 @@ public class SimpleEditModel implements ExerciseModel <Document>, Serializable {
     private double commentPrefHeight = 60;
     private double commentTextHeight = 0;
     private Document exerciseResponse = new Document("");
-    private double responsePrefHeight = 450;
+    private double responsePrefHeight = 350;
     private double responseTextHeight = 0;
     private String responsePrompt = "";
 

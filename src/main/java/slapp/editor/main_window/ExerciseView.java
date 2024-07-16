@@ -22,6 +22,7 @@ public interface ExerciseView<T> {
     DoubleProperty getContentWidthProperty();
     double getContentFixedHeight();
     Node getExerciseControl();
+    Node getRightControl();
     double getContentWidth();
     double getContentHeight();
 

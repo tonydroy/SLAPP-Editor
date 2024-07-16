@@ -460,7 +460,10 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
 
     @Override
     public void setExerciseModified(boolean modified) { exerciseModified = modified; }
-
+    @Override
+    public Node getFFViewNode() {return verticalTreeView.getExerciseContentNode();}
+    @Override
+    public Node getFFPrintNode() {return null;}
     @Override
     public ExerciseModel<VerticalTreeModel> getExerciseModelFromView() {
         return (ExerciseModel) getVerticalTreeModelFromView();

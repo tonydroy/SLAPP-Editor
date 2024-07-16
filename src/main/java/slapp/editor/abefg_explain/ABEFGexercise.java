@@ -393,6 +393,10 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         this.exerciseModified = modified;
     }
 
+    @Override
+    public Node getFFViewNode() {return null;}
+    @Override
+    public Node getFFPrintNode() {return null;}
 
     @Override
     public ExerciseModel getExerciseModelFromView() {

@@ -343,6 +343,11 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         return (ExerciseModel) getABmodelFromView();
     }
 
+    @Override
+    public Node getFFViewNode() {return null;}
+    @Override
+    public Node getFFPrintNode() {return null;}
+
     private ABmodel getABmodelFromView() {
         RichTextArea commentRTA = abView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
