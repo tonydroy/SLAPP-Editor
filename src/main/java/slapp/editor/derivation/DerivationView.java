@@ -129,7 +129,8 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
         VBox controlBox = new VBox(20, undoButton, redoButton, insertLineButton, deleteLineButton, insertSubButton, insertSubsButton, indentButton, outdentButton, addShelfButton, addGapButton);
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
         controlBox.setMargin(insertLineButton, new Insets(0,0,20, 0));
-        controlBox.setPadding(new Insets(40,20,0,40));
+        controlBox.setPadding(new Insets(40,20,0,20));
+        controlBox.setMinWidth(150); controlBox.setMaxWidth(150);
         exerciseControlNode = controlBox;
     }
 
@@ -204,7 +205,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
 
         //split pane
         double splitPaneInitialWidth = Math.round(splitPanePrefWidth / mainView.getScalePageWidth() * 20.0) * 5.0;
-        splitPaneWidthSpinner = new Spinner<>(100.0, 999.0, splitPaneInitialWidth, 5.0);
+        splitPaneWidthSpinner = new Spinner<>(70.0, 999.0, splitPaneInitialWidth, 5.0);
         splitPaneWidthSpinner.setPrefWidth(60);
         splitPaneWidthSpinner.setDisable(false);
         splitPaneWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
@@ -217,7 +218,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
             if (decrement != null) decrement.getOnMouseReleased().handle(null);
         });
 
-        contentSplitPane.setMinHeight(375);
+        contentSplitPane.setMinHeight(200);
         splitPaneHeightSpinner = new Spinner<>(0.0,999.0, 0,1.0);
         splitPaneHeightSpinner.setPrefWidth(60);
         splitPaneHeightSpinner.setDisable(true);
@@ -228,11 +229,11 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
         });
 
         contentSplitPane.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            if (currentSpinnerNode != contentSplitPane) {
+//            if (currentSpinnerNode != contentSplitPane) {
                 currentSpinnerNode = contentSplitPane;
                 splitPaneHeightSpinner.getValueFactory().setValue((double) Math.round(contentSplitPane.getHeight()/mainView.getScalePageHeight() * 100.0));
                 mainView.updateSizeSpinners(splitPaneHeightSpinner, splitPaneWidthSpinner);
-            }
+ //           }
         });
 
 

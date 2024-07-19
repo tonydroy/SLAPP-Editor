@@ -976,7 +976,22 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     @Override
     public Node getFFViewNode() {return derivationView.getExerciseContentNode();}
     @Override
-    public Node getFFPrintNode() {return null;}
+    public Node getFFPrintNode() {
+        DerivationExercise printExercise = this;
+        DerivationModel printModel = derivationModel;
+        double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
+
+        GridPane derivationPane = printExercise.getExerciseView().getGrid();
+        derivationPane.setPadding(new Insets(15,0,15,0));
+
+        double width = printModel.getGridWidth() * nodeWidth;
+        derivationPane.setMaxWidth(width);
+        derivationPane.setMinWidth(width);
+        HBox gridBox = new HBox(derivationPane);
+        gridBox.setAlignment(Pos.CENTER);
+
+        return gridBox;
+    }
 
     @Override
     public ExerciseModel<DerivationModel> getExerciseModelFromView() {

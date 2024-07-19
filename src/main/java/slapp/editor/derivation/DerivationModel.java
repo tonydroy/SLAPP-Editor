@@ -17,7 +17,7 @@ public class DerivationModel implements ExerciseModel<Document>, Serializable {
     private boolean started = false;
 
 
-    private double splitPanePrefWidth;
+    private double splitPanePrefWidth = PrintUtilities.getPageWidth();
 
     private double gridWidth = 0;
     private boolean isLeftmostScopeLine = true;

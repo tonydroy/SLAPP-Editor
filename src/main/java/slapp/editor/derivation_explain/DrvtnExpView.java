@@ -133,6 +133,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
         controlBox.setMargin(insertLineButton, new Insets(0,0,20, 0));
         controlBox.setPadding(new Insets(40,20,0,40));
+        controlBox.setMinWidth(150); controlBox.setMaxWidth(150);
         exerciseControlNode = controlBox;
 
 

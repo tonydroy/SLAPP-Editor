@@ -106,6 +106,7 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
         VBox controlBox = (VBox) exerciseControlNode;        ;
         controlBox.setSpacing(30.0);
         controlBox.setPadding(new Insets(200,20,0,30));
+        controlBox.setMinWidth(150); controlBox.setMaxWidth(150);
         controlBox.getChildren().addAll(addPageButton, removePageButton);
     }
 

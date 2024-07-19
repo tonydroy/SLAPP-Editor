@@ -291,6 +291,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         VBox annotationButtons = new VBox(annotationPlus, annotationMinus);
         HBox annotationBox = new HBox(annotationToggle, annotationButtons);
         annotationBox.setMaxHeight(30);
+        annotationBox.setMaxWidth(64);
 
         axisNode = new Ruler();
         axisNode.setManaged(false);
@@ -326,7 +327,9 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         controlBox.setMargin(rulerButton, new Insets(-10, 0, 0, 0));
 
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
-        controlBox.setPadding(new Insets(20,10,0,80));
+        controlBox.setPadding(new Insets(20,20,0,20));
+        controlBox.setMinWidth(150); controlBox.setMaxWidth(150);
+
         exerciseControlNode = controlBox;
 
     }
@@ -443,6 +446,7 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
         //main pane
         mainPane.setMinHeight(150);
+        mainPane.setMinWidth(300);
         mainPaneHeightSpinner = new Spinner<>(0.0,999.0, 0,1.0);
         mainPaneHeightSpinner.setPrefWidth(60);
         mainPaneHeightSpinner.setDisable(true);
@@ -462,12 +466,12 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         });
 
         mainPane.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            if (currentSpinnerNode != mainPane) {
+ //           if (currentSpinnerNode != mainPane) {
                 currentSpinnerNode = mainPane;
                 mainPaneHeightSpinner.getValueFactory().setValue((double) Math.round(mainPane.getHeight()/ mainView.getScalePageHeight() * 100.0));
                 mainPaneWidthSpinner.getValueFactory().setValue((double) Math.round(mainPane.getWidth()/ mainView.getScalePageWidth() * 100.0));
                 mainView.updateSizeSpinners(mainPaneHeightSpinner, mainPaneWidthSpinner);
-            }
+  //          }
         });
 
 

@@ -130,6 +130,7 @@ public class ABExpRootLayout extends AnchorPane {
         VBox annotationButtons = new VBox(annotationPlus, annotationMinus);
         annotationBox = new HBox(annotationToggle, annotationButtons);
         annotationBox.setMaxHeight(30);
+        annotationBox.setMaxWidth(64);
 
 
         circleToggle = new ToggleButton();

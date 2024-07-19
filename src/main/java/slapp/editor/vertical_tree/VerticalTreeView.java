@@ -64,7 +64,8 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
 
         controlBox.getChildren().addAll(undoButton, redoButton);
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
-        controlBox.setPadding(new Insets(50,10,0,80));
+        controlBox.setPadding(new Insets(50,20,0,60));
+        controlBox.setMinWidth(150); controlBox.setMaxWidth(150);
         exerciseControlNode = controlBox;
     }
 
@@ -155,7 +156,7 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
         });
 
         double mainPaneInitialWidth = Math.round(mainPanePrefWidth / mainView.getScalePageWidth() * 20.0) * 5.0;
-        mainPaneWidthSpinner = new Spinner<>(100.0, 999.0, mainPaneInitialWidth, 5.0);
+        mainPaneWidthSpinner = new Spinner<>(70.0, 999.0, mainPaneInitialWidth, 5.0);
         mainPaneWidthSpinner.setPrefWidth(60);
         mainPaneWidthSpinner.setDisable(false);
         mainPaneWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
@@ -164,7 +165,7 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
         mainPane1.maxWidthProperty().bind(Bindings.multiply(mainView.scalePageWidthProperty(), DoubleProperty.doubleProperty(mainPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0)));
  //       mainPane.maxWidthProperty().bind(mainPane.prefWidthProperty());
         mainPane.prefWidthProperty().bind(mainPane1.maxWidthProperty());
- //       mainPane1.prefWidthProperty().bind(mainPane.prefWidthProperty());
+        mainPane1.prefWidthProperty().bind(mainPane.prefWidthProperty());
         mainPaneWidthSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = mainPaneWidthSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
@@ -173,10 +174,10 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
         });
 
         mainPane.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            if (currentSpinnerNode != mainPane) {
+ //           if (currentSpinnerNode != mainPane) {
                 currentSpinnerNode = mainPane;
                 mainView.updateSizeSpinners(mainPaneHeightSpinner, mainPaneWidthSpinner);
-            }
+//            }
         });
 
 

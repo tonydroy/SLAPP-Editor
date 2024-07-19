@@ -219,7 +219,8 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         setupTableButton.setPrefWidth(100);
 
         controlBox = new VBox(20, basicFormulaControlBox, basicFormulasPane, mainFormulaControlBox, mainFormulasPane, spinnerBox, setupTableButton);
-        controlBox.setPadding(new Insets(100, 20, 0, 30));
+        controlBox.setPadding(new Insets(100, 15,0,15));
+        controlBox.setMinWidth(150); controlBox.setMaxWidth(150);
 
         choiceBox = new HBox(20, choiceLeadLabel, aCheckBox, bCheckBox);
         choiceBox.setPadding(new Insets(5,0,5,5));
@@ -231,6 +232,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
 
         tableGrid = new GridPane();
         tableGrid.setPadding(new Insets(20,0,20,10));
+
 
 
 
@@ -643,12 +645,12 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
         });
 
         tableGrid.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            if (currentSpinnerNode != tableGrid) {
+        //    if (currentSpinnerNode != tableGrid) {
                 currentSpinnerNode = tableGrid;
                 tableGridHeightSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getHeight()/ mainView.getScalePageHeight() * 100.0));
                 tableGridWidthSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getWidth()/ mainView.getScalePageWidth() * 100.0));
                 mainView.updateSizeSpinners(tableGridHeightSpinner, tableGridWidthSpinner);
-            }
+        //    }
         });
 
         //choices (null spinners)
@@ -821,7 +823,7 @@ public class TruthTableGenView implements ExerciseView<DecoratedRTA> {
     public double getContentFixedHeight() { return contentFixedHeight; }
 
     @Override
-    public Node getExerciseControl() { return controlBox; }
+    public Node getExerciseControl() {  return controlBox; }
     @Override
     public Node getRightControl() { return null; }
 

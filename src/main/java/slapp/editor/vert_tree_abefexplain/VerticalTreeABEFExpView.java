@@ -98,7 +98,8 @@ public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
 
         controlBox.getChildren().addAll(undoButton, redoButton);
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
-        controlBox.setPadding(new Insets(100,10,0,80));
+        controlBox.setPadding(new Insets(100,20,0,40));
+        controlBox.setMinWidth(150); controlBox.setMaxWidth(150);
         exerciseControlNode = controlBox;
     }
 

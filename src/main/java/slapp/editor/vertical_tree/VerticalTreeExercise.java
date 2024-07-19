@@ -463,7 +463,33 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
     @Override
     public Node getFFViewNode() {return verticalTreeView.getExerciseContentNode();}
     @Override
-    public Node getFFPrintNode() {return null;}
+    public Node getFFPrintNode() {
+        VerticalTreeModel printModel = verticalTreeModel;
+        VerticalTreeExercise printExercise = this;
+        double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
+
+        AnchorPane mainPane = printExercise.getExerciseView().getRootLayout().getMainPane();
+        mainPane.setStyle("-fx-background-color: transparent");
+        ObservableList<Node> nodes = mainPane.getChildren();
+
+        for (Node node : nodes) {
+            if (node instanceof TreeFormulaBox) {
+                TreeFormulaBox treeBox = (TreeFormulaBox) node;
+                treeBox.getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");
+                if (treeBox.getAnnotationField() != null) treeBox.getAnnotationField().setStyle("-fx-background-color: transparent");
+            }
+            if (node instanceof MapFormulaBox) {
+                ((MapFormulaBox) node).getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");
+            }
+        }
+
+        HBox contentHBox = new HBox(mainPane);
+        contentHBox.setAlignment(Pos.CENTER);
+        contentHBox.setPadding(new Insets(0,0,20, 0));
+
+        return contentHBox;
+    }
+
     @Override
     public ExerciseModel<VerticalTreeModel> getExerciseModelFromView() {
         return (ExerciseModel) getVerticalTreeModelFromView();

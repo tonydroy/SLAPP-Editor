@@ -28,7 +28,7 @@ public class VerticalTreeABEFExpModel implements ExerciseModel<Document>, Serial
     private Document explainDocument = new Document();
     private double explainPrefHeight = 70;
     private double explainTextHeight = 0;
-    private double mainPanePrefHeight = 250;
+    private double mainPanePrefHeight = 150;  //250
     private double mainPanePrefWidth;
 
 

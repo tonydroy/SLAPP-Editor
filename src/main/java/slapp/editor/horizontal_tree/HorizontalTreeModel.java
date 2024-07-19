@@ -1,6 +1,7 @@
 package slapp.editor.horizontal_tree;
 
 import com.gluonhq.richtextarea.model.Document;
+import slapp.editor.PrintUtilities;
 import slapp.editor.main_window.ExerciseModel;
 import slapp.editor.main_window.ExerciseType;
 

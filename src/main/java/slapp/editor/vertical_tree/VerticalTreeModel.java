@@ -26,8 +26,8 @@ public class VerticalTreeModel implements ExerciseModel<Document>, Serializable 
     private Document exerciseComment = new Document();
     private double commentPrefHeight = 60;
     private double commentTextHeight = 0;
-    private double mainPanePrefHeight = 350;
-    private double mainPanePrefWidth = 100;
+    private double mainPanePrefHeight = 150;  //350
+    private double mainPanePrefWidth = PrintUtilities.getPageWidth();
 
 
 

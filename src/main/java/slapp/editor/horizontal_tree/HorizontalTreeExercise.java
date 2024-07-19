@@ -384,7 +384,55 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
     @Override
     public Node getFFViewNode() {return horizontalTreeView.getMainPane();}
     @Override
-    public Node getFFPrintNode() {return null;}
+    public Node getFFPrintNode() {
+        HorizontalTreeExercise printExercise = this;
+        HorizontalTreeModel printModel = horizontalTreeModel;
+        double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
+
+        AnchorPane mainPane = printExercise.getExerciseView().getMainPane();
+        Group root = new Group();
+        Scene scene = new Scene(root);
+        root.getChildren().add(mainPane);
+        root.applyCss();
+        root.layout();
+
+        Ruler axis = new Ruler();
+        double axisWidth = Math.max(nodeWidth, mainPane.getWidth() - 10);
+        axis.updateRuler(axisWidth);
+
+        mainPane.setStyle("-fx-background-color: transparent");
+        mainPane.setPrefWidth(printModel.getMainPaneWidth());
+        printExercise.getExerciseView().simpleRemoveAxis();
+
+        ObservableList<Node> mainNodes = mainPane.getChildren();
+        for (Node mainNode : mainNodes) {
+
+            if (mainNode instanceof TreePane) {
+                TreePane treePane = (TreePane) mainNode;
+                ObservableList<Node> paneNodes = treePane.getChildren();
+                for (Node paneNode : paneNodes) {
+                    if (paneNode instanceof BranchNode) {
+                        BranchNode branchNode = (BranchNode) paneNode;
+                        branchNode.getFormulaBoxedDRTA().getRTA().setStyle("-fx-border-color: transparent");
+                        branchNode.getConnectorBoxedDRTA().getRTA().setStyle("-fx-border-color: transparent");
+                        branchNode.getAnnotationField().setStyle("-fx-background-color: transparent");
+                    }
+                }
+            }
+        }
+
+        AnchorPane mainStack = new AnchorPane(axis, mainPane);
+        mainStack.setLeftAnchor(axis, 5.0);
+
+        if (!horizontalTreeView.isAxis()) mainStack.getChildren().remove(axis);
+        HBox contentHBox = new HBox(mainStack);
+        contentHBox.setAlignment(Pos.CENTER);
+        contentHBox.setPadding(new Insets(10,0,20, 0));
+        contentHBox.setMaxWidth(axisWidth);
+
+        return contentHBox;
+    }
+
     @Override
     public ExerciseModel<HorizontalTreeModel> getExerciseModelFromView() {
         return (ExerciseModel) getHorizontalTreeModelFromView();

@@ -42,8 +42,7 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
     private Button indentButton;
     private Button outdentButton;
     private Button removeButton;
-    private Button undoButton;
-    private Button redoButton;
+    private Button restoreButton;
     private Button addEditButton;
     private Button addHTreeButton;
     private Button addTTableButton;
@@ -65,8 +64,7 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
         indentButton = newControlsButton("Indent", "Indent current window.");
         outdentButton = newControlsButton("Outdent", "Outdent current window.");
         removeButton = newControlsButton("Remove", "Remove current window.");
-        undoButton = newControlsButton ("Undo", "Undo window action.");
-        redoButton = newControlsButton ("Redo", "Redo window action.");
+        restoreButton = newControlsButton ("Restore", "Restore last removed item.");
         addEditButton = newControlsButton("Simple Edit", "Insert simple editor.");
         addTTableButton = newControlsButton("Truth Table", "Insert truth table.");
         addHTreeButton = newControlsButton("Horiz Tree", "Insert horizontal tree.");
@@ -82,7 +80,7 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
 
         VBox rightControlBox = new VBox(20);
         rightControlBox.setAlignment(Pos.BASELINE_LEFT);
-        rightControlBox.setPadding(new Insets(40,20,0,40));
+        rightControlBox.setPadding(new Insets(40,20,0,20));
         freeFormControlNode = rightControlBox;
 
 
@@ -115,7 +113,7 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
             if (decrement != null) decrement.getOnMouseReleased().handle(null);
         });
 
-        statementRTA.prefWidthProperty().bind(mainView.scalePageWidthProperty());
+        statementRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
         statementWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
         statementWidthSpinner.setPrefWidth(60);
         statementWidthSpinner.setDisable(true);
@@ -146,7 +144,7 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
             if (decrement != null) decrement.getOnMouseReleased().handle(null);
         });
 
-        commentRTA.prefWidthProperty().bind(mainView.scalePageWidthProperty());
+        commentRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
         commentWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
         commentWidthSpinner.setPrefWidth(60);
         commentWidthSpinner.setDisable(true);
@@ -192,9 +190,7 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
 
     public Button getRemoveButton() {     return removeButton;   }
 
-    public Button getUndoButton() {     return undoButton;  }
-
-    public Button getRedoButton() {     return redoButton;  }
+    public Button getRestoreButton() {     return restoreButton;  }
 
     public Button getAddEditButton() {     return addEditButton;  }
 

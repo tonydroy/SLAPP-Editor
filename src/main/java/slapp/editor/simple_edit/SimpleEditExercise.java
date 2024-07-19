@@ -221,7 +221,22 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     @Override
     public Node getFFViewNode() {   return editView.getFFViewNode();}
     @Override
-    public Node getFFPrintNode() {return null;}
+    public Node getFFPrintNode() {
+        SimpleEditModel printModel = editModel;
+        SimpleEditExercise printExercise = this;
+        double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
+
+        RichTextArea responseRTA = printExercise.getExerciseView().getExerciseResponse().getEditor();
+        responseRTA.prefHeightProperty().unbind();
+        responseRTA.minWidthProperty().unbind();
+        responseRTA.setPrefHeight(printModel.getResponseTextHeight() + 15);
+        responseRTA.setContentAreaWidth(nodeWidth);
+        responseRTA.setMinWidth(nodeWidth);
+        responseRTA.getStylesheets().clear(); responseRTA.getStylesheets().add("richTextAreaPrinter.css");
+
+        return responseRTA;
+    }
+
     @Override
     public ExerciseModel getExerciseModelFromView() {
         return (ExerciseModel) getSimpleEditModelFromView();

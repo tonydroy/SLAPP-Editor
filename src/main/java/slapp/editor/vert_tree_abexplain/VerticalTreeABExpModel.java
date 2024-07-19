@@ -27,7 +27,7 @@ public class VerticalTreeABExpModel implements ExerciseModel<Document>, Serializ
     private Document explainDocument = new Document();
     private double explainPrefHeight = 70;
     private double explainTextHeight = 0;
-    private double mainPanePrefHeight = 275;
+    private double mainPanePrefHeight = 150;  //275
     private double mainPanePrefWidth;
 
 

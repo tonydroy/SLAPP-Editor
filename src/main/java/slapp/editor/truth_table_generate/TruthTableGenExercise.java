@@ -507,9 +507,27 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
     @Override
     public void setExerciseModified(boolean modified) { exerciseModified = modified; }
     @Override
-    public Node getFFViewNode() {return null;}
+    public Node getFFViewNode() {return truthTableGenView.getTableGrid();}
     @Override
-    public Node getFFPrintNode() {return null;}
+    public Node getFFPrintNode() {
+        TruthTableGenModel printModel = truthTableGenModel;
+        TruthTableGenExercise printExercise = this;
+        double nodeWidth = PrintUtilities.getPageWidth() / mainWindow.getBaseScale();
+
+        GridPane tablePane = printExercise.getExerciseView().getTableGrid();
+        ObservableList<Node> gridItems = tablePane.getChildren();
+        ToggleButton[] buttons = printExercise.getExerciseView().getHighlightButtons();
+        for (int i = 0; i < buttons.length; i ++) {
+            tablePane.getChildren().remove(buttons[i]);
+        }
+        tablePane.setPadding(new Insets(15, 0, 15, 0));
+        tablePane.setPrefWidth(printModel.getGridWidth());
+        HBox gridBox = new HBox(tablePane);
+        gridBox.setAlignment(Pos.CENTER);
+
+        return gridBox;
+    }
+
     @Override
     public ExerciseModel<TruthTableGenModel> getExerciseModelFromView() {
         return (ExerciseModel) getTruthTableGenModelFromView();

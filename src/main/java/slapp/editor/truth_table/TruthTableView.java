@@ -128,7 +128,8 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         setupTableButton.setPrefWidth(100);
 
         controlBox = new VBox(20, upperControlBox, basicFormulasPane, spinnerBox, setupTableButton);
-        controlBox.setPadding(new Insets(100, 20, 00, 30));
+        controlBox.setPadding(new Insets(100, 20, 00, 20));
+        controlBox.setMinWidth(150); controlBox.setMaxWidth(150);
 
 
         tableGrid = new GridPane();

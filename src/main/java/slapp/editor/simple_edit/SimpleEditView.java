@@ -43,7 +43,7 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
         this.mainView = mainView;
 
         Region spacer = new Region();
-        spacer.setPrefWidth(140);
+        spacer.setPrefWidth(150);
         VBox controlBox = (VBox) exerciseControlNode;
         controlBox.getChildren().add(spacer);
     }
@@ -139,10 +139,10 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
         responseWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
         responseRTA.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            if (currentSpinnerNode != responseRTA) {
+  //          if (currentSpinnerNode != responseRTA) {
                 currentSpinnerNode = responseRTA;
                 mainView.updateSizeSpinners(responseHeightSpinner, responseWidthSpinner);
-            }
+ //           }
         });
 
         //page height listener

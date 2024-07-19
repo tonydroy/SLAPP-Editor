@@ -94,6 +94,7 @@ public class FrontPageView implements ExerciseView<Label> {
         };
         exerciseContent.focusedProperty().addListener(contentFocusListener);
 
+
     }
 
     @Override
