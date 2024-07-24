@@ -155,9 +155,11 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.getAddVTreeBaseItalButton().setOnAction(e -> addVTreeBaseItalAction());
         freeFormView.getAddVTreeItalSansButton().setOnAction(e -> addVTreeItalSansAction());
         freeFormView.getAddNDrvtnItalSansButton().setOnAction(e -> addNDrvtnItalSansAction());
+        freeFormView.getAddNDrvtnScriptItalButton().setOnAction(e -> addNDrvtnScriptItalAction());
         freeFormView.getAddNDrvtnScriptSansButton().setOnAction(e -> addNDrvtnScriptSansAction());
         freeFormView.getAddNDrvtnItalBBButton().setOnAction(e -> addNDrvtnItalBBAction());
         freeFormView.getAddADrvtnItalSansButton().setOnAction(e -> addADrvtnItalSansAction());
+        freeFormView.getAddADrvtnScriptItalButton().setOnAction(e -> addADrvtnScriptItalicAction());
         freeFormView.getAddADrvtnScriptSansButton().setOnAction(e -> addADrvtnScriptSansAction());
         freeFormView.getAddADrvtnItalBBButton().setOnAction(e -> addADrvtnItalBBAction());
 
@@ -202,6 +204,10 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
                     members.add(freeFormView.getAddNDrvtnItalSansButton());
                     break;
                 }
+                case N_DERIVATION_SCRIPT_ITAL: {
+                    members.add(freeFormView.getAddNDrvtnScriptItalButton());
+                    break;
+                }
                 case N_DERIVATION_SCIRPT_SANS: {
                     members.add(freeFormView.getAddNDrvtnScriptSansButton());
                     break;
@@ -210,9 +216,12 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
                     members.add(freeFormView.getAddNDrvtnItalBBButton());
                     break;
                 }
-
                 case A_DERIVATION_ITAL_SANS: {
                     members.add(freeFormView.getAddADrvtnItalSansButton());
+                    break;
+                }
+                case A_DERIVATION_SCRIPT_ITAL: {
+                    members.add(freeFormView.getAddADrvtnScriptItalButton());
                     break;
                 }
                 case A_DERIVATION_SCRIPT_SANS: {
@@ -411,6 +420,26 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
     }
+
+    private void addNDrvtnScriptItalAction() {
+        freeFormModel = getFreeFormModelFromView();
+
+        List<ModelLine> modelLines = new ArrayList<>();
+        ModelLine line1 = new ModelLine(1, new Document(), "", LineType.MAIN_CONTENT_LINE);
+        ModelLine line2 = new ModelLine(1, new Document(), "", LineType.MAIN_CONTENT_LINE);
+        ModelLine line3 = new ModelLine(1, new Document(), "", LineType.MAIN_CONTENT_LINE);
+        modelLines.addAll(Arrays.asList(line1, line2, line3));
+
+        DerivationModel newMod = new DerivationModel("", false, 80, .64, true, true, SCRIPT_AND_ITALIC,
+                new Document(), new Document(), modelLines);
+
+        int index = exerciseList.indexOf(activeExercise);
+        ModelElement element = new ModelElement(newMod, 0);
+        freeFormModel.getModelElements().add(++index, element);
+        setElementsFromModel();
+        freeFormView.updateContentFromViewElements();
+        setActiveExercise(index);
+    }
     private void addNDrvtnScriptSansAction() {
         freeFormModel = getFreeFormModelFromView();
 
@@ -460,6 +489,26 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         modelLines.addAll(Arrays.asList(line1, line2, line3));
 
         DerivationModel newMod = new DerivationModel("", false, 80, .64, false, false, ITALIC_AND_SANS,
+                new Document(), new Document(), modelLines);
+
+        int index = exerciseList.indexOf(activeExercise);
+        ModelElement element = new ModelElement(newMod, 0);
+        freeFormModel.getModelElements().add(++index, element);
+        setElementsFromModel();
+        freeFormView.updateContentFromViewElements();
+        setActiveExercise(index);
+    }
+
+    private void addADrvtnScriptItalicAction() {
+        freeFormModel = getFreeFormModelFromView();
+
+        List<ModelLine> modelLines = new ArrayList<>();
+        ModelLine line1 = new ModelLine(1, new Document(), "", LineType.MAIN_CONTENT_LINE);
+        ModelLine line2 = new ModelLine(1, new Document(), "", LineType.MAIN_CONTENT_LINE);
+        ModelLine line3 = new ModelLine(1, new Document(), "", LineType.MAIN_CONTENT_LINE);
+        modelLines.addAll(Arrays.asList(line1, line2, line3));
+
+        DerivationModel newMod = new DerivationModel("", false, 80, .64, false, false, SCRIPT_AND_ITALIC,
                 new Document(), new Document(), modelLines);
 
         int index = exerciseList.indexOf(activeExercise);

@@ -54,9 +54,11 @@ public class FreeFormCreate {
     private CheckBox vertTreeBaseItalCheck;
     private CheckBox vertTreeItalSansCheck;
     private CheckBox natDrvtnItalSansCheck;
+    private CheckBox natDrvtnScriptItalicCheck;
     private CheckBox natDrvtnScriptSansCheck;
     private CheckBox natDrvtnItalBBCheck;
     private CheckBox axDrvtnItalSansCheck;
+    private CheckBox axDrvtnScriptItalicCheck;
     private CheckBox axDrvtnScriptSansCheck;
     private CheckBox axDrvtnItalBBCheck;
 
@@ -90,8 +92,8 @@ public class FreeFormCreate {
     private void setChecks(FreeFormModel originalModel) {
         simpleEditCheck.setSelected(false); truthTableCheck.setSelected(false); horizTreeCheck.setSelected(false);
         vertTreeBaseItalCheck.setSelected(false); vertTreeItalSansCheck.setSelected(false);
-        natDrvtnItalSansCheck.setSelected(false); natDrvtnScriptSansCheck.setSelected(false); natDrvtnItalBBCheck.setSelected(false);
-        axDrvtnItalSansCheck.setSelected(false); axDrvtnScriptSansCheck.setSelected(false); axDrvtnItalBBCheck.setSelected(false);
+        natDrvtnItalSansCheck.setSelected(false); natDrvtnScriptItalicCheck.setSelected(false); natDrvtnScriptSansCheck.setSelected(false); natDrvtnItalBBCheck.setSelected(false);
+        axDrvtnItalSansCheck.setSelected(false); axDrvtnScriptItalicCheck.setSelected(false); axDrvtnScriptSansCheck.setSelected(false); axDrvtnItalBBCheck.setSelected(false);
 
         List<ElementTypes> elementTypes = originalModel.getElementTypes();
         for (ElementTypes type: elementTypes) {
@@ -120,6 +122,10 @@ public class FreeFormCreate {
                     natDrvtnItalSansCheck.setSelected(true);
                     break;
                 }
+                case N_DERIVATION_SCRIPT_ITAL: {
+                    natDrvtnScriptItalicCheck.setSelected(true);
+                    break;
+                }
                 case N_DERIVATION_SCIRPT_SANS: {
                     natDrvtnScriptSansCheck.setSelected(true);
                     break;
@@ -130,6 +136,10 @@ public class FreeFormCreate {
                 }
                 case A_DERIVATION_ITAL_SANS: {
                     axDrvtnItalSansCheck.setSelected(true);
+                    break;
+                }
+                case A_DERIVATION_SCRIPT_ITAL: {
+                    axDrvtnScriptItalicCheck.setSelected(true);
                     break;
                 }
                 case A_DERIVATION_SCRIPT_SANS: {
@@ -187,7 +197,7 @@ public class FreeFormCreate {
         horizTreeCheck.setSelected(false);
         horizTreeCheck.selectedProperty().addListener((ob, ov, nv) -> modified = true );
 
-        vertTreeBaseItalCheck = new CheckBox("Vertical Tree (base/ital kbd)");
+        vertTreeBaseItalCheck = new CheckBox("Vertical Tree (base/ital)");
         vertTreeBaseItalCheck.setSelected(false);
         vertTreeBaseItalCheck.selectedProperty().addListener((ob, ov, nv) -> {
             boolean selected = (boolean) nv;
@@ -197,7 +207,7 @@ public class FreeFormCreate {
             }
         });
 
-        vertTreeItalSansCheck = new CheckBox("Vertical Tree (ital/sans kbd)");
+        vertTreeItalSansCheck = new CheckBox("Vertical Tree (ital/sans)");
         vertTreeItalSansCheck.setSelected(false);
         vertTreeItalSansCheck.selectedProperty().addListener((ob, ov, nv) -> {
             boolean selected = (boolean) nv;
@@ -207,29 +217,43 @@ public class FreeFormCreate {
             }
         });
 
-        natDrvtnItalSansCheck = new CheckBox("Natural Derivation (ital/sans kbd)");
+        natDrvtnItalSansCheck = new CheckBox("Nat Drvtn (ital/sans)");
         natDrvtnItalSansCheck.setSelected(false);
         natDrvtnItalSansCheck.selectedProperty().addListener((ob, ov, nv) -> {
             boolean selected = (boolean) nv;
             if (selected) {
                 modified = true;
+                natDrvtnScriptItalicCheck.setSelected(false);
                 natDrvtnScriptSansCheck.setSelected(false);
                 natDrvtnItalBBCheck.setSelected(false);
             }
         });
 
-        natDrvtnScriptSansCheck = new CheckBox("Natural Derivation (script/sans kbd)");
+        natDrvtnScriptItalicCheck = new CheckBox("Nat Drvtn (script/italic)");
+        natDrvtnScriptItalicCheck.setSelected(false);
+        natDrvtnScriptItalicCheck.selectedProperty().addListener((ob, ov, nv) -> {
+            boolean selected = (boolean) nv;
+            if (selected) {
+                modified = true;
+                natDrvtnItalSansCheck.setSelected(false);
+                natDrvtnScriptSansCheck.setSelected(false);
+                natDrvtnItalBBCheck.setSelected(false);
+            }
+        });
+
+        natDrvtnScriptSansCheck = new CheckBox("Nat Drvtn (script/sans)");
         natDrvtnScriptSansCheck.setSelected(false);
         natDrvtnScriptSansCheck.selectedProperty().addListener((ob, ov, nv) -> {
             boolean selected = (boolean) nv;
             if (selected) {
                 modified = true;
                 natDrvtnItalSansCheck.setSelected(false);
+                natDrvtnScriptItalicCheck.setSelected(false);
                 natDrvtnItalBBCheck.setSelected(false);
             }
         });
 
-        natDrvtnItalBBCheck = new CheckBox("Natural Derivation (ital/bb kbd)");
+        natDrvtnItalBBCheck = new CheckBox("Nat Drvtn (ital/bb)");
         natDrvtnItalBBCheck.setSelected(false);
         natDrvtnItalBBCheck.selectedProperty().addListener((ob, ov, nv) -> {
             boolean selected = (boolean) nv;
@@ -237,32 +261,47 @@ public class FreeFormCreate {
                 modified = true;
                 natDrvtnScriptSansCheck.setSelected(false);
                 natDrvtnItalSansCheck.setSelected(false);
+                natDrvtnScriptItalicCheck.setSelected(false);
             }
         });
 
-        axDrvtnItalSansCheck = new CheckBox("Axiomatic Derivation (ital/sans kbd)");
+        axDrvtnItalSansCheck = new CheckBox("Ax Drvtn (ital/sans)");
         axDrvtnItalSansCheck.setSelected(false);
         axDrvtnItalSansCheck.selectedProperty().addListener((ob, ov, nv) -> {
             boolean selected = (boolean) nv;
             if (selected) {
                 modified = true;
+                axDrvtnScriptItalicCheck.setSelected(false);
                 axDrvtnScriptSansCheck.setSelected(false);
                 axDrvtnItalBBCheck.setSelected(false);
             }
         });
 
-        axDrvtnScriptSansCheck = new CheckBox("Axiomatic Derivation (script/sans kbd)");
+        axDrvtnScriptItalicCheck = new CheckBox("Ax Drvtn (script/italic)");
+        axDrvtnScriptItalicCheck.setSelected(false);
+        axDrvtnScriptItalicCheck.selectedProperty().addListener((ob, ov, nv) -> {
+            boolean selected = (boolean) nv;
+            if (selected) {
+                modified = true;
+                axDrvtnItalSansCheck.setSelected(false);
+                axDrvtnScriptSansCheck.setSelected(false);
+                axDrvtnItalBBCheck.setSelected(false);
+            }
+        });
+
+        axDrvtnScriptSansCheck = new CheckBox("Ax Drvtn (script/sans)");
         axDrvtnScriptSansCheck.setSelected(false);
         axDrvtnScriptSansCheck.selectedProperty().addListener((ob, ov, nv) -> {
             boolean selected = (boolean) nv;
             if (selected) {
                 modified = true;
                 axDrvtnItalSansCheck.setSelected(false);
+                axDrvtnScriptItalicCheck.setSelected(false);
                 axDrvtnItalBBCheck.setSelected(false);
             }
         });
 
-        axDrvtnItalBBCheck = new CheckBox("Axiomatic Derivation (ital/bb kbd)");
+        axDrvtnItalBBCheck = new CheckBox("Ax Drvtn (ital/bb)");
         axDrvtnItalBBCheck.setSelected(false);
         axDrvtnItalBBCheck.selectedProperty().addListener((ob, ov, nv) -> {
             boolean selected = (boolean) nv;
@@ -270,13 +309,14 @@ public class FreeFormCreate {
                 modified = true;
                 axDrvtnScriptSansCheck.setSelected(false);
                 axDrvtnItalSansCheck.setSelected(false);
+                axDrvtnScriptItalicCheck.setSelected(false);
             }
         });
 
         HBox checks1 = new HBox(30, simpleEditCheck, truthTableCheck, horizTreeCheck);
         HBox checks2 = new HBox(30, vertTreeBaseItalCheck, vertTreeItalSansCheck);
-        HBox checks3 = new HBox(30, natDrvtnItalSansCheck, natDrvtnScriptSansCheck, natDrvtnItalBBCheck);
-        HBox checks4 = new HBox(30, axDrvtnItalSansCheck, axDrvtnScriptSansCheck, axDrvtnItalBBCheck);
+        HBox checks3 = new HBox(30, natDrvtnItalSansCheck, natDrvtnScriptItalicCheck, natDrvtnScriptSansCheck, natDrvtnItalBBCheck);
+        HBox checks4 = new HBox(30, axDrvtnItalSansCheck, axDrvtnScriptItalicCheck, axDrvtnScriptSansCheck, axDrvtnItalBBCheck);
 
         VBox fieldsBox = new VBox(15, nameBox, checks1, checks2, checks3, checks4);
 
@@ -489,9 +529,11 @@ public class FreeFormCreate {
         if (vertTreeBaseItalCheck.isSelected()) elementTypes.add(ElementTypes.VERT_TREE_BASE_ITAL);
         if (vertTreeItalSansCheck.isSelected()) elementTypes.add(ElementTypes.VERT_TREE_ITAL_SANS);
         if (natDrvtnItalSansCheck.isSelected()) elementTypes.add(ElementTypes.N_DERIVATION_ITAL_SANS);
+        if (natDrvtnScriptItalicCheck.isSelected()) elementTypes.add(ElementTypes.N_DERIVATION_SCRIPT_ITAL);
         if (natDrvtnScriptSansCheck.isSelected()) elementTypes.add(ElementTypes.N_DERIVATION_SCIRPT_SANS);
         if (natDrvtnItalBBCheck.isSelected()) elementTypes.add(ElementTypes.N_DERIVATION_ITAL_BB);
         if (axDrvtnItalSansCheck.isSelected()) elementTypes.add(ElementTypes.A_DERIVATION_ITAL_SANS);
+        if (axDrvtnScriptItalicCheck.isSelected()) elementTypes.add(ElementTypes.A_DERIVATION_SCRIPT_ITAL);
         if (axDrvtnScriptSansCheck.isSelected()) elementTypes.add(ElementTypes.A_DERIVATION_SCRIPT_SANS);
         if (axDrvtnItalBBCheck.isSelected()) elementTypes.add(ElementTypes.A_DERIVATION_ITAL_BB);
     }

@@ -49,9 +49,11 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
     private Button addVTreeBaseItalButton;
     private Button addVTreeItalSansButton;
     private Button addNDrvtnItalSansButton;
+    private Button addNDrvtnScriptItalButton;
     private Button addNDrvtnScriptSansButton;
     private Button addNDrvtnItalBBButton;
     private Button addADrvtnItalSansButton;
+    private Button addADrvtnScriptItalButton;
     private Button addADrvtnScriptSansButton;
     private Button addADrvtnItalBBButton;
 
@@ -71,9 +73,11 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
         addVTreeBaseItalButton = newControlsButton("Vert Tree", "Insert vertical tree.");
         addVTreeItalSansButton = newControlsButton("Vert Tree", "Insert vertical tree.");
         addNDrvtnItalSansButton = newControlsButton("Nat Drvtn", "Insert natural derivation.");
+        addNDrvtnScriptItalButton = newControlsButton("Nat Drvtn", "Insert natural derivation.");
         addNDrvtnScriptSansButton = newControlsButton("Nat Drvtn", "Insert natural derivation.");
         addNDrvtnItalBBButton = newControlsButton("Nat Drvtn", "Insert natural derivation.");
         addADrvtnItalSansButton = newControlsButton("Ax Drvtn", "Insert axiomatic derivation.");
+        addADrvtnScriptItalButton = newControlsButton("Ax Drvtn", "Insert axiomatic derivation.");
         addADrvtnScriptSansButton = newControlsButton("Ax Drvtn", "Insert axiomatic derivation.");
         addADrvtnItalBBButton = newControlsButton("Ax Drvtn", "Insert axiomatic derivation.");
 
@@ -204,12 +208,14 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
 
     public Button getAddNDrvtnItalSansButton() {     return addNDrvtnItalSansButton;   }
 
+    public Button getAddNDrvtnScriptItalButton() {    return addNDrvtnScriptItalButton;   }
     public Button getAddNDrvtnScriptSansButton() {    return addNDrvtnScriptSansButton;   }
 
     public Button getAddNDrvtnItalBBButton() {     return addNDrvtnItalBBButton;  }
 
     public Button getAddADrvtnItalSansButton() {     return addADrvtnItalSansButton;   }
 
+    public Button getAddADrvtnScriptItalButton() {     return addADrvtnScriptItalButton;  }
     public Button getAddADrvtnScriptSansButton() {     return addADrvtnScriptSansButton;  }
 
     public Button getAddADrvtnItalBBButton() {     return addADrvtnItalBBButton;   }
