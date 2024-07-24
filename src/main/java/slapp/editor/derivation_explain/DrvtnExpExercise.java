@@ -171,7 +171,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                 BoxedDRTA bdrta = new BoxedDRTA();
                 RichTextArea rta = bdrta.getRTA();
                 rta.getActionFactory().open(modelLine.getLineContentDoc()).execute(new ActionEvent());
-                rta.getActionFactory().saveNow().execute(new ActionEvent());
+//                rta.getActionFactory().saveNow().execute(new ActionEvent());
 
 
                 if (LineType.isSetupLine(lineType)) {

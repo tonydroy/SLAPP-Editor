@@ -58,10 +58,12 @@ public class DerivationCreate {
     private CheckBox scopeLineCheck;
     private CheckBox defaultShelfCheck;
     private CheckBox italicAndSansCheck;
+    private CheckBox scriptAndItalicCheck;
     private CheckBox scriptAndSansCheck;
     private CheckBox italicAndBlackboardCheck;
     private CheckBox greekAndFrakturCheck;
     private ChangeListener italicAndSansListener;
+    private ChangeListener scriptAndItalicListener;
     private ChangeListener scriptAndSansListener;
     private ChangeListener italicAndBlackboardListener;
     private ChangeListener greekAndFrakturListener;
@@ -101,10 +103,12 @@ public class DerivationCreate {
         statementTextHeight = originalModel.getStatementTextHeight();
 
         RichTextAreaSkin.KeyMapValue keyboardSelector = originalModel.getKeyboardSelector();
-        if (keyboardSelector == ITALIC_AND_SANS) {italicAndSansCheck.setSelected(true); scriptAndSansCheck.setSelected(false); italicAndBlackboardCheck.setSelected(false); greekAndFrakturCheck.setSelected(false);}
-        if (keyboardSelector == SCRIPT_AND_SANS) {italicAndSansCheck.setSelected(false); scriptAndSansCheck.setSelected(true); italicAndBlackboardCheck.setSelected(false); greekAndFrakturCheck.setSelected(false);}
-        if (keyboardSelector == ITALIC_AND_BLACKBOARD) {italicAndSansCheck.setSelected(false); scriptAndSansCheck.setSelected(false); italicAndBlackboardCheck.setSelected(true); greekAndFrakturCheck.setSelected(false);}
-        if (keyboardSelector == GREEK_AND_FRAKTUR) {italicAndSansCheck.setSelected(false); scriptAndSansCheck.setSelected(false); italicAndBlackboardCheck.setSelected(false); greekAndFrakturCheck.setSelected(true);}
+        if (keyboardSelector == ITALIC_AND_SANS) {italicAndSansCheck.setSelected(true); scriptAndItalicCheck.setSelected(false); scriptAndSansCheck.setSelected(false); italicAndBlackboardCheck.setSelected(false); greekAndFrakturCheck.setSelected(false);}
+        if (keyboardSelector == SCRIPT_AND_ITALIC) {scriptAndItalicCheck.setSelected(true); italicAndSansCheck.setSelected(false); scriptAndSansCheck.setSelected(false); italicAndBlackboardCheck.setSelected(false); greekAndFrakturCheck.setSelected(false);}
+
+        if (keyboardSelector == SCRIPT_AND_SANS) {italicAndSansCheck.setSelected(false); scriptAndItalicCheck.setSelected(false); scriptAndSansCheck.setSelected(true); italicAndBlackboardCheck.setSelected(false); greekAndFrakturCheck.setSelected(false);}
+        if (keyboardSelector == ITALIC_AND_BLACKBOARD) {italicAndSansCheck.setSelected(false); scriptAndItalicCheck.setSelected(false); scriptAndSansCheck.setSelected(false); italicAndBlackboardCheck.setSelected(true); greekAndFrakturCheck.setSelected(false);}
+        if (keyboardSelector == GREEK_AND_FRAKTUR) {italicAndSansCheck.setSelected(false); scriptAndItalicCheck.setSelected(false); scriptAndSansCheck.setSelected(false); italicAndBlackboardCheck.setSelected(false); greekAndFrakturCheck.setSelected(true);}
 
         scopeLineCheck.setSelected(originalModel.isLeftmostScopeLine());
         defaultShelfCheck.setSelected(originalModel.isDefaultShelf());
@@ -185,6 +189,8 @@ public class DerivationCreate {
         Label keyboardLabel = new Label("Default Derivation Keyboard: ");
         italicAndSansCheck = new CheckBox("Italic and Sans");
         italicAndSansCheck.setSelected(true);
+        scriptAndItalicCheck = new CheckBox("Script and Italic");
+        scriptAndItalicCheck.setSelected(false);
         scriptAndSansCheck = new CheckBox("Script and Sans");
         scriptAndSansCheck.setSelected(false);
         italicAndBlackboardCheck = new CheckBox("Italic and Blackboard");
@@ -200,6 +206,7 @@ public class DerivationCreate {
                     fieldModified = true;
                     keyboardSelector = ITALIC_AND_SANS;
                     updateKeyboard();
+                    scriptAndItalicCheck.setSelected(false);
                     scriptAndSansCheck.setSelected(false);
                     italicAndBlackboardCheck.setSelected(false);
                     greekAndFrakturCheck.setSelected(false);
@@ -207,6 +214,23 @@ public class DerivationCreate {
             }
         };
         italicAndSansCheck.selectedProperty().addListener(italicAndSansListener);
+
+        scriptAndItalicListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ob, Object ov, Object nv) {
+                boolean selected = (boolean) nv;
+                if (selected) {
+                    fieldModified = true;
+                    keyboardSelector = SCRIPT_AND_ITALIC;
+                    updateKeyboard();
+                    italicAndSansCheck.setSelected(false);
+                    scriptAndSansCheck.setSelected(false);
+                    italicAndBlackboardCheck.setSelected(false);
+                    greekAndFrakturCheck.setSelected(false);
+                }
+            }
+        };
+        scriptAndItalicCheck.selectedProperty().addListener(scriptAndItalicListener);
 
         scriptAndSansListener = new ChangeListener() {
             @Override
@@ -217,6 +241,7 @@ public class DerivationCreate {
                     keyboardSelector = SCRIPT_AND_SANS;
                     updateKeyboard();
                     italicAndSansCheck.setSelected(false);
+                    scriptAndItalicCheck.setSelected(false);
                     italicAndBlackboardCheck.setSelected(false);
                     greekAndFrakturCheck.setSelected(false);
                 }
@@ -233,6 +258,7 @@ public class DerivationCreate {
                     keyboardSelector = ITALIC_AND_BLACKBOARD;
                     updateKeyboard();
                     italicAndSansCheck.setSelected(false);
+                    scriptAndItalicCheck.setSelected(false);
                     scriptAndSansCheck.setSelected(false);
                     greekAndFrakturCheck.setSelected(false);
                 }
@@ -249,6 +275,7 @@ public class DerivationCreate {
                     keyboardSelector = GREEK_AND_FRAKTUR;
                     updateKeyboard();
                     italicAndSansCheck.setSelected(false);
+                    scriptAndItalicCheck.setSelected(false);
                     scriptAndSansCheck.setSelected(false);
                     italicAndBlackboardCheck.setSelected(false);
                 }
@@ -300,7 +327,7 @@ public class DerivationCreate {
         HBox nameBox = new HBox(10, nameLabel, nameField);
         nameBox.setAlignment(Pos.CENTER_LEFT);
 
-        HBox keyboardBox = new HBox(10, keyboardLabel, italicAndSansCheck, scriptAndSansCheck, italicAndBlackboardCheck, greekAndFrakturCheck);
+        HBox keyboardBox = new HBox(10, keyboardLabel, italicAndSansCheck, scriptAndItalicCheck, scriptAndSansCheck, italicAndBlackboardCheck, greekAndFrakturCheck);
 
         Label widthLabel = new Label("Width: ");
         HBox topFields = new HBox(30, scopeLineCheck, defaultShelfCheck, widthLabel, widthSpinner, setupLinesLabel, addSetupLineButton, removeSetupLineButton);

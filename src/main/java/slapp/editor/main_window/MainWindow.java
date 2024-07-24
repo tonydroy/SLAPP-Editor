@@ -48,6 +48,7 @@ public class MainWindow {
     private boolean fitToPage = false;
 
 
+
     public MainWindow() {
         mainWindow = this;
         mainView = new MainWindowView(this);
@@ -67,6 +68,22 @@ public class MainWindow {
 
         mainView.getMainScene().focusOwnerProperty().addListener(focusListener);
 
+/*
+//      not sure I like this
+        mainView.getMainScene().addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                    setUpExercise(getEmptyExercise());
+                    isExerciseOpen = false;
+                    mainView.getMainScene().removeEventFilter(MouseEvent.MOUSE_PRESSED, this);
+
+            }
+        });
+
+ */
+
+       /*
+       //not a bad idea, but if not escaped, need also to remove filter after window action
         mainView.getMainScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent e) {
@@ -77,6 +94,10 @@ public class MainWindow {
                 }
             }
         });
+
+        */
+
+
     }
 
     /* Comment:

@@ -9,12 +9,16 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.*;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
@@ -128,6 +132,8 @@ public class MainWindowView {
     public static TextField txtHeightIndicator;
     DoubleProperty scalePageHeight = new SimpleDoubleProperty();
     DoubleProperty scalePageWidth = new SimpleDoubleProperty();
+
+
 
 
 
@@ -350,6 +356,10 @@ public class MainWindowView {
         mainScene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
 
 
+
+
+
+
         stage.setScene(mainScene);
         stage.setTitle("SLAPP Editor");
         stage.setMinWidth(minStageWidth);
@@ -491,9 +501,6 @@ public class MainWindowView {
         progressIndicator.setVisible(true);
         progressLabel.setVisible(true);
     }
-
-
-
 
 
 

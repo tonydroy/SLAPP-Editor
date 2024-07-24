@@ -18,6 +18,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
+import slapp.editor.main_window.MainWindowView;
 
 public class FrontPageAnimation {
 
