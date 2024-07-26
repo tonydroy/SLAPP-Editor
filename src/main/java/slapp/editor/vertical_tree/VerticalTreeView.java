@@ -135,7 +135,6 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
 
         //main pane
         AnchorPane mainPane1 = rootLayout.getMainPane();
-//        RootLayout mainPane = rootLayout;
         SplitPane mainPane = rootLayout.getBase_pane();
         mainPane1.setMinHeight(10.0);
         double mainPaneInitialHeight = Math.round((mainPanePrefHeight / mainView.getScalePageHeight()) * 20.0) * 5.0;

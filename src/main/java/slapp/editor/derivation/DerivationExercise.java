@@ -443,7 +443,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
     private boolean charIsDigit(char character) {
         boolean result = false;
-        if ('0' <= character && character <= '9') result = true;
+        if (('0' <= character && character <= '9') || character == '.') result = true;
         return result;
     }
 

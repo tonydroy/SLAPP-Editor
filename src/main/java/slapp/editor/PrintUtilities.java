@@ -54,6 +54,8 @@ public class PrintUtilities {
             pageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), bottomMargin );
 
             double top = pageLayout.getTopMargin();
+
+
             double bottom = 18.0;
             if (pageLayout.getPageOrientation() == PageOrientation.LANDSCAPE) {
                 bottom = top;
@@ -183,15 +185,15 @@ public class PrintUtilities {
 
                 //if all the nodes have been added print page
                 if (i == printBuffer.size()) {
- //                   spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 25 + 16.0)) ;     //25
-                    spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 16.0)) ;
+
+                    spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 24.0)) ;  //16  temp fix to stop cutoff footer for vtree
                     pageBox.getChildren().addAll(spacer, getFooterBox(++pageNum, footerInfo));
                     success = (job.printPage(internalPageLayout, pageBox) && success);
                 }
                 //if the node does not fit on this page, print page and start new
             } else if (!pageBox.getChildren().isEmpty()) {
-//                spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 25 + 16.0));         //25
-                spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 16.0));
+
+                spacer.setPrefHeight(internalPageLayout.getPrintableHeight() - (netHeight + 24.0));  //16
                 pageBox.getChildren().addAll(spacer, getFooterBox(++pageNum, footerInfo));
                 success = (job.printPage(internalPageLayout, pageBox) && success);
 
@@ -207,7 +209,7 @@ public class PrintUtilities {
                 footerBox.getTransforms().add(new Scale(scale, scale));
                 StackPane pane = new StackPane(nodeGroup, footerBox);
                 pane.setAlignment(footerBox, Pos.TOP_LEFT);
-                footerBox.setTranslateY(internalPageLayout.getPrintableHeight() - 16.0);
+                footerBox.setTranslateY(internalPageLayout.getPrintableHeight() - 24.0);  //16
                 footerBox.setTranslateX(0.0);
                 success = (job.printPage(internalPageLayout, pane) && success);
                 i++;

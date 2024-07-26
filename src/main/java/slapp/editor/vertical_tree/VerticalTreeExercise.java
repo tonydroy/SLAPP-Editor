@@ -387,6 +387,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
         //content node
         AnchorPane mainPane = printExercise.getExerciseView().getRootLayout().getMainPane();
         mainPane.setStyle("-fx-background-color: transparent");
+
         ObservableList<Node> nodes = mainPane.getChildren();
 
         for (Node node : nodes) {
@@ -399,6 +400,8 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
                 ((MapFormulaBox) node).getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");
             }
         }
+
+
 
         HBox contentHBox = new HBox(mainPane);
         contentHBox.setAlignment(Pos.CENTER);
