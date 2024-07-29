@@ -1,6 +1,7 @@
-package slapp.editor.simple_edit;
+package slapp.editor.simple_trans;
 
 import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -28,22 +29,28 @@ import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
-import slapp.editor.derivation.SetupLine;
+import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
+import slapp.editor.simple_trans.SimpleTransExercise;
+import slapp.editor.simple_trans.SimpleTransModel;
 
-
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
-public class SimpleEditCreate {
+public class SimpleTransCreate {
     private MainWindow mainWindow;
+    private MenuBar menuBar;
+    private BorderPane borderPane;
     private RichTextArea statementRTA;
     private DecoratedRTA statementDRTA;
     private double statementTextHeight;
+
+    private RichTextArea interpretationRTA;
+    private DecoratedRTA interpretationDRTA;
+    private double interpretationTextHeight;
+
     private TextField nameField;
-    private TextField promptField;
     private boolean fieldModified = false;
     private ChangeListener nameListener;
     private ChangeListener promptListener;
@@ -57,31 +64,42 @@ public class SimpleEditCreate {
     private Button saveAsButton;
     private ToolBar sizeToolBar;
 
+    private ToolBar editToolbar;
+    private ToolBar fontsToolbar;
 
-    public SimpleEditCreate(MainWindow mainWindow) {
+
+    private ToolBar paragraphToolbar;;
+    private ToolBar kbdDiaToolBar;
+    private VBox nameVBox;
+
+
+    public SimpleTransCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
-    public SimpleEditCreate(MainWindow mainWindow, SimpleEditModel originalModel) {
+    public SimpleTransCreate(MainWindow mainWindow, SimpleTransModel originalModel) {
         this(mainWindow);
 
         statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         statementTextHeight = originalModel.getStatementTextHeight();
+
+        interpretationRTA.getActionFactory().open(originalModel.getExerciseInterpretation()).execute(new ActionEvent());
+        interpretationRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        interpretationTextHeight = originalModel.getInterpretationTextHeight();
+
         nameField.setText(originalModel.getExerciseName());
-        promptField.setText(originalModel.getResponsePrompt());
         nameField.textProperty().addListener(nameListener);
-        promptField.textProperty().addListener(promptListener);
         fieldModified = false;
     }
     private void setupWindow() {
 
-        BorderPane borderPane = new BorderPane();
+        borderPane = new BorderPane();
 
         //empty bar for consistent look
         Menu helpMenu = new Menu("");
-        MenuBar menuBar = new MenuBar(helpMenu);
+        menuBar = new MenuBar(helpMenu);
 
         statementDRTA = new DecoratedRTA();
         statementRTA = statementDRTA.getEditor();
@@ -89,11 +107,34 @@ public class SimpleEditCreate {
         statementRTA.getStylesheets().add("slappTextArea.css");
         statementRTA.setPrefWidth(PrintUtilities.getPageWidth() + 20);
         statementRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
-        statementRTA.setPrefHeight(200);
+        statementRTA.setPrefHeight(150);
 
         statementRTA.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
             fieldModified = true;
             statementTextHeight = mainWindow.getMainView().getRTATextHeight(statementRTA);
+        });
+        statementRTA.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) {
+                editorInFocus(statementDRTA, ControlType.AREA);
+            }
+        });
+
+        interpretationDRTA = new DecoratedRTA();
+        interpretationRTA = interpretationDRTA.getEditor();
+        interpretationRTA.setPromptText("Interpretation Function (may be blank)");
+        interpretationRTA.getStylesheets().add("slappTextArea.css");
+        interpretationRTA.setContentAreaWidth(PrintUtilities.getPageWidth());
+        interpretationRTA.setPrefHeight(150);
+        interpretationDRTA.getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.BASE_AND_SANS);
+
+        interpretationRTA.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            fieldModified = true;
+            interpretationTextHeight = mainWindow.getMainView().getRTATextHeight(interpretationRTA);
+        });
+        interpretationRTA.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) {
+                editorInFocus(interpretationDRTA, ControlType.AREA);
+            }
         });
 
         Label nameLabel = new Label("Exercise Name: ");
@@ -109,38 +150,27 @@ public class SimpleEditCreate {
         };
         nameField.textProperty().addListener(nameListener);
 
-        Label promptLabel = new Label("Content prompt: ");
-        promptLabel.setPrefWidth(95);
-        promptField = new TextField();
-        promptField.setPromptText("(plain text)");
-        promptListener = new ChangeListener() {
-            @Override
-            public void changed(ObservableValue ob, Object ov, Object nv) {
-                fieldModified = true;
-                promptField.textProperty().removeListener(nameListener);
-            }
-        };
-        promptField.textProperty().addListener(nameListener);
 
 
         HBox nameBox = new HBox(nameLabel, nameField);
         nameBox.setAlignment(Pos.BASELINE_LEFT);
-        HBox promptBox = new HBox(promptLabel, promptField);
-        promptBox.setAlignment(Pos.BASELINE_LEFT);
-        VBox nameNpromptBox = new VBox(10,nameBox,promptBox);
-        nameNpromptBox.setPadding(new Insets(20,0,20,70));
 
-        String helpText = "Simple Edit Exercise is appropriate for any exercise that calls for a single text box.  (In the usual case, these appear as elements of the 'free form' exercise -- where Simple Edit is superseded by Page Edit for stand-alone exercises.)  All the usual keyboard and edit commands apply.\n\n" +
-                "For the Simple Edit Exercise, you need only provide the exercise name, exercise statement and, if desired, a prompt that will appear in an empty content area (you may not see the prompt until the content area gains focus).";
+        nameVBox = new VBox(nameBox);
+        nameVBox.setPadding(new Insets(20,0,20,70));
+
+        String helpText = "Simple Translation is appropriate for any exercise that calls for an interpretation function and simple formal translation (usually of an ordinary language sentence).\n\n" +
+
+                "For the Simple Translate Exercise, you need only provide the exercise name, exercise statement and, if desired, an interpretation function to appear along with the exercise.  "+
+                "An empty interpretation field appears as such along with the exercise to be filled in by the student.";
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(130);
+        helpArea.setPrefHeight(120);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
         helpArea.setStyle("-fx-text-fill: mediumslateblue");
 
-        centerBox = new VBox(10, statementRTA, helpArea);
+        centerBox = new VBox(10, statementRTA, interpretationRTA, helpArea);
 
         Group centerGroup = new Group(centerBox);
         borderPane.setCenter(centerGroup);
@@ -195,7 +225,7 @@ public class SimpleEditCreate {
 
 
 
-
+/*
         ToolBar editToolbar = statementDRTA.getEditToolbar();
         ToolBar fontsToolbar = statementDRTA.getFontsToolbar();
         ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
@@ -209,18 +239,21 @@ public class SimpleEditCreate {
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
 
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, nameNpromptBox);
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, nameVBox);
         borderPane.topProperty().setValue(topBox);
         borderPane.setTop(topBox);
+
+ */
 
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
-        stage.setTitle("Create Simple Edit Exercise:");
+        stage.setTitle("Create Simple Translation Exercise:");
         stage.getIcons().addAll(EditorMain.icons);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.setWidth(860);
+        stage.setHeight(800);
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setOnCloseRequest(e-> {
             e.consume();
@@ -247,13 +280,13 @@ public class SimpleEditCreate {
     }
 
     private void setCenterVgrow() {
-        double fixedHeight = helpArea.getHeight() * scale + 400;
+        double fixedHeight = (helpArea.getHeight() + statementRTA.getHeight()) * scale + 350;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
         DoubleProperty maximumHeightProperty = new SimpleDoubleProperty(PrintUtilities.getPageHeight() );
         DoubleProperty scaleProperty = new SimpleDoubleProperty(scale);
         centerHeightProperty = new SimpleDoubleProperty();
         centerHeightProperty.bind(Bindings.min(maximumHeightProperty, (stage.heightProperty().subtract(fixedValueProperty)).divide(scaleProperty)));
-        statementRTA.prefHeightProperty().bind(centerHeightProperty);
+        interpretationRTA.prefHeightProperty().bind(centerHeightProperty);
     }
 
     private void closeWindow() {
@@ -275,7 +308,7 @@ public class SimpleEditCreate {
 
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
-        if (fieldModified || statementRTA.isModified()) {
+        if (fieldModified || statementRTA.isModified() || interpretationRTA.isModified()) {
             Alert confirm = EditorAlerts.confirmationAlert(title, content);
             Optional<ButtonType> result = confirm.showAndWait();
             if (result.get() != OK) okcontinue = false;
@@ -284,12 +317,17 @@ public class SimpleEditCreate {
     }
 
     private void viewExercise() {
-        SimpleEditModel model = extractModelFromWindow();
-        SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
+        SimpleTransModel model = extractModelFromWindow();
+        SimpleTransExercise exercise = new SimpleTransExercise(model, mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.prefHeightProperty().unbind();
         rta.setEditable(false);
         exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
+
+        RichTextArea interpRTA = exercise.getExerciseView().getExerciseInterpretation().getEditor();
+        interpRTA.prefHeightProperty().unbind();
+        exercise.getExerciseView().setInterpretationPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getInterpretationPrefHeight()));
+
         mainWindow.setUpExercise(exercise);
     }
 
@@ -298,34 +336,83 @@ public class SimpleEditCreate {
         saveAsButton.setDisable(true);
         nameField.textProperty().addListener(nameListener);
 
-        SimpleEditModel model = extractModelFromWindow();
 
-
-        SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
-        RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
-        rta.prefHeightProperty().unbind();
-        rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
-        exercise.saveExercise(saveAs);
+        SimpleTransModel model = extractModelFromWindow();
 
 
 
+        boolean success = DiskUtilities.saveExercise(saveAs, model);
+        if (success) {
+            fieldModified = false;
 
-
+        }
         saveButton.setDisable(false);
         saveAsButton.setDisable(false);
-        fieldModified = false;
+   //     fieldModified = false;
     }
 
-    private SimpleEditModel extractModelFromWindow() {
-        SimpleEditModel model = new SimpleEditModel(nameField.getText(), promptField.getText());
+    private SimpleTransModel extractModelFromWindow() {
+        SimpleTransModel model = new SimpleTransModel(nameField.getText());
+        if (statementRTA.isModified() || interpretationRTA.isModified()) fieldModified = true;
 
-        if (statementRTA.isModified()) fieldModified = true;
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setExerciseStatement(statementRTA.getDocument());
         model.setStatementTextHeight(statementTextHeight);
         model.setStatementPrefHeight(statementTextHeight + 25);
+
+        interpretationRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        model.setExerciseInterpretation(interpretationRTA.getDocument());
+
+        model.setInterpretationTextHeight(interpretationTextHeight);
+        model.setInterpretationPrefHeight(Math.max(100, interpretationTextHeight + 25));
+
+
         return model;
+    }
+
+    void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
+
+        KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
+        keyboardDiagram.initialize(decoratedRTA);
+        if (keyboardDiagram.isShowing()) {
+            keyboardDiagram.updateAndShow();
+        }
+
+        editToolbar = decoratedRTA.getEditToolbar();
+        fontsToolbar = decoratedRTA.getFontsToolbar();
+        paragraphToolbar = decoratedRTA.getParagraphToolbar();
+        kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
+        kbdDiaToolBar.setPrefHeight(38);
+
+
+        if (kbdDiaToolBar.getItems().isEmpty()) {
+
+            kbdDiaToolBar.getItems().addAll(decoratedRTA.getKeyboardDiagramButton());
+
+            switch (control) {
+                case NONE: {
+                    kbdDiaToolBar.setDisable(true);
+                }
+                case STATEMENT: {
+                    editToolbar.setDisable(true);
+                    fontsToolbar.setDisable(true);
+                }
+                case FIELD: {
+                    paragraphToolbar.setDisable(true);
+                }
+                case AREA: { }
+            }
+        }
+
+        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
+        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
+        editAndKbdBox.layout();
+
+
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, nameVBox);
+        borderPane.topProperty().setValue(topBox);
+
+
     }
 
 

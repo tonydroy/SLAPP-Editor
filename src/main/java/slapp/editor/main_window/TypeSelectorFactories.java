@@ -25,6 +25,9 @@ import slapp.editor.page_editor.PageEditModel;
 import slapp.editor.simple_edit.SimpleEditCreate;
 import slapp.editor.simple_edit.SimpleEditExercise;
 import slapp.editor.simple_edit.SimpleEditModel;
+import slapp.editor.simple_trans.SimpleTransCreate;
+import slapp.editor.simple_trans.SimpleTransExercise;
+import slapp.editor.simple_trans.SimpleTransModel;
 import slapp.editor.truth_table.TruthTableCreate;
 import slapp.editor.truth_table.TruthTableExercise;
 import slapp.editor.truth_table.TruthTableModel;
@@ -62,6 +65,10 @@ public class TypeSelectorFactories {
             case "SimpleEditModel": {
                 SimpleEditModel editModel = (SimpleEditModel) objectModel;
                 return new SimpleEditExercise(editModel, mainWindow);
+            }
+            case "SimpleTransModel": {
+                SimpleTransModel transModel = (SimpleTransModel) objectModel;
+                return new SimpleTransExercise(transModel, mainWindow);
             }
             case "PageEditModel": {
                 PageEditModel editModel = (PageEditModel) objectModel;
@@ -138,6 +145,15 @@ public class TypeSelectorFactories {
                     break;
                 }
                 SimpleEditCreate simpleEditCreate = new SimpleEditCreate(mainWindow, editModel);
+                break;
+            }
+            case "SimpleTransModel": {
+                SimpleTransModel transModel = (SimpleTransModel) objectModel;
+                if (transModel.isStarted()) {
+                    EditorAlerts.showSimpleAlert("Cannot Open", "This exercise appears to have the content area modified.  Cannot open in create window.");
+                    break;
+                }
+                SimpleTransCreate simpleTransCreate = new SimpleTransCreate(mainWindow, transModel);
                 break;
             }
             case "PageEditModel": {
@@ -304,6 +320,10 @@ public class TypeSelectorFactories {
             }
             case SIMPLE_EDIT: {
                 SimpleEditCreate simpleEditCreate = new SimpleEditCreate(mainWindow);
+                break;
+            }
+            case SIMPLE_TRANS: {
+                SimpleTransCreate simpleTransCreate = new SimpleTransCreate(mainWindow);
                 break;
             }
             case TRUTH_TABLE: {

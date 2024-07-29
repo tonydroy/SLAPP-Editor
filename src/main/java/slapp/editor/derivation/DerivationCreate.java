@@ -669,11 +669,7 @@ public class DerivationCreate {
         editToolbar = decoratedRTA.getEditToolbar();
         fontsToolbar = decoratedRTA.getFontsToolbar();
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
-
-//        kbdDiaToolBar = new ToolBar();
-//        kbdDiaToolBar.setStyle("-fx-spacing: 5");
         kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
-
         kbdDiaToolBar.setPrefHeight(38);
 
 
@@ -702,7 +698,6 @@ public class DerivationCreate {
 
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, upperFieldsBox);
-//        topBox.layout();
         borderPane.topProperty().setValue(topBox);
 
 

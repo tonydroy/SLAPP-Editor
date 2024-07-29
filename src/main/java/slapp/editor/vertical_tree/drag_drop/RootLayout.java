@@ -339,7 +339,7 @@ public class RootLayout extends AnchorPane {
             @Override
             public void handle(KeyEvent e) {
                 KeyCode code = e.getCode();
-                if (code == KeyCode.F10) {
+                if (code == KeyCode.F11) {
                     ObservableList<Node> nodesList = mainPane.getChildren();
                     List<MapFormulaBox> formulaBoxes = new ArrayList<>();
                     for (Node node : nodesList) {
@@ -362,7 +362,7 @@ public class RootLayout extends AnchorPane {
                         EditorAlerts.fleetingPopup("Map requires two marked nodes.");
                     }
                     e.consume();
-                } else if (code == KeyCode.F11) {
+                } else if (code == KeyCode.F12) {
                     ObservableList<Node> nodesList = mainPane.getChildren();
                     for (Node node : nodesList) {
                         if (inHierarchy(verticalTreeView.getMainView().getMainScene().focusOwnerProperty().get(), node)) {

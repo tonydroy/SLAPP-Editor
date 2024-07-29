@@ -106,7 +106,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
         explainEditor.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
             exerciseModified = true;
-            double explanationTextHeight = mainView.getRTATextHeight(commentEditor);
+            double explanationTextHeight = mainView.getRTATextHeight(explainEditor);
             horizontalTreeModel.setExplainTextHeight(explanationTextHeight);
         });
 
@@ -296,11 +296,14 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         root.layout();
 
         Ruler axis = new Ruler();
-        double axisWidth = Math.max(nodeWidth, mainPane.getWidth() - 10);
+ //       double axisWidth = Math.max(nodeWidth, mainPane.getWidth() - 10);
+        double axisWidth = Math.max(nodeWidth, printModel.getMainPaneWidth() - 10);
+
         axis.updateRuler(axisWidth);
 
         mainPane.setStyle("-fx-background-color: transparent");
         mainPane.setPrefWidth(printModel.getMainPaneWidth());
+
         printExercise.getExerciseView().simpleRemoveAxis();
 
         ObservableList<Node> mainNodes = mainPane.getChildren();
@@ -323,7 +326,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         AnchorPane mainStack = new AnchorPane(axis, mainPane);
         mainStack.setLeftAnchor(axis, 5.0);
 
-        if (!horizontalTreeView.isAxis()) mainStack.getChildren().remove(axis);
+        if (!horizontalTreeModel.isAxis()) mainStack.getChildren().remove(axis);
         HBox contentHBox = new HBox(mainStack);
         contentHBox.setAlignment(Pos.CENTER);
         contentHBox.setPadding(new Insets(10,0,20, 0));
@@ -397,7 +400,8 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         root.layout();
 
         Ruler axis = new Ruler();
-        double axisWidth = Math.max(nodeWidth, mainPane.getWidth() - 10);
+        double axisWidth = Math.max(nodeWidth, printModel.getMainPaneWidth() - 10);
+
         axis.updateRuler(axisWidth);
 
         mainPane.setStyle("-fx-background-color: transparent");
@@ -424,7 +428,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         AnchorPane mainStack = new AnchorPane(axis, mainPane);
         mainStack.setLeftAnchor(axis, 5.0);
 
-        if (!horizontalTreeView.isAxis()) mainStack.getChildren().remove(axis);
+        if (!horizontalTreeModel.isAxis()) mainStack.getChildren().remove(axis);
         HBox contentHBox = new HBox(mainStack);
         contentHBox.setAlignment(Pos.CENTER);
         contentHBox.setPadding(new Insets(10,0,20, 0));

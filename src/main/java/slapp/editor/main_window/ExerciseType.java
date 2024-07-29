@@ -6,6 +6,7 @@ public enum ExerciseType {
     PAGE_EDIT("Page Edit", "Exercise requires a text response -- anywhere from short answer, to multiple pages."),
     AB_EXPLAIN("AB explain", "Exercise requires binary choice with an explanation."),
     ABEFG_EXPLAIN("AB/EFG explain", "Exercise requires both binary and tertiary choice with an explanation"),
+    SIMPLE_TRANS("Simple Translation", "Exercise with fields for interpretation function and formal translation."),
     DERIVATION("Derivation", "Exercise requires a derivation"),
     DRVTN_EXP("Derivation explain", "Exercise requires a derivation and explanation."),
     HORIZONTAL_TREE("Horizontal Tree Explain", "Exercise requires a horizontal tree (of the type encountered in chapters 4 and 5 of SL) and an explanation."),

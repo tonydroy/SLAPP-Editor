@@ -153,7 +153,7 @@ public class ABEFExpMapFormulaBox extends AnchorPane {
                 RichTextArea rta = formulaBox.getRTA();
                 KeyCode code = e.getCode();
                 Bounds rtaBounds = self.sceneToLocal(rta.localToScene(rta.getBoundsInLocal()));
-                if (code == KeyCode.F9) {
+                if (code == KeyCode.F10) {
                     if (mapStage < 2) {
                         Bounds caretBounds = ((RichTextAreaSkin) formulaBox.getRTA().getSkin()).getCaretPosition();
                         Bounds newCaretBounds = rta.sceneToLocal(caretBounds);

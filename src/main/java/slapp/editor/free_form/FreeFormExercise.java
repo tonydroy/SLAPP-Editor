@@ -82,7 +82,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
                         activeExercise = exer;
 
                         ExerciseType type = ((ExerciseModel)exer.getExerciseModel()).getExerciseType();
-                        if (type == ExerciseType.SIMPLE_EDIT) {
+                        if (type == ExerciseType.SIMPLE_EDIT || type ==ExerciseType.HORIZONTAL_TREE) {
                             freeFormView.getIndentButton().setDisable(true);
                             freeFormView.getOutdentButton().setDisable(true);
                         } else {
@@ -164,6 +164,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.getAddADrvtnItalBBButton().setOnAction(e -> addADrvtnItalBBAction());
 
         freeFormView.getRestoreButton().setDisable(true);
+        freeFormView.getRemoveButton().setDisable(true);
 
         //cleanup
         freeFormView.initializeViewDetails();
@@ -282,13 +283,15 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         mainWindow.getMainView().setUpLeftControl(freeFormView.getExerciseControl());
 
         ExerciseType type = ((ExerciseModel)exer.getExerciseModel()).getExerciseType();
-        if (type == ExerciseType.SIMPLE_EDIT) {
+
+        if (type == ExerciseType.SIMPLE_EDIT || type == ExerciseType.HORIZONTAL_TREE) {
             freeFormView.getIndentButton().setDisable(true);
             freeFormView.getOutdentButton().setDisable(true);
         } else {
             freeFormView.getIndentButton().setDisable(false);
             freeFormView.getOutdentButton().setDisable(false);
         }
+        freeFormView.getRemoveButton().setDisable(false);
     }
 
     private void removeAction()  {
@@ -331,6 +334,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         setElementsFromModel();
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
+        freeFormView.getRemoveButton().setDisable(false);
     }
 
 
@@ -347,6 +351,8 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         newMod.setBinaryOperators(binaryList);
         TruthTableGenExercise exer = new TruthTableGenExercise(newMod, mainWindow, true);
 
+
+
         int index = exerciseList.indexOf(activeExercise);
         ModelElement element = new ModelElement(newMod, 0);
         freeFormModel.getModelElements().add(++index, element);
@@ -354,6 +360,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         setElementsFromModel();
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
+        freeFormView.getRemoveButton().setDisable(false);
     }
 
     private void addHTreeAction() {
@@ -365,6 +372,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         setElementsFromModel();
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
+        freeFormView.getRemoveButton().setDisable(false);
     }
 
     private void addVTreeBaseItalAction() {
@@ -382,6 +390,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         setElementsFromModel();
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
+        freeFormView.getRemoveButton().setDisable(false);
     }
 
     private void addVTreeItalSansAction() {
@@ -399,6 +408,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         setElementsFromModel();
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
+        freeFormView.getRemoveButton().setDisable(false);
     }
 
     private void addNDrvtnItalSansAction() {
@@ -419,6 +429,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         setElementsFromModel();
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
+        freeFormView.getRemoveButton().setDisable(false);
     }
 
     private void addNDrvtnScriptItalAction() {
@@ -439,6 +450,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         setElementsFromModel();
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
+        freeFormView.getRemoveButton().setDisable(false);
     }
     private void addNDrvtnScriptSansAction() {
         freeFormModel = getFreeFormModelFromView();
@@ -458,6 +470,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         setElementsFromModel();
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
+        freeFormView.getRemoveButton().setDisable(false);
     }
     private void addNDrvtnItalBBAction() {
         freeFormModel = getFreeFormModelFromView();
@@ -477,6 +490,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         setElementsFromModel();
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
+        freeFormView.getRemoveButton().setDisable(false);
     }
 
     private void addADrvtnItalSansAction() {
@@ -497,6 +511,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         setElementsFromModel();
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
+        freeFormView.getRemoveButton().setDisable(false);
     }
 
     private void addADrvtnScriptItalicAction() {
@@ -517,6 +532,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         setElementsFromModel();
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
+        freeFormView.getRemoveButton().setDisable(false);
     }
 
     private void addADrvtnScriptSansAction() {
@@ -537,6 +553,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         setElementsFromModel();
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
+        freeFormView.getRemoveButton().setDisable(false);
     }
 
     private void addADrvtnItalBBAction() {
@@ -557,6 +574,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         setElementsFromModel();
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
+        freeFormView.getRemoveButton().setDisable(false);
     }
 
 

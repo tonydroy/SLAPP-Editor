@@ -225,7 +225,7 @@ public class ExpTreeFormulaBox extends AnchorPane {
                 rtaBoundsHeight = rtaBounds.getHeight();
                 rtaBoundsMinY = rtaBounds.getMinY();
 
-                if (code == KeyCode.F9) {
+                if (code == KeyCode.F10) {
                     if (circleStage < 2) {
                         Bounds caretBounds = ((RichTextAreaSkin) formulaBox.getRTA().getSkin()).getCaretPosition();
                         Bounds newCaretBounds = rta.sceneToLocal(caretBounds);
@@ -243,7 +243,7 @@ public class ExpTreeFormulaBox extends AnchorPane {
                         circleStage = 0;
                     }
                     e.consume();
-                } else if (code == KeyCode.F10) {
+                } else if (code == KeyCode.F11) {
                     if (circleStage < 2) {
                         EditorAlerts.fleetingPopup("Circle requires two markers.");
                     }
@@ -266,7 +266,7 @@ public class ExpTreeFormulaBox extends AnchorPane {
                 RichTextArea rta = formulaBox.getRTA();
                 KeyCode code = e.getCode();
                 Bounds rtaBounds = self.sceneToLocal(rta.localToScene(rta.getBoundsInLocal()));
-                if (code == KeyCode.F9) {
+                if (code == KeyCode.F10) {
                     if (ulineStage < 2) {
                         Bounds caretBounds = ((RichTextAreaSkin) formulaBox.getRTA().getSkin()).getCaretPosition();
                         Bounds newCaretBounds = rta.sceneToLocal(caretBounds);
@@ -285,7 +285,7 @@ public class ExpTreeFormulaBox extends AnchorPane {
                     }
                     e.consume();
                 }
-                else if (code == KeyCode.F10) {
+                else if (code == KeyCode.F11) {
                     if (ulineStage == 2) {
                         double minX = Math.min(ulineXAnchors[0], ulineXAnchors[1]);
                         double maxX = Math.max(ulineXAnchors[0], ulineXAnchors[1]);
