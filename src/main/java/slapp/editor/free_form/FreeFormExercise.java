@@ -154,6 +154,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
 
         freeFormView.getAddVTreeBaseItalButton().setOnAction(e -> addVTreeBaseItalAction());
         freeFormView.getAddVTreeItalSansButton().setOnAction(e -> addVTreeItalSansAction());
+        freeFormView.getAddVTreeScriptItalButton().setOnAction(e -> addVTreeScriptItalAction());
         freeFormView.getAddNDrvtnItalSansButton().setOnAction(e -> addNDrvtnItalSansAction());
         freeFormView.getAddNDrvtnScriptItalButton().setOnAction(e -> addNDrvtnScriptItalAction());
         freeFormView.getAddNDrvtnScriptSansButton().setOnAction(e -> addNDrvtnScriptSansAction());
@@ -199,6 +200,10 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
                 }
                 case VERT_TREE_ITAL_SANS: {
                     members.add(freeFormView.getAddVTreeItalSansButton());
+                    break;
+                }
+                case VERT_TREE_SCRIPT_ITAL: {
+                    members.add(freeFormView.getAddVTreeScriptItalButton());
                     break;
                 }
                 case N_DERIVATION_ITAL_SANS: {
@@ -265,6 +270,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         int indent = viewElement.getIndentLevel();
         viewElement.setIndentLevel(++indent);
         freeFormView.updateContentFromViewElements();
+        exerciseModified = true;
     }
 
     private void outdentAction() {
@@ -273,6 +279,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         int indent = viewElement.getIndentLevel();
         if (indent > 0) viewElement.setIndentLevel(--indent);
         freeFormView.updateContentFromViewElements();
+        exerciseModified = true;
     }
 
     private void setActiveExercise(int index) {
@@ -305,7 +312,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
             freeFormView.updateContentFromViewElements();
 
             freeFormView.getRestoreButton().setDisable(false);
-
+            exerciseModified = true;
             if (index > 0) setActiveExercise(index - 1);
             else setActiveExercise(index);
         } else {
@@ -323,6 +330,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
 
         freeFormView.getRestoreButton().setDisable(true);
         setActiveExercise(index);
+        exerciseModified = true;
     }
 
     private void addEditAction() {
@@ -335,6 +343,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
         freeFormView.getRemoveButton().setDisable(false);
+        exerciseModified = true;
     }
 
 
@@ -361,6 +370,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
         freeFormView.getRemoveButton().setDisable(false);
+        exerciseModified = true;
     }
 
     private void addHTreeAction() {
@@ -373,6 +383,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
         freeFormView.getRemoveButton().setDisable(false);
+        exerciseModified = true;
     }
 
     private void addVTreeBaseItalAction() {
@@ -391,6 +402,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
         freeFormView.getRemoveButton().setDisable(false);
+        exerciseModified = true;
     }
 
     private void addVTreeItalSansAction() {
@@ -409,6 +421,26 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
         freeFormView.getRemoveButton().setDisable(false);
+        exerciseModified = true;
+    }
+
+    private void addVTreeScriptItalAction() {
+        freeFormModel = getFreeFormModelFromView();
+        VerticalTreeModel newMod = new VerticalTreeModel();
+
+        newMod.getDragIconList().addAll(Arrays.asList(DragIconType.tree_field, DragIconType.bracket, DragIconType.dashed_line, DragIconType.map_field));
+        newMod.getObjectControlList().addAll(Arrays.asList(ObjectControlType.FORMULA_BOX, ObjectControlType.OPERATOR_CIRCLE, ObjectControlType.STAR,
+                ObjectControlType.ANNOTATION, ObjectControlType.UNDERLINE, ObjectControlType.MAPPING));
+        newMod.setDefaultKeyboardType(SCRIPT_AND_ITALIC);
+
+        int index = exerciseList.indexOf(activeExercise);
+        ModelElement element = new ModelElement(newMod, 0);
+        freeFormModel.getModelElements().add(++index, element);
+        setElementsFromModel();
+        freeFormView.updateContentFromViewElements();
+        setActiveExercise(index);
+        freeFormView.getRemoveButton().setDisable(false);
+        exerciseModified = true;
     }
 
     private void addNDrvtnItalSansAction() {
@@ -430,6 +462,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
         freeFormView.getRemoveButton().setDisable(false);
+        exerciseModified = true;
     }
 
     private void addNDrvtnScriptItalAction() {
@@ -451,6 +484,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
         freeFormView.getRemoveButton().setDisable(false);
+        exerciseModified = true;
     }
     private void addNDrvtnScriptSansAction() {
         freeFormModel = getFreeFormModelFromView();
@@ -471,6 +505,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
         freeFormView.getRemoveButton().setDisable(false);
+        exerciseModified = true;
     }
     private void addNDrvtnItalBBAction() {
         freeFormModel = getFreeFormModelFromView();
@@ -491,6 +526,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
         freeFormView.getRemoveButton().setDisable(false);
+        exerciseModified = true;
     }
 
     private void addADrvtnItalSansAction() {
@@ -512,6 +548,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
         freeFormView.getRemoveButton().setDisable(false);
+        exerciseModified = true;
     }
 
     private void addADrvtnScriptItalicAction() {
@@ -533,6 +570,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
         freeFormView.getRemoveButton().setDisable(false);
+        exerciseModified = true;
     }
 
     private void addADrvtnScriptSansAction() {
@@ -554,6 +592,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
         freeFormView.getRemoveButton().setDisable(false);
+        exerciseModified = true;
     }
 
     private void addADrvtnItalBBAction() {
@@ -575,6 +614,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.updateContentFromViewElements();
         setActiveExercise(index);
         freeFormView.getRemoveButton().setDisable(false);
+        exerciseModified = true;
     }
 
 
@@ -682,19 +722,31 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         FreeFormModel originalModel = (FreeFormModel) (freeFormModel.getOriginalModel());
         originalModel.setExerciseComment(commentDocument);
         FreeFormExercise clearExercise = new FreeFormExercise(originalModel, mainWindow);
+        exerciseModified = false;
         return clearExercise;
     }
 
     @Override
     public boolean isExerciseModified() {
+
         for (Exercise exercise : exerciseList) {
-            if (exercise.isExerciseModified()) exerciseModified = true;
+            if (exercise.isExerciseModified()) {
+                exerciseModified = true;
+            }
         }
         return exerciseModified;
     }
 
     @Override
-    public void setExerciseModified(boolean modified) { exerciseModified = modified;   }
+    public void setExerciseModified(boolean modified) {
+        if (modified) exerciseModified = true;
+        else {
+            exerciseModified = false;
+            for (Exercise exercise : exerciseList) {
+                exercise.setExerciseModified(false);
+            }
+        }
+    }
 
     @Override
     public ExerciseModel<FreeFormModel> getExerciseModelFromView() {

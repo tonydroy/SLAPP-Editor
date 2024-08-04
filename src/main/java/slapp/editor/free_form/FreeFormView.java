@@ -48,6 +48,7 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
     private Button addTTableButton;
     private Button addVTreeBaseItalButton;
     private Button addVTreeItalSansButton;
+    private Button addVTreeScriptItalButton;
     private Button addNDrvtnItalSansButton;
     private Button addNDrvtnScriptItalButton;
     private Button addNDrvtnScriptSansButton;
@@ -72,6 +73,7 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
         addHTreeButton = newControlsButton("Horiz Tree", "Insert horizontal tree.");
         addVTreeBaseItalButton = newControlsButton("Vert Tree", "Insert vertical tree.");
         addVTreeItalSansButton = newControlsButton("Vert Tree", "Insert vertical tree.");
+        addVTreeScriptItalButton = newControlsButton("Vert Tree", "Insert vertical tree.");
         addNDrvtnItalSansButton = newControlsButton("Nat Drvtn", "Insert natural derivation.");
         addNDrvtnScriptItalButton = newControlsButton("Nat Drvtn", "Insert natural derivation.");
         addNDrvtnScriptSansButton = newControlsButton("Nat Drvtn", "Insert natural derivation.");
@@ -205,6 +207,7 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
     public Button getAddVTreeBaseItalButton() {      return addVTreeBaseItalButton;   }
 
     public Button getAddVTreeItalSansButton() {     return addVTreeItalSansButton;   }
+    public Button getAddVTreeScriptItalButton() { return addVTreeScriptItalButton; }
 
     public Button getAddNDrvtnItalSansButton() {     return addNDrvtnItalSansButton;   }
 

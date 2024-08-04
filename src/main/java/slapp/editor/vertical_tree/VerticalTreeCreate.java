@@ -62,6 +62,8 @@ public class VerticalTreeCreate {
     private CheckBox mappingCheck;
     private CheckBox baseItalicCheck;
     private CheckBox italicSansCheck;
+    private CheckBox scriptItalicCheck;
+
     private RichTextAreaSkin.KeyMapValue keyboardSelector;
     private double scale = 1.0;
     private Stage stage;
@@ -89,6 +91,7 @@ public class VerticalTreeCreate {
         keyboardSelector = originalModel.getDefaultKeyboardType();
         italicSansCheck.setSelected(keyboardSelector == ITALIC_AND_SANS);
         baseItalicCheck.setSelected(keyboardSelector == RichTextAreaSkin.KeyMapValue.BASE);
+        scriptItalicCheck.setSelected(keyboardSelector == SCRIPT_AND_ITALIC);
         List<DragIconType> dragIconList = originalModel.getDragIconList();
         treeFormulaBoxCheck.setSelected(dragIconList.contains(tree_field));
         verticalBracketCheck.setSelected(dragIconList.contains(bracket));
@@ -150,6 +153,7 @@ public class VerticalTreeCreate {
                 modified = true;
                 keyboardSelector = BASE;
                 italicSansCheck.setSelected(false);
+                scriptItalicCheck.setSelected(false);
             }
         });
         italicSansCheck = new CheckBox("Italic/Sans");
@@ -160,9 +164,22 @@ public class VerticalTreeCreate {
                 modified = true;
                 keyboardSelector = ITALIC_AND_SANS;
                 baseItalicCheck.setSelected(false);
+                scriptItalicCheck.setSelected(false);
             }
         });
-        HBox keyboardBox = new HBox(20, keyboardLabel, baseItalicCheck, italicSansCheck);
+        scriptItalicCheck = new CheckBox("Script/Italic");
+        scriptItalicCheck.setSelected(false);
+        scriptItalicCheck.selectedProperty().addListener((ob, ov, nv) -> {
+            boolean selected = (boolean) nv;
+            if (selected) {
+                modified = true;
+                keyboardSelector = SCRIPT_AND_ITALIC;
+                baseItalicCheck.setSelected(false);
+                italicSansCheck.setSelected(false);
+            }
+        });
+
+        HBox keyboardBox = new HBox(20, keyboardLabel, baseItalicCheck, italicSansCheck, scriptItalicCheck);
         keyboardBox.setAlignment(Pos.BASELINE_LEFT);
 
 
@@ -408,7 +425,8 @@ public class VerticalTreeCreate {
         VerticalTreeModel model = new VerticalTreeModel();
         model.setExerciseName(nameField.getText());
         if (italicSansCheck.isSelected()) model.setDefaultKeyboardType(ITALIC_AND_SANS);
-        else model.setDefaultKeyboardType(BASE);
+        else if (baseItalicCheck.isSelected()) model.setDefaultKeyboardType(BASE);
+        else model.setDefaultKeyboardType(SCRIPT_AND_ITALIC);
 
         List<DragIconType> dragList = model.getDragIconList();
         if (treeFormulaBoxCheck.isSelected()) dragList.add(tree_field);

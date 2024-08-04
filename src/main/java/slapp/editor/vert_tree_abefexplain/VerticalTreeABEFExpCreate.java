@@ -37,8 +37,7 @@ import slapp.editor.vertical_tree.object_models.ObjectControlType;
 import java.util.List;
 import java.util.Optional;
 
-import static com.gluonhq.richtextarea.RichTextAreaSkin.KeyMapValue.BASE;
-import static com.gluonhq.richtextarea.RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS;
+import static com.gluonhq.richtextarea.RichTextAreaSkin.KeyMapValue.*;
 import static javafx.scene.control.ButtonType.OK;
 import static slapp.editor.vertical_tree.drag_drop.DragIconType.*;
 import static slapp.editor.vertical_tree.object_models.ObjectControlType.*;
@@ -78,6 +77,7 @@ public class VerticalTreeABEFExpCreate {
     private CheckBox mappingCheck;
     private CheckBox baseItalicCheck;
     private CheckBox italicSansCheck;
+    private CheckBox scriptItalicCheck;
     private RichTextAreaSkin.KeyMapValue keyboardSelector;
     private double scale = 1.0;
     private Stage stage;
@@ -105,6 +105,7 @@ public class VerticalTreeABEFExpCreate {
         keyboardSelector = originalModel.getDefaultKeyboardType();
         italicSansCheck.setSelected(keyboardSelector == ITALIC_AND_SANS);
         baseItalicCheck.setSelected(keyboardSelector == RichTextAreaSkin.KeyMapValue.BASE);
+        scriptItalicCheck.setSelected(keyboardSelector == SCRIPT_AND_ITALIC);
         explainPromptField.setText(originalModel.getExplainPrompt());
         abChoiceLeadField.setText(originalModel.getABChoiceLead());
         efChoiceLeadField.setText(originalModel.getEFChoiceLead());
@@ -186,6 +187,7 @@ public class VerticalTreeABEFExpCreate {
                 modified = true;
                 keyboardSelector = BASE;
                 italicSansCheck.setSelected(false);
+                scriptItalicCheck.setSelected(false);
             }
         });
         italicSansCheck = new CheckBox("Italic/Sans");
@@ -196,9 +198,19 @@ public class VerticalTreeABEFExpCreate {
                 modified = true;
                 keyboardSelector = ITALIC_AND_SANS;
                 baseItalicCheck.setSelected(false);
+                scriptItalicCheck.setSelected(false);
             }
         });
-        HBox keyboardBox = new HBox(20, keyboardLabel, baseItalicCheck, italicSansCheck);
+        scriptItalicCheck.selectedProperty().addListener((ob, ov, nv) -> {
+            boolean selected = (boolean) nv;
+            if (selected) {
+                modified = true;
+                keyboardSelector = SCRIPT_AND_ITALIC;
+                baseItalicCheck.setSelected(false);
+                italicSansCheck.setSelected(false);
+            }
+        });
+        HBox keyboardBox = new HBox(20, keyboardLabel, baseItalicCheck, italicSansCheck, scriptItalicCheck);
         keyboardBox.setAlignment(Pos.BASELINE_LEFT);
 
         //choice fields
@@ -541,7 +553,8 @@ public class VerticalTreeABEFExpCreate {
         model.setExerciseName(nameField.getText());
         model.setExplainPrompt(explainPromptField.getText());
         if (italicSansCheck.isSelected()) model.setDefaultKeyboardType(ITALIC_AND_SANS);
-        else model.setDefaultKeyboardType(BASE);
+        else if (baseItalicCheck.isSelected()) model.setDefaultKeyboardType(BASE);
+        else model.setDefaultKeyboardType(SCRIPT_AND_ITALIC);
 
         model.setABChoiceLead(abChoiceLeadField.getText());
         model.setaPrompt(aPromptField.getText());

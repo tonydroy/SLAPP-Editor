@@ -258,6 +258,7 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         model.setCommentTextHeight(editModel.getCommentTextHeight());
 
         RichTextArea responseRTA = editView.getExerciseResponse().getEditor();
+        if (responseRTA.isModified()) exerciseModified = true;
         responseRTA.getActionFactory().saveNow().execute(new ActionEvent());
         Document responseDocument = responseRTA.getDocument();
         model.setExerciseResponse(responseDocument);
