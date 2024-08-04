@@ -43,6 +43,8 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
     private Button outdentButton;
     private Button removeButton;
     private Button restoreButton;
+    private Button moveUpButton;
+    private Button moveDownButton;
     private Button addEditButton;
     private Button addHTreeButton;
     private Button addTTableButton;
@@ -68,6 +70,8 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
         outdentButton = newControlsButton("Outdent", "Outdent current window.");
         removeButton = newControlsButton("Remove", "Remove current window.");
         restoreButton = newControlsButton ("Restore", "Restore last removed item.");
+        moveUpButton = newControlsButton("Move Up", "Place above previous item.");
+        moveDownButton = newControlsButton("Move Down", "Place below following item.");
         addEditButton = newControlsButton("Simple Edit", "Insert simple editor.");
         addTTableButton = newControlsButton("Truth Table", "Insert truth table.");
         addHTreeButton = newControlsButton("Horiz Tree", "Insert horizontal tree.");
@@ -197,6 +201,9 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
     public Button getRemoveButton() {     return removeButton;   }
 
     public Button getRestoreButton() {     return restoreButton;  }
+
+    public Button getMoveUpButton() { return moveUpButton; }
+    public Button getMoveDownButton() { return moveDownButton; }
 
     public Button getAddEditButton() {     return addEditButton;  }
 

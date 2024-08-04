@@ -927,7 +927,8 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         GridPane derivationPane = printExercise.getExerciseView().getGrid();
         derivationPane.setPadding(new Insets(15,0,15,0));
 
-        double width = printModel.getGridWidth() * nodeWidth;
+        double splitPaneWidth = Math.max(nodeWidth, printModel.getSplitPanePrefWidth());
+        double width = printModel.getGridWidth() * splitPaneWidth;
         derivationPane.setMaxWidth(width);
         derivationPane.setMinWidth(width);
         HBox gridBox = new HBox(derivationPane);

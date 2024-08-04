@@ -906,7 +906,9 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         GridPane derivationPane = printExercise.getExerciseView().getGrid();
         derivationPane.setPadding(new Insets(15,0,15,0));
 
-        double width = printModel.getGridWidth() * nodeWidth;
+        double splitPaneWidth = Math.max(nodeWidth, printModel.getSplitPanePrefWidth());
+        double width = printModel.getGridWidth() * splitPaneWidth;
+//        double width = printModel.getGridWidth() * nodeWidth;
         derivationPane.setMaxWidth(width);
         derivationPane.setMinWidth(width);
         HBox gridBox = new HBox(derivationPane);
@@ -984,7 +986,10 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         GridPane derivationPane = printExercise.getExerciseView().getGrid();
         derivationPane.setPadding(new Insets(15,0,15,0));
 
-        double width = printModel.getGridWidth() * nodeWidth;
+
+        double splitPaneWidth = Math.max(nodeWidth, printModel.getSplitPanePrefWidth());
+        double width = printModel.getGridWidth() * splitPaneWidth;
+
         derivationPane.setMaxWidth(width);
         derivationPane.setMinWidth(width);
         HBox gridBox = new HBox(derivationPane);

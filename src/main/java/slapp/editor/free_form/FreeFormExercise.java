@@ -43,6 +43,7 @@ import slapp.editor.vertical_tree.object_models.ObjectControlType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.gluonhq.richtextarea.RichTextAreaSkin.KeyMapValue.*;
@@ -147,6 +148,8 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.getRestoreButton().setOnAction(e -> restoreAction());
         freeFormView.getIndentButton().setOnAction(e -> indentAction());
         freeFormView.getOutdentButton().setOnAction(e -> outdentAction());
+        freeFormView.getMoveUpButton().setOnAction(e -> moveUpAction());
+        freeFormView.getMoveDownButton().setOnAction(e -> moveDownAction());
 
         freeFormView.getAddEditButton().setOnAction(e -> addEditAction());
         freeFormView.getAddHTreeButton().setOnAction(e -> addHTreeAction());
@@ -240,7 +243,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
                 }
             }
         }
-        members.addAll(freeFormView.getIndentButton(), freeFormView.getOutdentButton(), freeFormView.getRemoveButton(), freeFormView.getRestoreButton());
+        members.addAll(freeFormView.getIndentButton(), freeFormView.getOutdentButton(), freeFormView.getMoveUpButton(), freeFormView.getMoveDownButton(), freeFormView.getRemoveButton(), freeFormView.getRestoreButton());
         controlBox.setMargin(freeFormView.getIndentButton(), new Insets(25,0,0,0));
     }
 
@@ -306,8 +309,10 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         List<ModelElement> modelElements = freeFormModel.getModelElements();
         if (modelElements.size() > 1) {
             int index = exerciseList.indexOf(activeExercise);
-            lastRemovedElement = freeFormModel.getModelElements().get(index);
-            freeFormModel.getModelElements().remove(index);
+            lastRemovedElement = modelElements.get(index);
+            modelElements.remove(index);
+ //           lastRemovedElement = freeFormModel.getModelElements().get(index);
+ //           freeFormModel.getModelElements().remove(index);
             setElementsFromModel();
             freeFormView.updateContentFromViewElements();
 
@@ -331,6 +336,36 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.getRestoreButton().setDisable(true);
         setActiveExercise(index);
         exerciseModified = true;
+    }
+
+    private void moveUpAction() {
+        freeFormModel = getFreeFormModelFromView();
+        List<ModelElement> modelElements = freeFormModel.getModelElements();
+        int index = exerciseList.indexOf(activeExercise);
+        if (index > 0) {
+            Collections.swap(modelElements, index, index - 1);
+            setElementsFromModel();
+            freeFormView.updateContentFromViewElements();
+            exerciseModified = true;
+            setActiveExercise(--index);
+        } else {
+            EditorAlerts.fleetingPopup("Cannot move top item up.");
+        }
+    }
+
+    private void moveDownAction() {
+        freeFormModel = getFreeFormModelFromView();
+        List<ModelElement> modelElements = freeFormModel.getModelElements();
+        int index = exerciseList.indexOf(activeExercise);
+        if (index + 1 < modelElements.size()) {
+            Collections.swap(modelElements, index, index + 1);
+            setElementsFromModel();
+            freeFormView.updateContentFromViewElements();
+            exerciseModified = true;
+            setActiveExercise(++index);
+        } else {
+            EditorAlerts.fleetingPopup("Cannot move bottom item down.");
+        }
     }
 
     private void addEditAction() {
