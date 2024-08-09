@@ -67,6 +67,8 @@ public class KeyboardDiagram {
         stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Keyboard Diagrams");
+
+        stage.initOwner(EditorMain.mainStage);
         stage.initModality(Modality.NONE);
         stage.getIcons().addAll(EditorMain.icons);
 
@@ -254,7 +256,7 @@ public class KeyboardDiagram {
         shiftBoard.add(getControlKey("alternate/\n option",8),43,4,8,1);
         shiftBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 
-        title3 = new Text("Alt");
+        title3 = new Text("Alt (Option)");
         title3.setFont(titleFont);
 
         altBoard = new GridPane();
@@ -321,7 +323,7 @@ public class KeyboardDiagram {
         altBoard.add(getControlKey("alternate/\n option",8),43,4,8,1);
         altBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 
-        title4 = new Text("Shift-Alt");
+        title4 = new Text("Shift-Alt (Shift-Option)");
         title4.setFont(titleFont);
 
         shiftAltBoard = new GridPane();
@@ -388,7 +390,7 @@ public class KeyboardDiagram {
         shiftAltBoard.add(getControlKey("alternate/\n option",8),43,4,8,1);
         shiftAltBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 
-        title5 = new Text("Ctrl-Shift-Alt");
+        title5 = new Text("Ctrl-Shift-Alt (Command-Shift-Option)");
         title5.setFont(titleFont);
 
         ctrlShiftAltBoard = new GridPane();
@@ -464,7 +466,7 @@ public class KeyboardDiagram {
         ctrlShiftAltBoard.add(getControlKey("alternate/\n option",8),43,4,8,1);
         ctrlShiftAltBoard.add(getControlKey("control/\n command",9),51,4,9,1);
 
-        ctrlChars = new Text("\ud83e\udc46 F1 - F8: select keyboards (same order as keyboard dropdown)\n" +
+        ctrlChars = new Text("\ud83e\udc46 F1 - F8: select keyboards (same order as keyboard dropdown); F9 toggles to previous\n" +
         "    page-up: toggle superscript (+shift, shift back)\n" +
         "    page-down: toggle subscript (+shift, shift back)\n" +
         "    Ctrl:B bold, :I italic, :U underline, :0 (zero) overline\n" +

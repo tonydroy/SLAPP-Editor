@@ -149,7 +149,9 @@ public class AssignmentCommentWindow {
         stage.getIcons().addAll(EditorMain.icons);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
-        stage.initModality(Modality.APPLICATION_MODAL);
+
+        stage.initOwner(EditorMain.mainStage);
+        stage.initModality(Modality.WINDOW_MODAL);
         stage.setOnCloseRequest(e-> {
             e.consume();
             closeWindow();

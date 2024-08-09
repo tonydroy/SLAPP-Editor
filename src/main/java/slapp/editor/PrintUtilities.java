@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
+import static slapp.editor.EditorMain.os;
+
 import slapp.editor.main_window.MainWindowView;
 
 public class PrintUtilities {
@@ -42,6 +44,7 @@ public class PrintUtilities {
     private static VBox topBox;
 
 
+
     static {
         spacer.setVisible(false);
         PrinterJob job = PrinterJob.createPrinterJob();
@@ -54,17 +57,25 @@ public class PrintUtilities {
             pageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), bottomMargin );
 
             double top = pageLayout.getTopMargin();
-
-
             double bottom = 18.0;
+            double left = pageLayout.getLeftMargin();
+            double right = pageLayout.getRightMargin();
+
             if (pageLayout.getPageOrientation() == PageOrientation.LANDSCAPE) {
-                bottom = top;
-                top = 18.0;
+                if (os.startsWith("Win")) {
+                    internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), left, right, bottom, top);
+                }
+                else if (os.startsWith("Mac")) {
+                    double offset = 18.0;
+                    internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), left + offset, right - offset, top - offset, bottom + offset);
+                }
+            } else {
+                internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), left, right, top, bottom);
             }
-            internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), pageLayout.getLeftMargin(), pageLayout.getRightMargin(), top, bottom);
 
-//            internalPageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), 18.0);
 
+
+//            internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), pageLayout.getLeftMargin(), pageLayout.getRightMargin(), top, bottom);
 
         }
         else {
@@ -77,7 +88,9 @@ public class PrintUtilities {
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null) {
             job.getJobSettings().setPageLayout(pageLayout);
-            boolean proceed = job.showPageSetupDialog(EditorMain.mainStage);
+
+            boolean proceed = job.showPageSetupDialog(null);
+     //       boolean proceed = job.showPageSetupDialog(EditorMain.mainStage);
             if (proceed) {
                 PageLayout baseLayout = job.getJobSettings().getPageLayout();
                 Printer printer = job.getPrinter();
@@ -88,14 +101,24 @@ public class PrintUtilities {
 
                 double top = pageLayout.getTopMargin();
                 double bottom = 18.0;
+                double left = pageLayout.getLeftMargin();
+                double right = pageLayout.getRightMargin();
+
                 if (pageLayout.getPageOrientation() == PageOrientation.LANDSCAPE) {
-                    bottom = top;
-                    top = 18.0;
+                    if (os.startsWith("Win")) {
+                        internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), left, right, bottom, top);
+                    }
+                    else if (os.startsWith("Mac")) {
+                        double offset = 18.0;
+                        internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), left + offset, right - offset, top - offset, bottom + offset);
+                    }
+                } else {
+                    internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), left, right, top, bottom);
                 }
-                internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), pageLayout.getLeftMargin(), pageLayout.getRightMargin(), top, bottom);
-//                internalPageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), 18.0);
 
 
+
+ //               internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), pageLayout.getLeftMargin(), pageLayout.getRightMargin(), top, bottom);
             }
             job.endJob();
         }
@@ -109,7 +132,6 @@ public class PrintUtilities {
     }
     private static boolean runExportSetup() {
         boolean isExportSetup = false;
-        String os = System.getProperty("os.name");
         if (os.startsWith("Mac")) {
             EditorAlerts.showSimpleAlert("Use Print Option", "On Macintosh there is no independent PDF export option.  To create a PDF, select 'Print' and from the dropdown at the bottom of the print dialog, 'Save to PDF'.\n\n" +
                     "Export works by a \"PDF printer\".  Recent versions of the MAC OS exclude such printers from the printer list -- preferring to require the internal MAC option.");
@@ -131,7 +153,7 @@ public class PrintUtilities {
                 if (result.get() != OK) proceed = false;
 
                 if (proceed) {
-                    proceed = job.showPrintDialog(EditorMain.mainStage);
+                    proceed = job.showPrintDialog(null);
 
                     if (proceed) {
                         pdfPrinter = job.getPrinter();
@@ -234,7 +256,7 @@ public class PrintUtilities {
     public static void sendBufferToPrint(String footerInfo) {
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null) {
-            boolean proceed = job.showPrintDialog(EditorMain.mainStage);
+            boolean proceed = job.showPrintDialog(null);
             if (proceed) printNodes(footerInfo, job);
             job.endJob();
         }

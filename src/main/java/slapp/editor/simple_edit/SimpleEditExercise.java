@@ -234,6 +234,8 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         responseRTA.setMinWidth(nodeWidth);
         responseRTA.getStylesheets().clear(); responseRTA.getStylesheets().add("richTextAreaPrinter.css");
 
+
+
         return responseRTA;
     }
 

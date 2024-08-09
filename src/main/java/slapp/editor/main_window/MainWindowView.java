@@ -202,6 +202,12 @@ public class MainWindowView {
         assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, closeAssignmentItem, printAssignmentItem, exportAssignmentToPDFItem, createRevisedAssignmentItem, createNewAssignmentItem);
         printMenu.getItems().addAll(printExerciseItemPM, exportExerciseToPDFItemPM, printAssignmentItemPM, exportAssignmentToPDFItemPM, exportSetupItem, pageSetupItem, scaleSetupItem);
         helpMenu.getItems().addAll(generalIntroItem, verticalTreeItem, truthTableItem, horizontalTreeItem, derivationItem, instructorInfoItem, commonElementsTextItem, contextualTextItem, aboutItem, reportItem);
+/*
+        if (EditorMain.os.startsWith("Mac")) {
+            menuBar.setUseSystemMenuBar(true);
+        }
+        
+ */
 
         zoomLabel = new Label(" Zoom ");
         zoomSpinner = new Spinner(25, 500, 100, 5);
@@ -351,6 +357,7 @@ public class MainWindowView {
         borderPane.setLeft(leftControlNode);
         borderPane.setRight(rightControlNode);
 
+  //      borderPane.setTop(menuBar);
 
         mainScene = new Scene(borderPane);
         mainScene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
@@ -468,7 +475,7 @@ public class MainWindowView {
 
 
 
-
+//        borderPane.setTop(menuBar);
 
 
 
@@ -585,6 +592,9 @@ public class MainWindowView {
 
 
     public void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
+
+
+
         lastFocusedDRTA = decoratedRTA;
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
         keyboardDiagram.initialize(decoratedRTA);
@@ -624,9 +634,17 @@ public class MainWindowView {
         editAndKbdBox.setHgrow(sizeToolBar, Priority.ALWAYS);
 
 
+
+
         topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox);
         topBox.layout();
+
         borderPane.topProperty().setValue(topBox);
+
+
+
+
+
     }
 
     public void textFieldInFocus() {

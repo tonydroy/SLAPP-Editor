@@ -15,6 +15,7 @@ public class EditorMain extends Application {
     public static Stage mainStage;
     public static ObservableList<Image> icons;
     public static boolean secondaryCopy = false;
+    public static String os;
 
     public static void main(String[] args) {
         launch(args);
@@ -25,6 +26,7 @@ public class EditorMain extends Application {
         this.mainStage = stage;
 
         secondaryCopy = JustOneLock.isAppActive();
+        os = System.getProperty("os.name");
 
         if (!secondaryCopy) {
             stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon32x32.png")));

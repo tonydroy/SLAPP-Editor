@@ -363,7 +363,12 @@ public class CreateAssignment {
         stage.getIcons().addAll(EditorMain.icons);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
+
+        //test for mac menu bar
+        stage.initOwner(EditorMain.mainStage);
         stage.initModality(Modality.APPLICATION_MODAL);
+        //
+
         stage.setMinWidth(600);
         stage.setMinHeight(600);
         stage.setOnCloseRequest(e-> {

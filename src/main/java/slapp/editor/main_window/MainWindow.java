@@ -121,22 +121,28 @@ public class MainWindow {
         mainView.getCloseExerciseItem().setOnAction(e -> closeExercise());
         mainView.getPrintExerciseItem().setOnAction(e -> printExercise());
         mainView.getExportToPDFExerciseItem().setOnAction(e -> exportExerciseToPDF());
+        if (EditorMain.os.startsWith("Mac")) mainView.getExportToPDFExerciseItem().setDisable(true);
 
         mainView.getSaveAssignmentItem().setOnAction(e -> saveAssignment(false));
         mainView.getSaveAsAssignmentItem().setOnAction(e -> saveAssignment(true));
         mainView.getOpenAssignmentItem().setOnAction(e -> openAssignment());
         mainView.getCloseAssignmentItem().setOnAction(e -> closeAssignment());
         mainView.getPrintAssignmentItem().setOnAction(e -> printAssignment());
-        mainView.getExportAssignmentToPDFItem().setOnAction(e -> exportAssignment());
         mainView.getCreateRevisedAssignmentItem().setOnAction(e -> createRevisedAssignment());
         mainView.getCreateNewAssignmentItem().setOnAction(e -> createNewAssignment());
+        mainView.getExportAssignmentToPDFItem().setOnAction(e -> exportAssignment());
+        if (EditorMain.os.startsWith("Mac")) mainView.getExportAssignmentToPDFItem().setDisable(true);
+
 
         mainView.getPrintExerciseItemPM().setOnAction(e -> printExercise());
         mainView.getExportExerciseToPDFItemPM().setOnAction(e -> exportExerciseToPDF());
+        if (EditorMain.os.startsWith("Mac")) mainView.getExportExerciseToPDFItemPM().setDisable(true);
         mainView.getPrintAssignmentItemPM().setOnAction(e -> printAssignment());
         mainView.getExportAssignmentToPDFItemPM().setOnAction(e -> exportAssignment());
+        if (EditorMain.os.startsWith("Mac")) mainView.getExportAssignmentToPDFItemPM().setDisable(true);
         mainView.getPageSetupItem().setOnAction(e -> pageSetup());
         mainView.getExportSetupItem().setOnAction(e -> exportSetup());
+        if (EditorMain.os.startsWith("Mac")) mainView.getExportSetupItem().setDisable(true);
         mainView.getScaleSetupItem().setOnAction(e -> scaleSetup());
 
         mainView.getGeneralIntroItem().setOnAction(e -> videoHelp("https://www.slappservices.net/PhilosophyMajorAuto2.mp4", 700, 725));

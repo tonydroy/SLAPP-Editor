@@ -464,6 +464,8 @@ public class TreeFormulaBox extends AnchorPane {
                 container.addData ("type", mType.toString());
                 content.put(DragContainer.AddNode, container);
 
+
+
                 startDragAndDrop (TransferMode.ANY).setContent(content);
 
                 event.consume();
@@ -479,6 +481,7 @@ public class TreeFormulaBox extends AnchorPane {
 
             @Override
             public void handle(MouseEvent event) {
+
 
                 getParent().setOnDragOver(null);
                 getParent().setOnDragDropped(null);
@@ -559,6 +562,8 @@ public class TreeFormulaBox extends AnchorPane {
             @Override
             public void handle(DragEvent event) {
                 event.acceptTransferModes(TransferMode.ANY);
+
+
 
                 //Relocate end of user-draggable link
                 if (!mDragLink.isVisible())

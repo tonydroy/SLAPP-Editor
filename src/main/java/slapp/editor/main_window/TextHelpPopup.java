@@ -35,6 +35,7 @@ public class TextHelpPopup {
     private static String truthTables;
     private static String derivations;
 
+
 static {
 
     about = "<body style=\"margin-left:10; margin-right: 20\">"+
@@ -46,39 +47,62 @@ static {
             "In this preliminary version, every user becomes an evaluator and tester.  Comments are much appreciated.  You may submit comments and error reports by email <a href=\"mailto:messaging@slappservices.net?subject=SLAPP: (your issue)&body=Please be as specific as you can about your concern; if you are reporting an error, include information about the version of SLAPP and of your operating system, and (if possible) whether and how the problem may be repeated (ok to delete this line).\"> here </a>and by the 'comment / report' help menu item.  Reviews and other items that deserve public discussion may be submitted through the <a href=\"https://tonyroyphilosophy.net/textbook-blog/\">Symbolic Logic Blog</a>.</p>"
             ;
 
-    commonElements = "<body style=\"margin-left:10; margin-right: 20\">"+
-            "<p><h3>Common Functions</h3></p>"+
-            "<p>The SLAPP file structure consists of exercises, and then assignments made up of exercises.  You can open and work an exercise as such.  However, in the usual case, you will begin with an assignment.</p>"+
-            "<ol><li><h4>Top Menu Bar:</li>"+
-            "<ul><li>The assignment dropdown has the usual operations: save, save as, open, close, print, and export to PDF.  The latter works by a 'PDF printer', and the export option is a convenience to setup both physical and PDF printers.  (Recent versions of the Mac OS block PDF printers as such -- to generate a PDF, select the regular SLAPP print option and then the PDF dropdown from the Mac printer window.)  The 'create' options are of special interest to instructors.<br><br></li>"+
-            "<li>The first time you open an assignment you will be asked to provide header information.  The name field is required.  Then the '+' and '-' buttons add and remove fields for optional header items (as student number or course section).  You will not be able to return to this screen (without restarting the assignment from scratch).  So be sure that the information is complete and correct as you enter it.  <br><br></li>"+
-            "<li>Once you have an open assignment, move among exercises by the 'previous', 'next' and 'jump' items from the menu bar.  The 'comment' item opens a window to add a comment on the assignment as a whole; the comment appears at the top of a printed assignment.  The 'print' item duplicates print and export commands from the assignment and exercise items.  It also has options for printer and page setup. <br><br></li></ul>"+
-            "<li><h4>Edit Commands:</li>"+
-            "<ul><li>The button with the small keyboard icon pops up a keyboard diagram.  The diagram lists normal, shift, alt, shift-alt, and ctrl-shift-alt boards. The content of these boards is modified by the keyboard selector dropdown (and, more conveniently, by the F1-F5 keys).  The keyboard selector shifts base alphabet characters.  Logic characters remain the same for each selection (except for the few symbols on the top row of Base/Italic alt-board).  The keyboard selector is meant to group together characters you will need in a given context.<br><br>"+
-            "<i>Note:</i> You will not need all the characters from all the boards at once!  You should be able to go through Part I of <i>Symbolic Logic</i> using nothing but the few logic characters sprinkled into the alt- and shift-alt boards, and just the Base/Italic and Italic/Sans keyboard selections.<br><br></li>"+
-            "<li>In the unlikely event that you need a symbol not on the keyboard diagrams, you can insert any Unicode character by the unicode field.  You may enter either a decimal (preceded by '#') or hexadecimal (preceded by 'x') code.  Unicode includes over 100,000 character codes. You will be able to display a Unicode character so long as that character exists in a font on your computer.  If you enter a code for which there is no representation, you usually see an empty box.<br><br></li> "+
-            "<li>In Java (the computer language in which SLAPP is written), the ordinary representation for a character is a single 16-bit word.  But Unicode has more characters than can be represented in 16 bits.  The Java solution is to use just one 16-bit word in the ordinary case, but two words for character codes that fall outside of the 16-bit range.  This manifests itself in SLAPP especially when deleting characters -- the delete takes out one word at a time, where the second word typically does not represent anything, and so shows as an empty box.  If you see this, the program is not broken -- it is only that you have half the representation of a character in the underlying file and you can just delete again.<br><br></li>"+
-            "<li>Many of the edit buttons: cut, copy, paste, and such are what you expect.  A few call for special comment:<br><br></li>"+
-            "<ul><li>Superscript and subscript have 'regular' and green 'shifted' versions (and work also by shifted or unshifted F7 and F8 keys).  The regular versions work in the usual way.  Sometimes, however, you want a superscript over a subscript.  The shifted versions back up one space before adding the character.  This is not a complete solution to putting superscripts over subscripts, as it only moves back one space.  But in many cases this is just what you need.  Note that the shift applies to any text after it is applied and text reverts to its normal position after the shift is removed -- a result is that you always end up with a space after a shifted super- or sub-script -- as the text reverts to the place it would have been without the shift.<br><br></li>"+
-            "<li>Overline does not work by the usual mechanisms for strikethrough and underline.  It rather inserts an overline 'combining character' before the one you type -- where the combining character effectively overlaps the typed character.  Again, this mechanism manifests itself when deleting characters -- one step deletes the base character, and another the overline. And this is not a complete solution to overlining text.  It should, however, be sufficient for our purposes.<br><br></li>"+
-            "<li>The save button saves an open exercise in the current (most recent) exercise directory, or an assignment in the current assignment directory.  If an exercise is open, it saves the exercise.  If an assignment is open, it saves the assignment.<br><br></li></ul></ul>"+
-            "<li><h4>Page Management:</h4>"+
-            "Many SLAPP exercises involve graphical elements.  While there is no problem in the vast majority of cases, it is possible for such elements to extend beyond regular page boundaries.  SLAPP breaks printed pages only at the boundaries of its boxes.  If the content of a box extends beyond one page, it will clip whatever is beyond the page border.  This means that you have to manage page breaks yourself.<br><br> </li>"+
-            "<ul><li> The 'V Size' and 'H Size' items manage the size of the main content area.  The counters reflect the horizontal or vertical size of the content area as a percentage of the selected paper size.  With 'Win' checked, the content area sizes with the size of the SLAPP window.  With 'Win' unchecked the counter controls the size of the content area directly.<br><br></li>"+
-            "<li>In case content exceeds the selected paper size, there are different options:<br><br></li>"+
-            "<ul><li>In many cases, you can solve the problem by messing with the page setup -- changing the margins or changing the page orientation.   Note that page setup options apply to an entire print  job, and so to all the exercises in a printed assignment and not just to a member that is giving you trouble.<br><br></li>"+
-            "<li>Another option is to change the selected paper size.  This is sufficient to accommodate most any exercise, but the larger paper may not be accommodated by your printer.  If the size of your object is not too different from the size of the printer paper, you can select 'fit to page' from the print options and the printed version will squish itself onto the page.  Alternatively, if a PDF file is sufficient for your purposes, the PDF printer will accommodate any selected page size.<br><br></li>"+
-            "<li>If an electronic copy is sufficient, though, it may be simplest just to use the SLAPP file itself, with any review in SLAPP.  Then there are no worries about paper size.  And the comment fields on assignments and exercises remain live.<br><br></li></ul></ul>"+
-            "<li><h4>Additional Help:</h4>"+
-            "The 'Help' menu item includes help videos on different exercise types.  In addition, the 'Contextual' help item pops up help relevant to the exercise that is currently open.</li></ol>"
+    commonElements = "<body style=\"margin-left:10; margin-right: 20\">" +
+            "<p><h3>Common Functions</h3></p>" +
+            "<p>The SLAPP file structure consists of exercises, and then assignments made up of exercises.  You can open and work an exercise as such.  However, in the usual case, you will begin with an assignment.</p>" +
+            "<ol><li><h4>Top Menu Bar:</li>" +
+            "<ul><li>The assignment dropdown has the usual operations: save, save as, open, close, print, and export to PDF.  The export option is disabled on Mac: Export to PDF works by a 'PDF printer', however recent versions of the Mac OS block PDF printers as such -- to create a PDF on Mac, select the regular SLAPP print option and then the PDF dropdown from the Mac printer window.)  The 'create' options are of special interest to instructors.<br><br></li>" +
+            "<li>The first time you open an assignment you will be asked to provide header information.  The name field is required.  Then the '+' and '-' buttons add and remove fields for optional header items (as student number or course section).  You will not be able to return to this screen (without restarting the assignment from scratch).  So be sure that the information is complete and correct as you enter it.  <br><br></li>" +
+            "<li>Once you have an open assignment, move among exercises by the 'previous', 'next' and 'jump' items from the menu bar.  The 'comment' item opens a window to add a comment on the assignment as a whole; the comment appears at the top of a printed assignment.  The 'print' menu item duplicates print and export commands from the assignment and exercise items, and adds options for printer and page setup. <br><br></li>" +
+            "<li>The 'Help' menu item includes help videos on the different exercise types.  In addition, the 'Contextual' help item pops up text help relevant to whatever exercise is currently open.<br><br></li>" +
+            "<li>In this version, SLAPP does not make use of the regular Mac menu bar -- the menu bar is rather a Windows-style bar across the top of the SLAPP window.</li>" +
+            "</ul>" +
+            "<li><h4>Edit Commands:</li>" +
+            "<ul><li>The button with the small keyboard icon pops up a keyboard diagram.  The diagram lists normal, shift, alt, shift-alt, and ctrl-shift-alt boards (mac: normal, shift, option, shift-option and command-shift-option). The content of these boards is modified by the keyboard selector dropdown (and, alternatively, by the F1-F9 keys).  The keyboard selector shifts base alphabet characters.  The bulk of special characters remains the same for each selection.  Keyboard options are meant to group together characters you will need in a given context.<br><br>" +
+            "<i>Note:</i> You will not need all the characters from all the boards at once!  You should be able to go through a good part of <i>Symbolic Logic</i> using nothing but the few logic characters sprinkled into the alt- and shift-alt boards, and just the Base/Italic and Italic/Sans keyboard selections.<br><br></li>" +
+            "<li>In the unlikely event that you need a symbol not on the keyboard diagrams, you can insert any Unicode character by the unicode field.  You may enter either a decimal (preceded by '#') or hexadecimal (preceded by 'x') code.  Unicode includes over 100,000 character codes. You will be able to display a Unicode character so long as that character exists in a font on your computer.  If you enter a code for which there is no representation, you usually see an empty box.<br><br></li> " +
+            "<li>In Java (the computer language in which SLAPP is written), the ordinary representation for a character is a single 16-bit word.  But Unicode has more characters than can be represented in 16 bits.  The Java solution is to use just one 16-bit word in the ordinary case, but two words for character codes that fall outside of the 16-bit range.  This manifests itself in SLAPP especially when deleting characters -- the delete takes out one word at a time, where the second word typically does not represent anything, and so shows as an empty box.  If you see this, the program is not broken -- it is only that you have half the representation of a character in the underlying file and you can just delete again.<br><br></li>" +
+            "<li>Many of the edit buttons: cut, copy, paste, and such are what you expect.  A couple call for special comment:<br><br></li>" +
+            "<ul><li>Superscript and subscript have 'regular' and green 'shifted' versions (and work also by shifted or unshifted page up and page down keys).  The regular versions work in the usual way.  Sometimes, however, you want a superscript over a subscript.  The shifted versions back up one space before adding the character.  This is not a complete solution to putting superscripts over subscripts, as it only moves back one space.  But in many cases this is just what you need.  Note that the shift applies to any text after it is applied and text reverts to its normal position after the shift is removed -- a result is that you always end up with a space after a shifted super- or sub-script -- as the text reverts to the place it would have been without the shift.<br><br></li> " +
+            "<li>The save button saves an open exercise in the current (most recent) exercise directory, or an assignment in the current assignment directory.  If an exercise is open as such, it saves the exercise.  If an assignment is open, it saves the assignment.<br><br></li></ul>" +
+            "<li>Keys with a 'dotted circle' in the bottom row of the keyboard diagram are for 'two-stroke' characters ('dead keys'): typing a circle key followed by a regular character results in the character modified by the symbol from the circle key (overline, bar, arrow, hat, two-bar, circle, tilde, slash).  This works so long as the combined character exists in the SLAPP font.  Excluding the use of bold and italic buttons, overline works with any character that can be typed from a SLAPP keyboard; bar, arrow, and hat work with alphanumeric characters; slash with two-place relation symbols and zero; circle and tilde work on just on upper- and lower-case 'S', 'C', 'U', 'I', and two-bar adds a few characters to the blackboard style font (the latter are indicated in the top row of the Greek/Fraktur alt-board). With the overlaine button depressed, all typed characters are overlined.<br><br>" +
+            "Note that overline does not work in the same way as ordinary underline and strikethrough.  The latter overlay a line on top of characters from a font.  Overline takes characters from the font each of which has a built-in overline -- such that the lines appear as continuous when the characters are typed together.<br><br>" +
+            "</ul>" +
+            "<li><h4>Page Management:</h4>" +
+            "Many SLAPP exercises involve graphical elements.  While there is no problem in the vast majority of cases, it is possible for such elements to extend beyond regular page boundaries.  SLAPP breaks printed pages only at the boundaries of its boxes.  If the content of a box extends beyond one page, print will clip whatever is beyond the page border.  This means that you have to manage page breaks yourself.<br><br> </li>" +
+            "<ul><li> The 'V Sz' and 'H Sz' spinners reflect the horizontal and vertical size of a current content area (window) as a percentage of the selected paper size.  In some cases you can use the counters to change an area's vertical or horizontal size, and in others the counters simply reflect a size automatically set.<br><br></li>" +
+            "<li>Windows which take multiple lines of text show scroll bars as text exceeds window size.  As you type in such a window, the 'T Ht' label shows the total height of the text in that window as a percentage of selected paper size.<br><br></li>" +
+            "<li>In case content exceeds the selected paper size, there are different options:<br><br></li>" +
+            "<ul><li>In many cases, you can solve the problem by changing the page setup -- the selected paper, the page orientation, or the margins.  Page setup options apply to an entire print  job, and so to all the exercises in a printed assignment and not just to a member that is giving you trouble.<br><br></li>" +
+            "<li>In addition, from 'print/scale setup' the 'base scale' increases or decreases print size for an assignment -- you may actually prefer the look of a reduced scale (and save some trees while you are at it) as the normal SLAPP print layouts are relatively spacious.  With 'fit to page' selected, SLAPP reduces any oversize node to fit on the selected paper.  This is sufficient to print any exercise.  Some experimentation should reveal a range where you are comfortable with the reduced size.<br><br></li>" +
+            "<li>If an electronic copy will do, it may be convenient to submit just a PDF file -- where PDF accommodates any paper size your system will allow.  Or you might be able to submit a SLAPP file directly, in which case there are no size limitations (and comment fields on assignments and exercises remain live).<br><br></li></ul>" +
+            "</ul>" +
+            "<li><h4>Technical Matters:</h4>" +
+            "<ul><li><i>Hot Keys:</i> SLAPP uses multiple key combinations.  These are not 'hot keys' of the sort that work even when an app is not in the active window.  However other apps may use the same key combinations as hot keys.  If hotkey combinations do overlap with combinations used by SLAPP it is likely that the hotkey functions will fire when the combination is typed.  SLAPP does its best to avoid standard Mac and PC combinations.  If there is overlap, most apps have a means of changing their hot-key combinations. <br><br></li>" +
+            "<li><i>Function Keys:</i> SLAPP makes use of the function keys F1 - F12.  On many computers these keys are assigned to special functions (for volume and the like).  If this is the so, there are generally methods of changing the default behavior between regular F-key and the special assignments (different on different systems and keyboards).  Then holding down the Fn-key at the same time as you type a function key gives the non-default behavior.  <br><br></li>" +
+            "<li><i>Mouse Right-Click:</i> SLAPP makes use of right-click on the mouse.  On a PC, this is most always enabled.  There are different means of performing right-click on a Mac, including modifications from System Settings / Mouse / Secondary Click.<br><br></li>" +
+            "<li><i>Scratch Window:</i> SLAPP uses an invisible 'scratch window' for certain functions.  You cannot access or work in this window.  However its existence may be indicated by an icon in the taskbar or dock.  If so, ignore the extra icon.<br><br></li>" +
+            "<li><i>Rich Text Area:</i> SLAPP makes use of the <a href=\"https://github.com/gluonhq/rich-text-area\">Rich Text Area</a> Java control for most text editing purposes.  This is a wonderful tool insofar as it enables special characters and the like required for SLAPP.  However the Rich Text Area (RTA) is itself a work in progress.  Recent improvements have made it vastly more stable.  However, there remain a couple of contexts where it can give trouble.  <br><br></li>" +
+    "<ul><li>The RTA can get <i>very</i> slow after typing even moderate amounts of text.  One solution is to break documents into multiple paragraph-sized units (this helps also with page breaks).  Alternatively, a slowdown may be removed by <i>rewriting</i> text.  You can do this, say, by jumping to a next or previous exercise and then back again (or cutting a content and pasting it back).<br><br></li>" +
+            "<li>In its current version, the RTA may crash in case you attempt to copy and paste an <i>indented</i> line or paragraph.  In this case, you should see a popup warning: save your work, then close and restart SLAPP.  You should not have lost any of your work.</li></ul>" +
+            "</ol>"
             ;
 
-    simpleEdit = "<body style=\"margin-left:10; margin-right: 20\">"+
-            "<p><h3>Edit Exercises</h3></p>"+
-            "<p>Beyond information from the 'General Intro' help item -- with which you want to be familiar -- there is very little to say about exercises in this category.  Beyond the common controls, commands for edit exercises are straightforward:</p>"+
-            "<ul><li>In case of an extended response, add and delete pages by the buttons on the left.  'Insert' adds a page after the current page.  'Remove' deletes the current page.  You will not be able to have less than one page.<br><br></li>"+
-            "<li>Some edit exercises begin with simple choice checkboxes that are followed by the main edit field. <br><br></li></ul>"
-            ;
+    simpleEdit = "<body style=\"margin-left:10; margin-right: 20\">" +
+            "<p><h3>Edit Exercises</h3></p>" +
+            "<p>An edit exercise includes one or more windows for text entry.  These exercises may range from short answer to multiple pages.  Edit exercises come in two main forms." +
+            "<ol><li>The simplest form of the edit exercise has a text field with the ability to add and remove additional pages by 'insert page' and 'remove page' buttons on the left.<br><br>" +
+            "<ul><li>The buttons on the left insert and remove pages.  'Insert' adds a page after the current page.  'Remove' deletes the current page.  You will not be able to have less than one page.<br><br></li>" +
+            "<li>Pages are inserted 'horizontally' and you move from one page to another by the control at the bottom.<br><br></li>" +
+            "<li>This form of the edit exercise is often combined with some simple choice checkboxes and the edit field for an explanation after.<br><br></li></ul></li>" +
+            "<li>The second form of the edit exercise also begins with a text field.  In this case, fields are added 'vertically' as manipulated by controls on the right.<br><br>" +
+            "<ul><li>You can insert a new edit field below the current one by the 'simple edit' button.  The active field may be moved up or down, removed, and restored by the relevant buttons.<br><br></li>" +
+            "<li>This form of the exercise is not limited to edit fields.  As you progress, there may be options to insert objects including tree diagrams, truth tables, and derivations.  When an object is active, its own special controls appear on the left.  These work just as in dedicated exercises for the diagrams, tables, and derivations (and you should not encounter these options until you have already encountered them in their stand-alone form).<br><br></li>" +
+            "<li> The right-hand indent and outdent buttons do not apply to edit fields (which have their own internal indent mechanism).  Rather they are used to indent and outdent boxes for objects, such as tables and derivations, that are without internal indent mechanisms.<br><br></li>" +
+            "</ul></li>" +
+            "</ol>" +
+            "<ul><li>Because of its 'one page per window' setup and relatively limited editing capacities (compared to, say, Word), SLAPP is less than ideal for multiple-page essays.  All the same, you <em>can</em> produce multiple page documents in SLAPP.  Then you retain editing features unique to SLAPP -- special characters and the like.  And with the second form of the edit exercise, it is easy to include into your documents graphical elements including trees, tables and derivations. </li></ul>"
+    ;
 
     verticalTrees = "<body style=\"margin-left:10; margin-right: 20\">"+
             "<p><h3>VerticalTrees</h3></p>"+
@@ -135,6 +159,10 @@ static {
             "<br><br></li>" +
             "<li>In some cases, derivation exercises will be followed by an edit field to explain some aspect(s) of the derivation.</li></ul>"
             ;
+
+
+
+
 }
 
     public static void helpAbout() {
@@ -153,6 +181,9 @@ static {
         }
 
         switch(type) {
+            case FREE_FORM: {}
+            case SIMPLE_EDIT: {}
+            case SIMPLE_TRANS: {}
             case AB_EXPLAIN: { }
             case ABEFG_EXPLAIN: { }
             case PAGE_EDIT: {
@@ -167,6 +198,7 @@ static {
             }
 
             case TRUTH_TABLE_ABEXP: { }
+            case TRUTH_TABLE_GENERATE: {}
             case TRUTH_TABLE: {
                 showHelp(truthTables);
                 break;

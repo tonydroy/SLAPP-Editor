@@ -75,7 +75,14 @@ public class ExerciseTypePopup {
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Exercise Type");
-        stage.initModality(Modality.APPLICATION_MODAL);
+
+        //
+        stage.initOwner(EditorMain.mainStage);
+        stage.initModality(Modality.WINDOW_MODAL);
+
+//        stage.initModality(Modality.APPLICATION_MODAL);
+        //
+
         stage.getIcons().addAll(EditorMain.icons);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
