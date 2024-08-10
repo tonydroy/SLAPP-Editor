@@ -15,12 +15,14 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import slapp.editor.EditorAlerts;
+import slapp.editor.EditorMain;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
@@ -465,8 +467,11 @@ public class TreeFormulaBox extends AnchorPane {
                 content.put(DragContainer.AddNode, container);
 
 
+                Dragboard db = startDragAndDrop(TransferMode.MOVE);
+                db.setDragView(EditorMain.emptyImage);
+                db.setContent(content);
 
-                startDragAndDrop (TransferMode.ANY).setContent(content);
+ //               startDragAndDrop (TransferMode.ANY).setContent(content);
 
                 event.consume();
             }
@@ -489,6 +494,8 @@ public class TreeFormulaBox extends AnchorPane {
                 getParent().setOnDragOver(mContextLinkDragOver);
                 getParent().setOnDragDropped(mContextLinkDragDropped);
 
+
+
                 //Set up user-draggable link
                 right_pane.getChildren().add(0,mDragLink);
 
@@ -510,10 +517,13 @@ public class TreeFormulaBox extends AnchorPane {
 
                 //pass the UUID of the source node for later lookup
                 container.addData("source", getId());
-
                 content.put(DragContainer.AddLink, container);
 
-                startDragAndDrop (TransferMode.ANY).setContent(content);
+ //               startDragAndDrop (TransferMode.ANY).setContent(content);
+                Dragboard db = startDragAndDrop(TransferMode.MOVE);
+                db.setDragView(EditorMain.emptyImage);
+                db.setContent(content);
+
 
                 event.consume();
             }

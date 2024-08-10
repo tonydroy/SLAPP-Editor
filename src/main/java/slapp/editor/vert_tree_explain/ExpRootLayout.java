@@ -19,6 +19,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import slapp.editor.EditorAlerts;
 //import slapp.editor.vertical_tree.drag_drop.*;
+import slapp.editor.EditorMain;
 import slapp.editor.vertical_tree.drag_drop.DragIcon;
 import slapp.editor.vertical_tree.drag_drop.DragIconType;
 import slapp.editor.vertical_tree.drag_drop.DragContainer;
@@ -469,7 +470,11 @@ public class ExpRootLayout extends AnchorPane {
                 container.addData ("type", mDragOverIcon.getType().toString());
                 content.put(DragContainer.AddNode, container);
 
-                mDragOverIcon.startDragAndDrop (TransferMode.ANY).setContent(content);
+                Dragboard db = mDragOverIcon.startDragAndDrop(TransferMode.MOVE);
+                db.setDragView(EditorMain.emptyImage);
+                db.setContent(content);
+    //            mDragOverIcon.startDragAndDrop (TransferMode.ANY).setContent(content);
+
                 mDragOverIcon.setVisible(true);
                 mDragOverIcon.setMouseTransparent(true);
                 event.consume();
@@ -503,7 +508,7 @@ public class ExpRootLayout extends AnchorPane {
             @Override
             public void handle(DragEvent event) {
 
-                event.acceptTransferModes(TransferMode.ANY);
+                event.acceptTransferModes(TransferMode.MOVE);
 
                 //convert the mouse coordinates to scene coordinates,
                 //then convert back to coordinates that are relative to

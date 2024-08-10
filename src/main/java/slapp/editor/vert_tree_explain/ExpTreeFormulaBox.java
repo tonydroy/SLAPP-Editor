@@ -21,6 +21,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import slapp.editor.EditorAlerts;
+import slapp.editor.EditorMain;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
@@ -464,7 +465,10 @@ public class ExpTreeFormulaBox extends AnchorPane {
                 container.addData ("type", mType.toString());
                 content.put(DragContainer.AddNode, container);
 
-                startDragAndDrop (TransferMode.ANY).setContent(content);
+                Dragboard db = startDragAndDrop(TransferMode.MOVE);
+                db.setDragView(EditorMain.emptyImage);
+                db.setContent(content);
+     //           startDragAndDrop (TransferMode.ANY).setContent(content);
 
                 event.consume();
             }
@@ -510,7 +514,10 @@ public class ExpTreeFormulaBox extends AnchorPane {
 
                 content.put(DragContainer.AddLink, container);
 
-                startDragAndDrop (TransferMode.ANY).setContent(content);
+                Dragboard db = startDragAndDrop(TransferMode.MOVE);
+                db.setDragView(EditorMain.emptyImage);
+                db.setContent(content);
+ //               startDragAndDrop (TransferMode.ANY).setContent(content);
 
                 event.consume();
             }

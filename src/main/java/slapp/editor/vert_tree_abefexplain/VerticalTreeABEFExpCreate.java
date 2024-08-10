@@ -201,6 +201,8 @@ public class VerticalTreeABEFExpCreate {
                 scriptItalicCheck.setSelected(false);
             }
         });
+        scriptItalicCheck = new CheckBox("Script/Italic");
+        scriptItalicCheck.setSelected(false);
         scriptItalicCheck.selectedProperty().addListener((ob, ov, nv) -> {
             boolean selected = (boolean) nv;
             if (selected) {

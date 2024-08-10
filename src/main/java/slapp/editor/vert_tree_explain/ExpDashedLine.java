@@ -5,12 +5,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
+import slapp.editor.EditorMain;
 import slapp.editor.vertical_tree.drag_drop.DragContainer;
 import slapp.editor.vertical_tree.drag_drop.DragIconType;
 import slapp.editor.vertical_tree.drag_drop.Point2dSerial;
@@ -193,7 +191,10 @@ public class ExpDashedLine extends AnchorPane {
                 container.addData ("type", mType.toString());
                 content.put(DragContainer.AddNode, container);
 
-                startDragAndDrop (TransferMode.ANY).setContent(content);
+                Dragboard db = startDragAndDrop(TransferMode.MOVE);
+                db.setDragView(EditorMain.emptyImage);
+                db.setContent(content);
+ //               startDragAndDrop (TransferMode.ANY).setContent(content);
 
                 event.consume();
             }

@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
+import slapp.editor.EditorMain;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
@@ -285,7 +286,10 @@ public class ABExpMapFormulaBox extends AnchorPane {
                 container.addData ("type", mType.toString());
                 content.put(DragContainer.AddNode, container);
 
-                startDragAndDrop (TransferMode.ANY).setContent(content);
+                Dragboard db = startDragAndDrop(TransferMode.MOVE);
+                db.setDragView(EditorMain.emptyImage);
+                db.setContent(content);
+  //              startDragAndDrop (TransferMode.ANY).setContent(content);
 
                 event.consume();
             }

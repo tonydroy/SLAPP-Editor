@@ -16,6 +16,7 @@ public class EditorMain extends Application {
     public static ObservableList<Image> icons;
     public static boolean secondaryCopy = false;
     public static String os;
+    public static Image emptyImage;
 
     public static void main(String[] args) {
         launch(args);
@@ -37,6 +38,8 @@ public class EditorMain extends Application {
             stage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon_purple16x16.png")));
         }
         icons = stage.getIcons();
+
+        emptyImage = new Image(EditorMain.class.getResourceAsStream("/emptyImage.png"));
 
         Font.loadFont(EditorMain.class.getResource("/fonts/la-solid-900.ttf").toExternalForm(),11);
         Font.loadFont(EditorMain.class.getResource("/fonts/NotoSans-Bold.ttf").toExternalForm(),11);
