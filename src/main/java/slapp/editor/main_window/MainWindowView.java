@@ -114,7 +114,9 @@ public class MainWindowView {
     private MenuItem commonElementsTextItem;
     private MenuItem contextualTextItem;
     private MenuItem aboutItem;
-    private MenuItem generalIntroItem;
+
+    private MenuItem quickStartItem;
+    private MenuItem slappEditorItem;
     private MenuItem verticalTreeItem;
     private MenuItem horizontalTreeItem;
     private MenuItem truthTableItem;
@@ -161,9 +163,12 @@ public class MainWindowView {
         Menu printMenu = new Menu("Print");
         Menu helpMenu = new Menu("Help");
 
+        Text filmItemGraphic0 = new Text("\uf008");
+        filmItemGraphic0.setStyle("-fx-font-family: la-solid-900");
+        quickStartItem = new MenuItem("Intro/Quick Start", filmItemGraphic0);
         Text filmItemGraphic1 = new Text("\uf008");
         filmItemGraphic1.setStyle("-fx-font-family: la-solid-900");
-        generalIntroItem = new MenuItem("General Intro", filmItemGraphic1);
+        slappEditorItem = new MenuItem("SLAPP editor", filmItemGraphic1);
         Text filmItemGraphic2 = new Text("\uf008");
         filmItemGraphic2.setStyle("-fx-font-family: la-solid-900");
         verticalTreeItem = new MenuItem("Vertical Trees", filmItemGraphic2);
@@ -183,7 +188,7 @@ public class MainWindowView {
 
         Text textItemGraphic1 = new Text("\uf15c");
         textItemGraphic1.setStyle("-fx-font-family: la-solid-900");
-        commonElementsTextItem = new MenuItem("General Intro", textItemGraphic1);
+        commonElementsTextItem = new MenuItem("General Info", textItemGraphic1);
         Text textItemGraphic2 = new Text("\uf15c");
         textItemGraphic2.setStyle("-fx-font-family: la-solid-900");
         contextualTextItem = new MenuItem("Contextual", textItemGraphic2);
@@ -201,7 +206,7 @@ public class MainWindowView {
         exerciseMenu.getItems().addAll(saveExerciseItem, saveAsExerciseItem, openExerciseItem, clearExerciseItem, closeExerciseItem, printExerciseItem, exportToPDFExerciseItem, createRevisedExerciseItem, createNewExerciseItem);
         assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, closeAssignmentItem, printAssignmentItem, exportAssignmentToPDFItem, createRevisedAssignmentItem, createNewAssignmentItem);
         printMenu.getItems().addAll(printExerciseItemPM, exportExerciseToPDFItemPM, printAssignmentItemPM, exportAssignmentToPDFItemPM, exportSetupItem, pageSetupItem, scaleSetupItem);
-        helpMenu.getItems().addAll(generalIntroItem, verticalTreeItem, truthTableItem, horizontalTreeItem, derivationItem, instructorInfoItem, commonElementsTextItem, contextualTextItem, aboutItem, reportItem);
+        helpMenu.getItems().addAll(quickStartItem, slappEditorItem, verticalTreeItem, truthTableItem, horizontalTreeItem, derivationItem, instructorInfoItem, commonElementsTextItem, contextualTextItem, aboutItem, reportItem);
 /*
         if (EditorMain.os.startsWith("Mac")) {
             menuBar.setUseSystemMenuBar(true);
@@ -845,8 +850,9 @@ public class MainWindowView {
         return aboutItem;
     }
 
-    public MenuItem getGeneralIntroItem() {
-        return generalIntroItem;
+    public MenuItem getQuickStartItem() {return quickStartItem; }
+    public MenuItem getSlappEditorItem() {
+        return slappEditorItem;
     }
 
     public MenuItem getVerticalTreeItem() {

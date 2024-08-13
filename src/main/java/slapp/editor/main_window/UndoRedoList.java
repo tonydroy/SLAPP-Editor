@@ -31,7 +31,6 @@ public class UndoRedoList<T> extends LinkedList<T> {
             element = this.get(currentIndex);
         }
         return element;
-
     }
 
     public T getRedoElement() {

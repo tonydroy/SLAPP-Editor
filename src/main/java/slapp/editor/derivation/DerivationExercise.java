@@ -58,7 +58,13 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         this.mainView = mainWindow.getMainView();
         this.derivationView = new DerivationView(mainView);
         setDerivationView();
-        pushUndoRedo();
+
+        //cannot depend on pushUndoRedo because documents can't yet be extracted from view
+        DerivationModel deepCopy = (DerivationModel) SerializationUtils.clone(derivationModel);
+        undoRedoList.push(deepCopy);
+        updateUndoRedoButtons();
+
+ //       pushUndoRedo();
     }
 
     private void setDerivationView() {
@@ -148,8 +154,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                 BoxedDRTA bdrta = new BoxedDRTA();
                 RichTextArea rta = bdrta.getRTA();
                 rta.getActionFactory().open(modelLine.getLineContentDoc()).execute(new ActionEvent());
- //               rta.getActionFactory().saveNow().execute(new ActionEvent());
-
+                rta.getActionFactory().saveNow().execute(new ActionEvent());
 
                 if (LineType.isSetupLine(lineType)) {
                     rta.setEditable(false);
@@ -198,6 +203,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                 BoxedDRTA bdrta = viewLine.getLineContentBoxedDRTA();
                 DecoratedRTA drta = bdrta.getDRTA();
                 RichTextArea rta = bdrta.getRTA();
+                rta.getActionFactory().saveNow().execute(new ActionEvent());
                 mainView.editorInFocus(drta, ControlType.FIELD);
                 rta.focusedProperty().addListener((o, ov, nv) -> {
                     if (nv) {

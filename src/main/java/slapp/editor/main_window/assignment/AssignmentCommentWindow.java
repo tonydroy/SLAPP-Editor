@@ -115,16 +115,21 @@ public class AssignmentCommentWindow {
 
         });
 
+        ToolBar sizeToolBar = new ToolBar();
+        sizeToolBar.setPrefHeight(38);
+        sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
+
         ToolBar editToolbar = commentDRTA.getEditToolbar();
         ToolBar fontsToolbar = commentDRTA.getFontsToolbar();
         ToolBar paragraphToolbar = commentDRTA.getParagraphToolbar();
         ToolBar kbdDiaToolBar = commentDRTA.getKbdDiaToolbar();
+        kbdDiaToolBar.setPrefHeight(38);
 
         if (kbdDiaToolBar.getItems().isEmpty()) {
-            kbdDiaToolBar.getItems().addAll(zoomLabel, zoomSpinner,  new Label("    "), commentDRTA.getKeyboardDiagramButton());
+            kbdDiaToolBar.getItems().addAll(commentDRTA.getKeyboardDiagramButton());
         }
 
-        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar);
+        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox);
@@ -149,6 +154,8 @@ public class AssignmentCommentWindow {
         stage.getIcons().addAll(EditorMain.icons);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
+
+        stage.setMinWidth(860);
 
         stage.initOwner(EditorMain.mainStage);
         stage.initModality(Modality.WINDOW_MODAL);
