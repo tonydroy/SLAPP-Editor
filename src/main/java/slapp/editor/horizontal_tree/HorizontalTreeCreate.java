@@ -268,9 +268,9 @@ public class HorizontalTreeCreate {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-            statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
-  //          statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
-            statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
+   //         statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
+            statementRTA.getActionFactory().newDocumentNow().execute(new ActionEvent());
+   //         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
             fieldModified = false;
         }

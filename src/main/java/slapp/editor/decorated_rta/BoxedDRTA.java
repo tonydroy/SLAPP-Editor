@@ -18,9 +18,6 @@ public class BoxedDRTA {
         rta.setContentAreaWidth(2000);
         boxedRTA = new HBox(rta);
 
-
-
-
         EventHandler<MouseEvent> mouseEventHandler = e -> {
             rta.requestFocus();
             e.consume();

@@ -29,6 +29,8 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.assignment.AssignmentHeader;
 import slapp.editor.main_window.assignment.AssignmentHeaderItem;
+
+import javax.xml.stream.EventFilter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -367,11 +369,6 @@ public class MainWindowView {
         mainScene = new Scene(borderPane);
         mainScene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
 
-
-
-
-
-
         stage.setScene(mainScene);
         stage.setTitle("SLAPP Editor");
         stage.setMinWidth(minStageWidth);
@@ -457,6 +454,10 @@ public class MainWindowView {
 
         statementNode.minHeight(currentExerciseView.getStatementHeight());
         commentNode.minHeight(currentExerciseView.getCommentHeight());
+
+
+        //this prevents scrollpane from jumping to top (esp in derivations)
+        commentNode.setFocusTraversable(false);
 
         centerBox.getChildren().clear();
         centerBox.getChildren().addAll(commentNode, statementNode, contentNode);

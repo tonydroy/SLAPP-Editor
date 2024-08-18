@@ -508,9 +508,9 @@ public class VerticalTreeABEFExpCreate {
             ePromptField.textProperty().addListener(ePromptListener);
             fPromptField.textProperty().addListener(fPromptListener);
 
- //           statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
-            statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
-            statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
+            statementRTA.getActionFactory().newDocumentNow().execute(new ActionEvent());
+ //           statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
+  //          statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
             modified = false;
         }

@@ -72,6 +72,7 @@ public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
     VerticalTreeABEFExpView(MainWindowView mainView) {
         this.mainView = mainView;
 
+//        aCheckBox.setFocusTraversable(false); bCheckBox.setFocusTraversable(false); eCheckBox.setFocusTraversable(false); fCheckBox.setFocusTraversable(false);
         Font labelFont = new Font("Noto Serif Combo", 11);
         abChoiceLeadLabel.setFont(labelFont); aCheckBox.setFont(labelFont); bCheckBox.setFont(labelFont);
         choiceBox1 = new HBox(20, abChoiceLeadLabel, aCheckBox, bCheckBox);

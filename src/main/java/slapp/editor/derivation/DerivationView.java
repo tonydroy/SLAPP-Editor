@@ -174,6 +174,9 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
         commentRTA.getStylesheets().add("slappTextArea.css");
         commentRTA.setPromptText("Comment:");
 
+
+
+
         double commentInitialHeight = Math.round(commentPrefHeight / mainView.getScalePageHeight() * 100.0 );
         commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
         commentHeightSpinner.setPrefWidth(60);
@@ -296,6 +299,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
                 rta.setMinHeight(contentRowHeight);
                 rta.setPrefWidth(100);
                 rta.getStylesheets().add("slappDerivation.css");
+
 
                 contentBox = bdrta.getBoxedRTA();
                 contentBox.setHgrow(bdrta.getRTA(), Priority.ALWAYS);

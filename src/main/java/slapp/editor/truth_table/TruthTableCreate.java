@@ -564,9 +564,9 @@ public class TruthTableCreate {
             mainFormulaList.add(mainFormulaBoxedDRTA);
             updateMainFormulaGridFromFields();
 
-            statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
-  //          statementRTA.getActionFactory().newDocument().execute(new ActionEvent());
-            statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
+  //          statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
+            statementRTA.getActionFactory().newDocumentNow().execute(new ActionEvent());
+  //          statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
             viewExercise();
             fieldModified = false;

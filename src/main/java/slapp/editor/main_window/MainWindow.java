@@ -145,12 +145,12 @@ public class MainWindow {
         if (EditorMain.os.startsWith("Mac")) mainView.getExportSetupItem().setDisable(true);
         mainView.getScaleSetupItem().setOnAction(e -> scaleSetup());
 
-        mainView.getQuickStartItem().setOnAction(e -> videoHelp("https://www.slappservices.net/quick_start.mp4", 800, 700));
-        mainView.getSlappEditorItem().setOnAction(e -> videoHelp("https://www.slappservices.net/slapp_editor.mp4", 700, 725));
+        mainView.getQuickStartItem().setOnAction(e -> videoHelp("https://www.slappservices.net/quick_start.mp4", 900, 650));
+        mainView.getSlappEditorItem().setOnAction(e -> videoHelp("https://www.slappservices.net/slapp_editor.mp4", 800, 750));
         mainView.getVerticalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/vertical_trees.mp4", 600, 900));
-        mainView.getHorizontalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/horizontal_trees.mp4", 650, 900));
+        mainView.getHorizontalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/horizontal_trees.mp4", 600, 900));
         mainView.getTruthTableItem().setOnAction(e -> videoHelp("https://www.slappservices.net/truth_tables.mp4", 700, 775));
-        mainView.getDerivationItem().setOnAction(e -> videoHelp("https://www.slappservices.net/derivations.mp4", 700, 725));
+        mainView.getDerivationItem().setOnAction(e -> videoHelp("https://www.slappservices.net/derivations.mp4", 700, 835));
         mainView.getInstructorInfoItem().setOnAction(e -> videoHelp("https://www.slappservices.net/instructor_info.mp4", 900, 600));
 
         mainView.getCommonElementsTextItem().setOnAction(e -> generalTextHelp());

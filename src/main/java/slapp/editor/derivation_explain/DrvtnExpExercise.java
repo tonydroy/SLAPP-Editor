@@ -30,6 +30,7 @@ import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
+import slapp.editor.derivation.DerivationModel;
 import slapp.editor.derivation.LineType;
 import slapp.editor.derivation.ModelLine;
 import slapp.editor.derivation.ViewLine;
@@ -63,7 +64,12 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         this.mainView = mainWindow.getMainView();
         this.drvtnExpView = new DrvtnExpView(mainView);
         setDrvtnExpView();
-        pushUndoRedo();
+
+        //cannot depend on pushUndoRedo because documents can't yet be extracted from view
+        DrvtnExpModel deepCopy = (DrvtnExpModel) SerializationUtils.clone(drvtnExpModel);
+        undoRedoList.push(deepCopy);
+        updateUndoRedoButtons();
+ //       pushUndoRedo();
     }
 
     private void setDrvtnExpView() {
@@ -171,7 +177,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                 BoxedDRTA bdrta = new BoxedDRTA();
                 RichTextArea rta = bdrta.getRTA();
                 rta.getActionFactory().open(modelLine.getLineContentDoc()).execute(new ActionEvent());
-//                rta.getActionFactory().saveNow().execute(new ActionEvent());
+                rta.getActionFactory().saveNow().execute(new ActionEvent());
 
 
                 if (LineType.isSetupLine(lineType)) {
@@ -221,6 +227,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                 BoxedDRTA bdrta = viewLine.getLineContentBoxedDRTA();
                 DecoratedRTA drta = bdrta.getDRTA();
                 RichTextArea rta = bdrta.getRTA();
+                rta.getActionFactory().saveNow().execute(new ActionEvent());
                 mainView.editorInFocus(drta, ControlType.FIELD);
                 rta.focusedProperty().addListener((o, ov, nv) -> {
                     if (nv) {

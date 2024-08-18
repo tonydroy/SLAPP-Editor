@@ -267,7 +267,8 @@ public class SimpleEditCreate {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-            statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
+            statementRTA.getActionFactory().newDocumentNow().execute(new ActionEvent());
+ //           statementRTA.getActionFactory().open(new Document("")).execute(new ActionEvent());
             viewExercise();
             fieldModified = false;
         }
@@ -325,6 +326,7 @@ public class SimpleEditCreate {
         model.setExerciseStatement(statementRTA.getDocument());
         model.setStatementTextHeight(statementTextHeight);
         model.setStatementPrefHeight(statementTextHeight + 25);
+
         return model;
     }
 

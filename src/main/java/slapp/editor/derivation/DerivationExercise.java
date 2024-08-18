@@ -345,11 +345,8 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                 if (!inHierarchy(event.getPickResult().getIntersectedNode(), rta)) {
                     if (editJustification) {
                         editJustification = false;
-                        saveJustificationRTA(rta, rowIndex);
 
-                        //this stops (strange) scroll pane behavior on mouse click out of justification;
-                        //jumps to top of scroll.  Don't understand.
-                        derivationView.getGrid().requestFocus();
+                        saveJustificationRTA(rta, rowIndex);
                     }
                 }
             }
