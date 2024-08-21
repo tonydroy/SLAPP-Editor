@@ -22,7 +22,7 @@ import javafx.stage.*;
 import javafx.application.*;
 import slapp.editor.main_window.MainWindow;
 import slapp.editor.decorated_rta.*;
-import slapp.editor.tests.*;
+
 import slapp.editor.decorated_rta.*;
 
 public class EditorMain extends Application {
@@ -66,27 +66,7 @@ public class EditorMain extends Application {
         Font.loadFont(EditorMain.class.getResource("/fonts/NotoSerifCombo-Italic.ttf").toExternalForm(),11);
         Font.loadFont(EditorMain.class.getResource("/fonts/NotoSerifCombo-Regular.ttf").toExternalForm(),11);
 
-
-
-
-
-
-
         MainWindow mainWindow = new MainWindow();
-
-
-//        ExtendedDemo demo = new ExtendedDemo(stage); demo.start();
-//        DerivationTest test = new DerivationTest(); test.testGrid(stage);
-//        ExtractFromDoc test = new ExtractFromDoc(); test.rtaInsertTest(stage);
-//        ParseTableDocTest test = new ParseTableDocTest(); test.parseTableDocTest(stage);
-//        BoxedRTATest test = new BoxedRTATest(); test.testBoxedDRTA(stage);
-//        TextWidthTest test = new TextWidthTest(); test.testTextWidth(stage);
-//        ScrollPaneTest test = new ScrollPaneTest(); test.testScrollPane(stage);
-//        RoundingTest test = new RoundingTest();
-//        ClipTest test = new ClipTest(); test.testClip(stage);
-
     }
-
-
 }
 
