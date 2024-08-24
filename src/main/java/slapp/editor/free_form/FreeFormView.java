@@ -292,15 +292,5 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
     public Node getRightControl() { return freeFormControlNode; }
 
 
-    //vesitigal
-    @Override
-    public DoubleProperty getContentHeightProperty() {       return null;  }
-    @Override
-    public DoubleProperty getContentWidthProperty() {     return null;  }
-    @Override
-    public double getContentFixedHeight() {      return 0;   }
-    @Override
-    public double getContentWidth() {      return 0;  }
-    @Override
-    public double getContentHeight() {      return 0;  }
+
 }

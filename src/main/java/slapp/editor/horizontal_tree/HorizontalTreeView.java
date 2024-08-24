@@ -981,22 +981,10 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     public Node getExerciseContentNode() { return centerBox; }
 
     @Override
-    public DoubleProperty getContentHeightProperty() { return mainPane.prefHeightProperty();  }
-
-    @Override
-    public DoubleProperty getContentWidthProperty() { return mainPane.prefWidthProperty(); }
-
-    @Override
-    public double getContentFixedHeight() {  return 30;  }
-
-    @Override
     public Node getExerciseControl() { return exerciseControlNode;  }
     @Override
     public Node getRightControl() { return null; }
 
-    @Override
-    public double getContentWidth() { return 0; }
 
-    @Override
-    public double getContentHeight() {   return 0;  }
+
 }

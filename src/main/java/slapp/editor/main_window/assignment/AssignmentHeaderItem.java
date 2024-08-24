@@ -17,20 +17,48 @@ package slapp.editor.main_window.assignment;
 
 import java.io.Serializable;
 
+/**
+ * Simple lable-value pair for optional student or instructor header items
+ */
 public class AssignmentHeaderItem implements Serializable {
+    private String label = "";
+    private String value = "";
 
-    String label = "";
-    String value = "";
-
-    public AssignmentHeaderItem(){};
+    /**
+     * Create header item pair from the parameters label and valud
+     * @param label the item label
+     * @param value the value for the label
+     */
     public AssignmentHeaderItem(String label, String value) {
         this.label = label;
         this.value = value;
     }
 
+    /**
+     * Header pair label
+     * @param label label String
+     */
     public void setLabel(String label) { this.label = label; }
+
+    /**
+     * Header pair value
+     *
+     * @param value value String
+     */
     public void setValue(String value) { this.value = value; }
+
+    /**
+     * Header pair label
+     *
+     * @return label String
+     */
     public String getLabel() {return label; }
+
+    /**
+     * Header pair value
+     *
+     * @return value string
+     */
     public String getValue() { return value; }
 
 }

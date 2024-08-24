@@ -414,18 +414,11 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
     }
     @Override
     public Node getExerciseContentNode() { return new VBox(contentSplitPane); }
-    @Override
-    public DoubleProperty getContentHeightProperty() { return grid.prefHeightProperty(); }
-    @Override
-    public DoubleProperty getContentWidthProperty() {return grid.prefWidthProperty(); }
-    @Override
-    public double getContentFixedHeight() { return -50.0; }
+
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
     @Override
     public Node getRightControl() { return null; }
-    @Override
-    public double getContentWidth() { return 200.0;  }
-    @Override
-    public double getContentHeight() { return getGridHeight() + 40.0 ;  }
+
+
 }

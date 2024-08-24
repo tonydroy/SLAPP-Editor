@@ -20,6 +20,14 @@ import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.scene.Node;
 import slapp.editor.decorated_rta.DecoratedRTA;
 
+/**
+ * Interface for the exercise view
+ *
+ * @param <T> the class for the statement view
+ */
+//TODO Rip this generic?
+    //Initially, I thought statements would include derivations or the like.
+    //In fact, however, they are all DecoratedRTA (with any special items pushed into the work area)
 public interface ExerciseView<T> {
 
     String getExerciseName();
@@ -33,12 +41,10 @@ public interface ExerciseView<T> {
     double getStatementHeight();
     void setStatementPrefHeight(double height);
     Node getExerciseContentNode();
-    DoubleProperty getContentHeightProperty();
-    DoubleProperty getContentWidthProperty();
-    double getContentFixedHeight();
+
     Node getExerciseControl();
     Node getRightControl();
-    double getContentWidth();
-    double getContentHeight();
+
+
 
 }

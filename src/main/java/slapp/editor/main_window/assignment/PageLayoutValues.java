@@ -19,6 +19,9 @@ import javafx.print.PageOrientation;
 
 import java.io.Serializable;
 
+/**
+ * Serializable object to hold page setup values (except Paper)
+ */
 public class PageLayoutValues implements Serializable {
 
     PageOrientation orientation;
@@ -27,6 +30,15 @@ public class PageLayoutValues implements Serializable {
     double topMargin;
     double bottomMargin;
 
+    /**
+     * Create object with values from the parameters
+     *
+     * @param orientation the page orientation
+     * @param leftMargin the left margin
+     * @param rightMargin the right margin
+     * @param topMargin the top margin
+     * @param bottomMargin the bottom margin
+     */
     public PageLayoutValues(PageOrientation orientation, double leftMargin, double rightMargin, double topMargin, double bottomMargin) {
         this.orientation = orientation;
         this.leftMargin = leftMargin;
@@ -35,29 +47,47 @@ public class PageLayoutValues implements Serializable {
         this.bottomMargin = bottomMargin;
     }
 
+    /**
+     * The {@link javafx.print.PageOrientation}
+     *
+     * @return the PageOrientation value
+     */
     public PageOrientation getOrientation() {
         return orientation;
     }
 
-
-
+    /**
+     * The left margin
+     *
+     * @return the left margin
+     */
     public double getLeftMargin() {
         return leftMargin;
     }
 
-
-
+    /**
+     * The right margin
+     *
+     * @return the right margin
+     */
     public double getRightMargin() {
         return rightMargin;
     }
 
-
+    /**
+     * The top margin
+     *
+     * @return the top margin
+     */
     public double getTopMargin() {
         return topMargin;
     }
 
-
-
+    /**
+     * The bottom margin
+     *
+     * @return the bottom margin
+     */
     public double getBottomMargin() {
         return bottomMargin;
     }

@@ -25,13 +25,22 @@ import slapp.editor.EditorMain;
 import java.io.IOException;
 import slapp.editor.EditorAlerts;
 
+/**
+ * Window to contain the player media view / menu bar combination
+ */
 public class MediaViewer {
 
-    Player player;
-    Stage stage;
+    private Player player;
+    private Stage stage;
 
 
-
+    /**
+     * Set player in window
+     *
+     * @param file the url of file to play
+     * @param width width of scene
+     * @param height height of scene
+     */
     public void play(String file, double width, double height) {
         try {
             player = new Player(file);
@@ -63,6 +72,9 @@ public class MediaViewer {
         stage.show();
     }
 
+    /**
+     * Stop the player and close the stage
+     */
     public void stopPlay() {
         if (player != null) player.getPlayer().stop();
         if (stage != null) stage.close();

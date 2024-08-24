@@ -15,6 +15,9 @@ You should have received a copy of the GNU General Public License along with SLA
 
 package slapp.editor.main_window;
 
+/**
+ * Enum of SLAPP exercise types.  Each type has a label and a longer description.
+ */
 public enum ExerciseType {
 
     SIMPLE_EDIT("Simple Edit", "Exercise with simple edit area box (mainly for use in the 'free-form' exercise)."),
@@ -38,12 +41,29 @@ public enum ExerciseType {
     public final String label;
     public final String description;
 
+    /**
+     * Create the type with label and description
+     * @param label the label
+     * @param description the (longer) description
+     */
     private ExerciseType(String label, String description) {
 
         this.label = label;
         this.description = description;
     }
+
+    /**
+     * toString returns the label
+     *
+     * @return the label String
+     */
     public String toString() { return label; }
+
+    /**
+     * The longer description
+     *
+     * @return the description
+     */
     public String getDescription() {return description; }
 
 }

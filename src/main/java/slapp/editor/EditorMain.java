@@ -21,22 +21,43 @@ import javafx.scene.text.Font;
 import javafx.stage.*;
 import javafx.application.*;
 import slapp.editor.main_window.MainWindow;
-import slapp.editor.decorated_rta.*;
 
-import slapp.editor.decorated_rta.*;
-
+/**
+ * Includes the main and start methods for the SLAPP editor.
+ */
 public class EditorMain extends Application {
 
+    /** Stage for the main window   */
     public static Stage mainStage;
+
+    /** Window icons     */
     public static ObservableList<Image> icons;
-    public static boolean secondaryCopy = false;
-    public static String os;
+
+    /** Non-null (but small and blank) image     */
     public static Image emptyImage;
 
+    /** True if this is a second instance of SLAPP   */
+    public static boolean secondaryCopy = false;
+
+    /** The operating system     */
+    public static String os;
+
+
+    /**
+     * The main entry point to the SLAPP editor
+     *
+     * @param args - not used
+     */
     public static void main(String[] args) {
         launch(args);
     }
 
+    /**
+     * The JavaFX entry point to the SLAPP editor.  Sets static variables, and creates the main window.
+     *
+     * @param stage the primary stage for this application, onto which
+     * the application scene can be set.
+     */
     @Override
     public void start(Stage stage) {
         this.mainStage = stage;

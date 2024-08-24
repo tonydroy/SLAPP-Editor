@@ -587,29 +587,9 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     public Node getExerciseContentNode() { return centerBox;  }
 
     @Override
-    public DoubleProperty getContentHeightProperty() { return tableGrid.prefHeightProperty(); }
-    @Override
-    public DoubleProperty getContentWidthProperty() {return tableGrid.prefWidthProperty(); }
-
-    @Override
-    public double getContentFixedHeight() { return contentFixedHeight; }
-
-    @Override
     public Node getExerciseControl() { return controlBox; }
     @Override
     public Node getRightControl() { return null; }
-    @Override
-    public double getContentWidth() { return endPane.getBoundsInParent().getMaxX(); }
-    @Override
-    public double getContentHeight() {
-        double height = 0;
-        for (ToggleButton button : highlightButtons) {
-            if (button != null) {
-                height = button.getBoundsInParent().getMaxY();
-                break;
-            }
-        }
-        return height;
 
-    }
+
 }

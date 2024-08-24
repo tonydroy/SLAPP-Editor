@@ -434,6 +434,8 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
         return contentPrompt;
     }
 
+    public void setContentPrompt(String prompt) { contentPrompt = prompt; }
+
     @Override
     public String getExerciseName() { return exerciseName; }
     @Override
@@ -459,25 +461,16 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
  //       exerciseStatement.getEditor().setMinHeight(height);
     }
 
-    public VBox getExerciseContent() { return contentBox; }
 
-    public void setExerciseContent(VBox contentBox) { this.contentBox = contentBox; }
     @Override
     public Node getExerciseContentNode() { return contentBox; }
 
-    public void setContentPrompt(String prompt) { contentPrompt = prompt; }
-    @Override
-    public DoubleProperty getContentHeightProperty() { return grid.prefHeightProperty(); }
-    @Override
-    public DoubleProperty getContentWidthProperty() {return grid.prefWidthProperty(); }
-    @Override
-    public double getContentFixedHeight() { return explanationDRTA.getEditor().getHeight() - 50; }
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
     @Override
     public Node getRightControl() { return null; }
-    @Override
-    public double getContentWidth() { return 200.0; }
-    @Override
-    public double getContentHeight() { return getGridHeight() + 40; }
+
+
+
+
 }

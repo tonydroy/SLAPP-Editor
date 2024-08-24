@@ -404,27 +404,11 @@ public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
     public Node getExerciseContentNode() {
         return new VBox(root);
     }
-
-    @Override
-    public DoubleProperty getContentHeightProperty() {
-        return rootLayout.prefHeightProperty();
-    }
-    @Override
-    public DoubleProperty getContentWidthProperty() {return rootLayout.prefWidthProperty(); }
-
-    @Override
-    public double getContentFixedHeight() {
-        return 120;
-    }
-
     @Override
     public Node getExerciseControl() {
         return exerciseControlNode;
     }
     @Override
     public Node getRightControl() { return null; }
-    @Override
-    public double getContentWidth() {    return rootLayout.getMain_pane().getWidth(); }
-    @Override
-    public double getContentHeight() { return rootLayout.getMain_pane().getHeight(); }
+
 }

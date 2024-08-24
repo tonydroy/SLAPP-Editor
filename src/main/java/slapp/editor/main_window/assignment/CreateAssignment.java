@@ -48,6 +48,9 @@ import java.util.Random;
 
 import static javafx.scene.control.ButtonType.OK;
 
+/**
+ * Window to create or revise an assignment
+ */
 public class CreateAssignment {
 
     private MainWindow mainWindow;
@@ -60,25 +63,27 @@ public class CreateAssignment {
     private String creationID;
     private TextField assignmentNameField;
     private ChangeListener<String> nameListener;
-    ListView<File> exerciseList;
-    ListView<ExerciseModel> assignmentList;
+    private ListView<File> exerciseList;
+    private ListView<ExerciseModel> assignmentList;
     private boolean isModified = false;
-    TextArea helpArea;
-    GridPane optionalItemsPane;
-
-    DoubleProperty centerHeightProperty;
-    HBox workingBox;
-
+    private TextArea helpArea;
+    private GridPane optionalItemsPane;
+    private DoubleProperty centerHeightProperty;
+    private HBox workingBox;
     private Button saveButton;
     private Button saveAsButton;
     private Button clearButton;
     private Button exerciseFolderButton;
     private Label creationIDNum;
+    private List<TextField> labelFields = new ArrayList<>();
+    private List<TextField> valueFields = new ArrayList<>();
 
-
-    List<TextField> labelFields = new ArrayList<>();
-    List<TextField> valueFields = new ArrayList<>();
-
+    /**
+     * Create assignment window
+     *
+     * @param assignment the (possibly new) assignment to be revised.
+     * @param mainWindow main window
+     */
     public CreateAssignment(Assignment assignment, MainWindow mainWindow) {
         this.assignment = assignment;
         this.mainWindow = mainWindow;
@@ -86,7 +91,13 @@ public class CreateAssignment {
         setUpWindow();
     }
 
+
+    /*
+    Set up and open create window
+     */
     private void setUpWindow() {
+        //border pane top
+
         setCreationID();
 
         BorderPane borderPane = new BorderPane();
@@ -185,6 +196,8 @@ public class CreateAssignment {
 
         borderPane.setTop(topBox);
 
+        //border pane center
+
         Label exerciseLabel = new Label("Exercise");
         Label assignmtLabel = new Label("Assignment");
         exerciseList = new ListView<>();
@@ -220,9 +233,9 @@ public class CreateAssignment {
             exerciseFolderButton.setDisable(false);
         });
 
-
-
         borderPane.setCenter(workingBox);
+
+        // border pane right
 
         Button addUpButton = new Button("Add \u2191");
         addUpButton.setPrefWidth(60);
@@ -332,24 +345,14 @@ public class CreateAssignment {
             clearAssignment();
         });
 
-        /*
-        saveButton.setOnAction(e -> {
-           Assignment assignment = getAssignmentFromWindow();
-           boolean saved = false;
-            if (!assignment.getHeader().getAssignmentName().isEmpty()) {
-                saved = DiskUtilities.saveAssignment(false, assignment);
-                if (saved) isModified = false;
-            }
-            else EditorAlerts.showSimpleAlert("Cannot Save", "No named assignment to save.");
-        });
-
-         */
 
         closeButton.setOnAction(e -> {
             closeWindow();
         });
 
         borderPane.setRight(buttonBox);
+
+        //border pane bottom
 
         String helpText = "Name the assignment.  Optional identifying fields (as course, instructor) may be included as appropriate.\n\n" +
                 "Build an assignment by opening a folder with SlAPP exercise files (*.sle).  A selected exercise is added to the assignment above or below a selected assignment item by the add buttons.  " +
@@ -367,8 +370,7 @@ public class CreateAssignment {
 
         borderPane.setBottom(helpArea);
 
-
-
+        //scene and stage
 
         Scene scene = new Scene(borderPane);
 
@@ -394,12 +396,18 @@ public class CreateAssignment {
         setCenterVgrow();
     }
 
+    /*
+    Creation ID is random number set whenever create window is opened
+     */
     private void setCreationID() {
         Random rand = new Random();
         idNumber = rand.nextInt(1000000000);
         creationID = Integer.toString(idNumber);
     }
 
+    /*
+    Extract assignment model from window
+     */
     private Assignment getAssignmentFromWindow() {
         Assignment assignment = new Assignment();
         AssignmentHeader assignmentHeader = assignment.getHeader();
@@ -415,6 +423,9 @@ public class CreateAssignment {
         return assignment;
     }
 
+    /*
+    Save asignment
+     */
     private void saveAssignment(boolean saveAs) {
         Assignment assignment = getAssignmentFromWindow();
         boolean saved = false;
@@ -429,6 +440,9 @@ public class CreateAssignment {
         else EditorAlerts.showSimpleAlert("Cannot Save", "No named assignment to save.");
     }
 
+    /*
+    clear name, assignment list, and reset creation ID
+     */
     private void clearAssignment() {
         boolean okContinue = true;
         if (isModified) {
@@ -446,6 +460,9 @@ public class CreateAssignment {
         }
     }
 
+    /*
+    Close the exercise showing in the main window, and close create stage.
+     */
     private void closeWindow() {
         boolean okContinue = true;
         if (isModified) {
@@ -459,6 +476,9 @@ public class CreateAssignment {
         }
     }
 
+    /*
+    Update height of workingBox (border pane center) by dragging window
+     */
     private void setCenterVgrow() {
         double fixedHeight = helpArea.getHeight() + 400;
 
@@ -473,8 +493,5 @@ public class CreateAssignment {
         centerHeightProperty.bind(Bindings.min(maximumHeightProperty, (stage.heightProperty().subtract(externalHeightProperty))));
         workingBox.prefHeightProperty().bind(centerHeightProperty);
     }
-
-
-
 
 }

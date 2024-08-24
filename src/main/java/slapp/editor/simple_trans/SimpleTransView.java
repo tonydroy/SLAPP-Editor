@@ -258,19 +258,6 @@ public class SimpleTransView implements ExerciseView<DecoratedRTA> {
     @Override
     public Node getRightControl() { return null; }
 
-    //this is all vestigal need to rip:
-    @Override
-    public DoubleProperty getContentHeightProperty() { return exerciseResponse.getEditor().prefHeightProperty(); }
-    @Override
-    public DoubleProperty getContentWidthProperty() { return exerciseResponse.getEditor().prefWidthProperty(); }
-    @Override
-    public double getContentFixedHeight() { return -25.0; }
-    @Override
-    public double getContentWidth() { return 0.0; }
-    @Override
-    public double getContentHeight() { return 0.0; }
-
-
 
 }
 

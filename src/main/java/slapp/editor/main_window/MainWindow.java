@@ -26,8 +26,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -441,8 +439,11 @@ public class MainWindow {
             EditorAlerts.fleetingPopup("There is no open assignment on which to comment.");
         } else {
             AssignmentCommentWindow commentWindow = new AssignmentCommentWindow(currentAssignment.getHeader(), mainView);
-            AssignmentHeader header = commentWindow.getHeaderComment();
-            if (!(header.getComment().equals(currentAssignment.getComment()))) assignmentContentModified = true;
+            AssignmentHeader header = commentWindow.getAssignmentHeader();
+            if (!(header.getComment().equals(new Document()))) assignmentContentModified = true;
+
+
+
             currentAssignment.setHeader(header);
         }
     }

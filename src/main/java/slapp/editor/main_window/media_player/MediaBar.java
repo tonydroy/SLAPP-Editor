@@ -30,6 +30,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
+
+/**
+ * Control bar across bottom of player
+ */
 public class MediaBar extends HBox {
 
     // introducing Sliders
@@ -40,6 +44,11 @@ public class MediaBar extends HBox {
     MediaPlayer player;
     Label totalTime = new Label("");
 
+    /**
+     * Create media bar
+     *
+     * @param play the media player to which the bar applies
+     */
     public MediaBar(MediaPlayer play)
     { // Default constructor taking
         // the MediaPlayer object
@@ -128,6 +137,10 @@ public class MediaBar extends HBox {
     }
 
     // Outside the constructor
+
+    /**
+     * Move slider as video plays
+     */
     protected void updatesValues()
     {
         Platform.runLater(new Runnable() {
@@ -143,6 +156,11 @@ public class MediaBar extends HBox {
         });
     }
 
+    /**
+     * Label whose text will be set to the total duration of the video
+     *
+     * @return total time label
+     */
     Label getTotalTime() {
         return totalTime;
     }

@@ -65,13 +65,28 @@ import slapp.editor.vertical_tree.VerticalTreeCreate;
 import slapp.editor.vertical_tree.VerticalTreeExercise;
 import slapp.editor.vertical_tree.VerticalTreeModel;
 
+/**
+ * Class with switches depending on the model class or exercise type
+ */
 public class TypeSelectorFactories {
     private MainWindow mainWindow;
 
+    /**
+     * Create the factories
+     *
+     * @param mainWindow the main window
+     */
     public TypeSelectorFactories(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
     }
 
+    /**
+     * Starting with model object, return an exercise of its type
+     *
+     * @param objectModel the model object
+     *
+     * @return the exercise
+     */
     public Exercise getExerciseFromModelObject(Object objectModel) {
         String modelClassName = objectModel.getClass().getSimpleName();
 
@@ -149,6 +164,11 @@ public class TypeSelectorFactories {
         }
     }
 
+    /**
+     * From model object, if not started, open create window for (revision of) exercise of that type.
+     *
+     * @param objectModel the model object
+     */
     public void createRevisedExerciseFromModelObject(Object objectModel) {
         String modelClassName = objectModel.getClass().getSimpleName();
         switch (modelClassName) {
@@ -305,6 +325,11 @@ public class TypeSelectorFactories {
     }
 
 
+    /**
+     * From exercise type, open create window for (new) exercise of that type.
+     *
+     * @param type the exercise type
+     */
     public void createExerciseOfType(ExerciseType type) {
 
         switch(type) {

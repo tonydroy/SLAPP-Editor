@@ -45,6 +45,6 @@ module slapp.editor {
     exports slapp.editor.decorated_rta;
     opens slapp.editor.decorated_rta to javafx.fxml;
 //    exports slapp.editor.tests;
-    opens slapp.editor.tests to javafx.fxml;
+//    opens slapp.editor.tests to javafx.fxml;
     exports slapp.editor.vertical_tree.drag_drop;
 }

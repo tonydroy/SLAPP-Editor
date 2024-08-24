@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Open window for student to complete assignment header before working assignment
+ */
 public class UpdateAssignmentHeader {
 
     AssignmentHeader header;
@@ -42,12 +45,23 @@ public class UpdateAssignmentHeader {
     List<TextField> valueFields = new ArrayList<>();
     int optItemIndex = 0;
 
+    /**
+     * Create (but do not show) window to modify initial header by student values
+     *
+     * @param header the initial header
+     */
     public UpdateAssignmentHeader(AssignmentHeader header) {
         this.header = header;
         updateWindow();
     }
 
+    /*
+    Set up the create window
+     */
     private void updateWindow() {
+
+        //border pane top
+
         Random rand = new Random();
         int idNumber = rand.nextInt(1000000000);
         header.setWorkingID(Integer.toString(idNumber));
@@ -83,8 +97,7 @@ public class UpdateAssignmentHeader {
         VBox topBox = new VBox(menuBar, idBox, insItemsPane, new Separator(Orientation.HORIZONTAL));
         borderPane.setTop(topBox);
 
-
-
+        //border pane center
 
         Label studentNameLabel = new Label("Student Name: ");
         studentNameField = new TextField();
@@ -132,10 +145,10 @@ public class UpdateAssignmentHeader {
         VBox centerBox = new VBox(10, studentNameBox, optionalItemBox, optionalItemsPane );
         borderPane.setCenter(centerBox);
 
+        //border pane bottom
 
         String helpText = "Fill in the name field.  Additional information (as student number, course section) may be included by optional fields.\n\n" +
                 "NOTE: Once you click 'Create Assignment', you will not be able to return to this window in order to update the header again (without starting the entire assignment over).  Be sure that header fields are filled out completely and correctly!";
-
 
         TextArea helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
@@ -147,6 +160,8 @@ public class UpdateAssignmentHeader {
         helpArea.setStyle("-fx-text-fill: mediumslateblue");
 
         borderPane.setBottom(helpArea);
+
+        //border pane right
 
         Button updateButton = new Button("Create Assignment");
         updateButton.setPrefWidth(125);
@@ -171,6 +186,8 @@ public class UpdateAssignmentHeader {
         buttonBox.setPadding(new Insets(20));
         borderPane.setRight(buttonBox);
 
+        //border pane scene and stage
+
         Scene scene = new Scene(borderPane);
 
         stage = new Stage();
@@ -189,11 +206,19 @@ public class UpdateAssignmentHeader {
         });
     }
 
+    /**
+     * Show update header window and return the updated header
+     *
+     * @return updated header
+     */
     public AssignmentHeader updateHeader() {
         stage.showAndWait();
         return header;
     }
 
+    /*
+    Called by update button
+     */
     private void updateHeaderFromWindow() {
         header.setStudentName(studentNameField.getText());
         for (int i = 0; i < labelFields.size(); i++) {
@@ -201,6 +226,9 @@ public class UpdateAssignmentHeader {
         }
     }
 
+    /*
+    Close window
+     */
     private void closeWindow() {
         stage.close();
     }

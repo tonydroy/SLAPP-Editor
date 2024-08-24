@@ -301,27 +301,11 @@ public class VerticalTreeView  implements ExerciseView<DecoratedRTA> {
     public Node getExerciseContentNode() {
         return new VBox(root);
     }
-
-    @Override
-    public DoubleProperty getContentHeightProperty() {
-        return rootLayout.prefHeightProperty();
-    }
-    @Override
-    public DoubleProperty getContentWidthProperty() {return rootLayout.prefWidthProperty(); }
-
-    @Override
-    public double getContentFixedHeight() {
-        return 0;
-    }
-
     @Override
     public Node getExerciseControl() {
         return exerciseControlNode;
     }
     @Override
     public Node getRightControl() { return null; }
-    @Override
-    public double getContentWidth() {    return rootLayout.getMainPane().getWidth(); }
-    @Override
-    public double getContentHeight() { return rootLayout.getMainPane().getHeight(); }
+
 }

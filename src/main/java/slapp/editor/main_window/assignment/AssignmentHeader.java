@@ -21,6 +21,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Model for assignment header.  Contains ID information, assignment comment, and optional items added from student and instructor.
+ */
 public class AssignmentHeader implements Serializable {
     private String creationID = "";
     private String workingID = "";
@@ -28,71 +31,157 @@ public class AssignmentHeader implements Serializable {
     private String studentName = "";
     private Document comment = new Document();
     private double commentTextHeight = 0;
-
-
     private List<AssignmentHeaderItem> instructorItems = new ArrayList<>();
     private List<AssignmentHeaderItem> studentItems = new ArrayList<>();
 
+    /**
+     * Create header object with default (empty) field values.
+     */
     public AssignmentHeader(){ }
 
 
+    /**
+     * The creation ID number is a 10-digit randomly assigned number which tracks the (instructor)
+     * origin of the assignment.
+     *
+     * @return the ID number.
+     */
     public String getCreationID() {
         return creationID;
     }
 
+    /**
+     * The creation ID number is a 10-digit randomly assigned number which tracks the (instructor)
+     * origin of the assignment assignment.
+     *
+     * @param creationID the ID number.
+     */
     public void setCreationID(String creationID) {
         this.creationID = creationID;
     }
 
+    /**
+     * The working ID is a 10-digit randomly assigned number set when a student first opens an assignment and
+     * creates the header.
+     *
+     * @return the ID number.
+     */
     public String getWorkingID() {
         return workingID;
     }
 
+
+    /**
+     * The working ID is a 10-digit randomly asigned number set when a student first opens an assignment and
+     * creates the header.
+     *
+     * @param workingID the ID number
+     */
     public void setWorkingID(String workingID) {
         this.workingID = workingID;
     }
 
+    /**
+     * The assignment name.  Also appears as file name.
+     *
+     * @return the assignment name
+     */
     public String getAssignmentName() {
         return assignmentName;
     }
 
+    /**
+     * The assignment name.  Also appears as file name
+     *
+     * @param assignmentName the assignment name
+     */
     public void setAssignmentName(String assignmentName) {
         this.assignmentName = assignmentName;
     }
 
+    /**
+     * Student name string
+     *
+     * @return student name
+     */
     public String getStudentName() {
         return studentName;
     }
 
+    /**
+     * Student name string
+     *
+     * @param studentName student name
+     */
     public void setStudentName(String studentName) {
         this.studentName = studentName;
     }
 
+    /**
+     * List of optional instructor header items
+     *
+     * @return instructor items list
+     */
     public List<AssignmentHeaderItem> getInstructorItems() {
         return instructorItems;
     }
 
+    /**
+     * List of optional instructor header items
+     *
+     * @param instructorItems instructor items list
+     */
     public void setInstructorItems(List<AssignmentHeaderItem> instructorItems) {
         this.instructorItems = instructorItems;
     }
 
+    /**
+     * List of optional student header items
+     *
+     * @return student items list
+     */
     public List<AssignmentHeaderItem> getStudentItems() {
         return studentItems;
     }
 
+    /**
+     * List of optional student header items
+     *
+     * @param studentItems student items list
+     */
     public void setStudentItems(List<AssignmentHeaderItem> studentItems) {
         this.studentItems = studentItems;
     }
 
+    /**
+     * Comment on assignment
+     *
+     * @return comment document
+     */
     public Document getComment() {
         return comment;
     }
 
+    /**
+     * Comment on assignment
+     *
+     * @param comment comment document
+     */
     public void setComment(Document comment) {
         this.comment = comment;
     }
 
+    /**
+     * Comment text height (not same as window height)
+     *
+     * @return text height value
+     */
     public double getCommentTextHeight() {     return commentTextHeight;  }
 
+    /**
+     * Comment text height (not same as window height)
+     *
+     * @param commentTextHeight text height value
+     */
     public void setCommentTextHeight(double commentTextHeight) {     this.commentTextHeight = commentTextHeight;  }
 }

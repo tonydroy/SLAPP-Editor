@@ -254,19 +254,11 @@ public class PageEditView implements ExerciseView<DecoratedRTA> {
     }
     @Override
     public Node getExerciseContentNode() {     return pagination;  }
-    @Override
-    public DoubleProperty getContentHeightProperty() { return contentPageList.get(pagination.getCurrentPageIndex()).getEditor().prefHeightProperty(); }
-    @Override
-    public DoubleProperty getContentWidthProperty() { return contentPageList.get(pagination.getCurrentPageIndex()).getEditor().prefWidthProperty(); }
-    @Override
-    public double getContentFixedHeight() { return -25.0; }
+
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
     @Override
     public Node getRightControl() { return null; }
-    @Override
-    public double getContentWidth() { return 200.0; }
-    @Override
-    public double getContentHeight() { return 300.0; }
+
 }
 

@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License along with SLA
 package slapp.editor.main_window.assignment;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
@@ -28,7 +27,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -36,12 +34,14 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.MainWindowView;
 
+/**
+ * Window to update of comment in assignment header
+ */
 public class AssignmentCommentWindow {
 
     private AssignmentHeader header;
@@ -55,16 +55,30 @@ public class AssignmentCommentWindow {
     private VBox centerBox;
     private SimpleDoubleProperty centerHeightProperty;
 
+    /**
+     * Creates (but does not show) window to update comment in the assignment header.
+     * @param header the current header
+     * @param mainView the current MainWindowView
+     */
     public AssignmentCommentWindow(AssignmentHeader header, MainWindowView mainView) {
         this.header = header;
         this.mainView = mainView;
         setUpWindow();
     }
-    public AssignmentHeader getHeaderComment() {
+
+    /**
+     * Show assignment comment window, and return header with updated comment field
+     *
+     * @return header with updated comment
+     */
+    public AssignmentHeader getAssignmentHeader() {
         stage.showAndWait();
         return header;
     }
 
+    /*
+     * Create (but don't show) stage for comment window.
+     */
     private void setUpWindow() {
         BorderPane borderPane = new BorderPane();
 
@@ -146,19 +160,8 @@ public class AssignmentCommentWindow {
 
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
-
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox);
-//        topBox.layout();
         borderPane.topProperty().setValue(topBox);
-
-        /*
-        ToolBar fontsToolBar = commentDRTA.getFontsToolbar();
-        fontsToolBar.getItems().addAll(zoomLabel, zoomSpinner);
-
-        VBox topBox = new VBox(menuBar, commentDRTA.getEditToolbar(), fontsToolBar, commentDRTA.getParagraphToolbar() );
-        borderPane.setTop(topBox);
-
-         */
 
         scene = new Scene(borderPane);
         scene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
@@ -169,7 +172,6 @@ public class AssignmentCommentWindow {
         stage.getIcons().addAll(EditorMain.icons);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
-
         stage.setMinWidth(860);
 
         stage.initOwner(EditorMain.mainStage);
@@ -178,10 +180,11 @@ public class AssignmentCommentWindow {
             e.consume();
             closeWindow();
         });
-
-
     }
 
+    /*
+     * Update zoom for the center box (comment and help fields)
+     */
     private void updateZoom() {
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
@@ -189,6 +192,9 @@ public class AssignmentCommentWindow {
         setCenterVgrow();
     }
 
+    /*
+     * Update height of comment field by dragging stage size.
+     */
     private void setCenterVgrow() {
         double fixedHeight = helpArea.getHeight() * scale + 280;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
@@ -200,6 +206,9 @@ public class AssignmentCommentWindow {
     }
 
 
+    /*
+     * Update the header with the current value of the comment field.
+     */
     private void updateHeaderFromWindow() {
         commentEditor.getActionFactory().saveNow().execute(new ActionEvent());
         Document statementDocument = commentEditor.getDocument();

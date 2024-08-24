@@ -29,6 +29,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+/**
+ * Media view / menu bar combined into border pane
+ */
 public class Player extends BorderPane {
     Media media;
     MediaPlayer player;
@@ -36,6 +39,13 @@ public class Player extends BorderPane {
     Pane mpane;
     MediaBar bar;
 
+    /**
+     * Create border pane with media player in the center and menu bar at bottom, and start play
+     *
+     * @param file the url of media to play
+     * @throws SecurityException if attempted connection is security violation
+     * @throws IOException if SLAPP server cannot be found
+     */
     public Player(String file) throws SecurityException, IOException  { // Default constructor
 
         try {
@@ -77,8 +87,18 @@ public class Player extends BorderPane {
         player.play(); // Making the video play
     }
 
+    /**
+     * The media view contains the media player
+     *
+     * @return the media view
+     */
     public MediaView getView() {     return view;  }
 
+    /**
+     * The player provides controls for playing media.  It works in combination with the  media view.
+     *
+     * @return the player
+     */
     public MediaPlayer getPlayer() {
         return player;
     }
