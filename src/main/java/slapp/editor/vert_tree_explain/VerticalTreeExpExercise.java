@@ -79,7 +79,6 @@ public class VerticalTreeExpExercise implements Exercise<VerticalTreeExpModel, V
     }
 
     private void setVerticalTreeView() {
-        verticalTreeExpView.setExerciseName(verticalTreeExpModel.getExerciseName());
         verticalTreeExpView.setDefaultKeyboard(verticalTreeExpModel.getDefaultKeyboardType());
         verticalTreeExpView.setStatementPrefHeight(verticalTreeExpModel.getStatementPrefHeight());
         verticalTreeExpView.setCommentPrefHeight(verticalTreeExpModel.getCommentPrefHeight());

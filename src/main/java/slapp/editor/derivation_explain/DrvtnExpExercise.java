@@ -89,7 +89,6 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
     private void setDrvtnExpView() {
 
-        drvtnExpView.setExerciseName(drvtnExpModel.getExerciseName());
         drvtnExpView.setContentPrompt(drvtnExpModel.getContentPrompt());
         drvtnExpView.setLeftmostScopeLine(drvtnExpModel.isLeftmostScopeLine());
         drvtnExpView.setKeyboardSelector(drvtnExpModel.getKeyboardSelector());
@@ -1034,7 +1033,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     }
 
     private DrvtnExpModel getDrvtnExpModelFromView() {
-        String name = drvtnExpView.getExerciseName();
+        String name = drvtnExpModel.getExerciseName();
         String prompt = drvtnExpView.getContentPrompt();
         Boolean started = (drvtnExpModel.isStarted() || exerciseModified);
 

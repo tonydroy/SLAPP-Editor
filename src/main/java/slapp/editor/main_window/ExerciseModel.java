@@ -29,7 +29,7 @@ import java.io.Serializable;
 public interface ExerciseModel<T> extends Serializable {
 
     /**
-     * The exercise name (used also as file name
+     * The exercise name (used also as file name)
      *
      * @return the name string
      */

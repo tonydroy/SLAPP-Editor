@@ -85,7 +85,6 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
     }
 
     private void setTruthTableView() {
-        truthTableView.setExerciseName(truthTableModel.getExerciseName());
         truthTableView.setStatementPrefHeight(truthTableModel.getStatementPrefHeight());
         truthTableView.setCommentPrefHeight(truthTableModel.getCommentPrefHeight());
 
@@ -400,7 +399,7 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
 
     private TruthTableModel getTruthTableModelFromView() {
         TruthTableModel model = new TruthTableModel();
-        model.setExerciseName(truthTableView.getExerciseName());
+        model.setExerciseName(truthTableModel.getExerciseName());
         model.setOriginalModel(truthTableModel.getOriginalModel());
         model.setStarted(truthTableModel.isStarted() || exerciseModified);
 

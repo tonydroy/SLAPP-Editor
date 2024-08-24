@@ -82,7 +82,6 @@ public class VerticalTreeABExpExercise implements Exercise<VerticalTreeABExpMode
     }
 
     private void setVerticalTreeView() {
-        verticalTreeABExpView.setExerciseName(verticalTreeABExpModel.getExerciseName());
         verticalTreeABExpView.setExplainPrompt(verticalTreeABExpModel.getExplainPrompt());
         verticalTreeABExpView.setDefaultKeyboard(verticalTreeABExpModel.getDefaultKeyboardType());
         verticalTreeABExpView.setStatementPrefHeight(verticalTreeABExpModel.getStatementPrefHeight());

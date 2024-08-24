@@ -41,7 +41,6 @@ import java.util.List;
 
 public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
     MainWindowView mainView;
-    private String exerciseName = new String("");
     private RichTextAreaSkin.KeyMapValue keyboardSelector;
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private double statementPrefHeight = 0;
@@ -437,23 +436,15 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
     public void setContentPrompt(String prompt) { contentPrompt = prompt; }
 
     @Override
-    public String getExerciseName() { return exerciseName; }
-    @Override
-    public void setExerciseName(String name) { this.exerciseName = name; }
-    @Override
     public DecoratedRTA getExerciseComment() { return exerciseComment; }
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment; }
-    @Override
-    public double getCommentHeight() { return exerciseComment.getEditor().getHeight(); }
     @Override
     public DecoratedRTA getExerciseStatement() { return exerciseStatement; }
     @Override
     public void setExerciseStatement(DecoratedRTA exerciseStatement) { this.exerciseStatement = exerciseStatement; }
     @Override
     public Node getExerciseStatementNode() { return exerciseStatement.getEditor(); }
-    @Override
-    public double getStatementHeight() { return exerciseStatement.getEditor().getHeight();    }
     @Override
     public void setStatementPrefHeight(double height) {
         statementPrefHeight = height;

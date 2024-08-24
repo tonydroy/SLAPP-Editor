@@ -124,7 +124,6 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
     }
 
     private void setFreeFormView() {
-        freeFormView.setExerciseName(freeFormModel.getExerciseName());
         freeFormView.setStatementPrefHeight(freeFormModel.getStatementPrefHeight());
         freeFormView. setCommentPrefHeight(freeFormModel.getCommentPrefHeight());
 

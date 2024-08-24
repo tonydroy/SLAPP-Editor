@@ -41,7 +41,6 @@ import slapp.editor.vert_tree_explain.ExpRootLayout;
 public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
 
     private MainWindowView mainView;
-    private String exerciseName = new String("");
     private RichTextAreaSkin.KeyMapValue defaultKeyboard;
     private String explainPrompt = "";
     private Label abChoiceLeadLabel = new Label();
@@ -360,23 +359,12 @@ public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
 
 
     @Override
-    public String getExerciseName() { return exerciseName; }
-
-    @Override
-    public void setExerciseName(String name) {exerciseName = name; }
-
-    @Override
     public DecoratedRTA getExerciseComment() {
         return exerciseComment;
     }
 
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment;  }
-
-    @Override
-    public double getCommentHeight() {
-        return exerciseComment.getEditor().getHeight();
-    }
 
     @Override
     public DecoratedRTA getExerciseStatement() {
@@ -388,11 +376,6 @@ public class VerticalTreeABEFExpView implements ExerciseView<DecoratedRTA> {
 
     @Override
     public Node getExerciseStatementNode() { return exerciseStatement.getEditor();   }
-
-    @Override
-    public double getStatementHeight() {
-        return exerciseStatement.getEditor().getHeight();
-    }
 
     @Override
     public void setStatementPrefHeight(double height) {

@@ -82,6 +82,7 @@ public class MainWindowView {
     private Node rightControlNode;
     private VBox statusBar;
     private HBox upperStatusBox;
+
     private FlowPane lowerStatusPane;
     HBox centerHBox;
     private Button saveButton;
@@ -467,8 +468,8 @@ public class MainWindowView {
 
 //        this.contentWidthProperty = currentExerciseView.getContentWidthProperty();
 
-        statementNode.minHeight(currentExerciseView.getStatementHeight());
-        commentNode.minHeight(currentExerciseView.getCommentHeight());
+ //       statementNode.minHeight(currentExerciseView.getStatementHeight());
+ //       commentNode.minHeight(currentExerciseView.getCommentHeight());
 
 
         //this prevents scrollpane from jumping to top (esp in derivations)
@@ -488,7 +489,9 @@ public class MainWindowView {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         upperStatusBox.getChildren().clear();
         lowerStatusPane.getChildren().clear();
-        upperStatusBox.getChildren().add(new Label("Exercise: " + currentExerciseView.getExerciseName()));
+
+        upperStatusBox.getChildren().add(new Label("Exercise: " + ((ExerciseModel) mainWindow.getCurrentExercise().getExerciseModel()).getExerciseName()));
+ //       upperStatusBox.getChildren().add(new Label("Exercise: " + currentExerciseView.getExerciseName()));
         lowerStatusPane.getChildren().add(new Label("Date: " + dtf.format(LocalDateTime.now())));
 
         borderPane.setLeft(leftControlNode);
@@ -580,7 +583,8 @@ public class MainWindowView {
 
         upperStatusBox.getChildren().addAll(new Label("Student Name: " + header.getStudentName()),
                 new Label("Assignment: " + header.getAssignmentName()),
-                new Label("Exercise: " + currentExerciseView.getExerciseName() + " (" + exerciseNum + "/" + mainWindow.getCurrentAssignment().getExerciseModels().size() + ")"),
+                new Label("Exercise: " + ((ExerciseModel) mainWindow.getCurrentExercise().getExerciseModel()).getExerciseName() + " (" + exerciseNum + "/" + mainWindow.getCurrentAssignment().getExerciseModels().size() + ")"),
+ //               new Label("Exercise: " + currentExerciseView.getExerciseName() + " (" + exerciseNum + "/" + mainWindow.getCurrentAssignment().getExerciseModels().size() + ")"),
                 new Label("ID: " + header.getCreationID() + "-" + header.getWorkingID()) );
         lowerStatusPane.getChildren().add(new Label("Date: " + dtf.format(LocalDateTime.now())));
         for (int i = 0; i < header.getInstructorItems().size(); i++) {
@@ -800,6 +804,7 @@ public class MainWindowView {
     public void setVerticalSizeSpinner(Spinner<Double> verticalSizeSpinner) {
         this.verticalSizeSpinner = verticalSizeSpinner;
     }
+
 
 
 

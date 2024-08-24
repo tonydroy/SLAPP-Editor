@@ -269,23 +269,25 @@ public class CreateAssignment {
             File exerciseFile = (File) exerciseSelectionModel.getSelectedItem();
             if (exerciseFile != null) {
                 ExerciseModel exerciseModel = DiskUtilities.getExerciseModelFromFile(exerciseFile);
-                if (!exerciseModel.isStarted()) {
-                    int newIndex = assignmentSelectionModel.getSelectedIndex() + 1;
-                    assignmentList.getItems().add(newIndex, exerciseModel);
-                    isModified = true;
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            assignmentSelectionModel.select(newIndex);
-                            assignmentList.getFocusModel().focus(newIndex);
-                        }
-                    });
+                if (exerciseModel !=null) {
+                    if (!exerciseModel.isStarted()) {
+                        int newIndex = assignmentSelectionModel.getSelectedIndex() + 1;
+                        assignmentList.getItems().add(newIndex, exerciseModel);
+                        isModified = true;
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                assignmentSelectionModel.select(newIndex);
+                                assignmentList.getFocusModel().focus(newIndex);
+                            }
+                        });
 
-                } else {
-                    EditorAlerts.showSimpleAlert("Cannot Add", "The content section of this exercise appears to have been modified.\n\n" +
-                            "Please select an empty exercise.");
+                    } else {
+                        EditorAlerts.showSimpleAlert("Cannot Add", "The content section of this exercise appears to have been modified.\n\n" +
+                                "Please select an empty exercise.");
+                    }
                 }
-            } else {
+            }  else {
                 EditorAlerts.fleetingPopup("No exercise selected.  Please make selection.");
             }
         });

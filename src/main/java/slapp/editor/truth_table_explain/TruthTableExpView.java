@@ -46,7 +46,6 @@ import java.util.function.UnaryOperator;
 
 public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private MainWindowView mainView;
-    private String exerciseName = new String();
     private String explainPrompt = "";
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private DecoratedRTA exerciseComment = new DecoratedRTA();
@@ -653,20 +652,12 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
 
     public void setExplainPrefHeight(double explainPrefHeight) { this.explainPrefHeight = explainPrefHeight;  }
 
-    @Override
-    public String getExerciseName() { return exerciseName;  }
-
-    @Override
-    public void setExerciseName(String name) { exerciseName = name; }
 
     @Override
     public DecoratedRTA getExerciseComment() { return exerciseComment; }
 
     @Override
     public void setExerciseComment(DecoratedRTA comment) { exerciseComment = comment;  }
-
-    @Override
-    public double getCommentHeight() { return exerciseComment.getEditor().getHeight(); }
 
     @Override
     public DecoratedRTA getExerciseStatement() { return exerciseStatement;  }
@@ -676,9 +667,6 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
 
     @Override
     public Node getExerciseStatementNode() { return exerciseStatement.getEditor();  }
-
-    @Override
-    public double getStatementHeight() { return exerciseStatement.getEditor().getHeight();  }
 
     @Override
     public void setStatementPrefHeight(double height) {

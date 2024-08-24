@@ -46,7 +46,7 @@ import javax.xml.stream.EventFilter;
 
 public class FrontPageView implements ExerciseView<Label> {
 
-    private String name = "";
+
     private Label exerciseStatement;
     private DecoratedRTA exerciseComment;
     private Node exerciseControl;
@@ -112,24 +112,17 @@ public class FrontPageView implements ExerciseView<Label> {
 
     }
 
-    @Override
-    public String getExerciseName() { return name; }
-    @Override
-    public void setExerciseName(String name) {this.name = name; }
+
     @Override
     public DecoratedRTA getExerciseComment() { return exerciseComment; }
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) {}
-    @Override
-    public double getCommentHeight() { return 0.0; }
     @Override
     public Label getExerciseStatement() { return exerciseStatement; }
     @Override
     public void setExerciseStatement(Label exerciseStatement) {}
     @Override
     public Node getExerciseStatementNode() { return exerciseStatement; }
-    @Override
-    public double getStatementHeight() { return 0.0; }
     @Override
     public void setStatementPrefHeight(double height) { }
     @Override

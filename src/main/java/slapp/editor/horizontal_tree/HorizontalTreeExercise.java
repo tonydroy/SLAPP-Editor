@@ -77,7 +77,6 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
     }
 
     private void setHorizontalTreeView() {
-        horizontalTreeView.setExerciseName(horizontalTreeModel.getExerciseName());
         horizontalTreeView.setStatementPrefHeight(horizontalTreeModel.getStatementPrefHeight());
         horizontalTreeView.setCommentPrefHeight(horizontalTreeModel.getCommentPrefHeight());
         horizontalTreeView.setExplainPrefHeight(horizontalTreeModel.getExplainPrefHeight());

@@ -84,7 +84,6 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
     private void setDerivationView() {
 
-        derivationView.setExerciseName(derivationModel.getExerciseName());
         derivationView.setLeftmostScopeLine(derivationModel.isLeftmostScopeLine());
         derivationView.setKeyboardSelector(derivationModel.getKeyboardSelector());
         derivationView.setStatementPrefHeight(derivationModel.getStatementPrefHeight());
@@ -1022,7 +1021,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
 
     private DerivationModel getDerivationModelFromView() {
-        String name = derivationView.getExerciseName();
+        String name = derivationModel.getExerciseName();
         Boolean started = (derivationModel.isStarted() || exerciseModified);
 
         Document statementDocument = derivationModel.getExerciseStatement();

@@ -62,7 +62,6 @@ public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
 
     private void setEditView() {
 
-        editView.setExerciseName(editModel.getExerciseName());
         editView.setContentPrompt(editModel.getContentPrompt());
         editView.setStatementPrefHeight(editModel.getStatementPrefHeight());
         editView.setCommentPrefHeight(editModel.getCommentPrefHeight());

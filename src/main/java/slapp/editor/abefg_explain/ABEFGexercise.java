@@ -66,7 +66,6 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
 
     private void setEditView() {
 
-        abefgView.setExerciseName(abefgModel.getExerciseName());
         abefgView.setContentPrompt(abefgModel.getContentPrompt());
         abefgView.setStatementPrefHeight(abefgModel.getStatementPrefHeight());
         abefgView.setCommentPrefHeight(abefgModel.getCommentPrefHeight());

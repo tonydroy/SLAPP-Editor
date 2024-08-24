@@ -64,7 +64,6 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
 
     private void setEditView() {
 
-        abView.setExerciseName(abModel.getExerciseName());
         abView.setContentPrompt(abModel.getContentPrompt());
         abView.setStatementPrefHeight(abModel.getStatementPrefHeight());
         abView.setCommentPrefHeight(abModel.getCommentPrefHeight());

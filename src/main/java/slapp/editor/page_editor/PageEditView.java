@@ -35,7 +35,6 @@ import java.util.List;
 public class PageEditView implements ExerciseView<DecoratedRTA> {
 
     private MainWindowView mainView;
-    private String exerciseName = new String();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private List<DecoratedRTA> contentPageList = new ArrayList<>();
@@ -230,24 +229,18 @@ public class PageEditView implements ExerciseView<DecoratedRTA> {
     public double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight(); }
     public double getPaginationPrefHeight() { return pagination.getPrefHeight();    }
 
-    @Override
-    public String getExerciseName() {return exerciseName; }
-    @Override
-    public void setExerciseName(String name) { this.exerciseName = name; }
+
     @Override
     public DecoratedRTA getExerciseComment() { return exerciseComment; }
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment; }
-    @Override
-    public double getCommentHeight() { return exerciseComment.getEditor().getHeight(); }
     @Override
     public DecoratedRTA getExerciseStatement() { return exerciseStatement; }
     @Override
     public void setExerciseStatement(DecoratedRTA exerciseStatement) {  this.exerciseStatement = exerciseStatement;  }
     @Override
     public Node getExerciseStatementNode() {  return exerciseStatement.getEditor();  }
-    @Override
-    public double getStatementHeight() { return exerciseStatement.getEditor().getHeight(); }
+
     public void setStatementPrefHeight(double height) {
         statementPrefHeight = height;
         exerciseStatement.getEditor().setPrefHeight(height);

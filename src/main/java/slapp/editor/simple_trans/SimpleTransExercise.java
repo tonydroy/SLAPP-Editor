@@ -59,7 +59,6 @@ public class SimpleTransExercise implements Exercise<SimpleTransModel, SimpleTra
 
     private void setTransView() {
 
-        transView.setExerciseName(transModel.getExerciseName());
         transView.setStatementPrefHeight(transModel.getStatementPrefHeight());
         transView.setCommentPrefHeight(transModel.getCommentPrefHeight());
         transView.setResponsePrefHeight(transModel.getResponsePrefHeight());

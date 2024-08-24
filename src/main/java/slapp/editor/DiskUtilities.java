@@ -168,7 +168,7 @@ public class DiskUtilities {
                 exerciseModel = (ExerciseModel) oi.readObject();
             } catch (IOException | ClassNotFoundException e) {
  //               e.printStackTrace();
-                EditorAlerts.showSimpleAlert("Error opening file", e.getClass().getCanonicalName());
+                EditorAlerts.showSimpleAlert("Error opening file", e.getClass().getCanonicalName() + ", " + fileToOpen.getName());
             }
         }
         return exerciseModel;

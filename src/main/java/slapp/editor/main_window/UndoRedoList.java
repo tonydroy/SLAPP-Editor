@@ -17,16 +17,30 @@ package slapp.editor.main_window;
 
 import java.util.LinkedList;
 
-
+/**
+ * Linked list to support undo/redo operations.  Works by pushing and popping "snapshots" of exercise.
+ *
+ * @param <T> The type of items included in the list (usually exercise models)
+ */
 public class UndoRedoList<T> extends LinkedList<T> {
     private int maxSize;
     private int currentIndex = 0;
 
+    /**
+     * Constructor for list with parameter for maximum size.
+     *
+     * @param size the maximum size of the list
+     */
     public UndoRedoList(int size) {
         super();
         this.maxSize = size;
     }
 
+    /**
+     * Push element onto list.
+     *
+     * @param element the element to push
+     */
     @Override
     public void push(T element) {
         for (int i = 0; i < currentIndex; i++) {

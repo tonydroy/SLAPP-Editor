@@ -38,7 +38,6 @@ import java.util.List;
 public class FreeFormView implements ExerciseView<DecoratedRTA> {
 
     private MainWindowView mainView;
-    private String exerciseName = "";
     private DecoratedRTA statementDRTA = new DecoratedRTA();
     private DecoratedRTA commentDRTA = new DecoratedRTA();
     private double statementPrefHeight = 0;
@@ -250,20 +249,12 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
 
     public void setExerciseControlNode(Node exerciseControlNode) {   this.exerciseControlNode = exerciseControlNode;  }
 
-    @Override
-    public String getExerciseName() { return exerciseName;  }
-
-    @Override
-    public void setExerciseName(String name) { exerciseName = name; }
 
     @Override
     public DecoratedRTA getExerciseComment() { return commentDRTA;  }
 
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) { commentDRTA = exerciseComment;   }
-
-    @Override
-    public double getCommentHeight() { return commentDRTA.getEditor().getHeight();   }
 
     @Override
     public DecoratedRTA getExerciseStatement() {  return statementDRTA;   }
@@ -273,9 +264,6 @@ public class FreeFormView implements ExerciseView<DecoratedRTA> {
 
     @Override
     public Node getExerciseStatementNode() { return statementDRTA.getEditor();  }
-
-    @Override
-    public double getStatementHeight() { return statementDRTA.getEditor().getHeight();   }
 
     @Override
     public void setStatementPrefHeight(double height) {

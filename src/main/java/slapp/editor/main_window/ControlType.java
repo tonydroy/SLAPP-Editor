@@ -15,18 +15,49 @@ You should have received a copy of the GNU General Public License along with SLA
 
 package slapp.editor.main_window;
 
+/**
+ * The ControlType sets the active controls for a RichText area
+ *
+ */
 public enum ControlType {
 
+    /**
+     * Nonof the control bar controls active
+     */
     NONE("no control"),
+
+    /**
+     * No RTA controls active (but keyboard and window controls ok)
+     */
     STATEMENT("statement"),
+
+    /**
+     * Controls appropriate to a one-line field active
+     */
     FIELD("field"),
+
+    /**
+     * All controls active
+     */
     AREA("area");
 
 
-    public final String label;
+    private final String label;
+
+    /**
+     * ControlType constructor with String parameter
+     *
+     * @param label String label
+     */
     private ControlType(String label) {
         this.label = label;
     }
+
+    /**
+     * toString returns the label
+     *
+     * @return label string
+     */
     public String toString() { return label; }
 
     }

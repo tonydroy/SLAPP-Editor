@@ -39,7 +39,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.awt.Desktop;
 
-
+/**
+ * Show text help in popup window
+ *
+ * Static help strings set at initialization of class
+ */
 public class TextHelpPopup {
 
     private static String about;
@@ -185,19 +189,28 @@ static {
             "<li>SLAPP will attempt to link and adjust any number that is part of a justification.  In the vast majority of cases, this is just what you want.  But, in some cases, you want a justification to include a fixed number (as for a theorm or axiom number, as T6.15 or A8).  Then the fixed number must be distinct from that of any line.  Since line numbers are always whole numbers, this happens automatically if the justification number contains a 'point'.  If there is no natural point in the justification number, you can distinguish the justification number from the line numbers by adding a leading point or zero (A.8 or A08).</li></ol>"
             ;
 
-
-
-
 }
 
+    /**
+     * Show the about help item.
+     */
     public static void helpAbout() {
        showHelp(about);
     }
 
+    /**
+     * Show the common elements help item.
+     */
     public static void helpCommonElements() {
         showHelp(commonElements);
     }
 
+    /**
+     * Show help relevant to current exercise type.
+     *
+     * @param type the exercise type
+     */
+    //switch "falls through" to help item relevant to members of a type grouping.
     public static void helpContextual(ExerciseType type) {
 
         if (type == null) {
@@ -248,7 +261,11 @@ static {
 
     }
 
-
+    /**
+     * Create WebView and place on new Stage
+     *
+     * @param helpString the html string to be displayed.
+     */
     private static void showHelp(String helpString) {
 
         WebView webView = new WebView();

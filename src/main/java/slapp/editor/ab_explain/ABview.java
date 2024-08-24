@@ -35,7 +35,6 @@ import java.util.List;
 public class ABview implements ExerciseView<DecoratedRTA> {
 
     private MainWindowView mainView;
-    private String exerciseName = new String();
     private Label leaderLabel = new Label("");
     private CheckBox checkBoxA = new CheckBox("");
     private CheckBox checkBoxB = new CheckBox("");
@@ -295,23 +294,15 @@ public class ABview implements ExerciseView<DecoratedRTA> {
     public void setPaginationPrefHeight(double paginationPrefHeight) { this.paginationPrefHeight = paginationPrefHeight;   }
 
     @Override
-    public String getExerciseName() {return exerciseName; }
-    @Override
-    public void setExerciseName(String name) { this.exerciseName = name; }
-    @Override
     public DecoratedRTA getExerciseComment() { return exerciseComment;     }
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment; }
-    @Override
-    public double getCommentHeight() { return exerciseComment.getEditor().getHeight(); }
     @Override
     public DecoratedRTA getExerciseStatement() { return exerciseStatement; }
     @Override
     public void setExerciseStatement(DecoratedRTA exerciseStatement) { this.exerciseStatement = exerciseStatement; }
     @Override
     public Node getExerciseStatementNode() { return exerciseStatement.getEditor(); }
-    @Override
-    public double getStatementHeight() { return exerciseStatement.getEditor().getHeight(); }
     public void setStatementPrefHeight(double height) {
         statementPrefHeight = height;
         exerciseStatement.getEditor().setPrefHeight(height);

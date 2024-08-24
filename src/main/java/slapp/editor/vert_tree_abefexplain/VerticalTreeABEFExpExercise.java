@@ -80,7 +80,6 @@ public class VerticalTreeABEFExpExercise implements Exercise<VerticalTreeABEFExp
     }
 
     private void setVerticalTreeView() {
-        verticalTreeABEFExpView.setExerciseName(verticalTreeABEFExpModel.getExerciseName());
         verticalTreeABEFExpView.setExplainPrompt(verticalTreeABEFExpModel.getExplainPrompt());
         verticalTreeABEFExpView.setDefaultKeyboard(verticalTreeABEFExpModel.getDefaultKeyboardType());
         verticalTreeABEFExpView.setStatementPrefHeight(verticalTreeABEFExpModel.getStatementPrefHeight());

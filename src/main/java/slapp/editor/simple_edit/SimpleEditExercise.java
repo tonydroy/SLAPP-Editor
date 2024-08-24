@@ -60,7 +60,6 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
 
     private void setEditView() {
 
-        editView.setExerciseName(editModel.getExerciseName());
         editView.setResponsePrompt(editModel.getResponsePrompt());
         editView.setStatementPrefHeight(editModel.getStatementPrefHeight());
         editView.setCommentPrefHeight(editModel.getCommentPrefHeight());

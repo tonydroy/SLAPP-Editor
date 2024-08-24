@@ -50,7 +50,6 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     private HorizontalTreeView self;
 
     private MainWindowView mainView;
-    private String exerciseName = new String("");
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
     private DecoratedRTA explainDRTA = new DecoratedRTA();
@@ -944,20 +943,12 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     public void setExplainPrefHeight(double explainPrefHeight) {   this.explainPrefHeight = explainPrefHeight;  }
 
 
-    @Override
-    public String getExerciseName() { return exerciseName;  }
-
-    @Override
-    public void setExerciseName(String name) { exerciseName = name;  }
 
     @Override
     public DecoratedRTA getExerciseComment() { return exerciseComment;  }
 
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment;  }
-
-    @Override
-    public double getCommentHeight() { return exerciseComment.getEditor().getHeight();  }
 
     @Override
     public DecoratedRTA getExerciseStatement() { return exerciseStatement; }
@@ -967,9 +958,6 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
     @Override
     public Node getExerciseStatementNode() { return exerciseStatement.getEditor();  }
-
-    @Override
-    public double getStatementHeight() { return exerciseStatement.getEditor().getHeight();  }
 
     @Override
     public void setStatementPrefHeight(double height) {
