@@ -219,7 +219,7 @@ public class MainWindowView {
 
         zoomLabel = new Label(" Zoom ");
         zoomSpinner = new Spinner(25, 500, 100, 5);
-        zoomSpinner.setPrefSize(60,25);
+        zoomSpinner.setPrefSize(65,25);
         zoomSpinner.setTooltip(new Tooltip("Window zoom as percentage of normal"));
         zoomSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = zoomSpinner.lookup(".increment-arrow-button");

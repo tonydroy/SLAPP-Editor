@@ -96,11 +96,11 @@ public class ABview implements ExerciseView<DecoratedRTA> {
 
         this.addPageButton = new Button("Insert Page");
         addPageButton.setTooltip(new Tooltip("Add after current page"));
-        addPageButton.setPrefWidth(90.0);
+        addPageButton.setPrefWidth(100.0);
 
         this.removePageButton = new Button("Remove Page");
         removePageButton.setTooltip(new Tooltip("Remove current page"));
-        removePageButton.setPrefWidth(90.0);
+        removePageButton.setPrefWidth(100.0);
 
         VBox controlBox = (VBox) exerciseControlNode;        ;
         controlBox.setSpacing(30.0);

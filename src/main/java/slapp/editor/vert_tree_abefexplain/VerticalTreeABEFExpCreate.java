@@ -410,7 +410,7 @@ public class VerticalTreeABEFExpCreate {
         //finish up with top
         Label zoomLabel = new Label(" Zoom ");
         Spinner<Integer> zoomSpinner = new Spinner(25, 500, 100, 5);
-        zoomSpinner.setPrefSize(60,25);
+        zoomSpinner.setPrefSize(65,25);
         zoomSpinner.valueProperty().addListener((obs, ov, nv) -> {
             Node increment = zoomSpinner.lookup(".increment-arrow-button");
             if (increment != null) increment.getOnMouseReleased().handle(null);
