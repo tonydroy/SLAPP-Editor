@@ -22,7 +22,7 @@ package slapp.editor.main_window;
 public enum ControlType {
 
     /**
-     * Nonof the control bar controls active
+     * None of the control bar controls active
      */
     NONE("no control"),
 
@@ -54,7 +54,7 @@ public enum ControlType {
     }
 
     /**
-     * toString returns the label
+     * returns the label
      *
      * @return label string
      */

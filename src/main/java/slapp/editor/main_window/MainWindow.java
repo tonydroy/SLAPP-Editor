@@ -37,15 +37,17 @@ import slapp.editor.main_window.assignment.*;
 import slapp.editor.main_window.media_player.MediaViewer;
 import slapp.editor.page_editor.PageEditExercise;
 import slapp.editor.page_editor.PageEditModel;
+import slapp.editor.simple_edit.SimpleEditExercise;
+import slapp.editor.simple_edit.SimpleEditModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import static javafx.scene.control.ButtonType.OK;
 
-
-
+/**
+ * Controller for the SLAPP main window
+ */
 public class MainWindow {
     private MainWindow mainWindow;
     private MainWindowView mainView;
@@ -60,66 +62,32 @@ public class MainWindow {
     private DoubleProperty baseScale = new SimpleDoubleProperty(1.0);
     private boolean fitToPage = false;
 
-
-
+    /**
+     * Create main SLAPP main window
+     */
     public MainWindow() {
+
         mainWindow = this;
         mainView = new MainWindowView(this);
         setupMainWindow();
         mainView.setupDummyWindowRTASize();
 
-
         focusListener = (ob, ov, nv) ->  {
             if (nv != null) {
-                if (nv.focusedProperty().get() == true) {
+                if (ov != lastFocusOwner) {
                     lastFocusOwner = ov;
- //                   updateNodeContainerHeight(nv, false);
                 }
             }
         };
         setUpExercise(new FrontPageExercise(this));
 
         mainView.getMainScene().focusOwnerProperty().addListener(focusListener);
-
-/*
-//      not sure I like this
-        mainView.getMainScene().addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent e) {
-                    setUpExercise(getEmptyExercise());
-                    isExerciseOpen = false;
-                    mainView.getMainScene().removeEventFilter(MouseEvent.MOUSE_PRESSED, this);
-
-            }
-        });
-
- */
-
-       /*
-       //not a bad idea, but if not escaped, need also to remove filter after window action
-        mainView.getMainScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent e) {
-                if (e.getCode() == KeyCode.ESCAPE) {
-                    setUpExercise(getEmptyExercise());
-                    isExerciseOpen = false;
-                    mainView.getMainScene().removeEventFilter(KeyEvent.KEY_PRESSED, this);
-                }
-            }
-        });
-
-        */
-
-
     }
 
-    /* Comment:
-    I do not understand how the focusOwnerProperty listener works.  In particular, a single listener responds to
-    focus changes on buttons and such, but not to focus changes on the comment, statement or content.  With a
-    second assignment of the same (!) listener as in setUpExercise below it fires twice but on all nodes -- a
-    remove command prevents adding another fire each time the exercise is changed.  ??
-     */
 
+    /*
+     * Initialize main window controls
+     */
     private void setupMainWindow() {
 
         mainView.scalePageHeightProperty().bind(Bindings.divide(PrintUtilities.pageHeightProperty(), mainWindow.baseScaleProperty()));
@@ -170,6 +138,7 @@ public class MainWindow {
         mainView.getAboutItem().setOnAction(e -> aboutTextHelp());
         mainView.getContextualTextItem().setOnAction(e -> contextualTextHelp());
         mainView.getReportItem().setOnAction(e -> makeReport());
+        mainView.getSaveButton().setOnAction(e -> saveAction());
 
 
         Label previousExerciseLabel = new Label("Previous");
@@ -211,25 +180,22 @@ public class MainWindow {
         });
         mainView.getAssignmentCommentMenu().setGraphic(assignmentCommentLabel);
 
-
     }
 
-
+    /**
+     * Update currentExercise, and then the mainView.
+     * @param exercise the new exercise
+     */
     public void setUpExercise(Exercise exercise) {
-
         mainView.getMainScene().focusOwnerProperty().removeListener(focusListener);
         currentExercise = exercise;
         mainView.setupExercise();
-        mainView.getSaveButton().setOnAction(e -> saveAction());
-        mainView.getMainScene().focusOwnerProperty().get();
         mainView.getMainScene().focusOwnerProperty().addListener(focusListener);
     }
 
-    private void showProgressIndicator(String message) {
-
-    }
-
-
+    /*
+     * Open open window to get type, and then window to create exercise.
+     */
     private void createNewExercise() {
         if (checkContinueAssignment("Confirm Create", "This assignment appears to have been changed, and will be overwritten in the create process.\n\nContinue to create exercise?")) {
             if (checkContinueExercise("Confirm Create", "This exercise appears to have been changed, and will be overwritten by the new one.\n\nContinue to create exercise?")) {
@@ -244,6 +210,9 @@ public class MainWindow {
         }
     }
 
+    /*
+     * Open exercise in create window for revision.  This gets blocked (at TypeSelectorFactories) if the exercise has been even partially worked.
+     */
     private void createRevisedExercise() {
         if (checkContinueAssignment("Confirm Create", "This assignment appears to have been changed, and will be overwritten in the create process.\n\nContinue to create exercise?")) {
             if (checkContinueExercise("Confirm Create", "This exercise appears to have been changed, and will be overwritten by the new one.\n\nContinue to create exercise?")) {
@@ -258,7 +227,10 @@ public class MainWindow {
         }
     }
 
-    public void saveAction(){
+    /*
+     * If named assignment is open, save assignment.  Else if named exercise is open save exercise.
+     */
+    private void saveAction(){
         if (currentAssignment != null) {
             if (!currentAssignment.getHeader().getAssignmentName().isEmpty()) {
                 saveAssignment(false);
@@ -271,7 +243,13 @@ public class MainWindow {
         }
         else EditorAlerts.fleetingPopup("No named assignment or exercise to save.");
     }
-    public void saveExercise(boolean saveAs) {
+
+    /*
+     * Save named exercise
+     *
+     * @param saveAs if true activate 'save as' else current exerrcise directory
+     */
+    private void saveExercise(boolean saveAs) {
         if (currentExercise != null) {
             if (!((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
                 currentExercise.saveExercise(saveAs);
@@ -279,6 +257,10 @@ public class MainWindow {
         }
         else EditorAlerts.fleetingPopup("No named exercise to save.");
     }
+
+    /*
+     * Reset current exercise to its original state
+     */
     private void resetExercise() {
         Alert confirm = EditorAlerts.confirmationAlert("Confirm Reset", "This will undo all your work on this exercise.  Continue to reset?");
         Optional<ButtonType> result = confirm.showAndWait();
@@ -288,17 +270,25 @@ public class MainWindow {
         }
     }
 
+    /*
+     * Revert to empty simple edit exercise
+     *
+     * @return the empty exercise
+     */
     private Exercise getEmptyExercise() {
         //revert to empty simple edit exercise
-        PageEditModel emptyModel = new PageEditModel("",false,"",80,new Document(), new Document(), new ArrayList<>());
-        PageEditExercise emptyExercise = new PageEditExercise(emptyModel, mainWindow);
+        SimpleEditModel emptyModel = new SimpleEditModel("", "");
+        emptyModel.setResponsePrefHeight(400);
+        SimpleEditExercise emptyExercise = new SimpleEditExercise(emptyModel, mainWindow);
         return emptyExercise;
     }
 
+    /*
+     * Close exercise that is open as such (without assignment)
+     */
     public void closeExercise() {
         if (currentAssignment == null) {
             if (checkContinueExercise("Confirm Close", "This exercise appears to have been changed.\n\nContinue to close exercise?")) {
-
                 setUpExercise(getEmptyExercise());
                 isExerciseOpen = false;
             }
@@ -307,20 +297,17 @@ public class MainWindow {
         }
     }
 
+    /*
+     * Open exercise from disk
+     */
     private void openExercise(){
-
         if (checkContinueAssignment("Confirm Open", "This assignment appears to have been changed, and will be overwritten by the new exercise.  Continue to open exercise?")) {
             if (checkContinueExercise("Confirm Open", "This exercise appears to have been changed, and will be overwritten by the new one.  Continue to open exercise?")) {
                 Object exerciseModelObject = DiskUtilities.openExerciseModelObject();
                 if (exerciseModelObject != null) {
-
                     TypeSelectorFactories typeFactories = new TypeSelectorFactories(this);
                     Exercise exercise = typeFactories.getExerciseFromModelObject(exerciseModelObject);
-
-
-
                     if (exercise != null) {
-
                         setUpExercise(exercise);
                         isExerciseOpen = true;
                         currentAssignment = null;
@@ -330,15 +317,18 @@ public class MainWindow {
         }
     }
 
+    /*
+     * Export current exercise to PDF
+     */
+    //TODO this and printExercise are mostly duplicated code.  Refactor?
     private void exportExerciseToPDF() {
         if (currentExercise != null && !((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
             boolean heightGood = true;
 
-
+            //isolate printExercise from currentExercise
             ExerciseModel printModel = currentExercise.getExerciseModelFromView();
             TypeSelectorFactories typeFactory = new TypeSelectorFactories(mainWindow);
             Exercise printExercise = typeFactory.getExerciseFromModelObject(printModel);
-
 
             List<Node> printNodes = printExercise.getPrintNodes();
             PrintUtilities.resetPrintBuffer(getBaseScale());
@@ -362,6 +352,9 @@ public class MainWindow {
 
     }
 
+    /*
+     * Send current exercise to printer
+     */
     private void printExercise() {
         if (currentExercise != null && !((ExerciseModel) currentExercise.getExerciseModel()).getExerciseName().isEmpty()) {
             boolean heightGood = true;
@@ -392,6 +385,13 @@ public class MainWindow {
         else EditorAlerts.fleetingPopup("Cannot find named exercise to print.");
     }
 
+    /*
+     * Return true if exercise is unmodified or modified and user says ok
+     *
+     * @param title title of confirmation box
+     * @param content content of confirmation box
+     * @return true if ok to continue, and otherwise false
+     */
     private boolean checkContinueExercise(String title, String content) {
         boolean okContinue = true;
         if (isExerciseOpen && currentExercise.isExerciseModified()) {
@@ -402,6 +402,13 @@ public class MainWindow {
         return okContinue;
     }
 
+    /*
+     * Return true if assignment is unmodified or modified and user says ok
+     *
+     * @param title title of confirmation box
+     * @param content content of confirmation box
+     * @return true if ok to continue, and otherwise false
+     */
     private boolean checkContinueAssignment(String title, String content) {
         boolean okContinue = true;
         if (currentAssignment != null && (currentExercise.isExerciseModified() || assignmentContentModified)) {
@@ -412,42 +419,38 @@ public class MainWindow {
         return okContinue;
     }
 
-
-
-    private boolean isContainer(Node container, Node element) {
-        if (element == null)
-            return false;
-        Node current = element;
-        while (current != null) {
-            if (current == container)
-                return true;
-            current = current.getParent();
-        }
-        return false;
-    }
-
+    /*
+     * Run export setup
+     */
     private void exportSetup() { PrintUtilities.exportSetup(); }
 
+    /*
+     * Run page setup
+     */
     private void pageSetup() {
         PrintUtilities.updatePageLayout();
-
     }
 
-
-    public void assignmentComment() {
+    /*
+     * Update assignment header with assignment comment
+     */
+    private void assignmentComment() {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("There is no open assignment on which to comment.");
         } else {
             AssignmentCommentWindow commentWindow = new AssignmentCommentWindow(currentAssignment.getHeader(), mainView);
             AssignmentHeader header = commentWindow.getAssignmentHeader();
             if (!(header.getComment().equals(new Document()))) assignmentContentModified = true;
-
-
-
             currentAssignment.setHeader(header);
         }
     }
-    public void saveAssignment(boolean saveAs){
+
+    /*
+     * If necessary, update assignment from current exercise and save
+     *
+     * @param saveAs true if activate 'save as' otherwise false
+     */
+    private void saveAssignment(boolean saveAs){
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("There is no open assignment to save.");
         } else {
@@ -466,8 +469,10 @@ public class MainWindow {
         }
     }
 
+    /*
+     * Open assignment from disk
+     */
     public void openAssignment(){
-
         if (checkContinueAssignment("Confirm Open", "The current assignment appears to have been changed, and will be overwritten by the new one.\n\nContinue to open assignment?")) {
             if (checkContinueExercise("Confirm Open", "The current exercise appears to have been changed, and will be overwritten by the new assignment.\n\nContinue to open assignment?")) {
                 isExerciseOpen = false;
@@ -477,14 +482,13 @@ public class MainWindow {
                         UpdateAssignmentHeader headerUpdater = new UpdateAssignmentHeader(assignment.getHeader());
                         assignment.setHeader(headerUpdater.updateHeader());
                     }
-                    if (assignment.hasCompletedHeader()) {
+                    else {
                         currentAssignment = assignment;
                         TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
                         assignmentIndex = 0;
                         setBaseScale(currentAssignment.getBaseScale());
                         fitToPage = currentAssignment.isFitToPage();
                         PrintUtilities.setPageLayout(currentAssignment.getPageLayout());
-
 
                         currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                         mainView.setupExercise();
@@ -495,7 +499,11 @@ public class MainWindow {
             }
         }
     }
-    public void closeAssignment() {
+
+    /*
+     * Close open assignment
+     */
+    private void closeAssignment() {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("There is no open assignment to close.");
         } else {
@@ -508,8 +516,12 @@ public class MainWindow {
             }
         }
     }
-    public void printAssignment() {
 
+    /*
+     * Send open assignment to the printer
+     */
+    //TODO This and exportAssignment are mostly duplicated code.  Refactor?
+    private void printAssignment() {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("There is no open assignment to print.");
         } else {
@@ -539,7 +551,6 @@ public class MainWindow {
                     }
                 }
             }
-//            mainView.deactivateProgressIndicator();
 
             if (!badExerciseList.isEmpty()) {
                 StringBuilder sb = new StringBuilder(badExerciseList.get(0));
@@ -561,9 +572,10 @@ public class MainWindow {
         }
     }
 
-
-
-    public void exportAssignment() {
+    /*
+     * Send open assignment to PDF
+     */
+    private void exportAssignment() {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("There is no open assignment to export.");
         } else {
@@ -617,16 +629,13 @@ public class MainWindow {
         }
     }
 
-
-
-
-
-    public void createRevisedAssignment() {
+    /*
+     * If assignment is not started (if it does not have a completed header), open for revision in create window
+     */
+    private void createRevisedAssignment() {
         if (checkContinueAssignment("Confirm Create", "The current assignment appears to have been changed, and will be overwritten in the creation process.\n\nContinue to create assignment?")) {
- //           currentAssignment = null;
-            if (checkContinueExercise("Confirm Create", "The current exercise appears to have been changed, and will be overwritten in the creation process.\n\nContinue to create assignment?")) {
+             if (checkContinueExercise("Confirm Create", "The current exercise appears to have been changed, and will be overwritten in the creation process.\n\nContinue to create assignment?")) {
                 isExerciseOpen = false;
-
                 Assignment assignment = DiskUtilities.openAssignment();
                 if (assignment != null) {
                     if (!assignment.hasCompletedHeader()) {
@@ -639,7 +648,11 @@ public class MainWindow {
             }
         }
     }
-    public void createNewAssignment(){
+
+    /*
+     * Open window to create a new assignment
+     */
+    private void createNewAssignment(){
         if (checkContinueAssignment("Confirm Create", "The current assignment appears to have been changed, and will be overwritten in the creation process.\n\nContinue to create assignment?")) {
             currentAssignment = null;
             if (checkContinueExercise("Confirm Create", "The current exercise appears to have been changed, and will be overwritten in the creation process.\n\n Continue to create assignment?")) {
@@ -649,7 +662,10 @@ public class MainWindow {
         }
     }
 
-    public void previousExercise() {
+    /*
+     * Update assignment with current exercise, and move to the previous exercise
+     */
+    private void previousExercise() {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("Cannot Advance.  There is no open assignment.");
         } else {
@@ -668,7 +684,11 @@ public class MainWindow {
             }
         }
     }
-    public void nextExercise() {
+
+    /*
+     * Update assignment with current exercise, and move to next
+     */
+    private void nextExercise() {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("Cannot Advance.  There is no open assignment.");
         } else {
@@ -677,19 +697,19 @@ public class MainWindow {
             if (nextIndex < currentAssignment.getExerciseModels().size()) {
                 ExerciseModel model = currentExercise.getExerciseModelFromView();
                 currentAssignment.replaceExerciseModel(assignmentIndex, model);
-
                 assignmentIndex = nextIndex;
                 TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
-
-
-
                 currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                 mainView.setupExercise();
                 mainView.setUpLowerAssignmentBar();
             }
         }
      }
-    public void goToExercise() {
+
+    /*
+     * Open popup for user to select an exercise from assignment.  Save current exercise to assignment and go to selected.
+     */
+    private void goToExercise() {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("Cannot Jump.  There is no open assignment.");
         } else {
@@ -721,12 +741,8 @@ public class MainWindow {
                     if (nv != null) {
                         ExerciseModel model = currentExercise.getExerciseModelFromView();
                         currentAssignment.replaceExerciseModel(assignmentIndex, model);
-
                         assignmentIndex = exerciseList.getItems().indexOf(nv);
                         TypeSelectorFactories typeFactory = new TypeSelectorFactories(mainWindow);
-
-
-
                         currentExercise = typeFactory.getExerciseFromModelObject(currentAssignment.getExerciseModels().get(assignmentIndex));
                         mainView.setupExercise();
                         mainView.setUpLowerAssignmentBar();
@@ -749,8 +765,9 @@ public class MainWindow {
         }
     }
 
-
-
+    /*
+     * Open popup for user to select baseScale and/or fit to page
+     */
     private void scaleSetup() {
         Popup scaleSetupPopup = new Popup();
 
@@ -789,7 +806,12 @@ public class MainWindow {
 
     }
 
-    public boolean checkCloseWindow() {
+    /**
+     * True if exercise/assignment not modified, or if modified and user selects ok
+     *
+     * @return true if ok to continue
+     */
+    boolean checkCloseWindow() {
         boolean continueClose = false;
         if (checkContinueAssignment("Confirm Close", "The current assignment appears to have been changed.\n\nContinue to close?")) {
             if (checkContinueExercise("Confirm Close", "The current exercise appears to have been changed.\n\nContinue to close exercise?")) {
@@ -799,49 +821,101 @@ public class MainWindow {
         return continueClose;
     }
 
+    /*
+     * Open "about" text help popup
+     */
     private void aboutTextHelp() {
         TextHelpPopup.helpAbout();
     }
 
+    /*
+     * Open help video
+     *
+     * @param urlString - video location
+     * @param width - widith of view window
+     * @param height - height of view window
+     */
     private void videoHelp(String urlString, double width, double height) {
         mediaViewer.stopPlay();
         mediaViewer.play(urlString, width, height);
-//        mediaViewer.play("file:/c:/Users/tonyd/Dropbox/MyFiles(DB)/JavaProgs/resources/videos/derivations.mp4");
     }
 
+    /*
+     * Open 'general info' text help item
+     */
     private void generalTextHelp() {
         TextHelpPopup.helpCommonElements();
     }
+
+    /*
+     * Depending on current exercise, open contextual help
+     */
     private void contextualTextHelp() {
         TextHelpPopup.helpContextual(((ExerciseModel) (currentExercise.getExerciseModel())).getExerciseType());
     }
 
+    /*
+     * Open native mail client to report an issue
+     */
     private void makeReport() {
         String message = "Please be as specific as you can about your concern; if you are reporting an error, include information about the version of SLAPP and of your operating system, along with (if possible) the relevant file and whether and how the problem may be repeated (ok to delete this line).";
         MailHelper.generate("messaging@slappservices.net", "SLAPP: (your issue)", message);
     }
 
 
+    /**
+     * The MainWindowView is the main SLAPP window
+     *
+     * @return the mainView
+     */
     public MainWindowView getMainView() { return mainView; }
+
+    /**
+     * The current assignment is the assignment (if any) currently open
+     *
+     * @return the current assignment
+     */
     public Assignment getCurrentAssignment() { return currentAssignment; }
 
+    /**
+     * The current exercise is the exercise currently open (whether or not it is part of an assignment)
+     *
+     * @return the current exercise
+     */
     public Exercise getCurrentExercise() {    return currentExercise;  }
 
-    public int getAssignmentIndex() {
-        return assignmentIndex;
-    }
+    /**
+     * The assignment index is the position of the current exercise in the assignment's list of ExerciseModels
+     * @return
+     */
+    public int getAssignmentIndex() {     return assignmentIndex;   }
 
-    public Node getLastFocusOwner() {
-        return lastFocusOwner;
-    }
+    /**
+     * The last focus owner.  Required when a control depends on the particular item with focus before the
+     * control was selected.
+     *
+     * @return last focussed node
+     */
+    public Node getLastFocusOwner() {     return lastFocusOwner;   }
 
-    public void setLastFocusOwner(Node lastFocusOwner) {
-        this.lastFocusOwner = lastFocusOwner;
-    }
-
+    /**
+     * The base scale is the scale at which nodes are exported or printed (unless 'fit to page' is selected).
+     *
+     * @return the base scale (1.0 = 100% of normal)
+     */
     public double getBaseScale() { return baseScale.get(); }
 
+    /**
+     * The base scale is the scale at which nodes are exported or printed (unless 'fit to page' is selected).
+     *
+     * @return the base scale property (1.0 = 100% of normal)
+     */
     public DoubleProperty baseScaleProperty() {   return baseScale; }
 
+    /**
+     * The base scale is the scale at which nodes are exported or printed (unless 'fit to page' is selected).
+     *
+     * @param baseScale the base scale value (1.0 = 100% of normal)
+     */
     public void setBaseScale(double baseScale) { this.baseScale.set(baseScale); }
 }

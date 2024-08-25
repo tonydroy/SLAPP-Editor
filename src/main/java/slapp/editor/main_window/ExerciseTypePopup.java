@@ -15,10 +15,13 @@ You should have received a copy of the GNU General Public License along with SLA
 
 package slapp.editor.main_window;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
@@ -27,11 +30,22 @@ import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import javafx.scene.layout.*;
 
+/**
+ * Create pop-up window for user to select an {@link slapp.editor.main_window.ExerciseType}.
+ * Usually for the purpose of creating a new exercise of that type.
+ */
 public class ExerciseTypePopup {
     private static ExerciseType selectedItem = null;
     private static ExerciseType lastSelectedItem = null;
 
+    private static Stage stage;
 
+
+    /**
+     * Display window with ListView of exercise types, and return the one selected by the user.
+     *
+     * @return the exercise type
+     */
     public static ExerciseType getType() {
 
         ListView<ExerciseType> typeList = new ListView();
@@ -56,13 +70,26 @@ public class ExerciseTypePopup {
                     tooltip.setText(type.getDescription());
                     tooltip.setStyle("-fx-font-size: 12");
                     setTooltip(tooltip);
+
+                    setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                                if (mouseEvent.getClickCount() == 2) {
+                                    ExerciseType selection = typeList.getSelectionModel().getSelectedItem();
+                                    selectedItem = selection;
+                                    lastSelectedItem = selection;
+                                    stage.close();
+
+                                }
+                            }
+                        }
+
+                    });
                 }
             }
 
         });
-
-
-
 
         Button selectButton = new Button("Select");
         Button cancelButton = new Button("Cancel");
@@ -87,7 +114,7 @@ public class ExerciseTypePopup {
 
         StackPane pane = new StackPane(titledBox);
         Scene scene = new Scene(pane);
-        Stage stage = new Stage();
+        stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Exercise Type");
 

@@ -23,8 +23,15 @@ import java.util.LinkedList;
  * @param <T> The type of items included in the list (usually exercise models)
  */
 public class UndoRedoList<T> extends LinkedList<T> {
-    private int maxSize;
+
+    /*
+    The currentIndex is a pointer to the current snapshot.  Undo increments the pointer down the list,
+    redo decrements it back up.  Push cleans off items up to the pointer, and places a new item on the top.  If a
+    push increases size beyond the maximum, the bottom element is removed.
+     */
     private int currentIndex = 0;
+    private int maxSize;
+
 
     /**
      * Constructor for list with parameter for maximum size.
@@ -46,13 +53,19 @@ public class UndoRedoList<T> extends LinkedList<T> {
         for (int i = 0; i < currentIndex; i++) {
             this.removeFirst();
         }
+        currentIndex = 0;
+        this.addFirst(element);
+
         while (this.size() >= maxSize) {
             this.removeLast();
         }
-        currentIndex = 0;
-        this.addFirst(element);
     }
 
+    /**
+     * Undo element is next element down the list
+     *
+     * @return undo element
+     */
     public T getUndoElement() {
         T element = null;
         if (currentIndex + 1 < this.size()) {
@@ -62,6 +75,11 @@ public class UndoRedoList<T> extends LinkedList<T> {
         return element;
     }
 
+    /**
+     * Redo element is previous item in the list
+     *
+     * @return redo element
+     */
     public T getRedoElement() {
         T element = null;
         if (currentIndex > 0) {
@@ -69,20 +87,28 @@ public class UndoRedoList<T> extends LinkedList<T> {
             element = this.get(currentIndex);
         }
         return element;
-
     }
 
+    /**
+     * canRedo if there is a previous item in the list
+     *
+     * @return true if canRedo and otherwise false
+     */
     public boolean canRedo() {
         boolean canRedo = true;
         if (currentIndex <= 0) canRedo = false;
         return canRedo;
     }
 
+    /**
+     * canUndo if there is a next item in the list
+     *
+     * @return true if canUndo and otherwise false
+     */
     public boolean canUndo() {
         boolean canUndo = false;
         if (currentIndex + 1 < this.size()) canUndo = true;
         return canUndo;
     }
-
 
 }

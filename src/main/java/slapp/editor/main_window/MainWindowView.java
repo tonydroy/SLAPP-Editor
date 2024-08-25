@@ -49,6 +49,11 @@ import javax.xml.stream.EventFilter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * View for the main SLAPP window.  View has border pane with menu bar and toolbars on top, exercise content in
+ * center, the main exercise control on the left, supplementary exercise control on the right (in the current
+ * version, just for the free-form exercise), and footer information on the bottom.
+ */
 public class MainWindowView {
     private Stage stage = EditorMain.mainStage;
     private MainWindow mainWindow;
@@ -61,7 +66,6 @@ public class MainWindowView {
     private double scale = 1.0;
     MenuBar menuBar;
     private VBox topBox = new VBox();
-
     private Pane spacerPane;
     private ScrollPane centerPane;
     private StackPane centerStackPane;
@@ -82,7 +86,6 @@ public class MainWindowView {
     private Node rightControlNode;
     private VBox statusBar;
     private HBox upperStatusBox;
-
     private FlowPane lowerStatusPane;
     HBox centerHBox;
     private Button saveButton;
@@ -90,18 +93,13 @@ public class MainWindowView {
     private Spinner<Double> horizontalSizeSpinner;
     private CheckBox vWindowCheck;
     private Spinner<Double> verticalSizeSpinner;
-
     private ChangeListener verticalListener;
     private ChangeListener horizontalListener;
-
     private RichTextArea dummyRTA;
     private Group dummyRoot;
     private Scene dummyScene;
     private Stage dummyStage;
     private RichTextAreaSkin dummyRTASkin;
-
-
-
     private MenuItem createNewExerciseItem = new MenuItem("Create New");
     private MenuItem createRevisedExerciseItem = new MenuItem("Create Revised");
     private MenuItem saveExerciseItem = new MenuItem("Save");
@@ -126,13 +124,9 @@ public class MainWindowView {
     private MenuItem pageSetupItem = new MenuItem("Page Setup");
     private MenuItem exportSetupItem = new MenuItem("Export Setup");
     private MenuItem scaleSetupItem = new MenuItem("Scale Setup");
-
-
-
     private MenuItem commonElementsTextItem;
     private MenuItem contextualTextItem;
     private MenuItem aboutItem;
-
     private MenuItem quickStartItem;
     private MenuItem slappEditorItem;
     private MenuItem verticalTreeItem;
@@ -152,15 +146,6 @@ public class MainWindowView {
     public static TextField txtHeightIndicator;
     DoubleProperty scalePageHeight = new SimpleDoubleProperty();
     DoubleProperty scalePageWidth = new SimpleDoubleProperty();
-
-
-
-
-
-
-
-
-
 
 
 
