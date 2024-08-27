@@ -31,7 +31,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
@@ -41,7 +40,6 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
@@ -97,6 +95,7 @@ public class TruthTableCreate {
     private Button saveAsButton;
     private BoxedDRTA focusedBoxedDRTA;
     private ToolBar sizeToolBar;
+    private DecoratedRTA dummyDRTA = new DecoratedRTA();
 
 
     public TruthTableCreate(MainWindow mainWindow) {
@@ -160,6 +159,10 @@ public class TruthTableCreate {
             }
         };
         nameField.textProperty().addListener(nameListener);
+        nameField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
         HBox nameBox = new HBox(10, nameLabel, nameField);
         nameBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -352,14 +355,14 @@ public class TruthTableCreate {
         upperFieldsBox.setPadding(new Insets(20, 0, 20, 20));
 
         //center area
-        String helpText = "Truth Table Explain Exercise is like Truth Table Exercise except that it requests a choice between some mutually exclusive options (as valid/invalid) along with a short explanation.\n\n" +
-                "For the Truth Table Explain exercise, supply the exercise name and exercise statement.  The Checkbox lead appears prior to the check boxes, the A prompt with the first box, and the B prompt with the second.  " +
+        String helpText = "Truth Table Exercise is appropriate for any exercise that requires a truth table as response.\n\n" +
+                "For the Truth Table exercise, supply the exercise name and exercise statement.  " +
                 "The preset operator buttons set operators according to the official and abbreviating languages from Symbolic Logic; alternatively, you may edit sentential operator symbols individually. " +
                 "Finally supply formulas to appear across the top of the truth table (not including the base column).  The \"conclusion divider\" merely inserts an extra space and slash ('/') prior to the last formula." ;
 
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(180);
+        helpArea.setPrefHeight(140);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
@@ -430,7 +433,7 @@ public class TruthTableCreate {
         stage.getIcons().addAll(EditorMain.icons);
         stage.setWidth(860);
         stage.setMinWidth(860);
-        stage.setHeight(860);
+        stage.setHeight(900);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.initModality(Modality.WINDOW_MODAL);
@@ -719,50 +722,51 @@ public class TruthTableCreate {
         return model;
     }
 
-
-
-
-
     void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
+
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
         keyboardDiagram.initialize(decoratedRTA);
         if (keyboardDiagram.isShowing()) {
             keyboardDiagram.updateAndShow();
         }
 
-        editToolbar = decoratedRTA.getEditToolbar();
-        fontsToolbar = decoratedRTA.getFontsToolbar();
-        paragraphToolbar = decoratedRTA.getParagraphToolbar();
-        kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
+        ToolBar editToolbar = decoratedRTA.getKbdSelectorToolbar();
+        ToolBar fontsToolbar = decoratedRTA.getEditToolbar();
+        ToolBar paragraphToolbar = decoratedRTA.getParagraphToolbar();
+        ToolBar kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
         kbdDiaToolBar.setPrefHeight(38);
 
-        if (kbdDiaToolBar.getItems().isEmpty()) {
-
-            kbdDiaToolBar.getItems().addAll(decoratedRTA.getKeyboardDiagramButton());
-
-            switch (control) {
-                case NONE: {
-                    kbdDiaToolBar.setDisable(true);
-                }
-                case STATEMENT: {
-                    editToolbar.setDisable(true);
-                    fontsToolbar.setDisable(true);
-                }
-                case FIELD: {
-                    paragraphToolbar.setDisable(true);
-                }
-                case AREA: { }
+        switch (control) {
+            case NONE: {
+                kbdDiaToolBar.setDisable(true);
             }
+            case STATEMENT: {
+                editToolbar.setDisable(true);
+                fontsToolbar.setDisable(true);
+            }
+            case FIELD: {
+                paragraphToolbar.setDisable(true);
+            }
+            case AREA: { }
         }
+        sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
+
 
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
         editAndKbdBox.layout();
 
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, upperFieldsBox);
-//        topBox.layout();
-        borderPane.topProperty().setValue(topBox);
 
+
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, upperFieldsBox);
+        borderPane.topProperty().setValue(topBox);
     }
+
+    public void textFieldInFocus() {
+        editorInFocus(dummyDRTA, ControlType.STATEMENT);
+    }
+
+
+
 
 }

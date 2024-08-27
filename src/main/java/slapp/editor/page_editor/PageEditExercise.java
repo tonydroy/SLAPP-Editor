@@ -157,10 +157,7 @@ public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
             }
         });
         editView.addBlankContentPage(newPageIndex, drta);
-        Platform.runLater(() -> {
-            mainView.updateContentWidthProperty();
-            mainView.updateContentHeightProperty();
-        });
+
     }
 
     private void removePageAction() {
@@ -179,10 +176,7 @@ public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
                 editModel.getPageContents().remove(currentPageIndex);
                 editView.removeContentPage(currentPageIndex);
                 exerciseModified = true;
-                Platform.runLater(() -> {
-                    mainView.updateContentWidthProperty();
-                    mainView.updateContentHeightProperty();
-                });
+
             }
         }
     }

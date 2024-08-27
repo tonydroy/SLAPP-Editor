@@ -41,6 +41,7 @@ import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
+import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
 import slapp.editor.page_editor.PageContent;
 
@@ -83,6 +84,11 @@ public class ABEFGcreate {
     private Button saveAsButton;
     private ToolBar sizeToolBar;
 
+    private DecoratedRTA dummyDRTA = new DecoratedRTA();
+    private MenuBar menuBar;
+    private HBox gridBox;
+    private BorderPane borderPane;
+
 
     public ABEFGcreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -118,11 +124,11 @@ public class ABEFGcreate {
     }
 
     private void setupWindow() {
-        BorderPane borderPane = new BorderPane();
+        borderPane = new BorderPane();
 
         //empty bar for consistent look
         Menu helpMenu = new Menu("");
-        MenuBar menuBar = new MenuBar(helpMenu);
+        menuBar = new MenuBar(helpMenu);
 
         statementDRTA = new DecoratedRTA();
         statementRTA = statementDRTA.getEditor();
@@ -137,6 +143,14 @@ public class ABEFGcreate {
             statementTextHeight = mainWindow.getMainView().getRTATextHeight(statementRTA);
         });
 
+        statementRTA.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) {
+                editorInFocus(statementDRTA, ControlType.AREA);
+            }
+        });
+
+        //TODO there is an awful lot of duplicated code in here!
+
         Label nameLabel = new Label("Exercise Name: ");
         nameField  = new TextField();
         nameField.setPromptText("(plain text)");
@@ -148,6 +162,10 @@ public class ABEFGcreate {
             }
         };
         nameField.textProperty().addListener(nameListener);
+
+        nameField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
 
         Label leaderLabelAB = new Label("AB Checkbox Lead: ");
         leaderABfield = new TextField();
@@ -161,6 +179,10 @@ public class ABEFGcreate {
         };
         leaderABfield.textProperty().addListener(leaderListenerAB);
 
+        leaderABfield.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
         Label promptLabelA = new Label("A Prompt: ");
         promptFieldA = new TextField();
         promptFieldA.setPromptText("(plain text)");
@@ -172,6 +194,10 @@ public class ABEFGcreate {
             }
         };
         promptFieldA.textProperty().addListener(fieldListenerA);
+
+        promptFieldA.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
 
         Label promptLabelB = new Label("B Prompt: ");
         promptFieldB = new TextField();
@@ -185,6 +211,10 @@ public class ABEFGcreate {
         };
         promptFieldB.textProperty().addListener(fieldListenerB);
 
+        promptFieldB.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
         Label leaderLabelEFG = new Label("EFG Checkbox Lead: ");
         leaderEFGfield = new TextField();
         leaderEFGfield.setPromptText("(plain text)");
@@ -196,6 +226,10 @@ public class ABEFGcreate {
             }
         };
         leaderEFGfield.textProperty().addListener(leaderListenerEFG);
+
+        leaderEFGfield.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
 
         Label promptLabelE = new Label("E Prompt: ");
         promptFieldE = new TextField();
@@ -209,6 +243,10 @@ public class ABEFGcreate {
         };
         promptFieldE.textProperty().addListener(fieldListenerE);
 
+        promptFieldE.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
         Label promptLabelF = new Label("F Prompt: ");
         promptFieldF = new TextField();
         promptFieldF.setPromptText("(plain text)");
@@ -221,6 +259,10 @@ public class ABEFGcreate {
         };
         promptFieldF.textProperty().addListener(fieldListenerF);
 
+        promptFieldF.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
         Label promptLabelG = new Label("G Prompt: ");
         promptFieldG = new TextField();
         promptFieldG.setPromptText("(plain text)");
@@ -232,6 +274,10 @@ public class ABEFGcreate {
             }
         };
         promptFieldG.textProperty().addListener(fieldListenerG);
+
+        promptFieldG.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
 
 
         Label explainPromptLabel = new Label("Explain prompt: ");
@@ -247,6 +293,10 @@ public class ABEFGcreate {
         };
         explainPromptField.textProperty().addListener(explainPromptListener);
 
+        explainPromptField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
 
 
 
@@ -259,7 +309,7 @@ public class ABEFGcreate {
         checkboxPane.setHgap(10);
         checkboxPane.setVgap(10);
 
-        HBox gridBox = new HBox(checkboxPane);
+        gridBox = new HBox(checkboxPane);
         gridBox.setAlignment(Pos.CENTER);
 
 
@@ -331,16 +381,12 @@ public class ABEFGcreate {
         sizeToolBar.setPrefHeight(38);
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
 
-
-        ToolBar editToolbar = statementDRTA.getEditToolbar();
-        ToolBar fontsToolbar = statementDRTA.getFontsToolbar();
+/*
+        ToolBar editToolbar = statementDRTA.getKbdSelectorToolbar();
+        ToolBar fontsToolbar = statementDRTA.getEditToolbar();
         ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
         ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
         kbdDiaToolBar.setPrefHeight(38);
-
-        if (kbdDiaToolBar.getItems().isEmpty()) {
-            kbdDiaToolBar.getItems().addAll(statementDRTA.getKeyboardDiagramButton());
-        }
 
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
@@ -352,6 +398,8 @@ public class ABEFGcreate {
 
         borderPane.setTop(topBox);
 
+ */
+
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
@@ -360,6 +408,7 @@ public class ABEFGcreate {
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.setWidth(860);
+        stage.setHeight(850);
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setOnCloseRequest(e-> {
             e.consume();
@@ -473,6 +522,50 @@ public class ABEFGcreate {
         ABEFGmodel model = new ABEFGmodel(name, fields,  false, prompt, statementPrefHeight, statementDocument, commentDoc, new ArrayList<PageContent>());
         model.setStatementTextHeight(statementTextHeight);
         return model;
+    }
+
+    void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
+
+        KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
+        keyboardDiagram.initialize(decoratedRTA);
+        if (keyboardDiagram.isShowing()) {
+            keyboardDiagram.updateAndShow();
+        }
+
+        ToolBar editToolbar = decoratedRTA.getKbdSelectorToolbar();
+        ToolBar fontsToolbar = decoratedRTA.getEditToolbar();
+        ToolBar paragraphToolbar = decoratedRTA.getParagraphToolbar();
+        ToolBar kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
+        kbdDiaToolBar.setPrefHeight(38);
+
+        switch (control) {
+            case NONE: {
+                kbdDiaToolBar.setDisable(true);
+            }
+            case STATEMENT: {
+                editToolbar.setDisable(true);
+                fontsToolbar.setDisable(true);
+            }
+            case FIELD: {
+                paragraphToolbar.setDisable(true);
+            }
+            case AREA: { }
+        }
+        sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
+
+
+        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
+        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
+        editAndKbdBox.layout();
+
+
+
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, gridBox);
+        borderPane.topProperty().setValue(topBox);
+    }
+
+    public void textFieldInFocus() {
+        editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
 
 }

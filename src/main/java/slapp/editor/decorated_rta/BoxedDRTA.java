@@ -22,11 +22,19 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
+/**
+ * DecoratedRTA and HBox with editor as member.  The RTA is very hard to focus by mouse when it is formatted like
+ * a text field (with a single text line).  The boxedDRTA puts the RTA in an HBox and lets a mouse event on the
+ * box focus the RTA.
+ */
 public class BoxedDRTA {
 
-    DecoratedRTA drta;
-    HBox boxedRTA;
+    private DecoratedRTA drta;
+    private HBox boxedRTA;
 
+    /**
+     * Set up the new DecoratedRTA and corresponding boxedRTA
+     */
     public BoxedDRTA() {
         drta = new DecoratedRTA();
         RichTextArea rta = drta.getEditor();
@@ -41,14 +49,25 @@ public class BoxedDRTA {
     }
 
 
-
+    /**
+     * The decorated RTA created the constructor
+     * @return the decoratedRTA
+     */
     public DecoratedRTA getDRTA() {
         return drta;
     }
 
+    /**
+     * The boxedRTA derived from the DecoratedRTA
+     * @return the boxedRTA
+     */
     public HBox getBoxedRTA() {
         return boxedRTA;
     }
 
+    /**
+     * The RTA derived from the DecoratedRTA
+     * @return the RTA
+     */
     public RichTextArea getRTA() {return drta.getEditor(); }
 }

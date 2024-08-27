@@ -15,9 +15,18 @@ You should have received a copy of the GNU General Public License along with SLA
 
 package slapp.editor;
 
+/**
+ * Send email by native email client
+ */
 public class MailHelper {
-    public static void generate(String receiver, String subject, String body) {
 
+    /**
+     * Open the email client
+     * @param receiver message address to
+     * @param subject message subject
+     * @param body message body
+     */
+    public static void generate(String receiver, String subject, String body) {
         try {
             //Open mail client with "receiver", "subject", "message"
             composeEmail(receiver, subject, body);
@@ -28,7 +37,8 @@ public class MailHelper {
         }
     }
 
-    public static void composeEmail(String receiver, String subject, String body) throws Exception {
+
+    private static void composeEmail(String receiver, String subject, String body) throws Exception {
         //Generating mailto-URI. Subject and body (message) has to encoded.
         String mailto = "mailto:" + receiver;
         mailto += "?subject=" + uriEncode(subject);
@@ -51,6 +61,11 @@ public class MailHelper {
 
     }
 
+    /**
+     * replace non-alphanumeric characters with escape code
+     * @param in the input string
+     * @return the string with replaced characters
+     */
     private static String uriEncode(String in) {
         String out = new String();
         for (char ch : in.toCharArray()) {

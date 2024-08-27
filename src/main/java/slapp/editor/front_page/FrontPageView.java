@@ -17,27 +17,18 @@ package slapp.editor.front_page;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.model.Document;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
-
-import javax.xml.stream.EventFilter;
 
 /**
  * Simple view including just comment area, to support FrontPageExercise
@@ -92,12 +83,12 @@ public class FrontPageView implements ExerciseView<Label> {
         commentRTA.setStyle("-fx-padding: 5; -fx-background-color: WHITE; -fx-border-width: 2; -fx-border-color: LIGHTGREY; ");
   //      commentRTA.setStyle(".rich-text-area:focused {-fx-padding: 5; -fx-border-width: 2; -fx-border-color: LIGHTBLUE; }");
 
-        exerciseComment.getFontsToolbar().setFocusTraversable(false);
-        exerciseComment.getFontsToolbar().setMouseTransparent(true);
-        exerciseComment.getParagraphToolbar().setFocusTraversable(false);
-        exerciseComment.getParagraphToolbar().setMouseTransparent(true);
         exerciseComment.getEditToolbar().setFocusTraversable(false);
         exerciseComment.getEditToolbar().setMouseTransparent(true);
+        exerciseComment.getParagraphToolbar().setFocusTraversable(false);
+        exerciseComment.getParagraphToolbar().setMouseTransparent(true);
+        exerciseComment.getKbdSelectorToolbar().setFocusTraversable(false);
+        exerciseComment.getKbdSelectorToolbar().setMouseTransparent(true);
         mainView.editorInFocus(exerciseComment, ControlType.NONE);
 
         contentFocusListener = new ChangeListener() {

@@ -24,16 +24,12 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.*;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
@@ -45,14 +41,13 @@ import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.assignment.AssignmentHeader;
 import slapp.editor.main_window.assignment.AssignmentHeaderItem;
 
-import javax.xml.stream.EventFilter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
  * View for the main SLAPP window.  View has border pane with menu bar and toolbars on top, exercise content in
  * center, the main exercise control on the left, supplementary exercise control on the right (in the current
- * version, just for the free-form exercise), and footer information on the bottom.
+ * version, just for the free-form exercise), and footer information at the bottom.
  */
 public class MainWindowView {
     private Stage stage = EditorMain.mainStage;
@@ -87,11 +82,8 @@ public class MainWindowView {
     private VBox statusBar;
     private HBox upperStatusBox;
     private FlowPane lowerStatusPane;
-    HBox centerHBox;
     private Button saveButton;
-    private CheckBox hWindowCheck;
     private Spinner<Double> horizontalSizeSpinner;
-    private CheckBox vWindowCheck;
     private Spinner<Double> verticalSizeSpinner;
     private ChangeListener verticalListener;
     private ChangeListener horizontalListener;
@@ -141,25 +133,27 @@ public class MainWindowView {
     Menu assignmentCommentMenu = new Menu();
     private static Label progressLabel;
     public static ProgressIndicator progressIndicator;
-//    public static Text progressIndicator;
-
     public static TextField txtHeightIndicator;
     DoubleProperty scalePageHeight = new SimpleDoubleProperty();
     DoubleProperty scalePageWidth = new SimpleDoubleProperty();
 
 
-
+    /**
+     * Create the main window view
+     *
+      * @param mainWindow the main window controller
+     */
     public MainWindowView(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
-    private void setupWindow() {
 
+    private void setupWindow() {
+        //The dummy window is used for getting height of RTA text.
         setUpDummyWindow();
 
-
-
+        //menu bars
 
         Menu assignmentMenu = new Menu("Assignment");
         Menu exerciseMenu = new Menu("Exercise");
@@ -214,8 +208,9 @@ public class MainWindowView {
         if (EditorMain.os.startsWith("Mac")) {
             menuBar.setUseSystemMenuBar(true);
         }
-        
  */
+
+        //toolbar items
 
         zoomLabel = new Label(" Zoom ");
         zoomSpinner = new Spinner(25, 500, 100, 5);
@@ -241,84 +236,52 @@ public class MainWindowView {
             saveAsAssignmentItem.setDisable(true);
         }
 
-        hWindowCheck = new CheckBox("Win");
-        hWindowCheck.setTooltip(new Tooltip("Fix width by window"));
-
-
         horizontalSizeSpinner = new Spinner<>(0.0, 999.0, 0.0, 5.0);
         horizontalSizeSpinner.setPrefWidth(60);
         horizontalSizeSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
         horizontalSizeSpinner.setDisable(true);
-
-
-
-        vWindowCheck = new CheckBox("Win");
-        vWindowCheck.setTooltip(new Tooltip("Fix height by window"));
 
         verticalSizeSpinner = new Spinner<>(0.0, 999.0, 0.0, 5.0);
         verticalSizeSpinner.setPrefWidth(60);
         verticalSizeSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         verticalSizeSpinner.setDisable(true);
 
-
-
-
-
-        progressLabel = new Label("");
-//        progressLabel.setTextFill(Color.RED);
-//        progressLabel.setVisible(false);
-
-/*
-        progressIndicator = new Text("\uf110");
-        progressIndicator.setFill(Color.DEEPSKYBLUE);
-        progressIndicator.setStyle("-fx-font:  28 la-solid-900");
-        progressIndicator.setVisible(false);
-
- */
         txtHeightIndicator = new TextField("100");
         txtHeightIndicator.setPrefWidth(40);
         txtHeightIndicator.setDisable(true);
 
-
-
-
-
-
+        progressLabel = new Label("");
         progressIndicator = new ProgressIndicator();
         progressIndicator.setPrefWidth(25);
         progressIndicator.setPrefHeight(25);
         progressIndicator.setVisible(false);
 
-
-
-
-
         sizeToolBar.setStyle("-fx-spacing: 10");
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label(" T Ht:"), txtHeightIndicator,  new Label("V Sz:"), verticalSizeSpinner,
                 new Label("H Sz:"), horizontalSizeSpinner, new Label(" "), saveButton, progressIndicator);
-
         sizeToolBar.setPrefHeight(38);
 
 
-
-
-
+        //center
 
         centerBox = new VBox();
         centerBox.setSpacing(3);
-//        centerBox.setStyle("-fx-border-color: red");
-
 
         /*
+        The natural way to have scrolling (together with the ability to scale) is to have content including the RTA wrapped
+        in a group and then the group in a scroll pane.  This causes exceptions in the RTA:
+
         When the centerPane has the new Group(centerHBox) as member, zoom works as one would expect - the scroll pane
         responds to the layout bounds of the scaled group.  But, in this case, RTA crashes two ways: Typing any char
         results in ConcurrentModificationException (from ParagraphTile 352). And if the window is dragged with
         HSize Win checked there is a NullPointerException (from ParagraphTile 202).  There are no exceptions when
         the scroll pane has just center box -- but then zoom doesn't generate properly scroll bars.
 
-        For the current solution, see comment in ScrollPaneTest
+        So: Take a group containing a 'dummy' pane whose height and width are bound to those of content including the RTA as a
+        member; put both the group and the content onto an AnchorPane, and the anchor pane into the scroll pane.  Scaling
+        applies equally to the dummy pane and to the content. Then the scroll pane can go into the center of a border pane
+        or whatever.  This seems to work!
      */
-
 
         spacerPane = new Pane();
         spacerPane.prefHeightProperty().bind(centerBox.heightProperty());
@@ -328,30 +291,11 @@ public class MainWindowView {
 
         centerPane = new ScrollPane(comboPane);
 
-//        centerBox.setStyle("-fx-border-color: red; -fx-background-color: red; -fx-border-width: 3");
-
-
-
-
-
-
-//        centerPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-//        centerPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-//        centerPane.setStyle("-fx-background-color: transparent");
-
         borderPane.setCenter(centerPane);
         borderPane.setMargin(centerPane, new Insets(10,0,0,0));
         borderPane.getCenter().setStyle("-fx-background-color: transparent");
 
-
-
-
-
-
-
-
-
-
+        //bottom
 
         statusBar = new VBox(5);
         upperStatusBox = new HBox(40);
@@ -362,10 +306,12 @@ public class MainWindowView {
         statusBar.getChildren().addAll(upperStatusBox, lowerStatusPane);
         borderPane.setBottom(statusBar);
 
+        //sides
+
         borderPane.setLeft(leftControlNode);
         borderPane.setRight(rightControlNode);
 
-  //      borderPane.setTop(menuBar);
+        //window
 
         mainScene = new Scene(borderPane);
         mainScene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
@@ -386,25 +332,23 @@ public class MainWindowView {
             closeWindow();
         });
 
-//        stage.setIconified(false);
         stage.show();
-
-
-
-
     }
 
-
-
-
-    public void setupDummyWindowRTASize() {
+    /**
+     * Set the size of the dummy window as a function of the scale and paper size
+     */
+    void setupDummyWindowRTASize() {
         dummyRTA.prefHeightProperty().bind(Bindings.multiply(scalePageHeight, 5.0));
         dummyRTA.prefWidthProperty().bind(scalePageWidth);
     }
+
+    /*
+     * The dummy window contains an RTA upon which text may be "measured"
+     */
     private void setUpDummyWindow() {
         dummyRTA = new RichTextArea(EditorMain.mainStage);
         dummyRTA.getStylesheets().add("slappTextArea.css");
-
 
         dummyRoot = new Group();
         dummyRoot.getChildren().add(dummyRTA);
@@ -423,6 +367,13 @@ public class MainWindowView {
         dummyRTASkin = ((RichTextAreaSkin) dummyRTA.getSkin());
     }
 
+    /**
+     * Use the dummy window to extract RTA text height
+     *
+     * @param rta the RichTextArea
+     *
+     * @return height of text in RTA
+     */
     public double getRTATextHeight(RichTextArea rta) {
         rta.getActionFactory().saveNow().execute(new ActionEvent());
         Document doc = rta.getDocument();
@@ -436,13 +387,19 @@ public class MainWindowView {
         return height;
     }
 
+    /**
+     * Set (reset) the left control of the border pane
+     *
+     * @param leftControl the left control node for an exercise
+     */
     public void setUpLeftControl(Node leftControl) {
         borderPane.setLeft(leftControl);
     }
 
+    /**
+     * Set an exercise on the main view
+     */
     public void setupExercise() {
-
-
         this.currentExerciseView = (ExerciseView) mainWindow.getCurrentExercise().getExerciseView();
         this.statementNode = currentExerciseView.getExerciseStatementNode();
         this.contentNode = currentExerciseView.getExerciseContentNode();
@@ -451,52 +408,32 @@ public class MainWindowView {
         this.leftControlNode = currentExerciseView.getExerciseControl();
         this.rightControlNode = currentExerciseView.getRightControl();
 
-//        this.contentWidthProperty = currentExerciseView.getContentWidthProperty();
-
- //       statementNode.minHeight(currentExerciseView.getStatementHeight());
- //       commentNode.minHeight(currentExerciseView.getCommentHeight());
-
-
         //this prevents scrollpane from jumping to top (esp in derivations)
         commentNode.setFocusTraversable(false);
 
         centerBox.getChildren().clear();
         centerBox.getChildren().addAll(commentNode, statementNode, contentNode);
 
-
-
-
-
-
-
- //       centerBox.setVgrow(contentNode, Priority.ALWAYS);
-
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         upperStatusBox.getChildren().clear();
         lowerStatusPane.getChildren().clear();
 
         upperStatusBox.getChildren().add(new Label("Exercise: " + ((ExerciseModel) mainWindow.getCurrentExercise().getExerciseModel()).getExerciseName()));
- //       upperStatusBox.getChildren().add(new Label("Exercise: " + currentExerciseView.getExerciseName()));
         lowerStatusPane.getChildren().add(new Label("Date: " + dtf.format(LocalDateTime.now())));
 
         borderPane.setLeft(leftControlNode);
         borderPane.setRight(rightControlNode);
 
-
-
-//        borderPane.setTop(menuBar);
-
-
-
         centerBox.layout();
-
-
-
-
-
         Platform.runLater(() -> contentNode.requestFocus());
     }
 
+    /**
+     * Udate (reset) size spinners for active window
+     *
+     * @param height the height spinner
+     * @param width the width spinner
+     */
     public void updateSizeSpinners(Spinner<Double> height, Spinner<Double> width) {
         sizeToolBar.getItems().remove(5);
         sizeToolBar.getItems().add(5, height);
@@ -504,61 +441,29 @@ public class MainWindowView {
         sizeToolBar.getItems().add(7, width);
     }
 
-
-
-
-
+    /**
+     * Deactivate (hide) the progress indicator
+     */
     public static void deactivateProgressIndicator() {
         progressLabel.setVisible(false);
         progressIndicator.setVisible(false);
     }
+
+    /**
+     * Activate (show) the progress indicator
+     *
+     * @param text to indicate progress item
+     */
     public static void activateProgressIndicator(String text) {
         progressLabel.setText(text);
         progressIndicator.setVisible(true);
         progressLabel.setVisible(true);
     }
 
-
-
-    public void updateContentHeightProperty() {
-
-    }
-
-    public void updateContentWidthProperty() {
-
-    }
-
-    public void updateExerciseHeight() {
-
-    }
-
-    public void updateWindowV() {
-
-    }
-    public void updateCustomV() {
-
-    }
-
-
-
-    public void updateExerciseWidth() {
-
-    }
-    public void updateWindowH(){
-
-    }
-    public void updateCustomH(){
-
-    }
-
-
-
-    public void setCenterHgrow() {
-
-    }
-
-
-    public void setUpLowerAssignmentBar() {
+    /**
+     * Update lower assignment bar based on current exercise and/or assignment
+     */
+    void setUpLowerAssignmentBar() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         upperStatusBox.getChildren().clear();
         lowerStatusPane.getChildren().clear();
@@ -569,7 +474,6 @@ public class MainWindowView {
         upperStatusBox.getChildren().addAll(new Label("Student Name: " + header.getStudentName()),
                 new Label("Assignment: " + header.getAssignmentName()),
                 new Label("Exercise: " + ((ExerciseModel) mainWindow.getCurrentExercise().getExerciseModel()).getExerciseName() + " (" + exerciseNum + "/" + mainWindow.getCurrentAssignment().getExerciseModels().size() + ")"),
- //               new Label("Exercise: " + currentExerciseView.getExerciseName() + " (" + exerciseNum + "/" + mainWindow.getCurrentAssignment().getExerciseModels().size() + ")"),
                 new Label("ID: " + header.getCreationID() + "-" + header.getWorkingID()) );
         lowerStatusPane.getChildren().add(new Label("Date: " + dtf.format(LocalDateTime.now())));
         for (int i = 0; i < header.getInstructorItems().size(); i++) {
@@ -580,12 +484,15 @@ public class MainWindowView {
             AssignmentHeaderItem headerItem = header.getStudentItems().get(i);
             lowerStatusPane.getChildren().add(new Label( headerItem.getLabel() + ": " + headerItem.getValue()));
         }
-
     }
 
 
-
-    public void updateZoom(int zoom) {
+    /*
+     * Apply zoom setting
+     *
+     * @param zoom integer percentage
+     */
+    private void updateZoom(int zoom) {
         scale = (double)zoom/100.0;
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
@@ -597,13 +504,16 @@ public class MainWindowView {
         centerBox.getTransforms().add(new Scale(scale, scale));
         spacerPane.getTransforms().clear();
         spacerPane.getTransforms().add(new Scale(scale, scale));
-
     }
 
 
+    /**
+     * Set toolbars with controls for currently focused RTA
+     *
+     * @param decoratedRTA the focused RTA
+     * @param control The {@link slapp.editor.main_window.ControlType} for this RTA instance
+     */
     public void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
-
-
 
         lastFocusedDRTA = decoratedRTA;
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
@@ -612,55 +522,47 @@ public class MainWindowView {
             keyboardDiagram.updateAndShow();
         }
 
-        editToolbar = decoratedRTA.getEditToolbar();
-        fontsToolbar = decoratedRTA.getFontsToolbar();
+        editToolbar = decoratedRTA.getKbdSelectorToolbar();
+        fontsToolbar = decoratedRTA.getEditToolbar();
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
         kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
         editToolbar.setPrefHeight(38);
+        kbdDiaToolBar.setPrefHeight(38);
 
-//        if (kbdDiaToolBar.getItems().isEmpty()) {
-//            kbdDiaToolBar.getItems().add(decoratedRTA.getKeyboardDiagramButton());
-            kbdDiaToolBar.setPrefHeight(38);
-
-            switch (control) {
-                case NONE: {
-                    kbdDiaToolBar.setDisable(true);
-                }
-                case STATEMENT: {
-                    editToolbar.setDisable(true);
-                    fontsToolbar.setDisable(true);
-                }
-                case FIELD: {
-                    paragraphToolbar.setDisable(true);
-                }
-                case AREA: { }
+        //this "cascades" disable requests starting from the control type -- so if NONE, all are disabled, etc.
+        switch (control) {
+            case NONE: {
+                kbdDiaToolBar.setDisable(true);
             }
-
-            sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
-//        }
+            case STATEMENT: {
+                editToolbar.setDisable(true);
+                fontsToolbar.setDisable(true);
+            }
+            case FIELD: {
+                paragraphToolbar.setDisable(true);
+            }
+            case AREA: { }
+        }
+        sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
 
         HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar, sizeToolBar);
-
         editAndKbdBox.setHgrow(sizeToolBar, Priority.ALWAYS);
-
-
-
-
         topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox);
         topBox.layout();
 
         borderPane.topProperty().setValue(topBox);
-
-
-
-
-
     }
 
+    /**
+     * If a non-RTA text field is in focus, disable all but the kbdDiaToolBar
+     */
     public void textFieldInFocus() {
             editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
 
+    /*
+     * Close the main window view
+     */
     private void closeWindow() {
         if (mainWindow.checkCloseWindow()) {
             KeyboardDiagram.getInstance().close();
@@ -669,7 +571,12 @@ public class MainWindowView {
         }
     }
 
-    public VBox getAssignmentHeader() {
+    /**
+     * Get print/export assignment header
+     *
+     * @return VBox header node
+     */
+    VBox getAssignmentHeader() {
         VBox headerBox = new VBox(10);
         AssignmentHeader header = mainWindow.getCurrentAssignment().getHeader();
 
@@ -711,220 +618,408 @@ public class MainWindowView {
         return headerBox;
     }
 
-    public void setCurrentExerciseView(ExerciseView currentExerciseView) {
-        this.currentExerciseView = currentExerciseView;
-    }
 
-
-    public Spinner<Integer> getZoomSpinner() {
-        return zoomSpinner;
-    }
-
-    public Button getSaveButton() {
+     /**
+     * Button to save exercise/assignment
+     *
+     * @return the button
+     */
+    Button getSaveButton() {
         return saveButton;
     }
 
-    public MenuItem getSaveExerciseItem() {
+    /**
+     * Menu item to save current exercise
+     *
+     * @return the menu item
+     */
+    MenuItem getSaveExerciseItem() {
         return saveExerciseItem;
     }
 
-    public MenuItem getSaveAsExerciseItem() {
+    /**
+     * Menu item to save current exercise as
+     *
+     * @return the menu item
+     */
+    MenuItem getSaveAsExerciseItem() {
         return saveAsExerciseItem;
     }
 
-    public MenuItem getSaveAssignmentItem() {
+    /**
+     * Menu item to save current assignment
+     *
+     * @return the menu item
+     */
+    MenuItem getSaveAssignmentItem() {
         return saveAssignmentItem;
     }
 
-    public MenuItem getSaveAsAssignmentItem() {
+    /**
+     * Menu item to save current assignment as
+     *
+     * @return the menu item
+     */
+    MenuItem getSaveAsAssignmentItem() {
         return saveAsAssignmentItem;
     }
 
-    public MenuItem getOpenExerciseItem() {
+    /**
+     * Menu item to open an exercise
+     *
+     * @return the menu item
+     */
+    MenuItem getOpenExerciseItem() {
         return openExerciseItem;
     }
 
-    public MenuItem getCreateNewAssignmentItem() {
+    /**
+     * Menu item to create a new assignment
+     *
+     * @return the menu item
+     */
+    MenuItem getCreateNewAssignmentItem() {
         return createNewAssignmentItem;
     }
 
-    public MenuItem getOpenAssignmentItem() {
+    /**
+     * Menu item to open an assignment
+     *
+     * @return the menu item
+     */
+    MenuItem getOpenAssignmentItem() {
         return openAssignmentItem;
     }
 
-    public MenuItem getClearExerciseItem() {
+    /**
+     * Menu item to clear an exercise
+     *
+     * @return the menu item
+     */
+    MenuItem getClearExerciseItem() {
         return clearExerciseItem;
     }
 
-    public MenuItem getCreateNewExerciseItem() {
+    /**
+     * Menu item to create a new exercise
+     *
+     * @return the menu item
+     */
+    MenuItem getCreateNewExerciseItem() {
         return createNewExerciseItem;
     }
 
-    public MenuItem getCreateRevisedExerciseItem() {
+    /**
+     * Menu item to create a revised exercise
+     *
+     * @return the menu item
+     */
+    MenuItem getCreateRevisedExerciseItem() {
         return createRevisedExerciseItem;
     }
 
-    public MenuItem getPrintExerciseItem() {
+    /**
+     * Menu item to print the current exercise
+     *
+     * @return the menu item
+     */
+    MenuItem getPrintExerciseItem() {
         return printExerciseItem;
     }
 
-    public MenuItem getExportToPDFExerciseItem() {
+    /**
+     * Menu item to export current exercise to PDF
+     *
+     * @return the menu item
+     */
+    MenuItem getExportToPDFExerciseItem() {
         return exportToPDFExerciseItem;
     }
 
-    public MenuItem getCloseExerciseItem() {
+    /**
+     * Menu item to close current exercise
+     *
+     * @return the menu item
+     */
+    MenuItem getCloseExerciseItem() {
         return closeExerciseItem;
     }
 
-    public MenuItem getPageSetupItem() {
+    /**
+     * Menu item to open page setup window
+     *
+     * @return the menu item
+     */
+    MenuItem getPageSetupItem() {
         return pageSetupItem;
     }
 
+    /**
+     * Menu item to print exercise (from print menu)
+     *
+     * @return the menu item
+     */
+    MenuItem getPrintExerciseItemPM() {
+        return printExerciseItemPM;
+    }
+
+    /**
+     * Menu item to export exercise to PDF (from print menu)
+     *
+     * @return the menu item
+     */
+    MenuItem getExportExerciseToPDFItemPM() {
+        return exportExerciseToPDFItemPM;
+    }
+
+    /**
+     * Menu item to setup the export printer
+     *
+     * @return the menu item
+     */
+    MenuItem getExportSetupItem() {
+        return exportSetupItem;
+    }
+
+    /**
+     * Menu item to open print scale popup
+     *
+     * @return the menu item
+     */
+    MenuItem getScaleSetupItem() {
+        return scaleSetupItem;
+    }
+
+    /**
+     * Menu item to close current assignment
+     *
+     * @return the menu item
+     */
+    MenuItem getCloseAssignmentItem() {
+        return closeAssignmentItem;
+    }
+
+    /**
+     * Menu item to print current assignment
+     *
+     * @return the menu item
+     */
+    MenuItem getPrintAssignmentItem() {
+        return printAssignmentItem;
+    }
+
+    /**
+     * Menu item to create revise assignment
+     *
+     * @return the menu item
+     */
+    MenuItem getCreateRevisedAssignmentItem() {
+        return createRevisedAssignmentItem;
+    }
+
+    /**
+     * Menu item to export current assignment to PDF
+     *
+     * @return the menu item
+     */
+    MenuItem getExportAssignmentToPDFItem() {
+        return exportAssignmentToPDFItem;
+    }
+
+    /**
+     * Menu item to print current assignment (from print menu)
+     *
+     * @return the menu item
+     */
+    MenuItem getPrintAssignmentItemPM() {
+        return printAssignmentItemPM;
+    }
+
+    /**
+     * Menu item to
+     *
+     * @return the menu item export current assignment to PDF (from print menu)
+     */
+    MenuItem getExportAssignmentToPDFItemPM() {
+        return exportAssignmentToPDFItemPM;
+    }
+
+    /**
+     * Menu item to open 'general info' help item
+     *
+     * @return the menu item
+     */
+    MenuItem getCommonElementsTextItem() {
+        return commonElementsTextItem;
+    }
+
+    /**
+     * Menu item to
+     *
+     * @return the menu item open contextual help
+     */
+    MenuItem getContextualTextItem() {
+        return contextualTextItem;
+    }
+
+    /**
+     * Menu item to open 'about' help window
+     *
+     * @return the menu item
+     */
+    MenuItem getAboutItem() {
+        return aboutItem;
+    }
+
+    /**
+     * Menu item to open quick start viedeo
+     *
+     * @return the menu item
+     */
+    MenuItem getQuickStartItem() {return quickStartItem; }
+
+    /**
+     * Menu item to open the SLAPP editor help video
+     *
+     * @return the menu item
+     */
+    MenuItem getSlappEditorItem() {
+        return slappEditorItem;
+    }
+
+    /**
+     * Menu item to open the vertical tree help video
+     *
+     * @return the menu item
+     */
+    MenuItem getVerticalTreeItem() {
+        return verticalTreeItem;
+    }
+
+    /**
+     * Menu item to open the horizontal tree help video
+     *
+     * @return the menu item
+     */
+    MenuItem getHorizontalTreeItem() {
+        return horizontalTreeItem;
+    }
+
+    /**
+     * Menu item to open the truth table help video
+     *
+     * @return the menu item
+     */
+    MenuItem getTruthTableItem() {
+        return truthTableItem;
+    }
+
+    /**
+     * Menu item to open the derivation help video
+     *
+     * @return the menu item
+     */
+    MenuItem getDerivationItem() {
+        return derivationItem;
+    }
+
+    /**
+     * Menu item to open the instructor info help video
+     *
+     * @return the menu item
+     */
+    MenuItem getInstructorInfoItem() { return instructorInfoItem; }
+
+    /**
+     * Menu item to activate the 'comment/report' item
+     *
+     * @return the menu item
+     */
+    MenuItem getReportItem() {
+        return reportItem;
+    }
+
+    /**
+     * Empty menu to move to previous exercise
+     *
+     * @return the menu
+     */
+    Menu getPreviousExerciseMenu() {
+        return previousExerciseMenu;
+    }
+
+    /**
+     * Empty menu to move to next exercise
+     *
+     * @return the menu
+     */
+    Menu getNextExerciseMenu() {
+        return nextExerciseMenu;
+    }
+
+    /**
+     * Empty menu to jump to exercise
+     *
+     * @return the menu
+     */
+    Menu getGoToExerciseMenu() {
+        return goToExerciseMenu;
+    }
+
+    /**
+     * Empty menu to open assignment comment window
+     *
+     * @return the menu
+     */
+    Menu getAssignmentCommentMenu() {
+        return assignmentCommentMenu;
+    }
+
+    /**
+     * Scene for the main window view
+     *
+     * @return tghe main scene
+     */
     public Scene getMainScene() {
         return mainScene;
     }
 
-    public void setHorizontalSizeSpinner(Spinner<Double> horizontalSizeSpinner) {   this.horizontalSizeSpinner = horizontalSizeSpinner;  }
-
-    public void setVerticalSizeSpinner(Spinner<Double> verticalSizeSpinner) {
-        this.verticalSizeSpinner = verticalSizeSpinner;
-    }
-
-
-
-
-    public Node getStatementNode() {
-        return statementNode;
-    }
-
-    public Node getContentNode() {
-        return contentNode;
-    }
-
-    public Node getCommentNode() {
-        return commentNode;
-    }
-
-    public MenuItem getPrintExerciseItemPM() {
-        return printExerciseItemPM;
-    }
-
-    public MenuItem getExportExerciseToPDFItemPM() {
-        return exportExerciseToPDFItemPM;
-    }
-
-    public MenuItem getExportSetupItem() {
-        return exportSetupItem;
-    }
-    public MenuItem getScaleSetupItem() {
-        return scaleSetupItem;
-    }
-
-    public MenuItem getCloseAssignmentItem() {
-        return closeAssignmentItem;
-    }
-
-    public MenuItem getPrintAssignmentItem() {
-        return printAssignmentItem;
-    }
-
-    public MenuItem getCreateRevisedAssignmentItem() {
-        return createRevisedAssignmentItem;
-    }
-
-    public MenuItem getExportAssignmentToPDFItem() {
-        return exportAssignmentToPDFItem;
-    }
-
-    public MenuItem getPrintAssignmentItemPM() {
-        return printAssignmentItemPM;
-    }
-
-    public MenuItem getExportAssignmentToPDFItemPM() {
-        return exportAssignmentToPDFItemPM;
-    }
-
-    public MenuItem getCommonElementsTextItem() {
-        return commonElementsTextItem;
-    }
-
-    public MenuItem getContextualTextItem() {
-        return contextualTextItem;
-    }
-
-    public MenuItem getAboutItem() {
-        return aboutItem;
-    }
-
-    public MenuItem getQuickStartItem() {return quickStartItem; }
-    public MenuItem getSlappEditorItem() {
-        return slappEditorItem;
-    }
-
-    public MenuItem getVerticalTreeItem() {
-        return verticalTreeItem;
-    }
-
-    public MenuItem getHorizontalTreeItem() {
-        return horizontalTreeItem;
-    }
-
-    public MenuItem getTruthTableItem() {
-        return truthTableItem;
-    }
-
-    public MenuItem getDerivationItem() {
-        return derivationItem;
-    }
-    public MenuItem getInstructorInfoItem() { return instructorInfoItem; }
-
-    public MenuItem getReportItem() {
-        return reportItem;
-    }
-
-    public Menu getPreviousExerciseMenu() {
-        return previousExerciseMenu;
-    }
-
-    public Menu getNextExerciseMenu() {
-        return nextExerciseMenu;
-    }
-
-    public Menu getGoToExerciseMenu() {
-        return goToExerciseMenu;
-    }
-
-    public Menu getAssignmentCommentMenu() {
-        return assignmentCommentMenu;
-    }
-
-    public CheckBox getvWindowCheck() {
-        return vWindowCheck;
-    }
-
-
-
-    public ChangeListener getVerticalListener() {
-        return verticalListener;
-    }
-
-
-    public ChangeListener getHorizontalListener() {return horizontalListener; }
-
+    /**
+     * Minimum width for the main window view
+     *
+     * @return the width
+     */
     public double getMinStageWidth() {
         return minStageWidth;
     }
 
+    /**
+     * The scale page height is a function of selected paper and scale
+     *
+     * @return the height value
+     */
     public double getScalePageHeight() {   return scalePageHeight.get(); }
 
+    /**
+     * The scale page height is a function of selected paper and scale
+     *
+     * @return the height property
+     */
     public DoubleProperty scalePageHeightProperty() {   return scalePageHeight;  }
 
-    public void setScalePageHeight(double scalePageHeight) {   this.scalePageHeight.set(scalePageHeight);
-    }
-
+    /**
+     * The scale page width is a function of selected paper and scale
+     *
+     * @return the width value
+     */
     public double getScalePageWidth() {   return scalePageWidth.get();   }
 
+    /**
+     * The scale page width is a function of selected paper and scale
+     *
+     * @return the scale property
+     */
     public DoubleProperty scalePageWidthProperty() {    return scalePageWidth;  }
 
-    public void setScalePageWidth(double scalePageWidth) {    this.scalePageWidth.set(scalePageWidth);   }
+
 }

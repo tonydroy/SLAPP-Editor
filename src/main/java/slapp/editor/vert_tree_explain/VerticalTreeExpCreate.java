@@ -17,7 +17,6 @@ package slapp.editor.vert_tree_explain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
-import com.gluonhq.richtextarea.model.Document;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
@@ -43,8 +42,8 @@ import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
+import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
-import slapp.editor.vert_tree_abefexplain.VerticalTreeABEFExpModel;
 import slapp.editor.vertical_tree.drag_drop.DragIconType;
 import slapp.editor.vertical_tree.object_models.ObjectControlType;
 
@@ -89,6 +88,10 @@ public class VerticalTreeExpCreate {
     private Button saveButton;
     private Button saveAsButton;
     private ToolBar sizeToolBar;
+    private DecoratedRTA dummyDRTA = new DecoratedRTA();
+    private MenuBar menuBar;
+    private VBox fieldsBox;
+    private BorderPane borderPane;
 
 
 
@@ -125,11 +128,11 @@ public class VerticalTreeExpCreate {
     }
 
     private void setupWindow() {
-        BorderPane borderPane = new BorderPane();
+        borderPane = new BorderPane();
 
         //empty bar for consistent look
         Menu helpMenu = new Menu("");
-        MenuBar menuBar = new MenuBar(helpMenu);
+        menuBar = new MenuBar(helpMenu);
 
         //statementDRTA
         statementDRTA = new DecoratedRTA();
@@ -142,6 +145,11 @@ public class VerticalTreeExpCreate {
         statementRTA.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
             modified = true;
             statementTextHeight = mainWindow.getMainView().getRTATextHeight(statementRTA);
+        });
+        statementRTA.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) {
+                editorInFocus(statementDRTA, ControlType.AREA);
+            }
         });
 
         //name
@@ -157,6 +165,10 @@ public class VerticalTreeExpCreate {
             }
         };
         nameField.textProperty().addListener(nameListener);
+        nameField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
         HBox nameBox = new HBox(nameLabel, nameField);
         nameBox.setAlignment(Pos.BASELINE_LEFT);
 
@@ -210,6 +222,11 @@ public class VerticalTreeExpCreate {
             }
         };
         promptField.textProperty().addListener(promptListener);
+
+        promptField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
         HBox promptBox = new HBox(promptLabel, promptField);
         promptBox.setAlignment(Pos.BASELINE_LEFT);
 
@@ -262,7 +279,7 @@ public class VerticalTreeExpCreate {
         HBox controlBox = new HBox(20,controlLabel, boxingFormulaCheck, circleCheck, starCheck, annotationCheck, underlineCheck, mappingCheck);
         controlBox.setAlignment(Pos.BASELINE_LEFT);
 
-        VBox fieldsBox = new VBox(15, topFieldsBox, dragBox, controlBox, keyboardBox);
+        fieldsBox = new VBox(15, topFieldsBox, dragBox, controlBox, keyboardBox);
         fieldsBox.setPadding(new Insets(20,0, 0, 20));
 
         //center
@@ -332,9 +349,9 @@ public class VerticalTreeExpCreate {
         sizeToolBar.setPrefHeight(38);
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
 
-
-        ToolBar editToolbar = statementDRTA.getEditToolbar();
-        ToolBar fontsToolbar = statementDRTA.getFontsToolbar();
+/*
+        ToolBar editToolbar = statementDRTA.getKbdSelectorToolbar();
+        ToolBar fontsToolbar = statementDRTA.getEditToolbar();
         ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
         ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
         kbdDiaToolBar.setPrefHeight(38);
@@ -349,6 +366,8 @@ public class VerticalTreeExpCreate {
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, fieldsBox);
         borderPane.topProperty().setValue(topBox);
 
+ */
+
         //generate view
         scene = new Scene(borderPane);
         scene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
@@ -361,6 +380,7 @@ public class VerticalTreeExpCreate {
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.setWidth(860);
+        stage.setHeight(860);
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setOnCloseRequest(e-> {
             e.consume();
@@ -486,6 +506,50 @@ public class VerticalTreeExpCreate {
         model.setStatementTextHeight(statementTextHeight);
 
         return model;
+    }
+
+    void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
+
+        KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
+        keyboardDiagram.initialize(decoratedRTA);
+        if (keyboardDiagram.isShowing()) {
+            keyboardDiagram.updateAndShow();
+        }
+
+        ToolBar editToolbar = decoratedRTA.getKbdSelectorToolbar();
+        ToolBar fontsToolbar = decoratedRTA.getEditToolbar();
+        ToolBar paragraphToolbar = decoratedRTA.getParagraphToolbar();
+        ToolBar kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
+        kbdDiaToolBar.setPrefHeight(38);
+
+        switch (control) {
+            case NONE: {
+                kbdDiaToolBar.setDisable(true);
+            }
+            case STATEMENT: {
+                editToolbar.setDisable(true);
+                fontsToolbar.setDisable(true);
+            }
+            case FIELD: {
+                paragraphToolbar.setDisable(true);
+            }
+            case AREA: { }
+        }
+        sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
+
+
+        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
+        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
+        editAndKbdBox.layout();
+
+
+
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, fieldsBox);
+        borderPane.topProperty().setValue(topBox);
+    }
+
+    public void textFieldInFocus() {
+        editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
 
 }

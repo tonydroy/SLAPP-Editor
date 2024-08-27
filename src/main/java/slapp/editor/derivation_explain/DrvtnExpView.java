@@ -377,9 +377,6 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
 
             if (viewLine.getJustificationFlow() != null) grid.add(viewLine.getJustificationFlow(), 22, index);
         }
-        Platform.runLater(() -> {
-            mainView.updateContentHeightProperty();
-        });
     }
 
     public double getGridHeight() {

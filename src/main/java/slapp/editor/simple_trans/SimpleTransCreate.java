@@ -17,7 +17,6 @@ package slapp.editor.simple_trans;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
-import com.gluonhq.richtextarea.model.Document;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
@@ -46,8 +45,6 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
-import slapp.editor.simple_trans.SimpleTransExercise;
-import slapp.editor.simple_trans.SimpleTransModel;
 
 import java.util.Optional;
 
@@ -86,6 +83,7 @@ public class SimpleTransCreate {
     private ToolBar paragraphToolbar;;
     private ToolBar kbdDiaToolBar;
     private VBox nameVBox;
+    private DecoratedRTA dummyDRTA = new DecoratedRTA();
 
 
     public SimpleTransCreate(MainWindow mainWindow) {
@@ -97,11 +95,11 @@ public class SimpleTransCreate {
         this(mainWindow);
 
         statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
-        statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
+//        statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         statementTextHeight = originalModel.getStatementTextHeight();
 
         interpretationRTA.getActionFactory().open(originalModel.getExerciseInterpretation()).execute(new ActionEvent());
-        interpretationRTA.getActionFactory().saveNow().execute(new ActionEvent());
+//        interpretationRTA.getActionFactory().saveNow().execute(new ActionEvent());
         interpretationTextHeight = originalModel.getInterpretationTextHeight();
 
         nameField.setText(originalModel.getExerciseName());
@@ -133,6 +131,7 @@ public class SimpleTransCreate {
                 editorInFocus(statementDRTA, ControlType.AREA);
             }
         });
+        statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
         interpretationDRTA = new DecoratedRTA();
         interpretationRTA = interpretationDRTA.getEditor();
@@ -151,6 +150,7 @@ public class SimpleTransCreate {
                 editorInFocus(interpretationDRTA, ControlType.AREA);
             }
         });
+        interpretationRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
         Label nameLabel = new Label("Exercise Name: ");
         nameLabel.setPrefWidth(95);
@@ -165,6 +165,10 @@ public class SimpleTransCreate {
         };
         nameField.textProperty().addListener(nameListener);
 
+        nameField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
 
 
         HBox nameBox = new HBox(nameLabel, nameField);
@@ -176,10 +180,10 @@ public class SimpleTransCreate {
         String helpText = "Simple Translation is appropriate for any exercise that calls for an interpretation function and simple formal translation (usually of an ordinary language sentence).\n\n" +
 
                 "For the Simple Translate Exercise, you need only provide the exercise name, exercise statement and, if desired, an interpretation function to appear along with the exercise.  "+
-                "An empty interpretation field appears as such along with the exercise to be filled in by the student.";
+                "If this field is left blank, the empty interpretation field appears as such along with the exercise to be filled in by the student.";
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
-        helpArea.setPrefHeight(120);
+        helpArea.setPrefHeight(130);
         helpArea.setEditable(false);
         helpArea.setFocusTraversable(false);
         helpArea.setMouseTransparent(true);
@@ -324,6 +328,7 @@ public class SimpleTransCreate {
 
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
+
         if (fieldModified || statementRTA.isModified() || interpretationRTA.isModified()) {
             Alert confirm = EditorAlerts.confirmationAlert(title, content);
             Optional<ButtonType> result = confirm.showAndWait();
@@ -394,41 +399,40 @@ public class SimpleTransCreate {
             keyboardDiagram.updateAndShow();
         }
 
-        editToolbar = decoratedRTA.getEditToolbar();
-        fontsToolbar = decoratedRTA.getFontsToolbar();
-        paragraphToolbar = decoratedRTA.getParagraphToolbar();
-        kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
+        ToolBar editToolbar = decoratedRTA.getKbdSelectorToolbar();
+        ToolBar fontsToolbar = decoratedRTA.getEditToolbar();
+        ToolBar paragraphToolbar = decoratedRTA.getParagraphToolbar();
+        ToolBar kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
         kbdDiaToolBar.setPrefHeight(38);
 
-
-        if (kbdDiaToolBar.getItems().isEmpty()) {
-
-            kbdDiaToolBar.getItems().addAll(decoratedRTA.getKeyboardDiagramButton());
-
-            switch (control) {
-                case NONE: {
-                    kbdDiaToolBar.setDisable(true);
-                }
-                case STATEMENT: {
-                    editToolbar.setDisable(true);
-                    fontsToolbar.setDisable(true);
-                }
-                case FIELD: {
-                    paragraphToolbar.setDisable(true);
-                }
-                case AREA: { }
+        switch (control) {
+            case NONE: {
+                kbdDiaToolBar.setDisable(true);
             }
+            case STATEMENT: {
+                editToolbar.setDisable(true);
+                fontsToolbar.setDisable(true);
+            }
+            case FIELD: {
+                paragraphToolbar.setDisable(true);
+            }
+            case AREA: { }
         }
+        sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
+
 
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
         editAndKbdBox.layout();
 
 
+
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, nameVBox);
         borderPane.topProperty().setValue(topBox);
+    }
 
-
+    public void textFieldInFocus() {
+        editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
 
 

@@ -148,15 +148,13 @@ public class AssignmentCommentWindow {
         sizeToolBar.setPrefHeight(38);
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
 
-        ToolBar editToolbar = commentDRTA.getEditToolbar();
-        ToolBar fontsToolbar = commentDRTA.getFontsToolbar();
+        ToolBar editToolbar = commentDRTA.getKbdSelectorToolbar();
+        ToolBar fontsToolbar = commentDRTA.getEditToolbar();
         ToolBar paragraphToolbar = commentDRTA.getParagraphToolbar();
         ToolBar kbdDiaToolBar = commentDRTA.getKbdDiaToolbar();
         kbdDiaToolBar.setPrefHeight(38);
 
-        if (kbdDiaToolBar.getItems().isEmpty()) {
-            kbdDiaToolBar.getItems().addAll(commentDRTA.getKeyboardDiagramButton());
-        }
+
 
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);

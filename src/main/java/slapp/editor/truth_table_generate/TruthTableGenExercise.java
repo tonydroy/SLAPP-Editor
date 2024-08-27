@@ -251,10 +251,6 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
             updateViewTableItems();
             truthTableGenView.updateTableGridFromTableItems();
             exerciseModified = true;
-            Platform.runLater(() -> {
-                mainView.updateContentWidthProperty();
-                mainView.updateContentHeightProperty();
-            });
         });
 
         //table contents

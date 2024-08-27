@@ -17,45 +17,65 @@ package slapp.editor;
 
 import javafx.scene.Node;
 
+/**
+ * Adjunct to print utilities, for members of the PrintBuffer list
+ */
 public class PrintBufferItem {
     Node node;
     double height;
     double width;
     double scale = 1.0;
 
+    /**
+     * Construct buffer item with node, height width
+     * @param node
+     * @param height
+     * @param width
+     */
     PrintBufferItem(Node node, double height, double width) {
         this.node = node;
         this.height = height;
         this.width = width;
     }
+
+    /**
+     * The node to print
+     * @return the node
+     */
     public Node getNode() {
         return node;
     }
 
-    public void setNode(Node node) {
-        this.node = node;
-    }
-
+    /**
+     * The height of the print node
+     *
+     * @return the height
+     */
     public double getHeight() {
         return height;
     }
 
-    public void setHeight(double height) {
-        this.height = height;
-    }
-
+    /**
+     * The width of the print node
+     *
+     * @return the width
+     */
     public double getWidth() {
         return width;
     }
 
-    public void setWidth(double width) {
-        this.width = width;
-    }
-
+    /**
+     * The scale at which to print the node
+     * @return the scale
+     */
     public double getScale() {
         return scale;
     }
 
+    /**
+     * The scale at which to print the node
+     * @param scale the scale
+     */
     public void setScale(double scale) {
         this.scale = scale;
     }

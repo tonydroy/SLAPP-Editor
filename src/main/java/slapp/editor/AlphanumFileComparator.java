@@ -46,7 +46,7 @@ public class AlphanumFileComparator implements Comparator<File> {
         return ((ch >= 48) && (ch <= 57));
     }
 
-    /**
+    /*
      * Length of string is passed in for improved efficiency (only need to calculate it once)
      **/
     private final String getChunk(String s, int slength, int marker) {
@@ -74,6 +74,13 @@ public class AlphanumFileComparator implements Comparator<File> {
         return chunk.toString();
     }
 
+    /**
+     * compare names from pair of files
+     *
+     * @param f1 the first object to be compared.
+     * @param f2 the second object to be compared.
+     * @return comparator value, -1, 0, 1
+     */
     public int compare(File f1, File f2) {
         String s1 = f1.getName();
         String s2 = f2.getName();

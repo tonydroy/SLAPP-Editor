@@ -16,8 +16,6 @@ You should have received a copy of the GNU General Public License along with SLA
 package slapp.editor.horizontal_tree;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.RichTextAreaSkin;
-import com.gluonhq.richtextarea.model.Document;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
@@ -43,8 +41,9 @@ import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
+import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
-import java.util.ArrayList;
+
 import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
@@ -69,6 +68,10 @@ public class HorizontalTreeCreate {
     private Button saveButton;
     private Button saveAsButton;
     private ToolBar sizeToolBar;
+    private DecoratedRTA dummyDRTA = new DecoratedRTA();
+    private MenuBar menuBar;
+    private VBox topFieldsBox;
+    private BorderPane borderPane;
 
 
     public HorizontalTreeCreate(MainWindow mainWindow) {
@@ -88,11 +91,11 @@ public class HorizontalTreeCreate {
     }
 
     private void setupWindow() {
-        BorderPane borderPane = new BorderPane();
+        borderPane = new BorderPane();
 
         //empty bar for consistent look
         Menu helpMenu = new Menu("");
-        MenuBar menuBar = new MenuBar(helpMenu);
+        menuBar = new MenuBar(helpMenu);
 
         //statement field
         statementDRTA = new DecoratedRTA();
@@ -108,6 +111,12 @@ public class HorizontalTreeCreate {
             statementTextHeight = mainWindow.getMainView().getRTATextHeight(statementRTA);
         });
 
+        statementRTA.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) {
+                editorInFocus(statementDRTA, ControlType.AREA);
+            }
+        });
+
         //name field
         Label nameLabel = new Label("Exercise Name: ");
         nameLabel.setPrefWidth(100);
@@ -121,6 +130,10 @@ public class HorizontalTreeCreate {
             }
         };
         nameField.textProperty().addListener(nameListener);
+
+        nameField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
 
         HBox nameBox = new HBox(nameLabel, nameField);
         nameBox.setAlignment(Pos.BASELINE_LEFT);
@@ -138,10 +151,14 @@ public class HorizontalTreeCreate {
             }
         };
         promptField.textProperty().addListener(promptListener);
+        promptField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
         HBox promptBox = new HBox(promptLabel, promptField);
         promptBox.setAlignment(Pos.BASELINE_LEFT);
 
-        VBox topFieldsBox = new VBox(15, nameBox, promptBox);
+        topFieldsBox = new VBox(15, nameBox, promptBox);
         topFieldsBox.setPadding(new Insets(10, 0,0, 60));
 
         //help area
@@ -210,8 +227,9 @@ public class HorizontalTreeCreate {
         sizeToolBar.setPrefHeight(38);
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
 
-        ToolBar editToolbar = statementDRTA.getEditToolbar();
-        ToolBar fontsToolbar = statementDRTA.getFontsToolbar();
+        /*
+        ToolBar editToolbar = statementDRTA.getKbdSelectorToolbar();
+        ToolBar fontsToolbar = statementDRTA.getEditToolbar();
         ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
         ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
         kbdDiaToolBar.setPrefHeight(38);
@@ -229,6 +247,8 @@ public class HorizontalTreeCreate {
 
         borderPane.setTop(topBox);
 
+         */
+
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
@@ -237,6 +257,7 @@ public class HorizontalTreeCreate {
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.setWidth(860);
+        stage.setHeight(700);
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setOnCloseRequest(e-> {
             e.consume();
@@ -339,6 +360,50 @@ public class HorizontalTreeCreate {
         model.setStatementPrefHeight(statementTextHeight + 25);
         model.setStatementTextHeight(statementTextHeight);
         return model;
+    }
+
+    void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
+
+        KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
+        keyboardDiagram.initialize(decoratedRTA);
+        if (keyboardDiagram.isShowing()) {
+            keyboardDiagram.updateAndShow();
+        }
+
+        ToolBar editToolbar = decoratedRTA.getKbdSelectorToolbar();
+        ToolBar fontsToolbar = decoratedRTA.getEditToolbar();
+        ToolBar paragraphToolbar = decoratedRTA.getParagraphToolbar();
+        ToolBar kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
+        kbdDiaToolBar.setPrefHeight(38);
+
+        switch (control) {
+            case NONE: {
+                kbdDiaToolBar.setDisable(true);
+            }
+            case STATEMENT: {
+                editToolbar.setDisable(true);
+                fontsToolbar.setDisable(true);
+            }
+            case FIELD: {
+                paragraphToolbar.setDisable(true);
+            }
+            case AREA: { }
+        }
+        sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
+
+
+        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
+        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
+        editAndKbdBox.layout();
+
+
+
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, topFieldsBox);
+        borderPane.topProperty().setValue(topBox);
+    }
+
+    public void textFieldInFocus() {
+        editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
 
 

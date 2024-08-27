@@ -38,7 +38,9 @@ import slapp.editor.EditorMain;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * Keyboard diagram for currently selected keyboards and font size
+ */
 public class KeyboardDiagram {
     private DecoratedRTA decoratedRTA;
     private Map<Character, Text> keyTypedTextMap = new HashMap<>();
@@ -62,15 +64,14 @@ public class KeyboardDiagram {
     private static KeyboardDiagram uniqueKeyboardDiagram;
     private static Font titleFont;
     private static int baseKeyWidth;  //the width of a standard key is 4 of these units
-    private static DoubleProperty keyboardWindowX;
-    private static DoubleProperty keyboardWindowY;
-    private static DoubleProperty keyboardWindowWidth;
-    private static DoubleProperty keyboardWindowHeight;
     private static VBox boardsBox;
     private static ScrollPane scrollPane;
     private static Scene scene;
     private static Stage stage;
 
+    /**
+     * Set up window
+     */
     static {
         titleFont = titleFont = Font.font("Noto Sans", FontWeight.BOLD, FontPosture.REGULAR, 20);
         baseKeyWidth = 10;
@@ -89,18 +90,18 @@ public class KeyboardDiagram {
         stage.initModality(Modality.NONE);
         stage.getIcons().addAll(EditorMain.icons);
 
-
-
-        keyboardWindowX = new SimpleDoubleProperty();
-        keyboardWindowY = new SimpleDoubleProperty();
-        keyboardWindowHeight = new SimpleDoubleProperty();
-        keyboardWindowWidth = new SimpleDoubleProperty();
-        keyboardWindowX.bind(stage.xProperty());
-        keyboardWindowY.bind(stage.yProperty());
-        keyboardWindowWidth.bind(stage.widthProperty());
-        keyboardWindowHeight.bind(stage.heightProperty());
     }
+
+    /*
+     * Singleton class has private constructor
+     */
     private KeyboardDiagram(){}
+
+    /**
+     * Get instance of singleton class
+     *
+     * @return the unique keyboard diagram
+     */
     public static KeyboardDiagram getInstance() {
         if (uniqueKeyboardDiagram == null) {
             uniqueKeyboardDiagram = new KeyboardDiagram();
@@ -109,12 +110,21 @@ public class KeyboardDiagram {
     }
 
 
+    /**
+     * Update the font size for characters in the map depending on selected font size and scale value
+     * @param scale the scale
+     */
     public void updateFontSize(Double scale) {
         this.mapFontSize = decoratedRTA.getPrimaryFontSize() * scale;
     }
+
+    /**
+     * Initialize the diagram based on the DecoratedRTA with its keyboard selections
+     *
+     * @param decoratedRTA the decorated RTA
+     */
     public void initialize(DecoratedRTA decoratedRTA) {
         this.decoratedRTA = decoratedRTA;
- //       this.mapFontSize = decoratedRTA.getPrimaryFontSize() * scale;
         textFont = Font.font("Noto Serif Combo", FontWeight.NORMAL, FontPosture.REGULAR, mapFontSize);
         symbolFont = Font.font("Noto Serif Combo", FontWeight.NORMAL, FontPosture.REGULAR, mapFontSize);
         iconFont = Font.font("la-solid-900", FontWeight.NORMAL, FontPosture.REGULAR, 14);
@@ -123,10 +133,6 @@ public class KeyboardDiagram {
             e.consume();
             hide();
         });
-
-
-
-
 
         //initialize blank text maps
         Map<Character, String> keyTypedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyTypedCharMap();
@@ -441,7 +447,6 @@ public class KeyboardDiagram {
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.P,4),42,1,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.OPEN_BRACKET,4),46,1,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.CLOSE_BRACKET,4),50,1,4,1);
-
         ctrlShiftAltBoard.add(getControlKey("NoBreak\nSpace", 6),54,1,6,1);
 
         ctrlShiftAltBoard.add(getControlKey("Cap Lock",7),0,2,7,1);
@@ -490,8 +495,16 @@ public class KeyboardDiagram {
         "    Ctrl:A select all, :C copy, :X cut, :V paste, :Z undo, :Z(+shift) redo\n\n");
 
         ctrlChars.setFont(textFont);
-        }
-    StackPane getControlKey(String name, int width) {
+    }
+
+    /*
+     * Get key with text name (as 'shift' or 'enter')
+     *
+     * @param name key name
+     * @param key width units
+     * @return StackPane key
+     */
+    private StackPane getControlKey(String name, int width) {
         Text text = new Text(name);
         text.setFont(new Font("NotoSans", mapFontSize * 2/3));
         TextFlow flow = new TextFlow(text);
@@ -503,10 +516,15 @@ public class KeyboardDiagram {
         return pane;
     }
 
-    //used for combining characters
-    //the regular c/s/a pathway shows the character
-    //but I could not get it to work when appended to the dotted circle
-    StackPane getFixedCharKey(String name, int width) {
+
+    /*
+     * Get char with fixed symbol (used for combining characters)
+     *
+      * @param name the character string
+     * @param key width units
+     * @return StackPane key
+     */
+    private StackPane getFixedCharKey(String name, int width) {
         Text text = new Text(name);
         text.setFont(symbolFont);
         TextFlow flow = new TextFlow(text);
@@ -518,7 +536,13 @@ public class KeyboardDiagram {
         return pane;
     }
 
-    StackPane getIconKey(String name, int width) {
+    /*
+     * Get key from icon font (used just for 'do not go' character)
+     * @param name the character strint
+     * @param key with units
+     * @return StackPane key
+     */
+    private StackPane getIconKey(String name, int width) {
         Text text = new Text(name);
         text.setFont(iconFont);
         text.setFill(Color.RED);
@@ -532,7 +556,13 @@ public class KeyboardDiagram {
         return pane;
     }
 
-    StackPane getTypedKey(Character key, int width) {
+    /*
+     * Get key from the keyTypedTextMap
+     * @param key the key Character
+     * @param key width units
+     * @return StackPane key
+     */
+    private StackPane getTypedKey(Character key, int width) {
         Text text = keyTypedTextMap.get(key);
         text.setFont(textFont);
         TextFlow flow = new TextFlow(text);
@@ -544,7 +574,13 @@ public class KeyboardDiagram {
         return pane;
     }
 
-    StackPane getAltKey(KeyCode code, int width) {
+    /*
+     *Get key from keyPressedTextMap given KeyCode and alt down
+     * @param code the KeyCode
+     * @param width key width units
+     * @return StackPane key
+     */
+    private StackPane getAltKey(KeyCode code, int width) {
         Text text = keyPressedTextMap.get(new KeyCodeCombination(code, KeyCombination.ALT_DOWN));
         text.setFont(symbolFont);
         TextFlow flow = new TextFlow(text);
@@ -556,7 +592,13 @@ public class KeyboardDiagram {
         return pane;
     }
 
-    StackPane getShiftAltKey(KeyCode code, int width) {
+    /*
+     *Get key from keyPressedTextMap given KeyCode with shift and alt down
+     * @param code the KeyCode
+     * @param width key width units
+     * @return StackPane key
+     */
+    private StackPane getShiftAltKey(KeyCode code, int width) {
         Text text = keyPressedTextMap.get(new KeyCodeCombination(code, KeyCombination.ALT_DOWN, KeyCombination.SHIFT_DOWN));
         text.setFont(symbolFont);
         TextFlow flow = new TextFlow(text);
@@ -567,7 +609,14 @@ public class KeyboardDiagram {
         pane.setMinWidth(baseKeyWidth * width);
         return pane;
     }
-    StackPane getCtrlShiftAltKey(KeyCode code, int width) {
+
+    /*
+     *Get key from keyPressedTextMap given KeyCode with control/command, shift, and alt down
+     * @param code the KeyCode
+     * @param width key width units
+     * @return StackPane key
+     */
+    private StackPane getCtrlShiftAltKey(KeyCode code, int width) {
         Text text = keyPressedTextMap.get(new KeyCodeCombination(code, KeyCombination.ALT_DOWN, KeyCombination.SHIFT_DOWN,KeyCombination.SHORTCUT_DOWN));
         text.setFont(symbolFont);
         TextFlow flow = new TextFlow(text);
@@ -579,6 +628,9 @@ public class KeyboardDiagram {
         return pane;
     }
 
+    /**
+     * Update the diagram based on maps from the selected DecoratedRTA
+     */
     public void update() {
         Map<Character, String> keyTypedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyTypedCharMap();
         Map<KeyCodeCombination, String> keyPressedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyPressedCharMap();
@@ -593,6 +645,9 @@ public class KeyboardDiagram {
         boardsBox.getChildren().addAll(title1, normalBoard, title2, shiftBoard, title3, altBoard, title4, shiftAltBoard, title5, ctrlShiftAltBoard, ctrlChars);
     }
 
+    /**
+     * Update the keyboard diagram and show if not already showing.
+     */
     public void updateAndShow() {
         update();
         if (!shown) {
@@ -605,64 +660,30 @@ public class KeyboardDiagram {
         stage.show();
     }
 
+    /**
+     * Hide the stage.  Hide and close are the same.  However conceptually, this method is for closing the diagram
+     * while the program is running and the stage continues to exist in this static class.
+     */
     public void hide() {
         stage.hide();
         decoratedRTA.getEditor().requestFocus();
     }
 
+    /**
+     * Close the stage.  Hide and close are the same.  However conceptually, this method is for closing the diagram
+     * when the main program closes and so the stage and this class cease to exist.
+     */
     public void close() {
         hide();
         stage.close();
     }
 
-    public static double getKeyboardWindowX() {
-        return keyboardWindowX.get();
-    }
 
-    public static DoubleProperty keyboardWindowXProperty() {
-        return keyboardWindowX;
-    }
-
-    public static void setKeyboardWindowX(double keyboardWindowX) {
-        KeyboardDiagram.keyboardWindowX.set(keyboardWindowX);
-    }
-
-    public static double getKeyboardWindowY() {
-        return keyboardWindowY.get();
-    }
-
-    public static DoubleProperty keyboardWindowYProperty() {
-        return keyboardWindowY;
-    }
-
-    public static void setKeyboardWindowY(double keyboardWindowY) {
-        KeyboardDiagram.keyboardWindowY.set(keyboardWindowY);
-    }
-
-    public static double getKeyboardWindowWidth() {
-        return keyboardWindowWidth.get();
-    }
-
-    public static DoubleProperty keyboardWindowWidthProperty() {
-        return keyboardWindowWidth;
-    }
-
-    public static void setKeyboardWindowWidth(double keyboardWindowWidth) {
-        KeyboardDiagram.keyboardWindowWidth.set(keyboardWindowWidth);
-    }
-
-    public static double getKeyboardWindowHeight() {
-        return keyboardWindowHeight.get();
-    }
-
-    public static DoubleProperty keyboardWindowHeightProperty() {
-        return keyboardWindowHeight;
-    }
-
-    public static void setKeyboardWindowHeight(double keyboardWindowHeight) {
-        KeyboardDiagram.keyboardWindowHeight.set(keyboardWindowHeight);
-    }
-
+    /**
+     * The static keyboard window class may or may not have a showing diagram.
+     *
+     * @return true if the diagram is showing and otherwise false.
+     */
     public boolean isShowing() {
         return stage.isShowing();
     }

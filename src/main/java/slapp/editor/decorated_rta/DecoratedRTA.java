@@ -65,6 +65,9 @@ import static javafx.scene.text.FontPosture.REGULAR;
 import static javafx.scene.text.FontWeight.BOLD;
 import static javafx.scene.text.FontWeight.NORMAL;
 
+/**
+ * Rich Text area outfitted with toolbar controls (based on the Gluon "Full Featured Demo")
+ */
 public class DecoratedRTA {
 
     static {
@@ -81,25 +84,29 @@ public class DecoratedRTA {
     private final RichTextArea editor;
     private final DecoratedRTA decoratedRTA;
     private double primaryFontSize = 11.0;  //see corresponding value in TextDecoration.java
+    private ToolBar kbdSelectorToolbar;
     private ToolBar editToolbar;
-    private ToolBar fontsToolbar;
     private ToolBar paragraphToolbar;
-    private ToolBar insertToolbar;
     private ToolBar kbdDiaToolbar;
     private ToggleButton overlineButton;
 
     private Button keyboardDiagramButton;
     ChoiceBox<RichTextAreaSkin.KeyMapValue> keyboardSelector;
+
+    /**
+     * Create the decoratedRTA with RTA editor as component.
+     */
     public DecoratedRTA() {
         decoratedRTA = this;
         this.mainStage = EditorMain.mainStage;
         this.editor = new RichTextArea(mainStage);
         setup();
-
-
-
     }
-    public void setup() {
+
+    /*
+     * Set up the DRTA controls
+     */
+    private void setup() {
 
         //this prevents (strange) scrolling of scrollpanes whenever space is typed.
         editor.addEventFilter( KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
@@ -115,7 +122,7 @@ public class DecoratedRTA {
             }
         });
 
-        //presets combo box
+        //presets combo box (not currently part of SLAPP)
         ComboBox<Presets> presets = new ComboBox<>();
         presets.setTooltip(new Tooltip("Heading Level"));
         presets.getItems().setAll(Presets.values());
@@ -175,14 +182,12 @@ public class DecoratedRTA {
         textForeground.setTooltip(new Tooltip("Foreground Color"));
         textForeground.getStyleClass().add("foreground");
         new TextDecorateAction<>(editor, textForeground.valueProperty(), (TextDecoration textDecoration1) -> Color.web(textDecoration1.getForeground()), (builder, a) -> builder.foreground(toHexString(a)).build());
-//        new TextDecorateAction<>(editor, textForeground.valueProperty(), TextDecoration::getForeground, (builder, a) -> builder.foreground(a).build());
         textForeground.setValue(Color.BLACK);
 
         final ColorPicker textBackground = new ColorPicker();
         textBackground.setTooltip(new Tooltip("Background Color"));
         textBackground.getStyleClass().add("background");
         new TextDecorateAction<>(editor, textBackground.valueProperty(), (TextDecoration textDecoration) -> Color.web(textDecoration.getBackground()), (builder, a) -> builder.background(toHexString(a)).build());
-//        new TextDecorateAction<>(editor, textBackground.valueProperty(), TextDecoration::getBackground, (builder, a) -> builder.background(a).build());
         textBackground.setValue(Color.TRANSPARENT);
 
         //overline button
@@ -237,10 +242,10 @@ public class DecoratedRTA {
 
         //toolbars
 
-        editToolbar = new ToolBar();
-        editToolbar.setStyle("-fx-spacing: 10");
-        editToolbar.setPrefHeight(38);
-        editToolbar.getItems().setAll(
+        kbdSelectorToolbar = new ToolBar();
+        kbdSelectorToolbar.setStyle("-fx-spacing: 10");
+        kbdSelectorToolbar.setPrefHeight(38);
+        kbdSelectorToolbar.getItems().setAll(
                 keyboardSelector,
                 new Label("Size"),
                 fontSize,
@@ -249,12 +254,11 @@ public class DecoratedRTA {
 
         kbdDiaToolbar = new ToolBar();
         kbdDiaToolbar.setStyle("-fx-spacing: 10");
-//        kbdDiaToolbar.getItems().setAll(keyboardDiagramButton, wideSeparator(1), new Label("  "));
         kbdDiaToolbar.getItems().setAll(keyboardDiagramButton, new Label("  "));
 
-        fontsToolbar = new ToolBar();
-        fontsToolbar.setStyle("-fx-spacing: 12");
-        fontsToolbar.getItems().setAll(
+        editToolbar = new ToolBar();
+        editToolbar.setStyle("-fx-spacing: 12");
+        editToolbar.getItems().setAll(
                 actionButton("\uf0c4", "Cut",   editor.getActionFactory().cut()),  //LineAwesomeSolid.CUT
                 actionButton("\uf0c5", "Copy",  editor.getActionFactory().copy()), //LineAwesomeSolid.COPY
                 actionButton("\uf0ea", "Paste", editor.getActionFactory().paste()), //LineAwesomeSolid.PASTE
@@ -277,14 +281,6 @@ public class DecoratedRTA {
                 createToggleButton("\uf12c", "Subscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).transSuperscript(false).transSubscript(false).build())),
                 createColoredToggleButton("\uf12c", "Subscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build()))
                 );
-                //LineAwesomeSolid STRIKETHROUGH, UNDERLINE, SUPERSCRIPT, SUBSCRIPT
-
-        /*
-        insertToolbar = new ToolBar();
-        insertToolbar.setStyle("-fx-spacing: 12");
-        insertToolbar.getItems().setAll(
-        );
-         */
 
         paragraphToolbar = new ToolBar();
         paragraphToolbar.setStyle("-fx-spacing: 10");
@@ -317,6 +313,11 @@ public class DecoratedRTA {
         setRtaListeners();
     }
 
+    /*
+     * Color to hex string
+     * @param value the color
+     * @return the string
+     */
     private String toHexString(Color value) {
         return String.format("#%02X%02X%02X%02X", (int) Math.round(value.getRed() * 255),
                 (int) Math.round(value.getGreen() * 255),
@@ -324,7 +325,10 @@ public class DecoratedRTA {
                 (int) Math.round(value.getOpacity() * 255));
     }
 
-    public void setRtaListeners() {
+    /**
+     * Bind overline button and keyboard selector to Skin properties, and listen for changes.
+     */
+    private void setRtaListeners() {
         BorderPane tempPane = new BorderPane(editor);
         Scene tempScene = new Scene(tempPane);
         editor.applyCss();
@@ -343,12 +347,24 @@ public class DecoratedRTA {
         });
     }
 
+    /*
+     * Separator for use in toolbar with variable width
+     * @param inset the width
+     * @return the separator
+     */
     private Separator wideSeparator(double inset) {
         Separator separator = new Separator(Orientation.VERTICAL);
         separator.setPadding(new Insets(0, inset,0, inset));
         return separator;
     }
 
+    /*
+     * Get button to perform an action
+     * @param ikon the button ikon
+     * @param tooltip the button tooltip
+     * @param action the button action
+     * @return the button
+     */
     private Button actionButton(String ikon, String tooltip, Action action) {
         Button button = new Button(ikon);
         button.getStyleClass().add("lasolid-icon");
@@ -358,6 +374,13 @@ public class DecoratedRTA {
         return button;
     }
 
+    /*
+     * Get toggle button
+     * @param ikon the button ikon
+     * @param tooltip the button tooltip
+     * @param function the button function
+     * @return the button
+     */
     private ToggleButton createToggleButton(String ikon, String tooltip, Function<ObjectProperty<Boolean>, DecorateAction<Boolean>> function) {
         final ToggleButton toggleButton = new ToggleButton(ikon);
         toggleButton.getStyleClass().add("lasolid-icon");
@@ -366,6 +389,13 @@ public class DecoratedRTA {
         return toggleButton;
     }
 
+    /*
+     * Create the "green outline" toggle button (for shifted super- and subscript)
+     * @param ikon the button ikon
+     * @param tooltip the button tooltip
+     * @param function the button function
+     * @return the button
+     */
     private ToggleButton createColoredToggleButton(String ikon, String tooltip, Function<ObjectProperty<Boolean>, DecorateAction<Boolean>> function) {
         final ToggleButton toggleButton = new ToggleButton(ikon);
         toggleButton.getStyleClass().add("lasolid-icon");
@@ -376,7 +406,13 @@ public class DecoratedRTA {
     }
 
 
-
+    /*
+     * Create spinner that steps by 1
+     * @param text the spinner label
+     * @param tooltip the spinner tooltip
+     * @param function the spinner function
+     * @return the spinner HBox
+     */
     private HBox createSpinner(String text, String tooltip, Function<ObjectProperty<Integer>, DecorateAction<Integer>> function) {
         Spinner<Integer> spinner = new Spinner<>();
         //
@@ -402,7 +438,14 @@ public class DecoratedRTA {
         return spinnerBox;
     }
 
-    //
+    /*
+     * Create spinner that steps by 2
+     * @param text the spinner label
+     * @param tooltip the spinner tooltip
+     * @param function the spinner function
+     * @return the spinner HBox
+     */
+    //TODO This code duplicates createSpinner except for the amount to step by
     private HBox createJumpSpinner(String text, String tooltip, Function<ObjectProperty<Integer>, DecorateAction<Integer>> function) {
         Spinner<Integer> spinner = new Spinner<>();
         //
@@ -426,8 +469,13 @@ public class DecoratedRTA {
         spinnerBox.setAlignment(Pos.CENTER);
         return spinnerBox;
     }
-    //
 
+    /*
+     * Button to insert image
+     * @param ikon
+     * @param tooltip
+     * @return the button
+     */
     private Button actionImage(String ikon, String tooltip) {
         Button button = new Button(ikon);
         button.getStyleClass().add("lasolid-icon");
@@ -448,6 +496,11 @@ public class DecoratedRTA {
         return button;
     }
 
+    /*
+     * Button to insert emoji
+     * @param tooltip the button tooltip
+     * @return the emoji button
+     */
     private Button actionEmoji(String tooltip) {
         Region region = new Region();
         region.getStyleClass().addAll("icon", "emoji-outline");
@@ -467,6 +520,12 @@ public class DecoratedRTA {
         return emojiButton;
     }
 
+    /*
+     * Button to insert hyperlink
+     * @param ikon the button ikon
+     * @param tooltip the button tooltip
+     * @return the button
+     */
     private Button actionHyperlink(String ikon, String tooltip) {
         Button button = new Button(ikon);
         button.getStyleClass().add("lasolid-icon");
@@ -481,6 +540,10 @@ public class DecoratedRTA {
         return button;
     }
 
+    /*
+     * Create the insert hyperlink dialog
+     * @return the dialog
+     */
     private Dialog<String> createHyperlinkDialog() {
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Hyperlink");
@@ -519,6 +582,13 @@ public class DecoratedRTA {
         return dialog;
     }
 
+    /*
+     * Button to insert table
+     * @param ikon the button ikon
+     * @param tooltip the button tooltip
+     * @param actionFunction the button function
+     * @return the button
+     */
     private Button actionTable(String ikon, String tooltip, Function<TableDecoration, Action> actionFunction) {
         Button button = new Button(ikon);
         button.getStyleClass().add("lasolid-icon");
@@ -532,6 +602,10 @@ public class DecoratedRTA {
         return button;
     }
 
+    /**
+     * Dialog to insert table
+     * @return the dialog
+     */
     private Dialog<TableDecoration> insertTableDialog() {
         Dialog<TableDecoration> dialog = new Dialog<>();
         dialog.setTitle("Insert table");
@@ -591,12 +665,12 @@ public class DecoratedRTA {
         return dialog;
     }
 
-
-
-
+    /*
+     * Presets enum (used for presets combo box not currently in SLAPP
+     */
     private enum Presets {
 
-        DEFAULT("Default",13, NORMAL, TextAlignment.LEFT),
+        DEFAULT("Default",11, NORMAL, TextAlignment.LEFT),
         HEADER1("Header 1", 32, BOLD, TextAlignment.CENTER),
         HEADER2("Header 2", 24, BOLD, TextAlignment.LEFT),
         HEADER3("Header 3", 19, BOLD, TextAlignment.LEFT);
@@ -630,38 +704,58 @@ public class DecoratedRTA {
         }
     }
 
+    /**
+     * The RichTextArea editor
+     * @return the RTA
+     */
     public RichTextArea getEditor() {
         return editor;
     }
 
+    /**
+     * The RTA font size
+     * @return the font size
+     */
     public double getPrimaryFontSize() {
         return primaryFontSize;
     }
 
+    /**
+     * The kbdSelectorToolbar has just the keyboard selector dropdown
+     * @return the toolbar
+     */
+    public ToolBar getKbdSelectorToolbar() {
+        return kbdSelectorToolbar;
+    }
+
+    /**
+     * The Edit toolbar has multiple edit commands (for the SLAPP middle toolbar row)
+     * @return the toolbar
+     */
     public ToolBar getEditToolbar() {
         return editToolbar;
     }
 
-    public ToolBar getFontsToolbar() {
-        return fontsToolbar;
-    }
-
+    /**
+     * The paragraphtoolbar contains multiple commands relevant to paragraphs (for the SLAPP top toolbar row)
+     * @return the toolbar
+     */
     public ToolBar getParagraphToolbar() {
         return paragraphToolbar;
     }
 
-    public Button getKeyboardDiagramButton () {
-        return keyboardDiagramButton;
-    }
-
+    /**
+     * The keyboard selector dropdown gives keyboard combination options
+     * @return the choice box
+     */
     public ChoiceBox<RichTextAreaSkin.KeyMapValue> getKeyboardSelector() {
         return keyboardSelector;
     }
 
-    public ToolBar getInsertToolbar() {
-        return insertToolbar;
-    }
-
+    /**
+     * The keyboard diagram toolbar has just the keyboard diagram button
+     * @return the toolbar
+     */
     public ToolBar getKbdDiaToolbar() {
         return kbdDiaToolbar;
     }

@@ -238,19 +238,19 @@ public class CreateAssignment {
         // border pane right
 
         Button addUpButton = new Button("Add \u2191");
-        addUpButton.setPrefWidth(60);
+        addUpButton.setPrefWidth(65         );
         Button addDownButton = new Button("Add \u2193");
-        addDownButton.setPrefWidth(60);
+        addDownButton.setPrefWidth(65);
         Button removeButton = new Button("Remove");
-        removeButton.setPrefWidth(60);
+        removeButton.setPrefWidth(65);
         saveButton = new Button("Save");
-        saveButton.setPrefWidth(60);
+        saveButton.setPrefWidth(65);
         saveAsButton = new Button("Save As");
-        saveAsButton.setPrefWidth(60);
+        saveAsButton.setPrefWidth(65);
         clearButton = new Button("Clear");
-        clearButton.setPrefWidth(60);
+        clearButton.setPrefWidth(65);
         Button closeButton = new Button("Close");
-        closeButton.setPrefWidth(60);
+        closeButton.setPrefWidth(65);
         VBox buttonBox = new VBox(20, addUpButton, addDownButton, removeButton, saveButton, saveAsButton, clearButton, closeButton);
         buttonBox.setPadding(new Insets(0,20,40,0));
         buttonBox.setMargin(saveButton, new Insets(30,0,0,0));
@@ -388,7 +388,7 @@ public class CreateAssignment {
         stage.initModality(Modality.APPLICATION_MODAL);
         //
 
-        stage.setMinWidth(600);
+        stage.setMinWidth(605);
         stage.setMinHeight(600);
         stage.setOnCloseRequest(e-> {
             e.consume();

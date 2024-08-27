@@ -29,8 +29,16 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * Utility class to show pop-up alerts
+ */
 public class EditorAlerts {
 
+    /**
+     * Information alert with 'OK' to close
+     * @param header alert header string
+     * @param message alert message
+     */
     public static void showSimpleAlert(String header, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(header);
@@ -42,6 +50,11 @@ public class EditorAlerts {
 
     }
 
+    /**
+     * Self-closing information alert
+     * @param header alert header string
+     * @param message alert message
+     */
     public static void showFleetingAlert(String header, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(header);
@@ -56,10 +69,12 @@ public class EditorAlerts {
 
     }
 
-
-
-
-
+    /**
+     * Confirmation alert with OK/Cancel options.  The alert is returned, and must by shown by caller
+     * @param title alert header string
+     * @param content alert message
+     * @return the alert
+     */
     public static Alert confirmationAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
@@ -70,6 +85,10 @@ public class EditorAlerts {
         return alert;
     }
 
+    /**
+     * Self-closing popup message
+     * @param message the string (text) message
+     */
     public static void fleetingPopup(String message) {
         Popup popup = new Popup();
         Label label = new Label(message);
@@ -93,6 +112,10 @@ public class EditorAlerts {
         delay.play();
     }
 
+    /**
+     * Self-closing popup with label (node) message area
+     * @param label
+     */
     public static void fleetingPopup(Label label) {
         Popup popup = new Popup();
         label.setAlignment(Pos.CENTER);

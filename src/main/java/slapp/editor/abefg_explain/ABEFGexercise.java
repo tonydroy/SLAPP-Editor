@@ -227,10 +227,6 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
             }
         });
         abefgView.addBlankContentPage(newPageIndex, drta);
-        Platform.runLater(() -> {
-            mainView.updateContentWidthProperty();
-            mainView.updateContentHeightProperty();
-        });
     }
 
     private void removePageAction() {
@@ -249,10 +245,6 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
                 abefgModel.getPageContents().remove(currentPageIndex);
                 abefgView.removeContentPage(currentPageIndex);
                 exerciseModified = true;
-                Platform.runLater(() -> {
-                    mainView.updateContentWidthProperty();
-                    mainView.updateContentHeightProperty();
-                });
             }
         }
     }

@@ -41,9 +41,10 @@ import static slapp.editor.EditorMain.os;
 
 import slapp.editor.main_window.MainWindowView;
 
+/**
+ * Utility items to facilitate printing
+ */
 public class PrintUtilities {
-
-
     private static PageLayout pageLayout;
     //this is the layout visible to the rest of the program for the printable area
     private static DoubleProperty pageWidth = new SimpleDoubleProperty();
@@ -59,7 +60,9 @@ public class PrintUtilities {
     private static VBox topBox;
 
 
-
+    /**
+     * Set default print values
+     */
     static {
         spacer.setVisible(false);
         PrinterJob job = PrinterJob.createPrinterJob();
@@ -71,6 +74,8 @@ public class PrintUtilities {
             double bottomMargin = Math.max(baseLayout.getBottomMargin(), 48);
             pageLayout = printer.createPageLayout(baseLayout.getPaper(), baseLayout.getPageOrientation(), baseLayout.getLeftMargin(), baseLayout.getRightMargin(), baseLayout.getTopMargin(), bottomMargin );
 
+
+            //Landscape margins do not work as expected and seem different on Win and Mac.  This kludge seems ok?
             double top = pageLayout.getTopMargin();
             double bottom = 18.0;
             double left = pageLayout.getLeftMargin();
@@ -87,11 +92,6 @@ public class PrintUtilities {
             } else {
                 internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), left, right, top, bottom);
             }
-
-
-
-//            internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), pageLayout.getLeftMargin(), pageLayout.getRightMargin(), top, bottom);
-
         }
         else {
             EditorAlerts.showSimpleAlert("Print Problem", "Failed to set print and page defaults.");
@@ -99,6 +99,9 @@ public class PrintUtilities {
     }
 
 
+    /**
+     * Update page layout settings by page setup dialog
+     */
     public static void updatePageLayout() {
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null) {
@@ -114,6 +117,7 @@ public class PrintUtilities {
                 pageHeight.set(pageLayout.getPrintableHeight());
                 pageWidth.set(pageLayout.getPrintableWidth());
 
+                //see comment above
                 double top = pageLayout.getTopMargin();
                 double bottom = 18.0;
                 double left = pageLayout.getLeftMargin();
@@ -130,9 +134,6 @@ public class PrintUtilities {
                 } else {
                     internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), left, right, top, bottom);
                 }
-
-
-
  //               internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), pageLayout.getLeftMargin(), pageLayout.getRightMargin(), top, bottom);
             }
             job.endJob();
@@ -142,9 +143,18 @@ public class PrintUtilities {
         }
     }
 
+    /**
+     * Select export printer with failure message
+     */
     public static void exportSetup() {
         if (!runExportSetup())  EditorAlerts.showSimpleAlert("Print Problem", "Export setup failed");
     }
+
+    /**
+     * Select export printer with print dialog
+     *
+     * @return true if successful and otherwise false
+     */
     private static boolean runExportSetup() {
         boolean isExportSetup = false;
         if (os.startsWith("Mac")) {
@@ -181,16 +191,19 @@ public class PrintUtilities {
         return isExportSetup;
     }
 
-    public static void printNodes(String footerInfo, PrinterJob job) {
+    /*
+     * Send nodes from print buffer to printer.  Handles header, footer, and page breaks.
+     *
+     * @param footerInfo the footer string
+     * @param job the printer job
+     */
+    private static void printNodes(String footerInfo, PrinterJob job) {
 
         MainWindowView.activateProgressIndicator("printing");
-
-
 
         boolean success = true;
         int pageNum = 0;
         VBox pageBox = new VBox();
-//        pageBox.setPadding(new Insets(25,0,0,0));   // this papers over the fact that top margin is not working (giving about .75 margin); see compensation adding node to page
         double netHeight = 0;
         int i = 0;
 
@@ -257,6 +270,14 @@ public class PrintUtilities {
         else EditorAlerts.fleetingPopup("Print job did not complete.");
     }
 
+    /*
+     * Construct footer from page num and info string
+     *
+     * @param pageNum the page number
+     * @param infoString the info string
+     *
+     * @return the footer HBox
+     */
     private static HBox getFooterBox(int pageNum, String infoString) {
         Region spacer = new Region();
         HBox footerBox = new HBox(new Label(Integer.toString(pageNum)), spacer, new Label(infoString));
@@ -268,6 +289,11 @@ public class PrintUtilities {
         return footerBox;
     }
 
+    /**
+     * Show print dialog and send items from print buffer to the selected printer
+     *
+     * @param footerInfo the footer info string
+     */
     public static void sendBufferToPrint(String footerInfo) {
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null) {
@@ -279,6 +305,10 @@ public class PrintUtilities {
 
     }
 
+    /**
+     * If pdf printer not already selected, select; then send print buffer to the selected pdf printer
+     * @param footerInfo
+     */
     public static void sendBufferToPDF(String footerInfo) {
         boolean success = false;
         if (pdfPrinter != null || runExportSetup()) {
@@ -292,7 +322,12 @@ public class PrintUtilities {
         if (!success) EditorAlerts.showSimpleAlert("Print Problem", "Failed to create export job");
     }
 
-
+    /*
+     * Get size of node, and return print buffer item with node height and width
+     *
+     * @param node the node
+     * @return the print buffer item
+     */
     private static PrintBufferItem getNodeSize(Node node) {
         Group root = new Group();
         Scene scene = new Scene(root);
@@ -306,6 +341,13 @@ public class PrintUtilities {
         return new PrintBufferItem(node, bounds.getHeight(), bounds.getWidth());
     }
 
+    /**
+     * Get print buffer item from node, updated with scale values; add to printBuffer
+     *
+     * @param node the node
+     *
+     * @return true if the node fits on the page at the base scale, and otherwise false
+     */
     public static boolean processPrintNode(Node node) {
         boolean nodeFit = true;
         double wScale = 1.0;
@@ -330,28 +372,55 @@ public class PrintUtilities {
     }
 
 
-
-
+    /**
+     * Get the selected (printable) page width
+     *
+     * @return the width
+     */
     public static double getPageWidth() {
         return pageWidth.get();
     }
 
+    /**
+     * The selected (printable) page with property
+     * @return the page width property
+     */
     public static DoubleProperty pageWidthProperty() {
         return pageWidth;
     }
 
+    /**
+     * Get the selected (printable) page height.  This value does not include footer space.
+     *
+     * @return the height
+     */
     public static double getPageHeight() {
         return pageHeight.get();
     }
 
+    /**
+     * The selected (printable) page height property.  This value does not include the footer space.
+     *
+     * @return the page height property
+     */
     public static DoubleProperty pageHeightProperty() {
         return pageHeight;
     }
 
+    /**
+     * The page layout includes margins, paper and such
+     *
+     * @return the currently selected page layout
+     */
     public static PageLayout getPageLayout() {
         return pageLayout;
     }
 
+    /**
+     * Set page layout and update dependent values
+     *
+     * @param pageLayout the page layout
+     */
     public static void setPageLayout(PageLayout pageLayout) {
         if (pageLayout != null) {
             PrintUtilities.pageLayout = pageLayout;
@@ -359,38 +428,60 @@ public class PrintUtilities {
             pageWidth.set(pageLayout.getPrintableWidth());
 
             /*
-            In landscape printing, the top and bottom margins are reversed!!   Is this a feature of my Windows setup?  Revisit on Mac
+            Still have landscape problem as above
              */
             double top = pageLayout.getTopMargin();
             double bottom = 18.0;
-            if (pageLayout.getPageOrientation() == PageOrientation.LANDSCAPE) {
-                bottom = top;
-                top = 18.0;
-            }
-            internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), pageLayout.getLeftMargin(), pageLayout.getRightMargin(), top, bottom);
-//           internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), pageLayout.getLeftMargin(), pageLayout.getRightMargin(), pageLayout.getTopMargin(), 18.0);
+            double left = pageLayout.getLeftMargin();
+            double right = pageLayout.getRightMargin();
 
+            if (pageLayout.getPageOrientation() == PageOrientation.LANDSCAPE) {
+                if (os.startsWith("Win")) {
+                    internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), left, right, bottom, top);
+                }
+                else if (os.startsWith("Mac")) {
+                    double offset = 18.0;
+                    internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), left + offset, right - offset, top - offset, bottom + offset);
+                }
+            } else {
+                internalPageLayout = printer.createPageLayout(pageLayout.getPaper(), pageLayout.getPageOrientation(), left, right, top, bottom);
+            }
         }
     }
 
+    /**
+     * The currently selected printer
+     *
+     * @return the printer
+     */
     public static Printer getPrinter() {
         return printer;
     }
 
+    /**
+     * Reset scale for members of the print buffer all to the base value
+     */
     public static void resetPrintBufferScale() {
         for (PrintBufferItem item : printBuffer) {
             item.setScale(baseScale);
         }
+    }
 
-         }
+    /**
+     * Clear the print buffer and reset the base scale
+     *
+     * @param baseScale the base scale value
+     */
     public static void resetPrintBuffer(double baseScale) {
         PrintUtilities.baseScale = baseScale;
         printBuffer.clear();
         topBox = null;
     }
 
-    //this is a stub to let the extended demo compile
-        public static void printRTA(RichTextArea rta) {}
-
+    /**
+     * Set the header (top) box
+     *
+     * @param box the top box
+     */
     public static void setTopBox(VBox box) { topBox = box; }
 }

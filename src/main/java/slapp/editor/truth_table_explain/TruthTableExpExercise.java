@@ -207,10 +207,6 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
             updateViewTableItems();
             truthTableExpView.updateTableGridFromTableItems();
             exerciseModified = true;
-            Platform.runLater(() -> {
-                mainView.updateContentWidthProperty();
-                mainView.updateContentHeightProperty();
-            });
         });
 
         //table contents

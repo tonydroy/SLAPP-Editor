@@ -482,7 +482,7 @@ public class MainWindow {
                         UpdateAssignmentHeader headerUpdater = new UpdateAssignmentHeader(assignment.getHeader());
                         assignment.setHeader(headerUpdater.updateHeader());
                     }
-                    else {
+                    if (assignment.hasCompletedHeader()) {
                         currentAssignment = assignment;
                         TypeSelectorFactories typeFactory = new TypeSelectorFactories(this);
                         assignmentIndex = 0;

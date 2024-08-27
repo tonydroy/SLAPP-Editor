@@ -31,7 +31,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
@@ -105,6 +104,7 @@ public class TruthTableExpCreate {
     private Button lowerSaveButton;
     private Button saveAsButton;
     private BoxedDRTA focusedBoxedDRTA;
+    private DecoratedRTA dummyDRTA = new DecoratedRTA();
 
 
 
@@ -174,6 +174,10 @@ public class TruthTableExpCreate {
         };
         nameField.textProperty().addListener(nameListener);
 
+        nameField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
         Label explainPromptLabel = new Label("Explain Prompt: ");
         explainPromptField  = new TextField();
         explainPromptField.setPromptText("(plain text)");
@@ -184,6 +188,10 @@ public class TruthTableExpCreate {
             }
         };
         explainPromptField.textProperty().addListener(nameListener);
+
+        explainPromptField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
 
         HBox nameBox = new HBox(10, nameLabel, nameField, explainPromptLabel, explainPromptField);
         nameBox.setAlignment(Pos.CENTER_LEFT);
@@ -202,6 +210,10 @@ public class TruthTableExpCreate {
         };
         choiceLeadField.textProperty().addListener(choiceLeadListener);
 
+        choiceLeadField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
         Label aPromptLabel = new Label("A prompt: ");
         aPromptField  = new TextField();
         aPromptField.setPromptText("(plain text)");
@@ -214,6 +226,10 @@ public class TruthTableExpCreate {
         };
         aPromptField.textProperty().addListener(aPromptListener);
 
+        aPromptField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
         Label bPromptLabel = new Label("B prompt: ");
         bPromptField  = new TextField();
         bPromptField.setPromptText("(plain text)");
@@ -225,6 +241,10 @@ public class TruthTableExpCreate {
             }
         };
         bPromptField.textProperty().addListener(bPromptListener);
+
+        bPromptField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
 
         HBox choicesBox = new HBox(10, choiceLeadLabel, choiceLeadField, aPromptLabel, aPromptField, bPromptLabel, bPromptField);
         choicesBox.setAlignment(Pos.CENTER_LEFT);
@@ -492,7 +512,7 @@ public class TruthTableExpCreate {
         stage.getIcons().addAll(EditorMain.icons);
         stage.setWidth(860);
         stage.setMinWidth(860);
-        stage.setHeight(860);
+        stage.setHeight(900);
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.initModality(Modality.WINDOW_MODAL);
@@ -781,9 +801,6 @@ public class TruthTableExpCreate {
     }
 
 
-
-
-
     void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
@@ -792,39 +809,42 @@ public class TruthTableExpCreate {
             keyboardDiagram.updateAndShow();
         }
 
-        editToolbar = decoratedRTA.getEditToolbar();
-        fontsToolbar = decoratedRTA.getFontsToolbar();
-        paragraphToolbar = decoratedRTA.getParagraphToolbar();
-        kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
+        ToolBar editToolbar = decoratedRTA.getKbdSelectorToolbar();
+        ToolBar fontsToolbar = decoratedRTA.getEditToolbar();
+        ToolBar paragraphToolbar = decoratedRTA.getParagraphToolbar();
+        ToolBar kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
         kbdDiaToolBar.setPrefHeight(38);
 
-        if (kbdDiaToolBar.getItems().isEmpty()) {
-
-            kbdDiaToolBar.getItems().addAll(decoratedRTA.getKeyboardDiagramButton());
-
-            switch (control) {
-                case NONE: {
-                    kbdDiaToolBar.setDisable(true);
-                }
-                case STATEMENT: {
-                    editToolbar.setDisable(true);
-                    fontsToolbar.setDisable(true);
-                }
-                case FIELD: {
-                    paragraphToolbar.setDisable(true);
-                }
-                case AREA: { }
+        switch (control) {
+            case NONE: {
+                kbdDiaToolBar.setDisable(true);
             }
+            case STATEMENT: {
+                editToolbar.setDisable(true);
+                fontsToolbar.setDisable(true);
+            }
+            case FIELD: {
+                paragraphToolbar.setDisable(true);
+            }
+            case AREA: { }
         }
+        sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
+
 
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
         editAndKbdBox.layout();
 
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, upperFieldsBox);
-//        topBox.layout();
-        borderPane.topProperty().setValue(topBox);
 
+
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, upperFieldsBox);
+        borderPane.topProperty().setValue(topBox);
     }
+
+    public void textFieldInFocus() {
+        editorInFocus(dummyDRTA, ControlType.STATEMENT);
+    }
+
+
 
 }

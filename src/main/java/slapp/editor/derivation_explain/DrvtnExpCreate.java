@@ -31,7 +31,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
@@ -47,7 +46,6 @@ import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.derivation.LineType;
 import slapp.editor.derivation.ModelLine;
 
-import slapp.editor.derivation.SetupLine;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
 
@@ -109,6 +107,8 @@ public class DrvtnExpCreate {
     private ToolBar sizeToolBar;
     private Button lowerSaveButton;
     private Button saveAsButton;
+
+    private DecoratedRTA dummyDRTA = new DecoratedRTA();
 
     public DrvtnExpCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -185,6 +185,10 @@ public class DrvtnExpCreate {
         };
         nameField.textProperty().addListener(nameListener);
 
+        nameField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
         Label promptLabel = new Label("Explain prompt");
         promptLabel.setPrefWidth(95);
         promptField = new TextField();
@@ -197,6 +201,10 @@ public class DrvtnExpCreate {
             }
         };
         promptField.textProperty().addListener(promptFieldListener);
+
+        promptField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
 
 
         HBox nameBox = new HBox(10, nameLabel, nameField, promptLabel, promptField);
@@ -724,40 +732,39 @@ public class DrvtnExpCreate {
             keyboardDiagram.updateAndShow();
         }
 
-        editToolbar = decoratedRTA.getEditToolbar();
-        fontsToolbar = decoratedRTA.getFontsToolbar();
+        editToolbar = decoratedRTA.getKbdSelectorToolbar();
+        fontsToolbar = decoratedRTA.getEditToolbar();
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
         kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
         kbdDiaToolBar.setPrefHeight(38);
 
-        if (kbdDiaToolBar.getItems().isEmpty()) {
-
-            kbdDiaToolBar.getItems().addAll(decoratedRTA.getKeyboardDiagramButton());
-
-            switch (control) {
-                case NONE: {
-                    kbdDiaToolBar.setDisable(true);
-                }
-                case STATEMENT: {
-                    editToolbar.setDisable(true);
-                    fontsToolbar.setDisable(true);
-                }
-                case FIELD: {
-                    paragraphToolbar.setDisable(true);
-                }
-                case AREA: { }
+        switch (control) {
+            case NONE: {
+                kbdDiaToolBar.setDisable(true);
             }
+            case STATEMENT: {
+                editToolbar.setDisable(true);
+                fontsToolbar.setDisable(true);
+            }
+            case FIELD: {
+                paragraphToolbar.setDisable(true);
+            }
+            case AREA: { }
         }
+        sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
+
 
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
         editAndKbdBox.layout();
 
+
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, upperFieldsBox);
-//        topBox.layout();
         borderPane.topProperty().setValue(topBox);
+    }
 
-
+    public void textFieldInFocus() {
+        editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
 
     public RichTextAreaSkin.KeyMapValue getKeyboardSelector() {return keyboardSelector;}

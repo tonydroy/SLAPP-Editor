@@ -179,10 +179,6 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
             }
         });
         abView.addBlankContentPage(newPageIndex, drta);
-        Platform.runLater(() -> {
-            mainView.updateContentWidthProperty();
-            mainView.updateContentHeightProperty();
-        });
     }
 
     private void removePageAction() {
@@ -201,10 +197,6 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
                 abModel.getPageContents().remove(currentPageIndex);
                 abView.removeContentPage(currentPageIndex);
                 exerciseModified = true;
-                Platform.runLater(() -> {
-                    mainView.updateContentWidthProperty();
-                    mainView.updateContentHeightProperty();
-                });
             }
         }
     }

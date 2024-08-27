@@ -43,7 +43,6 @@ import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
-import slapp.editor.derivation_explain.DrvtnExpSetupLine;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
 
@@ -102,6 +101,7 @@ public class DerivationCreate {
     private ToolBar kbdDiaToolBar;
     private Button lowerSaveButton;
     private Button saveAsButton;
+    private DecoratedRTA dummyDRTA = new DecoratedRTA();
 
 
     public DerivationCreate(MainWindow mainWindow) {
@@ -177,6 +177,10 @@ public class DerivationCreate {
             }
         };
         nameField.textProperty().addListener(nameListener);
+
+        nameField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
 
         //check boxes
         scopeLineCheck = new CheckBox("Leftmost scope line");
@@ -681,31 +685,27 @@ public class DerivationCreate {
             keyboardDiagram.updateAndShow();
         }
 
-        editToolbar = decoratedRTA.getEditToolbar();
-        fontsToolbar = decoratedRTA.getFontsToolbar();
+        editToolbar = decoratedRTA.getKbdSelectorToolbar();
+        fontsToolbar = decoratedRTA.getEditToolbar();
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
         kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
         kbdDiaToolBar.setPrefHeight(38);
 
-
-        if (kbdDiaToolBar.getItems().isEmpty()) {
-
-            kbdDiaToolBar.getItems().addAll(decoratedRTA.getKeyboardDiagramButton());
-
-            switch (control) {
-                case NONE: {
-                    kbdDiaToolBar.setDisable(true);
-                }
-                case STATEMENT: {
-                    editToolbar.setDisable(true);
-                    fontsToolbar.setDisable(true);
-                }
-                case FIELD: {
-                    paragraphToolbar.setDisable(true);
-                }
-                case AREA: { }
+        switch (control) {
+            case NONE: {
+                kbdDiaToolBar.setDisable(true);
             }
+            case STATEMENT: {
+                editToolbar.setDisable(true);
+                fontsToolbar.setDisable(true);
+            }
+            case FIELD: {
+                paragraphToolbar.setDisable(true);
+            }
+            case AREA: { }
         }
+        sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
+
 
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
@@ -714,8 +714,10 @@ public class DerivationCreate {
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, upperFieldsBox);
         borderPane.topProperty().setValue(topBox);
+    }
 
-
+    public void textFieldInFocus() {
+        editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
 
     public RichTextAreaSkin.KeyMapValue getKeyboardSelector() {return keyboardSelector;}

@@ -29,8 +29,13 @@ import java.util.Objects;
 
 public class ExtractSubText {
 
-    public ExtractSubText() {}
-
+    /**
+     * Extract TextFlow (like a decorated substring) from Document
+     * @param start the start position in the document
+     * @param length the length in the document
+     * @param doc the Document
+     * @return the text flow
+     */
     public static TextFlow getTextFromDoc(int start, int length, Document doc) {
         TextFlow flow = new TextFlow();
         String docString = doc.getText();
@@ -71,6 +76,12 @@ public class ExtractSubText {
         return flow;
     }
 
+    /*
+     * Get the decoration with application to the index position in Do0cument
+     * @param index position in document
+     * @param decorations the document decorations
+     * @return the applicable DecorationModel
+     */
     private static DecorationModel getDecorationAtIndex(int index, List<DecorationModel> decorations) {
         DecorationModel decorationAtIndex = null;
         for (DecorationModel decoration : decorations) {
@@ -82,6 +93,12 @@ public class ExtractSubText {
         return decorationAtIndex;
     }
 
+    /*
+     * Build a Text object from string content and decoration
+     * @param content the string content
+     * @param decoration the decorations
+     * @return the text
+     */
     private static Text buildText(String content, TextDecoration decoration) {
 
         if ("\n".equals(content)) {

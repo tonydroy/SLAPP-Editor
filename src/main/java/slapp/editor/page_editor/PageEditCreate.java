@@ -42,6 +42,7 @@ import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
+import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -68,6 +69,11 @@ public class PageEditCreate {
     private Button saveAsButton;
     private ToolBar sizeToolBar;
 
+    DecoratedRTA dummyDRTA = new DecoratedRTA();
+    private MenuBar menuBar;
+    VBox nameNpromptBox;
+    BorderPane borderPane;
+
 
     public PageEditCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -88,11 +94,11 @@ public class PageEditCreate {
     }
 
     private void setupWindow() {
-        BorderPane borderPane = new BorderPane();
+        borderPane = new BorderPane();
 
         //empty bar for consistent look
         Menu helpMenu = new Menu("");
-        MenuBar menuBar = new MenuBar(helpMenu);
+        menuBar = new MenuBar(helpMenu);
 
         statementDRTA = new DecoratedRTA();
         statementRTA = statementDRTA.getEditor();
@@ -105,6 +111,12 @@ public class PageEditCreate {
         statementRTA.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
             fieldModified = true;
             statementTextHeight = mainWindow.getMainView().getRTATextHeight(statementRTA);
+        });
+
+        statementRTA.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) {
+                editorInFocus(statementDRTA, ControlType.AREA);
+            }
         });
 
         Label nameLabel = new Label("Exercise Name: ");
@@ -120,6 +132,10 @@ public class PageEditCreate {
         };
         nameField.textProperty().addListener(nameListener);
 
+        nameField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
         Label promptLabel = new Label("Content prompt: ");
         promptLabel.setPrefWidth(95);
         promptField = new TextField();
@@ -133,12 +149,16 @@ public class PageEditCreate {
         };
         promptField.textProperty().addListener(nameListener);
 
+        promptField.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv) textFieldInFocus();
+        });
+
 
         HBox nameBox = new HBox(nameLabel, nameField);
         nameBox.setAlignment(Pos.BASELINE_LEFT);
         HBox promptBox = new HBox(promptLabel, promptField);
         promptBox.setAlignment(Pos.BASELINE_LEFT);
-        VBox nameNpromptBox = new VBox(10,nameBox,promptBox);
+        nameNpromptBox = new VBox(10,nameBox,promptBox);
         nameNpromptBox.setPadding(new Insets(20,0,20,70));
 
         String helpText = "Page Edit Exercise is appropriate for any exercise that calls for a text response which may range from short answer to multiple pages. All the usual keyboard and edit commands apply.\n\n" +
@@ -205,10 +225,10 @@ public class PageEditCreate {
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
 
 
+/*
 
-
-        ToolBar editToolbar = statementDRTA.getEditToolbar();
-        ToolBar fontsToolbar = statementDRTA.getFontsToolbar();
+        ToolBar editToolbar = statementDRTA.getKbdSelectorToolbar();
+        ToolBar fontsToolbar = statementDRTA.getEditToolbar();
         ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
         ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
         kbdDiaToolBar.setPrefHeight(38);
@@ -224,7 +244,11 @@ public class PageEditCreate {
 //        topBox.layout();
         borderPane.topProperty().setValue(topBox);
 
+
+
         borderPane.setTop(topBox);
+
+ */
 
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
@@ -234,6 +258,7 @@ public class PageEditCreate {
         stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
         stage.setY(EditorMain.mainStage.getY() + 200);
         stage.setWidth(860);
+        stage.setHeight(700);
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setOnCloseRequest(e-> {
             e.consume();
@@ -336,6 +361,50 @@ public class PageEditCreate {
         PageEditModel model = new PageEditModel(name, false, prompt, statementPrefHeight, statementDocument, commentDoc, new ArrayList<PageContent>());
         model.setStatementTextHeight(statementTextHeight);
         return model;
+    }
+
+    void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
+
+        KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
+        keyboardDiagram.initialize(decoratedRTA);
+        if (keyboardDiagram.isShowing()) {
+            keyboardDiagram.updateAndShow();
+        }
+
+        ToolBar editToolbar = decoratedRTA.getKbdSelectorToolbar();
+        ToolBar fontsToolbar = decoratedRTA.getEditToolbar();
+        ToolBar paragraphToolbar = decoratedRTA.getParagraphToolbar();
+        ToolBar kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
+        kbdDiaToolBar.setPrefHeight(38);
+
+        switch (control) {
+            case NONE: {
+                kbdDiaToolBar.setDisable(true);
+            }
+            case STATEMENT: {
+                editToolbar.setDisable(true);
+                fontsToolbar.setDisable(true);
+            }
+            case FIELD: {
+                paragraphToolbar.setDisable(true);
+            }
+            case AREA: { }
+        }
+        sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
+
+
+        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
+        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
+        editAndKbdBox.layout();
+
+
+
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, nameNpromptBox);
+        borderPane.topProperty().setValue(topBox);
+    }
+
+    public void textFieldInFocus() {
+        editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
 
 }

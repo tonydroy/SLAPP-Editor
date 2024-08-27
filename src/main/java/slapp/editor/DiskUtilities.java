@@ -25,13 +25,22 @@ import slapp.editor.main_window.ExerciseModel;
 import java.io.*;
 import java.util.Collections;
 
+/**
+ * Utility methods for disk operations
+ */
 public class DiskUtilities {
 
     private static File exerciseDirectory = null;
     private static File assignmentDirectory = null;
     private static File userHomeFile = new File(System.getProperty("user.home"));
 
-
+    /**
+     * Save exercise
+     *
+     * @param saveAs if true or exercise directrory is null save as, otherwise save to current exercise directory
+     * @param exerciseModel the model to be saved
+     * @return true if successful and otherwise false
+     */
     public static boolean saveExercise(boolean saveAs, ExerciseModel exerciseModel) {
         boolean success = false;
         File fileToSave;
@@ -75,6 +84,13 @@ public class DiskUtilities {
         return success;
     }
 
+    /**
+     * Save assignment
+     *
+     * @param saveAs if true or assignment directory is null save as, otherwise save in current assignment directory
+     * @param assignment the assignment to save
+     * @return true if successful and otherwise false
+     */
     public static boolean saveAssignment(boolean saveAs, Assignment assignment) {
         boolean success = false;
         File fileToSave;
@@ -118,7 +134,11 @@ public class DiskUtilities {
         return success;
     }
 
-
+    /**
+     * Choose and open exercise model (as object) from disk
+     *
+     * @return the exercise model object
+     */
     public static Object openExerciseModelObject() {
         Object exerciseModelObject = null;
         FileChooser fileChooser = new FileChooser();
@@ -140,6 +160,11 @@ public class DiskUtilities {
         return exerciseModelObject;
     }
 
+    /**
+     * Choose and open assignment from disk
+     *
+     * @return the assignment
+     */
     public static Assignment openAssignment() {
         Assignment assignment = null;
         FileChooser fileChooser = new FileChooser();
@@ -161,6 +186,12 @@ public class DiskUtilities {
         return assignment;
     }
 
+    /**
+     * Get exercise model from disk file
+     *
+     * @param fileToOpen the file
+     * @return the exercise model
+     */
     public static ExerciseModel getExerciseModelFromFile(File fileToOpen) {
         ExerciseModel exerciseModel = null;
         if (fileToOpen != null) {
@@ -174,6 +205,12 @@ public class DiskUtilities {
         return exerciseModel;
     }
 
+    /**
+     * Get a directory from disk
+     *
+     * @param type the type EXERCISE/ASSIGNMENT of directory to open
+     * @return the directory
+     */
     public static File getDirectory(DirType type) {
         File startingDir = userHomeFile;
         if (type == DirType.EXERCISE && exerciseDirectory != null) startingDir = exerciseDirectory;
@@ -187,6 +224,13 @@ public class DiskUtilities {
     }
 
 
+    /**
+     * Get sorted list of files (of some type) from directory
+     *
+     * @param directory the directory File
+     * @param extension the type extgension
+     * @return the File list
+     */
     public static ObservableList<File> getFileListFromDir(File directory, String extension) {
         ObservableList list = null;
         FilenameFilter filenameFilter = new FilenameFilter() {
@@ -203,7 +247,9 @@ public class DiskUtilities {
     }
 
 
-
+    /**
+     * Enum to differentiate exercise/assignment directory types
+     */
     public enum DirType {
         EXERCISE,
         ASSIGNMENT;
