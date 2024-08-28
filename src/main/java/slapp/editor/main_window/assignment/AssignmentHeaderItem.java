@@ -21,6 +21,7 @@ import java.io.Serializable;
  * Simple lable-value pair for optional student or instructor header items
  */
 public class AssignmentHeaderItem implements Serializable {
+    private static final long serialVersionUID = 100L;
     private String label = "";
     private String value = "";
 

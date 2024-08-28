@@ -29,41 +29,36 @@ public interface Exercise<T,U> {
 
     /**
      * The exercise model is different for different exercise types
-     *
      * @return the model
      */
     T getExerciseModel();
 
     /**
      * The exercise view is different for different exercise types
-     * @return
+     * @return the view
      */
     U getExerciseView();
 
     /**
      * Save exercise to disk
-     *
      * @param saveAs true if "save as" should be invoked, and otherwise false
      */
     void saveExercise(boolean saveAs);
 
     /**
      * List of nodes to be sent to printer for this exercise
-     *
      * @return the node list
      */
     List<Node> getPrintNodes();
 
     /**
-     * Return to the initial (unworked) version of the exercise
-     *
+     * Return to the initial (unworked) version of the exercise, retaining the comment only.
      * @return the initial exercise
      */
     Exercise<T,U> resetExercise();
 
     /**
      * Exercise is modified if it is changed relative to last save
-     *
      * @return true if exercise is modified, and otherwise false
      */
     boolean isExerciseModified();
@@ -76,7 +71,6 @@ public interface Exercise<T,U> {
 
     /**
      * Extract an {@link slapp.editor.main_window.ExerciseModel} from view of the exercise
-     *
      * @return the exercise model
      */
     ExerciseModel<T> getExerciseModelFromView();
@@ -84,7 +78,6 @@ public interface Exercise<T,U> {
     /**
      * The view node to be displayed as a component of the free form exercise.  This will be a (possibly modified)
      * portion of the regular exercise view.
-     *
      * @return the view node
      */
     Node getFFViewNode();
@@ -92,7 +85,6 @@ public interface Exercise<T,U> {
     /**
      * The node to be printed as a component of the free form exercise.  This will be a (possibly modified)
      * portion of the regular print nodes.
-     *
      * @return the print node
      */
     Node getFFPrintNode();

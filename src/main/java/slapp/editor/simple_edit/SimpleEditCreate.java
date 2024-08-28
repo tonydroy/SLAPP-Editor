@@ -49,6 +49,9 @@ import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
+/**
+ * Create window for the simple edit exercise
+ */
 public class SimpleEditCreate {
     private MainWindow mainWindow;
     private RichTextArea statementRTA;
@@ -74,11 +77,20 @@ public class SimpleEditCreate {
     private BorderPane borderPane;
 
 
+    /**
+     * Construct the create window from scratch.
+     * @param mainWindow the main window
+     */
     public SimpleEditCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
+    /**
+     * Construct create window from existing (unworked) SimpleEditModel
+     * @param mainWindow the main window
+     * @param originalModel the existing model
+     */
     public SimpleEditCreate(MainWindow mainWindow, SimpleEditModel originalModel) {
         this(mainWindow);
 
@@ -91,6 +103,10 @@ public class SimpleEditCreate {
         promptField.textProperty().addListener(promptListener);
         fieldModified = false;
     }
+
+    /*
+     * Set up the create view
+     */
     private void setupWindow() {
 
         borderPane = new BorderPane();
@@ -136,8 +152,6 @@ public class SimpleEditCreate {
             if (nv) textFieldInFocus();
         });
 
-
-
         Label promptLabel = new Label("Content prompt: ");
         promptLabel.setPrefWidth(95);
         promptField = new TextField();
@@ -154,7 +168,6 @@ public class SimpleEditCreate {
         promptField.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) textFieldInFocus();
         });
-
 
         HBox nameBox = new HBox(nameLabel, nameField);
         nameBox.setAlignment(Pos.BASELINE_LEFT);
@@ -226,28 +239,6 @@ public class SimpleEditCreate {
         sizeToolBar.setPrefHeight(38);
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
 
-
-
-/*
-        ToolBar editToolbar = statementDRTA.getKbdSelectorToolbar();
-        ToolBar fontsToolbar = statementDRTA.getEditToolbar();
-        ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
-        ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
-        kbdDiaToolBar.setPrefHeight(38);
-
-
-
-
-
-        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
-        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
-
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, nameNpromptBox);
-        borderPane.topProperty().setValue(topBox);
-        borderPane.setTop(topBox);
-
- */
-
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
@@ -270,8 +261,9 @@ public class SimpleEditCreate {
         Platform.runLater(() -> nameField.requestFocus());
     }
 
-
-
+    /*
+     * update zoom value
+     */
     private void updateZoom() {
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
@@ -284,6 +276,9 @@ public class SimpleEditCreate {
         keyboardDiagram.update();
     }
 
+    /*
+     * The center statement area sizes as the stage is sized
+     */
     private void setCenterVgrow() {
         double fixedHeight = helpArea.getHeight() * scale + 400;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
@@ -294,6 +289,9 @@ public class SimpleEditCreate {
         statementRTA.prefHeightProperty().bind(centerHeightProperty);
     }
 
+    /*
+     * Close the create window
+     */
     private void closeWindow() {
         if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
             mainWindow.closeExercise();
@@ -301,17 +299,25 @@ public class SimpleEditCreate {
         }
     }
 
+    /*
+     * Clear the exercise (leaving prompt value)
+     */
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
             statementRTA.getActionFactory().newDocumentNow().execute(new ActionEvent());
- //           statementRTA.getActionFactory().open(new Document("")).execute(new ActionEvent());
             viewExercise();
             fieldModified = false;
         }
     }
 
+    /*
+     * If modified, check to continue action
+     * @param title the title of the confirmation box
+     * @param content the content of the confirmation box
+     * @return true if ok to continue, and otherwise false
+     */
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
         if (fieldModified || statementRTA.isModified()) {
@@ -322,6 +328,9 @@ public class SimpleEditCreate {
         return okcontinue;
     }
 
+    /*
+     * View the exercise as currently constucted
+     */
     private void viewExercise() {
         SimpleEditModel model = extractModelFromWindow();
         SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
@@ -332,14 +341,16 @@ public class SimpleEditCreate {
         mainWindow.setUpExercise(exercise);
     }
 
+    /*
+     * Save the currently constructed exercise
+     * @param saveAs true if "save as" selected, and otherwise false
+     */
     private void saveExercise(boolean saveAs) {
         saveButton.setDisable(true);
         saveAsButton.setDisable(true);
         nameField.textProperty().addListener(nameListener);
 
         SimpleEditModel model = extractModelFromWindow();
-
-
         SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
         RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
         rta.prefHeightProperty().unbind();
@@ -347,29 +358,31 @@ public class SimpleEditCreate {
         exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         exercise.saveExercise(saveAs);
 
-
-
-
-
         saveButton.setDisable(false);
         saveAsButton.setDisable(false);
         fieldModified = false;
     }
 
+    /*
+     * Generate a SimpleEditModel from window contents
+     * @return the simple edit model
+     */
     private SimpleEditModel extractModelFromWindow() {
         SimpleEditModel model = new SimpleEditModel(nameField.getText(), promptField.getText());
-
         if (statementRTA.isModified()) fieldModified = true;
         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setExerciseStatement(statementRTA.getDocument());
         model.setStatementTextHeight(statementTextHeight);
         model.setStatementPrefHeight(statementTextHeight + 25);
-
         return model;
     }
 
-
-    void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
+    /*
+     * Display and enable RTA toolbars
+      * @param decoratedRTA the RTA
+     * @param control the {@link slapp.editor.main_window.ControlType} for this RTA instance
+     */
+    private void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
         keyboardDiagram.initialize(decoratedRTA);
@@ -398,18 +411,18 @@ public class SimpleEditCreate {
         }
         sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
 
-
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
         editAndKbdBox.layout();
-
-
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, nameNpromptBox);
         borderPane.topProperty().setValue(topBox);
     }
 
-    public void textFieldInFocus() {
+    /*
+     * When a text field is in focus, show deactivated toolbars for dummy RTA
+     */
+    private void textFieldInFocus() {
         editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
 

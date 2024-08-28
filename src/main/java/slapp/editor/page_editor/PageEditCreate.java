@@ -363,7 +363,7 @@ public class PageEditCreate {
         return model;
     }
 
-    void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
+    private void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
         keyboardDiagram.initialize(decoratedRTA);
@@ -403,7 +403,7 @@ public class PageEditCreate {
         borderPane.topProperty().setValue(topBox);
     }
 
-    public void textFieldInFocus() {
+    private void textFieldInFocus() {
         editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
 

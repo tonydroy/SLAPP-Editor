@@ -39,6 +39,9 @@ import slapp.editor.page_editor.PageEditView;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The controller for the simple edit exercise
+ */
 public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditView> {
 
     private MainWindow mainWindow;
@@ -47,7 +50,11 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
     private MainWindowView mainView;
     private boolean exerciseModified = false;
 
-
+    /**
+     * Create simple edit exercise
+     * @param model the SimpleEditModel
+     * @param mainWindow the MainWindow
+     */
     public SimpleEditExercise(SimpleEditModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.editModel = model;
@@ -58,6 +65,9 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         setEditView();
     }
 
+    /**
+     * Set statement, comment, response in the view
+     */
     private void setEditView() {
 
         editView.setResponsePrompt(editModel.getResponsePrompt());
@@ -120,20 +130,38 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         editView.initializeViewDetails();
     }
 
+    /**
+     * The exercise model
+     * @return the model
+     */
     @Override
     public SimpleEditModel getExerciseModel() {
         return editModel;
     }
+
+    /**
+     * The exercise view
+     * @return the view
+     */
     @Override
     public SimpleEditView getExerciseView() {
         return editView;
     }
+
+    /**
+     * Save exercise to disk
+     * @param saveAs true if "save as" should be invoked, and otherwise false
+     */
     @Override
     public void saveExercise(boolean saveAs) {
         boolean success = DiskUtilities.saveExercise(saveAs, getSimpleEditModelFromView());
         if (success) exerciseModified = false;
     }
 
+    /**
+     * List of nodes to be sent to printer for this exercise
+     * @return the node list
+     */
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
@@ -207,6 +235,10 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         return nodeList;
     }
 
+    /**
+     * Return to the initial (unworked) version of the exercise, retaining the comment only.
+     * @return the initial exercise
+     */
     @Override
     public SimpleEditExercise resetExercise() {
         RichTextArea commentRTA = editView.getExerciseComment().getEditor();
@@ -218,22 +250,39 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         return clearExercise;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @return true if exercise is modified, and otherwise false
+     */
     @Override
     public boolean isExerciseModified() {
         RichTextArea commentEditor = editView.getExerciseComment().getEditor();
         if (commentEditor.isModified()) exerciseModified = true;
         RichTextArea responseEditor = editView.getExerciseResponse().getEditor();
         if (responseEditor.isModified()) exerciseModified = true;
-
         return exerciseModified;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @param modified true if exercise is modified, and otherwise false
+     */
     @Override
     public void setExerciseModified(boolean modified) {
         this.exerciseModified = modified;
     }
+
+    /**
+     * The view node to be displayed as a component of the free form exercise.
+     * @return the view node
+     */
     @Override
     public Node getFFViewNode() {   return editView.getFFViewNode();}
+
+    /**
+     * The node to be printed as a component of the free form exercise.
+     * @return the print node
+     */
     @Override
     public Node getFFPrintNode() {
         SimpleEditModel printModel = editModel;
@@ -243,21 +292,26 @@ public class SimpleEditExercise implements Exercise<SimpleEditModel, SimpleEditV
         RichTextArea responseRTA = printExercise.getExerciseView().getExerciseResponse().getEditor();
         responseRTA.prefHeightProperty().unbind();
         responseRTA.minWidthProperty().unbind();
-        responseRTA.setPrefHeight(printModel.getResponseTextHeight() + 10);
+        responseRTA.setPrefHeight(printModel.getResponseTextHeight() + 20);
         responseRTA.setContentAreaWidth(nodeWidth);
         responseRTA.setMinWidth(nodeWidth);
         responseRTA.getStylesheets().clear(); responseRTA.getStylesheets().add("richTextAreaPrinter.css");
-
-
-
         return responseRTA;
     }
 
+    /**
+     * Extract an {@link slapp.editor.main_window.ExerciseModel} from view of the exercise
+     * @return the exercise model
+     */
     @Override
     public ExerciseModel getExerciseModelFromView() {
         return (ExerciseModel) getSimpleEditModelFromView();
     }
 
+    /**
+     * Extract SimpleEditModelFrom view of the exercise
+     * @return the SimpleEditModel
+     */
     private SimpleEditModel getSimpleEditModelFromView() {
         SimpleEditModel model = new SimpleEditModel(editModel.getExerciseName(), editModel.getResponsePrompt());
         model.setOriginalModel(editModel.getOriginalModel());

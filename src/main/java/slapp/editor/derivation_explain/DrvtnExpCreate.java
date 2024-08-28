@@ -763,7 +763,7 @@ public class DrvtnExpCreate {
         borderPane.topProperty().setValue(topBox);
     }
 
-    public void textFieldInFocus() {
+    private void textFieldInFocus() {
         editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
 

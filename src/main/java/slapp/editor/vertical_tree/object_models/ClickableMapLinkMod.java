@@ -18,6 +18,7 @@ package slapp.editor.vertical_tree.object_models;
 import java.io.Serializable;
 
 public class ClickableMapLinkMod implements Serializable {
+    private static final long serialVersionUID = 100L;
     private String idString;
     private String sourceId;
     private String targetId;

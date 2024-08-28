@@ -638,7 +638,7 @@ public class VerticalTreeABEFExpCreate {
         return model;
     }
 
-    void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
+    private void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
         keyboardDiagram.initialize(decoratedRTA);
@@ -678,7 +678,7 @@ public class VerticalTreeABEFExpCreate {
         borderPane.topProperty().setValue(topBox);
     }
 
-    public void textFieldInFocus() {
+    private void textFieldInFocus() {
         editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
 

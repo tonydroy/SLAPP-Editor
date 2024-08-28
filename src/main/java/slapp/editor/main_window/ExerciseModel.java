@@ -30,84 +30,72 @@ public interface ExerciseModel<T> extends Serializable {
 
     /**
      * The exercise name (used also as file name)
-     *
      * @return the name string
      */
     String getExerciseName();
 
     /**
      * Every exercise has an {@link slapp.editor.main_window.ExerciseType}
-     *
      * @return the exercise type
      */
     ExerciseType getExerciseType();
 
     /**
-     * Exercise is <em>started</em> if it is differs from the original statement.
-     *
+     * Exercise is <em>started</em> if it is differs from the originally created version.
      * @return true if started, and otherwise false.
      */
     boolean isStarted();
 
     /**
-     * Exercise is <em>started</em> if it differs from the original statement.
-     *
+     * Exercise is <em>started</em> if it differs from the originally created version.
      * @param started true if started, and otherwise false
      */
     void setStarted(boolean started);
 
     /**
-     * The a comment on this exercise, which may be by either an instructor or student
-     *
+     * The comment on this exercise, which may be by either an instructor or student
      * @return the comment Document.
      */
     Document getExerciseComment();
 
     /**
      * The exercise prompt
-     *
      * @return The statement (T)
      */
     T getExerciseStatement();
 
     /**
      * The exercise comment on this exercise, which may be by either an instructor or student
-     *
      * @param comment the comment Document
      */
     void setExerciseComment(Document comment);
 
     /**
-     * The height of the exercise statement.
-     *
+     * The pref height of the exercise statement.
      * @return the statement height
      */
     double getStatementPrefHeight();
 
     /**
      * The height of the exercise statement
-     *
      * @param height the statement height
      */
     void setStatementPrefHeight(double height);
 
     /**
      * Override toString (usually with the exercise name)
-     *
      * @return the string representation
      */
     String toString();
 
     /**
      * The original model for the (unworked) exercise
-     *
      * @return the original model
      */
     ExerciseModel<T> getOriginalModel();
 
     /**
      * The original model for the (unworked exercise)
-     *
      * @param exerciseModel the original model
      */
     void setOriginalModel(ExerciseModel<T> exerciseModel);

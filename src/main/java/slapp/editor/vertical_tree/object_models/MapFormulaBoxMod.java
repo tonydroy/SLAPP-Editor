@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class MapFormulaBoxMod implements Serializable {
-
+    private static final long serialVersionUID = 100L;
     private String idString;
     private double layoutX;
     private double layoutY;

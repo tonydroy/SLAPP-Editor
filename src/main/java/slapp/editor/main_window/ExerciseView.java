@@ -31,64 +31,55 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 public interface ExerciseView<T> {
 
     /**
-     * The comment editor
-     *
+     * The comment decoratedRTA
      * @return comment DecoratedRTA
      */
     DecoratedRTA getExerciseComment();
 
     /**
-     * The comment editor
-     *
+     * The comment decoratedRTA
      * @param exerciseComment DecoratedRTA
      */
     void setExerciseComment(DecoratedRTA exerciseComment);
 
      /**
      * The exercise prompt (usually DecoratedRTA)
-     *
      * @return the statement (T)
      */
     T getExerciseStatement();
 
     /**
      * The exercise prompt (usually DecoratedRTA)
-     *
      * @param exerciseStatement the statement (T)
      */
     void setExerciseStatement(T exerciseStatement);
 
     /**
      * The exercise prompt node (usually RTA)
-     *
      * @return the statement node
      */
     Node getExerciseStatementNode();
 
      /**
      * The preferred height of the statement window
-     *
      * @param height the preferred height
      */
     void setStatementPrefHeight(double height);
 
     /**
      * The node which includes content of this exercise
-     *
      * @return the content node
      */
     Node getExerciseContentNode();
 
     /**
      * The left control node for this exercise
-     *
      * @return the control node
      */
     Node getExerciseControl();
 
     /**
      * The right control node for this exercise
-     *
      * @return the control node
      */
     Node getRightControl();

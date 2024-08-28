@@ -18,6 +18,7 @@ package slapp.editor.horizontal_tree;
 import java.io.Serializable;
 
 public class TreeModel implements Serializable {
+    private static final long serialVersionUID = 100L;
 
     private double paneXlayout;
     private double paneYlayout;

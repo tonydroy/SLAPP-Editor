@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FreeFormModel implements ExerciseModel<Document>, Serializable {
-
+    private static final long serialVersionUID = 100L;
     private String exerciseName = "";
     private ExerciseType exerciseType = ExerciseType.FREE_FORM;
     private ExerciseModel<Document> originalModel = null;
@@ -46,23 +46,23 @@ public class FreeFormModel implements ExerciseModel<Document>, Serializable {
     }
 
 
-    public void setExerciseStatement(Document exerciseStatement) {  statementDocument = exerciseStatement;  }
-    public double getStatementTextHeight() {
+    void setExerciseStatement(Document exerciseStatement) {  statementDocument = exerciseStatement;  }
+    double getStatementTextHeight() {
         return statementTextHeight;
     }
-    public void setStatementTextHeight(double statementTextHeight) {    this.statementTextHeight = statementTextHeight;  }
-    public double getCommentPrefHeight() {     return commentPrefHeight;  }
-    public void setCommentPrefHeight(double commentPrefHeight) {    this.commentPrefHeight = commentPrefHeight;  }
-    public double getCommentTextHeight() {
+    void setStatementTextHeight(double statementTextHeight) {    this.statementTextHeight = statementTextHeight;  }
+    double getCommentPrefHeight() {     return commentPrefHeight;  }
+    void setCommentPrefHeight(double commentPrefHeight) {    this.commentPrefHeight = commentPrefHeight;  }
+    double getCommentTextHeight() {
         return commentTextHeight;
     }
-    public void setCommentTextHeight(double commentTextHeight) {
+    void setCommentTextHeight(double commentTextHeight) {
         this.commentTextHeight = commentTextHeight;
     }
-    public List<ModelElement> getModelElements() {    return modelElements;  }
-    public List<ElementTypes> getElementTypes() {     return elementTypes;  }
+    List<ModelElement> getModelElements() {    return modelElements;  }
+    List<ElementTypes> getElementTypes() {     return elementTypes;  }
 
-    public void setModelElements(List<ModelElement> modelElements) {    this.modelElements = modelElements; }
+    void setModelElements(List<ModelElement> modelElements) {    this.modelElements = modelElements; }
 
     @Override
     public String getExerciseName() {  return exerciseName;  }

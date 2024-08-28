@@ -22,7 +22,7 @@ import slapp.editor.main_window.ExerciseType;
 import java.io.Serializable;
 
 public class SimpleTransModel implements ExerciseModel<Document>, Serializable {
-
+    private static final long serialVersionUID = 100L;
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.SIMPLE_EDIT;
     private ExerciseModel<Document> originalModel = null;
@@ -49,33 +49,33 @@ public class SimpleTransModel implements ExerciseModel<Document>, Serializable {
     }
 
 
-    public double getCommentTextHeight() {
+    double getCommentTextHeight() {
         return commentTextHeight;
     }
-    public void setCommentTextHeight(double commentTextHeight) {
+    void setCommentTextHeight(double commentTextHeight) {
         this.commentTextHeight = commentTextHeight;
     }
 
-    public void setExerciseStatement(Document exerciseStatement) {  this.exerciseStatement = exerciseStatement;  }
-    public double getStatementTextHeight() {
+    void setExerciseStatement(Document exerciseStatement) {  this.exerciseStatement = exerciseStatement;  }
+    double getStatementTextHeight() {
         return statementTextHeight;
     }
-    public void setStatementTextHeight(double statementTextHeight) {    this.statementTextHeight = statementTextHeight;  }
-    public double getCommentPrefHeight() {     return commentPrefHeight;  }
-    public void setCommentPrefHeight(double commentPrefHeight) {    this.commentPrefHeight = commentPrefHeight;  }
-    public Document getExerciseResponse() {   return exerciseResponse;  }
-    public void setExerciseResponse(Document exerciseResponse) {   this.exerciseResponse = exerciseResponse;  }
-    public double getResponsePrefHeight() {     return responsePrefHeight;  }
-    public void setResponsePrefHeight(double responsePrefHeight) {    this.responsePrefHeight = responsePrefHeight;  }
-    public double getResponseTextHeight() {     return responseTextHeight;  }
-    public void setResponseTextHeight(double responseTextHeight) {     this.responseTextHeight = responseTextHeight;  }
+    void setStatementTextHeight(double statementTextHeight) {    this.statementTextHeight = statementTextHeight;  }
+    double getCommentPrefHeight() {     return commentPrefHeight;  }
+    void setCommentPrefHeight(double commentPrefHeight) {    this.commentPrefHeight = commentPrefHeight;  }
+    Document getExerciseResponse() {   return exerciseResponse;  }
+    void setExerciseResponse(Document exerciseResponse) {   this.exerciseResponse = exerciseResponse;  }
+    double getResponsePrefHeight() {     return responsePrefHeight;  }
+    void setResponsePrefHeight(double responsePrefHeight) {    this.responsePrefHeight = responsePrefHeight;  }
+    double getResponseTextHeight() {     return responseTextHeight;  }
+    void setResponseTextHeight(double responseTextHeight) {     this.responseTextHeight = responseTextHeight;  }
 
-    public Document getExerciseInterpretation() {   return exerciseInterpretation;  }
-    public void setExerciseInterpretation(Document exerciseInterpretation) {   this.exerciseInterpretation = exerciseInterpretation;  }
-    public double getInterpretationPrefHeight() {     return interpretationPrefHeight;  }
-    public void setInterpretationPrefHeight(double interpretationPrefHeight) {    this.interpretationPrefHeight = interpretationPrefHeight;  }
-    public double getInterpretationTextHeight() {     return interpretationTextHeight;  }
-    public void setInterpretationTextHeight(double interpretationTextHeight) {     this.interpretationTextHeight = interpretationTextHeight;  }
+    Document getExerciseInterpretation() {   return exerciseInterpretation;  }
+    void setExerciseInterpretation(Document exerciseInterpretation) {   this.exerciseInterpretation = exerciseInterpretation;  }
+    double getInterpretationPrefHeight() {     return interpretationPrefHeight;  }
+    void setInterpretationPrefHeight(double interpretationPrefHeight) {    this.interpretationPrefHeight = interpretationPrefHeight;  }
+    double getInterpretationTextHeight() {     return interpretationTextHeight;  }
+    void setInterpretationTextHeight(double interpretationTextHeight) {     this.interpretationTextHeight = interpretationTextHeight;  }
 
 
 

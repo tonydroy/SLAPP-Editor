@@ -18,7 +18,7 @@ package slapp.editor.vertical_tree.object_models;
 import java.io.Serializable;
 
 public class UnderlineMod implements Serializable {
-
+    private static final long serialVersionUID = 100L;
     double startX;
     double length;
     double yPos;

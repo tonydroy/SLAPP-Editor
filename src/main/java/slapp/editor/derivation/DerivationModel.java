@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DerivationModel implements ExerciseModel<Document>, Serializable {
+    private static final long serialVersionUID = 100L;
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.DERIVATION;
     private ExerciseModel<Document> originalModel = null;
@@ -62,23 +63,23 @@ public class DerivationModel implements ExerciseModel<Document>, Serializable {
         this.splitPanePrefWidth = PrintUtilities.getPageWidth();
     }
 
-    public boolean isLeftmostScopeLine() { return isLeftmostScopeLine; }
-    public boolean isDefaultShelf() { return defaultShelf; }
-    public double getGridWidth() {return gridWidth; }
-    public List<ModelLine> getDerivationLines() { return derivationLines; }
-    public RichTextAreaSkin.KeyMapValue getKeyboardSelector() {return keyboardSelector;}
-    public double getCommentPrefHeight() { return commentPrefHeight;  }
-    public void setCommentPrefHeight(double commentPrefHeight) { this.commentPrefHeight = commentPrefHeight; }
-    public double getSplitPanePrefWidth() {   return splitPanePrefWidth;  }
-    public void setSplitPanePrefWidth(double splitPanePrefWidth) {  this.splitPanePrefWidth = splitPanePrefWidth;    }
+    boolean isLeftmostScopeLine() { return isLeftmostScopeLine; }
+    boolean isDefaultShelf() { return defaultShelf; }
+    double getGridWidth() {return gridWidth; }
+    List<ModelLine> getDerivationLines() { return derivationLines; }
+    RichTextAreaSkin.KeyMapValue getKeyboardSelector() {return keyboardSelector;}
+    double getCommentPrefHeight() { return commentPrefHeight;  }
+    void setCommentPrefHeight(double commentPrefHeight) { this.commentPrefHeight = commentPrefHeight; }
+    double getSplitPanePrefWidth() {   return splitPanePrefWidth;  }
+    void setSplitPanePrefWidth(double splitPanePrefWidth) {  this.splitPanePrefWidth = splitPanePrefWidth;    }
 
-    public double getStatementTextHeight() {     return statementTextHeight;   }
+    double getStatementTextHeight() {     return statementTextHeight;   }
 
-    public void setStatementTextHeight(double statementTextHeight) {     this.statementTextHeight = statementTextHeight;   }
+    void setStatementTextHeight(double statementTextHeight) {     this.statementTextHeight = statementTextHeight;   }
 
-    public double getCommentTextHeight() {     return commentTextHeight;   }
+    double getCommentTextHeight() {     return commentTextHeight;   }
 
-    public void setCommentTextHeight(double commentTextHeight) {     this.commentTextHeight = commentTextHeight;   }
+    void setCommentTextHeight(double commentTextHeight) {     this.commentTextHeight = commentTextHeight;   }
 
     @Override
     public String getExerciseName() { return exerciseName; }

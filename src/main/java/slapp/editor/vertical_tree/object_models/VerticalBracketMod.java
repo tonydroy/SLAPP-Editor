@@ -18,7 +18,7 @@ package slapp.editor.vertical_tree.object_models;
 import java.io.Serializable;
 
 public class VerticalBracketMod implements Serializable {
-
+    private static final long serialVersionUID = 100L;
     private double layoutX;
     private double layoutY;
     private double height;

@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VerticalTreeABExpModel implements ExerciseModel<Document>, Serializable {
-
+    private static final long serialVersionUID = 100L;
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.VERTICAL_TREE;
     private RichTextAreaSkin.KeyMapValue defaultKeyboardType = RichTextAreaSkin.KeyMapValue.ITALIC_AND_SANS;
@@ -68,99 +68,99 @@ public class VerticalTreeABExpModel implements ExerciseModel<Document>, Serializ
     public VerticalTreeABExpModel(){}
 
 
-    public void setExerciseName(String exerciseName) { this.exerciseName = exerciseName;    }
+    void setExerciseName(String exerciseName) { this.exerciseName = exerciseName;    }
 
-    public void setExerciseStatement(Document exerciseStatement) { this.exerciseStatement = exerciseStatement;    }
+    void setExerciseStatement(Document exerciseStatement) { this.exerciseStatement = exerciseStatement;    }
 
-    public void setExplainDocument(Document explainDocument) {this.explainDocument = explainDocument; }
+    void setExplainDocument(Document explainDocument) {this.explainDocument = explainDocument; }
 
-    public Document getExplainDocument() {  return explainDocument;  }
+    Document getExplainDocument() {  return explainDocument;  }
 
-    public String getExplainPrompt() {    return explainPrompt;  }
+    String getExplainPrompt() {    return explainPrompt;  }
 
-    public void setExplainPrompt(String explainPrompt) { this.explainPrompt = explainPrompt;  }
+    void setExplainPrompt(String explainPrompt) { this.explainPrompt = explainPrompt;  }
 
-    public void setChoiceLead(String choiceLead) {
+    void setChoiceLead(String choiceLead) {
         this.choiceLead = choiceLead;
     }
 
-    public void setaPrompt(String aPrompt) {
+    void setaPrompt(String aPrompt) {
         this.aPrompt = aPrompt;
     }
 
-    public void setaSelected(boolean aSelected) {
+    void setaSelected(boolean aSelected) {
         this.aSelected = aSelected;
     }
 
-    public void setbPrompt(String bPrompt) {
+    void setbPrompt(String bPrompt) {
         this.bPrompt = bPrompt;
     }
 
-    public void setbSelected(boolean bSelected) {
+    void setbSelected(boolean bSelected) {
         this.bSelected = bSelected;
     }
 
 
-    public List<DragIconType> getDragIconList() { return dragIconList;    }
+    List<DragIconType> getDragIconList() { return dragIconList;    }
 
-    public void setDragIconList(List<DragIconType> dragIconList) { this.dragIconList = dragIconList;    }
+    void setDragIconList(List<DragIconType> dragIconList) { this.dragIconList = dragIconList;    }
 
-    public List<ObjectControlType> getObjectControlList() {  return objectControlList;    }
+    List<ObjectControlType> getObjectControlList() {  return objectControlList;    }
 
-    public void setObjectControlList(List<ObjectControlType> objectControlList) { this.objectControlList = objectControlList;    }
+    void setObjectControlList(List<ObjectControlType> objectControlList) { this.objectControlList = objectControlList;    }
 
-    public List<TreeFormulaBoxMod> getTreeFormulaBoxes() {  return treeFormulaBoxes;   }
+    List<TreeFormulaBoxMod> getTreeFormulaBoxes() {  return treeFormulaBoxes;   }
 
-    public List<MapFormulaBoxMod> getMapFormulaBoxes() {  return mapFormulaBoxes;    }
+    List<MapFormulaBoxMod> getMapFormulaBoxes() {  return mapFormulaBoxes;    }
 
-    public List<VerticalBracketMod> getVerticalBrackets() {  return verticalBrackets;    }
+    List<VerticalBracketMod> getVerticalBrackets() {  return verticalBrackets;    }
 
-    public List<DashedLineMod> getDashedLineMods() {  return dashedLineMods;   }
+    List<DashedLineMod> getDashedLineMods() {  return dashedLineMods;   }
 
-    public List<ClickableNodeLinkMod> getClickableNodeLinks() {  return clickableNodeLinks;    }
+    List<ClickableNodeLinkMod> getClickableNodeLinks() {  return clickableNodeLinks;    }
 
-    public List<ClickableMapLinkMod> getClickableMapLinks() {  return clickableMapLinks;   }
+    List<ClickableMapLinkMod> getClickableMapLinks() {  return clickableMapLinks;   }
 
-    public List<MapQuestionMarkerMod> getMapQuestionMarkers() {  return mapQuestionMarkers;    }
-    public String getChoiceLead() {return choiceLead; }
-    public String getaPrompt() { return aPrompt; }
-    public boolean isaSelected() { return aSelected; }
-    public String getbPrompt() { return bPrompt; }
-    public boolean isbSelected() { return bSelected; }
+    List<MapQuestionMarkerMod> getMapQuestionMarkers() {  return mapQuestionMarkers;    }
+    String getChoiceLead() {return choiceLead; }
+    String getaPrompt() { return aPrompt; }
+    boolean isaSelected() { return aSelected; }
+    String getbPrompt() { return bPrompt; }
+    boolean isbSelected() { return bSelected; }
 
-    public RichTextAreaSkin.KeyMapValue getDefaultKeyboardType() {     return defaultKeyboardType;   }
+    RichTextAreaSkin.KeyMapValue getDefaultKeyboardType() {     return defaultKeyboardType;   }
 
-    public void setDefaultKeyboardType(RichTextAreaSkin.KeyMapValue defaultKeyboardType) {     this.defaultKeyboardType = defaultKeyboardType;   }
+    void setDefaultKeyboardType(RichTextAreaSkin.KeyMapValue defaultKeyboardType) {     this.defaultKeyboardType = defaultKeyboardType;   }
 
-    public double getCommentPrefHeight() {     return commentPrefHeight;  }
+    double getCommentPrefHeight() {     return commentPrefHeight;  }
 
-    public void setCommentPrefHeight(double commentPrefHeight) {     this.commentPrefHeight = commentPrefHeight;   }
+    void setCommentPrefHeight(double commentPrefHeight) {     this.commentPrefHeight = commentPrefHeight;   }
 
-    public double getExplainPrefHeight() {     return explainPrefHeight;  }
+    double getExplainPrefHeight() {     return explainPrefHeight;  }
 
-    public void setExplainPrefHeight(double explainPrefHeight) {     this.explainPrefHeight = explainPrefHeight;   }
+    void setExplainPrefHeight(double explainPrefHeight) {     this.explainPrefHeight = explainPrefHeight;   }
 
-    public double getMainPanePrefHeight() {     return mainPanePrefHeight;   }
+    double getMainPanePrefHeight() {     return mainPanePrefHeight;   }
 
-    public void setMainPanePrefHeight(double mainPanePrefHeight) {     this.mainPanePrefHeight = mainPanePrefHeight;  }
+    void setMainPanePrefHeight(double mainPanePrefHeight) {     this.mainPanePrefHeight = mainPanePrefHeight;  }
 
-    public double getMainPanePrefWidth() {     return mainPanePrefWidth;   }
+    double getMainPanePrefWidth() {     return mainPanePrefWidth;   }
 
-    public void setMainPanePrefWidth(double mainPanePrefWidth) {
+    void setMainPanePrefWidth(double mainPanePrefWidth) {
         this.mainPanePrefWidth = mainPanePrefWidth;
     }
 
-    public double getStatementTextHeight() {  return statementTextHeight;  }
+    double getStatementTextHeight() {  return statementTextHeight;  }
 
-    public void setStatementTextHeight(double statementTextHeight) {  this.statementTextHeight = statementTextHeight;   }
+    void setStatementTextHeight(double statementTextHeight) {  this.statementTextHeight = statementTextHeight;   }
 
-    public double getCommentTextHeight() {   return commentTextHeight;  }
+    double getCommentTextHeight() {   return commentTextHeight;  }
 
-    public void setCommentTextHeight(double commentTextHeight) {  this.commentTextHeight = commentTextHeight;  }
+    void setCommentTextHeight(double commentTextHeight) {  this.commentTextHeight = commentTextHeight;  }
 
-    public double getExplainTextHeight() {   return explainTextHeight;  }
+    double getExplainTextHeight() {   return explainTextHeight;  }
 
-    public void setExplainTextHeight(double explainTextHeight) {  this.explainTextHeight = explainTextHeight;   }
+    void setExplainTextHeight(double explainTextHeight) {  this.explainTextHeight = explainTextHeight;   }
 
     @Override
     public String getExerciseName() { return exerciseName;    }

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HorizontalTreeModel implements ExerciseModel<Document>, Serializable {
+    private static final long serialVersionUID = 100L;
 
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.HORIZONTAL_TREE;
@@ -49,47 +50,47 @@ public class HorizontalTreeModel implements ExerciseModel<Document>, Serializabl
     public HorizontalTreeModel() {}
 
 
-    public Document getExplainDocument() {return explainDocument; }
+    Document getExplainDocument() {return explainDocument; }
 
-    public String getExplainPrompt() {   return explainPrompt;  }
+    String getExplainPrompt() {   return explainPrompt;  }
 
-    public void setExplainPrompt(String explainPrompt) { this.explainPrompt = explainPrompt; }
+    void setExplainPrompt(String explainPrompt) { this.explainPrompt = explainPrompt; }
 
-    public void setExerciseName(String exerciseName) { this.exerciseName = exerciseName;  }
+    void setExerciseName(String exerciseName) { this.exerciseName = exerciseName;  }
 
-    public void setExerciseStatement(Document exerciseStatement) {   this.exerciseStatement = exerciseStatement;    }
+    void setExerciseStatement(Document exerciseStatement) {   this.exerciseStatement = exerciseStatement;    }
 
-    public void setExplainDocument(Document explainDocument) { this.explainDocument = explainDocument;  }
+    void setExplainDocument(Document explainDocument) { this.explainDocument = explainDocument;  }
 
-    public void setAxis(boolean axis) { this.axis = axis; }
+    void setAxis(boolean axis) { this.axis = axis; }
 
-    public boolean isAxis() {     return axis;  }
+    boolean isAxis() {     return axis;  }
 
 
-    public List<TreeModel> getTreeModels() {  return treeModels;  }
-    public double getCommentPrefHeight() {     return commentPrefHeight;  }
+    List<TreeModel> getTreeModels() {  return treeModels;  }
+    double getCommentPrefHeight() {     return commentPrefHeight;  }
 
-    public void setCommentPrefHeight(double commentPrefHeight) {     this.commentPrefHeight = commentPrefHeight;   }
+    void setCommentPrefHeight(double commentPrefHeight) {     this.commentPrefHeight = commentPrefHeight;   }
 
-    public double getExplainPrefHeight() {     return explainPrefHeight;  }
+    double getExplainPrefHeight() {     return explainPrefHeight;  }
 
-    public void setExplainPrefHeight(double explainPrefHeight) {     this.explainPrefHeight = explainPrefHeight;   }
+    void setExplainPrefHeight(double explainPrefHeight) {     this.explainPrefHeight = explainPrefHeight;   }
 
-    public double getStatementTextHeight() {     return statementTextHeight;  }
+    double getStatementTextHeight() {     return statementTextHeight;  }
 
-    public void setStatementTextHeight(double statementTextHeight) {     this.statementTextHeight = statementTextHeight;   }
+    void setStatementTextHeight(double statementTextHeight) {     this.statementTextHeight = statementTextHeight;   }
 
-    public double getCommentTextHeight() {     return commentTextHeight;  }
+    double getCommentTextHeight() {     return commentTextHeight;  }
 
-    public void setCommentTextHeight(double commentTextHeight) {     this.commentTextHeight = commentTextHeight;   }
+    void setCommentTextHeight(double commentTextHeight) {     this.commentTextHeight = commentTextHeight;   }
 
-    public double getExplainTextHeight() {     return explainTextHeight;  }
+    double getExplainTextHeight() {     return explainTextHeight;  }
 
-    public void setExplainTextHeight(double explainTextHeight) {     this.explainTextHeight = explainTextHeight;   }
+    void setExplainTextHeight(double explainTextHeight) {     this.explainTextHeight = explainTextHeight;   }
 
-    public double getMainPaneWidth() {     return mainPaneWidth;  }
+    double getMainPaneWidth() {     return mainPaneWidth;  }
 
-    public void setMainPaneWidth(double mainPaneWidth) {     this.mainPaneWidth = mainPaneWidth;  }
+    void setMainPaneWidth(double mainPaneWidth) {     this.mainPaneWidth = mainPaneWidth;  }
 
     @Override
     public String getExerciseName() { return exerciseName; }

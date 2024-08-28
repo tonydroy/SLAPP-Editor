@@ -20,7 +20,7 @@ import com.gluonhq.richtextarea.model.Document;
 import java.io.Serializable;
 
 public class ModelLine implements Serializable {
-
+    private static final long serialVersionUID = 100L;
     private int gridLineIndex;
     private int depth;
     private Document lineContentDoc;

@@ -23,7 +23,7 @@ import java.io.Serializable;
  * Serializable object to hold page setup values (except Paper)
  */
 public class PageLayoutValues implements Serializable {
-
+    private static final long serialVersionUID = 100L;
     PageOrientation orientation;
     double leftMargin;
     double rightMargin;

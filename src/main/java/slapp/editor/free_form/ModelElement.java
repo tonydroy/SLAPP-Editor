@@ -21,6 +21,7 @@ import slapp.editor.main_window.ExerciseModel;
 import java.io.Serializable;
 
 public class ModelElement implements Serializable {
+    private static final long serialVersionUID = 100L;
 
     private ExerciseModel model = null;
     private int indentLevel = 0;

@@ -33,6 +33,7 @@ import java.util.List;
  * The Assignment model.  Contains assignment header, exercises, and print setup info.
  */
 public class Assignment implements Serializable {
+    private static final long serialVersionUID = 100L;
     private AssignmentHeader header = new AssignmentHeader();
     private List<ExerciseModel> exerciseModels = new ArrayList<>();
     private double baseScale = 1.0;

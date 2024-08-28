@@ -19,24 +19,45 @@ import com.gluonhq.richtextarea.model.Document;
 
 import java.io.Serializable;
 
+/**
+ * Element corresponding to a single page of Pagination
+ */
 public class PageContent implements Serializable {
-
+    private static final long serialVersionUID = 100L;
     Document pageDoc;
     double textHeight;
 
 
+    /**
+     * The content consists of a Document and a height value
+     * @param pageDoc the Document
+     * @param textHeight the height value
+     */
     public PageContent(Document pageDoc, double textHeight) {
         this.pageDoc = pageDoc;
         this.textHeight = textHeight;
     }
+
+    /**
+     * Document for this page
+     * @return the document
+     */
     public Document getPageDoc() {
         return pageDoc;
     }
 
+    /**
+     * The text height for this page (may not be same as window size).
+     * @return the height
+     */
     public double getTextHeight() {
         return textHeight;
     }
 
+    /**
+     * The text height for this page (may not be same as window size).
+     * @param textHeight
+     */
     public void setTextHeight(double textHeight) {
         this.textHeight = textHeight;
     }

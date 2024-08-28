@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TreeFormulaBoxMod implements Serializable {
-
+    private static final long serialVersionUID = 100L;
     private String idString;
     private double layoutX;
     private double layoutY;

@@ -20,6 +20,7 @@ import javafx.geometry.Point2D;
 import java.io.Serializable;
 
 public class Point2dSerial extends Point2D implements Serializable {
+    private static final long serialVersionUID = 100L;
 
     public Point2dSerial(double x, double y) {
         super(x, y);

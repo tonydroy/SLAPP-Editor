@@ -448,7 +448,7 @@ public class ABcreate {
         return model;
     }
 
-    void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
+    private void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
         keyboardDiagram.initialize(decoratedRTA);
@@ -488,7 +488,7 @@ public class ABcreate {
         borderPane.topProperty().setValue(topBox);
     }
 
-    public void textFieldInFocus() {
+    private void textFieldInFocus() {
         editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
 

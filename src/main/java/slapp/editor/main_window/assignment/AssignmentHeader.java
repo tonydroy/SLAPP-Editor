@@ -25,6 +25,7 @@ import java.util.List;
  * Model for assignment header.  Contains ID information, assignment comment, and optional items added from student and instructor.
  */
 public class AssignmentHeader implements Serializable {
+    private static final long serialVersionUID = 100L;
     private String creationID = "";
     private String workingID = "";
     private String assignmentName = "";

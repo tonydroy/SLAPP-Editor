@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TruthTableGenModel implements ExerciseModel<Document>, Serializable {
-
+    private static final long serialVersionUID = 100L;
     private String exerciseName = new String("");
     private String interpretationPrompt = "";
     private ExerciseType exerciseType = ExerciseType.TRUTH_TABLE_ABEXP;
@@ -66,7 +66,7 @@ public class TruthTableGenModel implements ExerciseModel<Document>, Serializable
 
     public TruthTableGenModel(){}
 
-    public void setEmptyTableContents(int columns) {
+    void setEmptyTableContents(int columns) {
         String[][] mainValues = new String[columns][tableRows];
         for (int i = 0; i < columns; i++) {
             String[] column = new String[tableRows];
@@ -91,11 +91,11 @@ public class TruthTableGenModel implements ExerciseModel<Document>, Serializable
     }
 
 
-    public void setExerciseName(String exerciseName) {
+    void setExerciseName(String exerciseName) {
         this.exerciseName = exerciseName;
     }
 
-    public void setExerciseStatement(Document exerciseStatement) {
+    void setExerciseStatement(Document exerciseStatement) {
         this.exerciseStatement = exerciseStatement;
     }
 
@@ -107,102 +107,102 @@ public class TruthTableGenModel implements ExerciseModel<Document>, Serializable
         this.binaryOperators = binaryOperators;
     }
 
-    public void setMainFormulas(List<Document> mainFormulas) {
+    void setMainFormulas(List<Document> mainFormulas) {
         this.mainFormulas = mainFormulas;
     }
 
-    public void setTableValues(String[][] tableValues) {
+    void setTableValues(String[][] tableValues) {
         this.tableValues = tableValues;
     }
 
-    public void setRowComments(Document[] rowComments) {
+    void setRowComments(Document[] rowComments) {
         this.rowComments = rowComments;
     }
 
-    public void setColumnHighlights(boolean[] columnHighlights) {
+    void setColumnHighlights(boolean[] columnHighlights) {
         this.columnHighlights = columnHighlights;
     }
 
-    public void setConclusionDivider(boolean conclusionDivider) {
+    void setConclusionDivider(boolean conclusionDivider) {
         this.conclusionDivider = conclusionDivider;
     }
 
-    public void setChoiceLead(String choiceLead) {
+    void setChoiceLead(String choiceLead) {
         this.choiceLead = choiceLead;
     }
 
-    public void setaPrompt(String aPrompt) {
+    void setaPrompt(String aPrompt) {
         this.aPrompt = aPrompt;
     }
 
-    public void setaSelected(boolean aSelected) {
+    void setaSelected(boolean aSelected) {
         this.aSelected = aSelected;
     }
 
-    public void setbPrompt(String bPrompt) {
+    void setbPrompt(String bPrompt) {
         this.bPrompt = bPrompt;
     }
 
-    public void setbSelected(boolean bSelected) {
+    void setbSelected(boolean bSelected) {
         this.bSelected = bSelected;
     }
 
-    public void setExplainDocument(Document explainDocument) {
+    void setExplainDocument(Document explainDocument) {
         this.explainDocument = explainDocument;
     }
 
-    public String getExplainPrompt() {    return explainPrompt;  }
+    String getExplainPrompt() {    return explainPrompt;  }
 
-    public void setExplainPrompt(String explainPrompt) {  this.explainPrompt = explainPrompt;  }
+    void setExplainPrompt(String explainPrompt) {  this.explainPrompt = explainPrompt;  }
 
-    public void setTableRows(int tableRows) { this.tableRows = tableRows;  }
+    void setTableRows(int tableRows) { this.tableRows = tableRows;  }
 
-    public int getTableRows() { return tableRows; }
-    public Document[] getRowComments() { return rowComments;}
-    public boolean[] getColumnHighlights() { return columnHighlights; }
-    public String[][] getTableValues() { return tableValues; }
-    public boolean isConclusionDivider() { return conclusionDivider; }
-    public List<Document> getMainFormulas() { return mainFormulas; }
-    public List<String> getUnaryOperators() { return unaryOperators; }
-    public List<String> getBinaryOperators() { return binaryOperators; }
-    public void setBasicFormulas(List<Document> basicFormulas) { this.basicFormulas = basicFormulas;  }
-    public List<Document> getBasicFormulas() { return basicFormulas; }
-    public Document getExplainDocument() { return explainDocument; }
-    public Document getExerciseInterpretation() { return exerciseInterpretation; }
-    public void setExerciseInterpretation(Document exerInterp) { this.exerciseInterpretation = exerInterp; }
-    public String getChoiceLead() {return choiceLead; }
-    public String getaPrompt() { return aPrompt; }
-    public boolean isaSelected() { return aSelected; }
-    public String getbPrompt() { return bPrompt; }
-    public boolean isbSelected() { return bSelected; }
-    public String getInterpretationPrompt() {     return interpretationPrompt;  }
-    public void setInterpretationPrompt(String interpretationPrompt) {     this.interpretationPrompt = interpretationPrompt;  }
-    public double getCommentPrefHeight() {    return commentPrefHeight;  }
-    public void setCommentPrefHeight(double commentPrefHeight) {  this.commentPrefHeight = commentPrefHeight; }
-    public double getInterpretationPrefHeight() {  return interpretationPrefHeight;  }
-    public void setInterpretationPrefHeight(double interpretationPrefHeight) { this.interpretationPrefHeight = interpretationPrefHeight;   }
-    public double getExplainPrefHeight() { return explainPrefHeight; }
-    public void setExplainPrefHeight(double explainPrefHeight) { this.explainPrefHeight = explainPrefHeight; }
+    int getTableRows() { return tableRows; }
+    Document[] getRowComments() { return rowComments;}
+    boolean[] getColumnHighlights() { return columnHighlights; }
+    String[][] getTableValues() { return tableValues; }
+    boolean isConclusionDivider() { return conclusionDivider; }
+    List<Document> getMainFormulas() { return mainFormulas; }
+    List<String> getUnaryOperators() { return unaryOperators; }
+    List<String> getBinaryOperators() { return binaryOperators; }
+    void setBasicFormulas(List<Document> basicFormulas) { this.basicFormulas = basicFormulas;  }
+    List<Document> getBasicFormulas() { return basicFormulas; }
+    Document getExplainDocument() { return explainDocument; }
+    Document getExerciseInterpretation() { return exerciseInterpretation; }
+    void setExerciseInterpretation(Document exerInterp) { this.exerciseInterpretation = exerInterp; }
+    String getChoiceLead() {return choiceLead; }
+    String getaPrompt() { return aPrompt; }
+    boolean isaSelected() { return aSelected; }
+    String getbPrompt() { return bPrompt; }
+    boolean isbSelected() { return bSelected; }
+    String getInterpretationPrompt() {     return interpretationPrompt;  }
+    void setInterpretationPrompt(String interpretationPrompt) {     this.interpretationPrompt = interpretationPrompt;  }
+    double getCommentPrefHeight() {    return commentPrefHeight;  }
+    void setCommentPrefHeight(double commentPrefHeight) {  this.commentPrefHeight = commentPrefHeight; }
+    double getInterpretationPrefHeight() {  return interpretationPrefHeight;  }
+    void setInterpretationPrefHeight(double interpretationPrefHeight) { this.interpretationPrefHeight = interpretationPrefHeight;   }
+    double getExplainPrefHeight() { return explainPrefHeight; }
+    void setExplainPrefHeight(double explainPrefHeight) { this.explainPrefHeight = explainPrefHeight; }
 
-    public double getStatementTextHeight() {     return statementTextHeight;  }
+    double getStatementTextHeight() {     return statementTextHeight;  }
 
-    public void setStatementTextHeight(double statementTextHeight) {     this.statementTextHeight = statementTextHeight;   }
+    void setStatementTextHeight(double statementTextHeight) {     this.statementTextHeight = statementTextHeight;   }
 
-    public double getCommentTextHeight() {   return commentTextHeight;  }
+    double getCommentTextHeight() {   return commentTextHeight;  }
 
-    public void setCommentTextHeight(double commentTextHeight) {   this.commentTextHeight = commentTextHeight;  }
+    void setCommentTextHeight(double commentTextHeight) {   this.commentTextHeight = commentTextHeight;  }
 
-    public double getInterpretationTextHeight() {  return interpretationTextHeight;  }
+    double getInterpretationTextHeight() {  return interpretationTextHeight;  }
 
-    public void setInterpretationTextHeight(double interpretationTextHeight) {  this.interpretationTextHeight = interpretationTextHeight;   }
+    void setInterpretationTextHeight(double interpretationTextHeight) {  this.interpretationTextHeight = interpretationTextHeight;   }
 
-    public double getExplainTextHeight() {     return explainTextHeight;  }
+    double getExplainTextHeight() {     return explainTextHeight;  }
 
-    public void setExplainTextHeight(double explainTextHeight) {    this.explainTextHeight = explainTextHeight;   }
+    void setExplainTextHeight(double explainTextHeight) {    this.explainTextHeight = explainTextHeight;   }
 
-    public double getGridWidth() {    return gridWidth; }
+    double getGridWidth() {    return gridWidth; }
 
-    public void setGridWidth(double gridWidth) {    this.gridWidth = gridWidth; }
+    void setGridWidth(double gridWidth) {    this.gridWidth = gridWidth; }
 
     @Override
     public String getExerciseName() {

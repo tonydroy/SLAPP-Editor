@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DrvtnExpModel implements ExerciseModel<Document>, Serializable {
+    private static final long serialVersionUID = 100L;
     private String exerciseName = new String("");
     private ExerciseType exerciseType  = ExerciseType.DRVTN_EXP;
     private ExerciseModel<Document> originalModel = null;
@@ -66,38 +67,38 @@ public class DrvtnExpModel implements ExerciseModel<Document>, Serializable {
         this.derivationLines = derivationLines;
     }
 
-    public boolean isLeftmostScopeLine() { return isLeftmostScopeLine; }
-    public boolean isDefaultShelf() { return defaultShelf; }
-    public double getGridWidth() {return gridWidth; }
-    public Document getExplanationDocument() { return explanationDocument;  }
-    public List<ModelLine> getDerivationLines() { return derivationLines; }
-    public String getContentPrompt() { return contentPrompt; }
-    public RichTextAreaSkin.KeyMapValue getKeyboardSelector() {return keyboardSelector;}
+    boolean isLeftmostScopeLine() { return isLeftmostScopeLine; }
+    boolean isDefaultShelf() { return defaultShelf; }
+    double getGridWidth() {return gridWidth; }
+    Document getExplanationDocument() { return explanationDocument;  }
+    List<ModelLine> getDerivationLines() { return derivationLines; }
+    String getContentPrompt() { return contentPrompt; }
+    RichTextAreaSkin.KeyMapValue getKeyboardSelector() {return keyboardSelector;}
 
-    public double getCommentPrefHeight() {
+    double getCommentPrefHeight() {
         return commentPrefHeight;
     }
 
-    public void setCommentPrefHeight(double commentPrefHeight) {
+    void setCommentPrefHeight(double commentPrefHeight) {
         this.commentPrefHeight = commentPrefHeight;
     }
 
-    public double getExplanationPrefHeight() {    return explanationPrefHeight;  }
-    public void setExplanationPrefHeight(double explanationPrefHeight) {  this.explanationPrefHeight = explanationPrefHeight;   }
-    public double getSplitPanePrefWidth() {    return splitPanePrefWidth;  }
-    public void setSplitPanePrefWidth(double splitPanePrefWidth) {    this.splitPanePrefWidth = splitPanePrefWidth;  }
+    double getExplanationPrefHeight() {    return explanationPrefHeight;  }
+    void setExplanationPrefHeight(double explanationPrefHeight) {  this.explanationPrefHeight = explanationPrefHeight;   }
+    double getSplitPanePrefWidth() {    return splitPanePrefWidth;  }
+    void setSplitPanePrefWidth(double splitPanePrefWidth) {    this.splitPanePrefWidth = splitPanePrefWidth;  }
 
-    public double getStatementTextHeight() {    return statementTextHeight;  }
+    double getStatementTextHeight() {    return statementTextHeight;  }
 
-    public void setStatementTextHeight(double statementTextHeight) {  this.statementTextHeight = statementTextHeight;  }
+    void setStatementTextHeight(double statementTextHeight) {  this.statementTextHeight = statementTextHeight;  }
 
-    public double getCommentTextHeight() {    return commentTextHeight;  }
+    double getCommentTextHeight() {    return commentTextHeight;  }
 
-    public void setCommentTextHeight(double commentTextHeight) {    this.commentTextHeight = commentTextHeight;   }
+    void setCommentTextHeight(double commentTextHeight) {    this.commentTextHeight = commentTextHeight;   }
 
-    public double getExplanationTextHeight() {     return explanationTextHeight;  }
+    double getExplanationTextHeight() {     return explanationTextHeight;  }
 
-    public void setExplanationTextHeight(double explanationTextHeight) {   this.explanationTextHeight = explanationTextHeight;   }
+    void setExplanationTextHeight(double explanationTextHeight) {   this.explanationTextHeight = explanationTextHeight;   }
 
     @Override
     public String getExerciseName() { return exerciseName; }

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ABmodel implements ExerciseModel<Document>, Serializable {
-
+    private static final long serialVersionUID = 100L;
     private String exerciseName = new String("");
     private ExerciseModel<Document> originalModel = null;
     private ExerciseType type = ExerciseType.AB_EXPLAIN;
@@ -59,26 +59,26 @@ public class ABmodel implements ExerciseModel<Document>, Serializable {
     }
 
     void addBlankContentPage(int position) { pageContents.add(position, new PageContent(new Document(), 0.0));  }
-    public String getContentPrompt() {
+    String getContentPrompt() {
         return prompt;
     }
     ABmodelExtra getModelFields() { return modelFields; }
 
-    public double getCommentPrefHeight() { return commentPrefHeight;  }
+    double getCommentPrefHeight() { return commentPrefHeight;  }
 
-    public void setCommentPrefHeight(double commentPrefHeight) { this.commentPrefHeight = commentPrefHeight;  }
+    void setCommentPrefHeight(double commentPrefHeight) { this.commentPrefHeight = commentPrefHeight;  }
 
-    public double getPaginationPrefHeight() {   return paginationPrefHeight;  }
+    double getPaginationPrefHeight() {   return paginationPrefHeight;  }
 
-    public void setPaginationPrefHeight(double paginationPrefHeight) {   this.paginationPrefHeight = paginationPrefHeight;  }
+    void setPaginationPrefHeight(double paginationPrefHeight) {   this.paginationPrefHeight = paginationPrefHeight;  }
 
-    public double getStatementTextHeight() {     return statementTextHeight;  }
+    double getStatementTextHeight() {     return statementTextHeight;  }
 
-    public void setStatementTextHeight(double statementTextHeight) {   this.statementTextHeight = statementTextHeight;   }
+    void setStatementTextHeight(double statementTextHeight) {   this.statementTextHeight = statementTextHeight;   }
 
-    public double getCommentTextHeight() {    return commentTextHeight;   }
+    double getCommentTextHeight() {    return commentTextHeight;   }
 
-    public void setCommentTextHeight(double commentTextHeight) {   this.commentTextHeight = commentTextHeight;  }
+    void setCommentTextHeight(double commentTextHeight) {   this.commentTextHeight = commentTextHeight;  }
 
     @Override
     public String getExerciseName() { return exerciseName; }

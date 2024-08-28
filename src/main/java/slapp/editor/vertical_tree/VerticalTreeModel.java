@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class VerticalTreeModel implements ExerciseModel<Document>, Serializable {
-
+    private static final long serialVersionUID = 100L;
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.VERTICAL_TREE;
     private RichTextAreaSkin.KeyMapValue defaultKeyboardType;
@@ -60,55 +60,55 @@ public class VerticalTreeModel implements ExerciseModel<Document>, Serializable 
     public VerticalTreeModel(){}
 
 
-    public void setExerciseName(String exerciseName) { this.exerciseName = exerciseName;    }
+    void setExerciseName(String exerciseName) { this.exerciseName = exerciseName;    }
 
-    public void setExerciseStatement(Document exerciseStatement) { this.exerciseStatement = exerciseStatement;    }
+    void setExerciseStatement(Document exerciseStatement) { this.exerciseStatement = exerciseStatement;    }
 
     public List<DragIconType> getDragIconList() { return dragIconList;    }
 
-    public void setDragIconList(List<DragIconType> dragIconList) { this.dragIconList = dragIconList;    }
+    void setDragIconList(List<DragIconType> dragIconList) { this.dragIconList = dragIconList;    }
 
     public List<ObjectControlType> getObjectControlList() {  return objectControlList;    }
 
-    public void setObjectControlList(List<ObjectControlType> objectControlList) { this.objectControlList = objectControlList;    }
+    void setObjectControlList(List<ObjectControlType> objectControlList) { this.objectControlList = objectControlList;    }
 
-    public List<TreeFormulaBoxMod> getTreeFormulaBoxes() {  return treeFormulaBoxes;   }
+    List<TreeFormulaBoxMod> getTreeFormulaBoxes() {  return treeFormulaBoxes;   }
 
-    public List<MapFormulaBoxMod> getMapFormulaBoxes() {  return mapFormulaBoxes;    }
+    List<MapFormulaBoxMod> getMapFormulaBoxes() {  return mapFormulaBoxes;    }
 
-    public List<VerticalBracketMod> getVerticalBrackets() {  return verticalBrackets;    }
+    List<VerticalBracketMod> getVerticalBrackets() {  return verticalBrackets;    }
 
-    public List<DashedLineMod> getDashedLineMods() {  return dashedLineMods;   }
+    List<DashedLineMod> getDashedLineMods() {  return dashedLineMods;   }
 
-    public List<ClickableNodeLinkMod> getClickableNodeLinks() {  return clickableNodeLinks;    }
+    List<ClickableNodeLinkMod> getClickableNodeLinks() {  return clickableNodeLinks;    }
 
-    public List<ClickableMapLinkMod> getClickableMapLinks() {  return clickableMapLinks;   }
+    List<ClickableMapLinkMod> getClickableMapLinks() {  return clickableMapLinks;   }
 
-    public List<MapQuestionMarkerMod> getMapQuestionMarkers() {  return mapQuestionMarkers;    }
+    List<MapQuestionMarkerMod> getMapQuestionMarkers() {  return mapQuestionMarkers;    }
 
     public RichTextAreaSkin.KeyMapValue getDefaultKeyboardType() {    return defaultKeyboardType;  }
 
     public void setDefaultKeyboardType(RichTextAreaSkin.KeyMapValue defaultKeyboardType) {   this.defaultKeyboardType = defaultKeyboardType;  }
 
-    public double getCommentPrefHeight() {     return commentPrefHeight;  }
+    double getCommentPrefHeight() {     return commentPrefHeight;  }
 
-    public void setCommentPrefHeight(double commentPrefHeight) {      this.commentPrefHeight = commentPrefHeight;  }
+    void setCommentPrefHeight(double commentPrefHeight) {      this.commentPrefHeight = commentPrefHeight;  }
 
-    public double getMainPanePrefHeight() { return mainPanePrefHeight;  }
+    double getMainPanePrefHeight() { return mainPanePrefHeight;  }
 
-    public void setMainPanePrefHeight(double mainPanePrefHeight) {  this.mainPanePrefHeight = mainPanePrefHeight;  }
+    void setMainPanePrefHeight(double mainPanePrefHeight) {  this.mainPanePrefHeight = mainPanePrefHeight;  }
 
-    public double getMainPanePrefWidth() {     return mainPanePrefWidth;  }
+    double getMainPanePrefWidth() {     return mainPanePrefWidth;  }
 
-    public void setMainPanePrefWidth(double mainPanePrefWidth) {    this.mainPanePrefWidth = mainPanePrefWidth; }
+    void setMainPanePrefWidth(double mainPanePrefWidth) {    this.mainPanePrefWidth = mainPanePrefWidth; }
 
-    public double getStatementTextHeight() {  return statementTextHeight;  }
+    double getStatementTextHeight() {  return statementTextHeight;  }
 
-    public void setStatementTextHeight(double statementTextHeight) {    this.statementTextHeight = statementTextHeight;  }
+    void setStatementTextHeight(double statementTextHeight) {    this.statementTextHeight = statementTextHeight;  }
 
-    public double getCommentTextHeight() {    return commentTextHeight; }
+    double getCommentTextHeight() {    return commentTextHeight; }
 
-    public void setCommentTextHeight(double commentTextHeight) {    this.commentTextHeight = commentTextHeight;  }
+    void setCommentTextHeight(double commentTextHeight) {    this.commentTextHeight = commentTextHeight;  }
 
     @Override
     public String getExerciseName() { return exerciseName;    }

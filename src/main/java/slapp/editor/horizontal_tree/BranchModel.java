@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class BranchModel implements Serializable {
-
+    private static final long serialVersionUID = 100L;
     private boolean annotation;
     private boolean formulaBranch;
     private boolean indefiniteNumBranch;

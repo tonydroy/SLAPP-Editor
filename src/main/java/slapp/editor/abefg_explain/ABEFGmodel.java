@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ABEFGmodel implements ExerciseModel<Document>, Serializable {
-
+    private static final long serialVersionUID = 100L;
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.ABEFG_EXPLAIN;
     private ExerciseModel<Document> originalModel = null;

@@ -18,7 +18,7 @@ package slapp.editor.ab_explain;
 import java.io.Serializable;
 
 public class ABmodelExtra implements Serializable {
-
+    private static final long serialVersionUID = 100L;
     private String leader = "";
     private String promptA = "";
     private boolean valueA = false;

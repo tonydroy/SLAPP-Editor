@@ -45,7 +45,7 @@ public class EditorAlerts {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.initModality(Modality.APPLICATION_MODAL);
-        alert.initOwner(EditorMain.mainStage);
+//        alert.initOwner(EditorMain.mainStage);
         alert.showAndWait();
 
     }
@@ -61,7 +61,7 @@ public class EditorAlerts {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.initModality(Modality.APPLICATION_MODAL);
-        alert.initOwner(EditorMain.mainStage);
+//        alert.initOwner(EditorMain.mainStage);
         PauseTransition delay = new PauseTransition(Duration.seconds(2));
         delay.setOnFinished(e -> alert.hide());
         delay.play();
@@ -81,7 +81,7 @@ public class EditorAlerts {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.initModality(Modality.APPLICATION_MODAL);
-        alert.initOwner(EditorMain.mainStage);
+ //       alert.initOwner(EditorMain.mainStage);
         return alert;
     }
 

@@ -19,8 +19,6 @@ import com.gluonhq.richtextarea.RichTextArea;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Pagination;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
@@ -30,9 +28,9 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
 
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * View for the simple edit exercise
+ */
 public class SimpleEditView implements ExerciseView<DecoratedRTA> {
 
     private MainWindowView mainView;
@@ -53,6 +51,10 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
     private Node currentSpinnerNode;
 
 
+    /**
+     * Create simple edit view
+     * @param mainView the main view
+     */
     public SimpleEditView(MainWindowView mainView) {
         this.mainView = mainView;
 
@@ -62,6 +64,9 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
         controlBox.getChildren().add(spacer);
     }
 
+    /**
+     * Initialize statement, comment, and response areas including text height controls
+     */
     void initializeViewDetails() {
 
         //statement rta
@@ -177,48 +182,119 @@ public class SimpleEditView implements ExerciseView<DecoratedRTA> {
         });
     }
 
+    /**
+     * The prompt for the response area
+     * @param prompt the prompt string
+     */
     public void setResponsePrompt(String prompt) {   responsePrompt = prompt;  }
+
+    /**
+     * The preferred height of the comment area
+     * @return the height value
+     */
     public double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight();     }
+
+    /**
+     * The preferred height of the comment area
+     * @param commentPrefHeight the height value
+     */
     public void setCommentPrefHeight(double commentPrefHeight) {     this.commentPrefHeight = commentPrefHeight;   }
+
+    /**
+     * The preferred height of the response area
+     * @return the height value
+     */
     public double getResponsePrefHeight() {    return exerciseResponse.getEditor().getPrefHeight();   }
+
+    /**
+     * The preferred height of the response area
+     * @param responsePrefHeight the height value
+     */
     public void setResponsePrefHeight(double responsePrefHeight) {     this.responsePrefHeight = responsePrefHeight;  }
 
+    /**
+     * The DecoratedRTA for the response area
+     * @return the DecoratedRTA
+     */
     public DecoratedRTA getExerciseResponse() {    return exerciseResponse;   }
 
+    /**
+     * The DecoratedRTA for the response area
+     * @param exerciseResponse the DecoratedRTA
+     */
     public void setExerciseResponse(DecoratedRTA exerciseResponse) {   this.exerciseResponse = exerciseResponse;  }
 
+    /**
+     * The node displayed for a simple edit window in the FreeForm exercise
+     * @return the exerciseResponse RTA
+     */
     public Node getFFViewNode() {
-        RichTextArea responseRTA = exerciseResponse.getEditor();
-        /*
-        double responseInitialHeight = Math.round(120.0 / mainView.getScalePageHeight() * 100.0);
-        responseRTA.prefHeightProperty().unbind();
-        responseHeightSpinner.getValueFactory().setValue((double) Math.round(responseInitialHeight));
-        responseRTA.prefHeightProperty().bind(Bindings.max(15.0, Bindings.multiply(mainView.scalePageHeightProperty().doubleValue(), DoubleProperty.doubleProperty(responseHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
-
-         */
-        return responseRTA;
+        return exerciseResponse.getEditor();
     }
 
 
+    /**
+     * The comment decoratedRTA
+     * @return comment DecoratedRTA
+     */
     @Override
     public DecoratedRTA getExerciseComment() { return exerciseComment; }
+
+    /**
+     * The comment decoratedRTA
+     * @param exerciseComment DecoratedRTA
+     */
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment; }
 
+    /**
+     * The exercise prompt DRTA
+     * @return the statement DRTA
+     */
     @Override
     public DecoratedRTA getExerciseStatement() { return exerciseStatement; }
+
+    /**
+     * The exercise prompt DRTA
+     * @param exerciseStatement the statement DRTA
+     */
     @Override
     public void setExerciseStatement(DecoratedRTA exerciseStatement) {  this.exerciseStatement = exerciseStatement;  }
+
+    /**
+     * The exercise prompt RTA
+     * @return the statement RTA
+     */
     @Override
     public Node getExerciseStatementNode() {  return exerciseStatement.getEditor();  }
+
+    /**
+     * The preferred height of the statement window
+     * @param height the preferred height
+     */
     public void setStatementPrefHeight(double height) {
         statementPrefHeight = height;
         exerciseStatement.getEditor().setPrefHeight(height);
     }
+
+    /**
+     * The node which includes content of this exercise
+     * @return the exerciseResponse RTA
+     */
     @Override
     public Node getExerciseContentNode() {     return exerciseResponse.getEditor();  }
+
+    /**
+     * The left control node - in this case, an empty VBox
+     * @return the control node
+     */
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
+
+    /**
+     * The right control is null
+     * @return null
+     */
     @Override
     public Node getRightControl() { return null; }
 

@@ -18,7 +18,7 @@ package slapp.editor.vertical_tree.object_models;
 import java.io.Serializable;
 
 public class MapQuestionMarkerMod implements Serializable {
-
+    private static final long serialVersionUID = 100L;
     private String idString;
     private String targetId;
     int targetMapStage;
