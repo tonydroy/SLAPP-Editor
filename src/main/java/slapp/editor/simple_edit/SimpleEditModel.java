@@ -161,7 +161,7 @@ public class SimpleEditModel implements ExerciseModel <Document>, Serializable {
 
     /**
      * Every exercise has an {@link slapp.editor.main_window.ExerciseType}
-     * @return the exercise type
+     * @return the SIMPLE_EDIT exercise type
      */
     @Override
     public ExerciseType getExerciseType() { return exerciseType; }
@@ -202,14 +202,14 @@ public class SimpleEditModel implements ExerciseModel <Document>, Serializable {
     public Document getExerciseStatement() { return exerciseStatement; }
 
     /**
-     * The pref height of the exercise statement.
+     * The pref height of the exercise statement window.
      * @return the statement height
      */
     @Override
     public double getStatementPrefHeight() {return statementPrefHeight;  }
 
     /**
-     * The pref height of the exercise statement
+     * The pref height of the exercise statement window.
      * @param statementPrefHeight the statement height
      */
     @Override

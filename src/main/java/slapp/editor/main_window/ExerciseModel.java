@@ -71,13 +71,13 @@ public interface ExerciseModel<T> extends Serializable {
     void setExerciseComment(Document comment);
 
     /**
-     * The pref height of the exercise statement.
+     * The pref height of the exercise statement window
      * @return the statement height
      */
     double getStatementPrefHeight();
 
     /**
-     * The height of the exercise statement
+     * The height of the exercise statement window.
      * @param height the statement height
      */
     void setStatementPrefHeight(double height);

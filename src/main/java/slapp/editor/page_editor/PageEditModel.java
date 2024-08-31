@@ -32,8 +32,6 @@ public class PageEditModel implements ExerciseModel<Document>, Serializable {
     private ExerciseType exerciseType = ExerciseType.PAGE_EDIT;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
-
-
     private Document exerciseStatement = new Document();
     private double statementPrefHeight = 80;
     private double statementTextHeight = 0;
@@ -98,57 +96,135 @@ public class PageEditModel implements ExerciseModel<Document>, Serializable {
     double getCommentPrefHeight() {return commentPrefHeight; }
 
     /**
-     *
-     * @param height
+     * The preferred height of the comment window
+     * @param height the height value
      */
     void setCommentPrefHeight(double height) {this.commentPrefHeight = height; }
 
+    /**
+     * The preferred height of the pagination window
+     * @return the height value
+     */
     double getPaginationPrefHeight() { return paginationPrefHeight;   }
 
+    /**
+     * The preferred height of the pagination window
+     * @param paginationPrefHeight the height value
+     */
     void setPaginationPrefHeight(double paginationPrefHeight) { this.paginationPrefHeight = paginationPrefHeight; }
 
-
-
+    /**
+     * The the text height in the comment area
+     * @return the text height
+     */
     double getCommentTextHeight() {
         return commentTextHeight;
     }
 
+    /**
+     * The text height in the comment area
+     * @param commentTextHeight the text height
+     */
     void setCommentTextHeight(double commentTextHeight) {
         this.commentTextHeight = commentTextHeight;
     }
 
+    /**
+     * The text height in the statement area
+     * @return the text height
+     */
     double getStatementTextHeight() {
         return statementTextHeight;
     }
 
+    /**
+     * The text height in the statement area
+     * @param statementTextHeight the text height
+     */
    void setStatementTextHeight(double statementTextHeight) {
         this.statementTextHeight = statementTextHeight;
     }
 
+    /**
+     * The exercise name (used also as file name)
+     * @return the name string
+     */
     @Override
     public String getExerciseName() {return exerciseName; }
+
+    /**
+     * Every exercise has an {@link slapp.editor.main_window.ExerciseType}
+     * @return the PAGE_EDIT exercise type
+     */
     @Override
     public ExerciseType getExerciseType() { return exerciseType; }
+
+    /**
+     * Exercise is <em>started</em> if it is differs from the originally created version.
+     * @return true if started, and otherwise false.
+     */
     @Override
     public boolean isStarted() { return started;  }
+
+    /**
+     * Exercise is <em>started</em> if it differs from the originally created version.
+     * @param started true if started, and otherwise false
+     */
     @Override
     public void setStarted(boolean started) { this.started = started;  }
+
+    /**
+     * The comment on this exercise, which may be by either an instructor or student
+     * @return the comment Document.
+     */
     @Override
     public Document getExerciseComment() { return exerciseComment;  }
+
+    /**
+     * The exercise comment on this exercise, which may be by either an instructor or student
+     * @param document the comment Document
+     */
     @Override
     public void setExerciseComment(Document document) {this.exerciseComment = document; }
+
+    /**
+     * The exercise prompt
+     * @return The statement (T)
+     */
     @Override
     public Document getExerciseStatement() { return exerciseStatement; }
+
+    /**
+     * The pref height of the exercise statement window
+     * @return the statement height
+     */
     @Override
     public double getStatementPrefHeight() {return statementPrefHeight;  }
+
+    /**
+     * The height of the exercise statement window
+     * @param statementPrefHeight the statement height
+     */
     @Override
     public void setStatementPrefHeight(double statementPrefHeight) {this.statementPrefHeight = statementPrefHeight; }
 
+    /**
+     * The original model for the (unworked) exercise
+     * @return the original model
+     */
     @Override
     public ExerciseModel<Document> getOriginalModel() { return (ExerciseModel) originalModel; }
 
+    /**
+     * The original model for the (unworked exercise)
+     * @param originalModel the original model
+     */
     public void setOriginalModel(ExerciseModel<Document> originalModel) { this.originalModel = originalModel; }
 
+    /**
+     * Override toString to return the exercise name
+     * @return the string representation
+     */
     @Override
     public String toString() { return exerciseName; }
 

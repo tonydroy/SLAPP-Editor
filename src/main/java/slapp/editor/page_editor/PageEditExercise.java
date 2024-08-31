@@ -42,6 +42,9 @@ import slapp.editor.DiskUtilities;
 
 import static javafx.scene.control.ButtonType.OK;
 
+/**
+ * Basic page edit exsericise
+ */
 public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
     private MainWindow mainWindow;
     private PageEditModel editModel;
@@ -50,6 +53,11 @@ public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
     private boolean exerciseModified = false;
     private int lastPageNum = -1;
 
+    /**
+     * Construct page edit exercise
+     * @param model a page edit model
+     * @param mainWindow the main window
+     */
     public PageEditExercise(PageEditModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.editModel = model;
@@ -60,6 +68,9 @@ public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
         setEditView();
     }
 
+    /*
+     * Set up statement, comment and pagination view elements.
+     */
     private void setEditView() {
 
         editView.setContentPrompt(editModel.getContentPrompt());
@@ -136,6 +147,9 @@ public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
         editView.getRemovePageButton().setOnAction(e -> removePageAction());
     }
 
+    /*
+     * Add page after the current page
+     */
     private void addPageAction() {
         int newPageIndex = editView.getContentPageIndex() + 1;
         editModel.addBlankContentPage(newPageIndex);
@@ -160,6 +174,9 @@ public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
 
     }
 
+    /*
+     * Remove the current page
+     */
     private void removePageAction() {
         if (editModel.getPageContents().size() <= 1) {
             EditorAlerts.showSimpleAlert("Cannot Remove", "Your response must include at least one page.");
@@ -181,21 +198,38 @@ public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
         }
     }
 
-
+    /**
+     * Model for this page edit exercise
+     * @return the model
+     */
     @Override
     public PageEditModel getExerciseModel() {
         return editModel;
     }
+
+    /**
+     * View for this page edit exercise
+     * @return the view
+     */
     @Override
     public PageEditView getExerciseView() {
         return editView;
     }
+
+    /**
+     * Save exercise to disk
+     * @param saveAs true if "save as" should be invoked, and otherwise false
+     */
     @Override
     public void saveExercise(boolean saveAs) {
         boolean success = DiskUtilities.saveExercise(saveAs, getPageEditModelFromView());
         if (success) exerciseModified = false;
     }
 
+    /**
+     * List of nodes to be sent to printer for this exercise
+     * @return the node list
+     */
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
@@ -277,9 +311,13 @@ public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
         commentRTA.getStylesheets().clear(); commentRTA.getStylesheets().add("richTextAreaPrinter.css");
         nodeList.add(commentRTA);
 
-
         return nodeList;
     }
+
+    /**
+     * Return to the initial (unworked) version of the exercise, retaining the comment only.
+     * @return the initial exercise
+     */
     @Override
     public PageEditExercise resetExercise() {
         RichTextArea commentRTA = editView.getExerciseComment().getEditor();
@@ -291,6 +329,10 @@ public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
         return clearExercise;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @return true if exercise is modified, and otherwise false
+     */
     @Override
     public boolean isExerciseModified() {
         RichTextArea commentEditor = editView.getExerciseComment().getEditor();
@@ -305,19 +347,43 @@ public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
         }
         return exerciseModified;
     }
+
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @param modified true if exercise is modified, and otherwise false
+     */
     @Override
     public void setExerciseModified(boolean modified) {
         this.exerciseModified = modified;
     }
+
+    /**
+     * No FF view node for the page edit exercise
+     * @return null
+     */
     @Override
     public Node getFFViewNode() {return null;}
+
+    /**
+     * No FF print node for the page edit exercise
+     * @return null
+     */
     @Override
     public Node getFFPrintNode() {return null;}
+
+    /**
+     * Extract an {@link slapp.editor.main_window.ExerciseModel} from view of the exercise
+     * @return the exercise model
+     */
     @Override
     public ExerciseModel getExerciseModelFromView() {
         return (ExerciseModel) getPageEditModelFromView();
     }
 
+    /*
+     * Extract page edit model from view
+     * @return the page edit model
+     */
     private PageEditModel getPageEditModelFromView() {
         RichTextArea commentRTA = editView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());
@@ -346,7 +412,6 @@ public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
         boolean started = (editModel.isStarted() || exerciseModified);
         editModel.setStarted(started);
 
-
         Document statementDocument = editModel.getExerciseStatement();
         double statementHeight = editView.getExerciseStatement().getEditor().getPrefHeight();
 
@@ -356,7 +421,6 @@ public class PageEditExercise implements Exercise<PageEditModel, PageEditView> {
         newModel.setPaginationPrefHeight(editView.getPaginationPrefHeight());
         newModel.setCommentTextHeight(editModel.getCommentTextHeight());
         newModel.setStatementTextHeight(editModel.getStatementTextHeight());
-
 
         return newModel;
     }

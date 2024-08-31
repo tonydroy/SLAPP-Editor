@@ -49,6 +49,9 @@ import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
+/**
+ * Create window for page edit exercise
+ */
 public class PageEditCreate {
     private MainWindow mainWindow;
     private RichTextArea statementRTA;
@@ -68,18 +71,26 @@ public class PageEditCreate {
     private Button saveButton;
     private Button saveAsButton;
     private ToolBar sizeToolBar;
-
     DecoratedRTA dummyDRTA = new DecoratedRTA();
     private MenuBar menuBar;
     VBox nameNpromptBox;
     BorderPane borderPane;
 
 
+    /**
+     * Construce page edit window from scratch
+     * @param mainWindow the main window
+     */
     public PageEditCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
+    /**
+     * Open create window for modification of existing page edit exercise
+     * @param mainWindow the main window
+     * @param originalModel model for the existing exercise
+     */
     public PageEditCreate(MainWindow mainWindow, PageEditModel originalModel) {
         this(mainWindow);
 
@@ -93,6 +104,9 @@ public class PageEditCreate {
         fieldModified = false;
     }
 
+    /*
+     * Set up the create view
+     */
     private void setupWindow() {
         borderPane = new BorderPane();
 
@@ -224,32 +238,6 @@ public class PageEditCreate {
         sizeToolBar.setPrefHeight(38);
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
 
-
-/*
-
-        ToolBar editToolbar = statementDRTA.getKbdSelectorToolbar();
-        ToolBar fontsToolbar = statementDRTA.getEditToolbar();
-        ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
-        ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
-        kbdDiaToolBar.setPrefHeight(38);
-
-        if (kbdDiaToolBar.getItems().isEmpty()) {
-            kbdDiaToolBar.getItems().addAll(statementDRTA.getKeyboardDiagramButton());
-        }
-
-        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
-        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
-
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, nameNpromptBox);
-//        topBox.layout();
-        borderPane.topProperty().setValue(topBox);
-
-
-
-        borderPane.setTop(topBox);
-
- */
-
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
@@ -272,6 +260,9 @@ public class PageEditCreate {
         Platform.runLater(() -> nameField.requestFocus());
     }
 
+    /*
+     * Update zoom value
+     */
     private void updateZoom() {
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
@@ -284,6 +275,9 @@ public class PageEditCreate {
         keyboardDiagram.update();
     }
 
+    /*
+     * The center statement area sizes as the stage is sized
+     */
     private void setCenterVgrow() {
         double fixedHeight = helpArea.getHeight() * scale + 400;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
@@ -294,6 +288,9 @@ public class PageEditCreate {
         statementRTA.prefHeightProperty().bind(centerHeightProperty);
     }
 
+    /*
+     * Close the create window
+     */
     private void closeWindow() {
         if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
             mainWindow.closeExercise();
@@ -301,18 +298,26 @@ public class PageEditCreate {
         }
     }
 
+    /*
+     * Clear the exercise (leaving prompt value)
+     */
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
  //           statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
             statementRTA.getActionFactory().newDocumentNow().execute(new ActionEvent());
-//            statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
             fieldModified = false;
         }
     }
 
+    /*
+     * If modified, check to continue action
+     * @param title the title of the confirmation box
+     * @param content the content of the confirmation box
+     * @return true if ok to continue, and otherwise false
+     */
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
         if (fieldModified || statementRTA.isModified()) {
@@ -323,6 +328,9 @@ public class PageEditCreate {
         return okcontinue;
     }
 
+    /*
+     * View the exercise as currently constructed
+     */
     private void viewExercise() {
         PageEditModel model = extractModelFromWindow();
         PageEditExercise exercise = new PageEditExercise(model, mainWindow);
@@ -333,6 +341,10 @@ public class PageEditCreate {
         mainWindow.setUpExercise(exercise);
     }
 
+    /*
+     * Save the currently constructed exercise
+     * @param saveAs true if "save as" selected, and otherwise false
+     */
     private void saveExercise(boolean saveAs) {
         saveButton.setDisable(true);
         saveAsButton.setDisable(true);
@@ -350,6 +362,11 @@ public class PageEditCreate {
         saveAsButton.setDisable(false);
         fieldModified = false;
     }
+
+    /*
+     * Generate a PageEditModel from window contents
+     * @return the simple edit model
+     */
     private PageEditModel extractModelFromWindow() {
         String name = nameField.getText();
         String prompt = promptField.getText();
@@ -363,6 +380,11 @@ public class PageEditCreate {
         return model;
     }
 
+    /*
+     * Display and enable RTA toolbars
+     * @param decoratedRTA the RTA
+     * @param control the {@link slapp.editor.main_window.ControlType} for this RTA instance
+     */
     private void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
@@ -403,6 +425,9 @@ public class PageEditCreate {
         borderPane.topProperty().setValue(topBox);
     }
 
+    /*
+     * When a text field is in focus, show deactivated toolbars for dummy RTA
+     */
     private void textFieldInFocus() {
         editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }

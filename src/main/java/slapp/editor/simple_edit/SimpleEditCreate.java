@@ -36,11 +36,13 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
+import slapp.editor.derivation.SetupLine;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
 
@@ -329,7 +331,7 @@ public class SimpleEditCreate {
     }
 
     /*
-     * View the exercise as currently constucted
+     * View the exercise as currently constructed
      */
     private void viewExercise() {
         SimpleEditModel model = extractModelFromWindow();
@@ -351,16 +353,15 @@ public class SimpleEditCreate {
         nameField.textProperty().addListener(nameListener);
 
         SimpleEditModel model = extractModelFromWindow();
-        SimpleEditExercise exercise = new SimpleEditExercise(model, mainWindow);
-        RichTextArea rta = exercise.getExerciseView().getExerciseStatement().getEditor();
-        rta.prefHeightProperty().unbind();
-        rta.setEditable(false);
-        exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
-        exercise.saveExercise(saveAs);
 
+
+        boolean success = DiskUtilities.saveExercise(saveAs, model);
+        if (success) {
+            fieldModified = false;
+        }
         saveButton.setDisable(false);
         saveAsButton.setDisable(false);
-        fieldModified = false;
+
     }
 
     /*
