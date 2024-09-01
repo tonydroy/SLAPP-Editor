@@ -17,7 +17,10 @@ package slapp.editor.ab_explain;
 
 import java.io.Serializable;
 
-public class ABmodelExtra implements Serializable {
+/**
+ * Supplement to AB model to support the choice fields
+ */
+class ABmodelExtra implements Serializable {
     private static final long serialVersionUID = 100L;
     private String leader = "";
     private String promptA = "";
@@ -26,9 +29,20 @@ public class ABmodelExtra implements Serializable {
     private boolean valueB = false;
 
 
+    /**
+     * Create ABmodelExtra with empty defaults
+     */
+    ABmodelExtra() {}
 
-   public ABmodelExtra() {}
-    public ABmodelExtra(String leader, String promptA, boolean valueA, String promptB, boolean valueB) {
+    /**
+     * CreateABmodelExtra with parameters
+     * @param leader the choice field leader
+     * @param promptA prompt for the A-choice     *
+     * @param valueA value of the A-choice
+     * @param promptB prompt for the B-choice
+     * @param valueB value of the B-choice
+     */
+    ABmodelExtra(String leader, String promptA, boolean valueA, String promptB, boolean valueB) {
         this();
         this.leader = leader;
         this.promptA = promptA;
@@ -37,31 +51,44 @@ public class ABmodelExtra implements Serializable {
         this.valueB = valueB;
     }
 
-    public String getLeader() {
+    /**
+     * The leader appears before the choice fields
+     * @return the String leader
+     */
+    String getLeader() {
         return leader;
     }
 
-    public String getPromptA() {
+    /**
+     * The A-prompt appears with the A-field
+     * @return the String prompt
+     */
+    String getPromptA() {
         return promptA;
     }
 
-    public boolean getValueA() {
+    /**
+     * The value of the A check box
+     * @return
+     */
+    boolean getValueA() {
         return valueA;
     }
 
-    public void setValueA(boolean valueA) {
-        this.valueA = valueA;
-    }
-
-    public String getPromptB() {
+    /**
+     * The B-prompt appears with the B-field
+     * @return the string prompt
+     */
+    String getPromptB() {
         return promptB;
     }
 
-    public boolean getValueB() {
+    /**
+     * The value of the B check box.
+     * @return
+     */
+    boolean getValueB() {
         return valueB;
     }
 
-    public void setValueB(boolean valueB) {
-        this.valueB = valueB;
-    }
 }

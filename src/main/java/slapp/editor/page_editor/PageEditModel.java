@@ -51,7 +51,7 @@ public class PageEditModel implements ExerciseModel<Document>, Serializable {
      * @param prompt prompt to appear on first page of blank pagination
      * @param statementPrefHeight preferred height of statement window
      * @param exerciseStatement the statement Document
-     * @param exerciseComment the comment document
+     * @param exerciseComment the comment Document
      * @param pageContents list of {@link slapp.editor.page_editor.PageContent}
      */
     PageEditModel(String name, boolean started, String prompt, double statementPrefHeight, Document exerciseStatement, Document exerciseComment, List<PageContent> pageContents) {
@@ -83,7 +83,7 @@ public class PageEditModel implements ExerciseModel<Document>, Serializable {
 
     /**
      * The prompt to appear on the first page of blank pagination
-     * @return
+     * @return the String prompt
      */
     String getContentPrompt() {
         return contentPrompt;
@@ -189,7 +189,7 @@ public class PageEditModel implements ExerciseModel<Document>, Serializable {
 
     /**
      * The exercise prompt
-     * @return The statement (T)
+     * @return The statement Document (T)
      */
     @Override
     public Document getExerciseStatement() { return exerciseStatement; }
@@ -219,6 +219,7 @@ public class PageEditModel implements ExerciseModel<Document>, Serializable {
      * The original model for the (unworked exercise)
      * @param originalModel the original model
      */
+    @Override
     public void setOriginalModel(ExerciseModel<Document> originalModel) { this.originalModel = originalModel; }
 
     /**

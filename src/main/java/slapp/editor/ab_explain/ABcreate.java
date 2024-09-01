@@ -52,6 +52,9 @@ import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
+/**
+ * Create window for the AB edit exercise
+ */
 public class ABcreate {
     private MainWindow mainWindow;
     private RichTextArea statementRTA;
@@ -62,7 +65,6 @@ public class ABcreate {
     private TextField promptFieldA;
     private TextField promptFieldB;
     private TextField contentPromptField;
-
     private boolean fieldsModified = false;
     private ChangeListener nameListener;
     private ChangeListener leaderListener;
@@ -80,17 +82,24 @@ public class ABcreate {
     private ToolBar sizeToolBar;
     private DecoratedRTA dummyDRTA = new DecoratedRTA();
     private MenuBar menuBar;
-
     VBox textFieldsPromptBox;
     private BorderPane borderPane;
 
 
-
+    /**
+     * Construct AB edit create window from scratch
+     * @param mainWindow the main window
+     */
     public ABcreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
+    /**
+     * Open create window for modification of existing AB edit exercise
+     * @param mainWindow the main window
+     * @param originalModel model for the existing exercise
+     */
     public ABcreate(MainWindow mainWindow, ABmodel originalModel) {
         this(mainWindow);
         statementRTA.getActionFactory().open(originalModel.getExerciseStatement()).execute(new ActionEvent());
@@ -109,10 +118,11 @@ public class ABcreate {
         leaderField.textProperty().addListener(leaderListener);
         promptFieldA.textProperty().addListener(fieldListenerA);
         promptFieldB.textProperty().addListener(fieldListenerB);
-
-
     }
 
+    /*
+     * Set up the create view
+     */
     private void setupWindow() {
         borderPane = new BorderPane();
 
@@ -157,7 +167,6 @@ public class ABcreate {
             if (nv) textFieldInFocus();
         });
 
-
         Label leaderLabel = new Label("Checkbox Lead: ");
         leaderLabel.setPrefWidth(100);
         leaderField = new TextField();
@@ -174,7 +183,6 @@ public class ABcreate {
         leaderField.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) textFieldInFocus();
         });
-
 
         Label promptLabelA = new Label("A Prompt: ");
         promptLabelA.setPrefWidth(100);
@@ -193,7 +201,6 @@ public class ABcreate {
             if (nv) textFieldInFocus();
         });
 
-
         Label promptLabelB = new Label("B Prompt: ");
         promptLabelB.setPrefWidth(100);
         promptFieldB = new TextField();
@@ -210,8 +217,6 @@ public class ABcreate {
         promptFieldB.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) textFieldInFocus();
         });
-
-
 
         Label contentPromptLabel = new Label("Explain prompt: ");
         contentPromptLabel.setPrefWidth(100);
@@ -230,9 +235,6 @@ public class ABcreate {
             if (nv) textFieldInFocus();
         });
 
-
-
-
         HBox nameBox = new HBox(nameLabel, nameField);
         nameBox.setAlignment(Pos.BASELINE_LEFT);
         HBox promptBox = new HBox(contentPromptLabel, contentPromptField);
@@ -248,8 +250,6 @@ public class ABcreate {
 
         String helpText = "AB Explain is appropriate for any exercise that requires a choice between mutually exclusive options (as true/false, consistent/inconsistent) together with an explanation or justification.\n\n" +
                 "For the AB Explain exercise, you supply the exercise name and, if desired, a prompt to appear in the explanation field.  Then the Checkbox Lead appears prior to the check boxes, the A Prompt with the first box, and the B Prompt with the second.";
-
-
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
         helpArea.setPrefHeight(120);
@@ -311,25 +311,6 @@ public class ABcreate {
         sizeToolBar.setPrefHeight(38);
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
 
-/*
-        ToolBar editToolbar = statementDRTA.getKbdSelectorToolbar();
-        ToolBar fontsToolbar = statementDRTA.getEditToolbar();
-        ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
-        ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
-        kbdDiaToolBar.setPrefHeight(38);
-
-
-        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
-        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
-
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, textFieldsPromptBox);
-//        topBox.layout();
-        borderPane.topProperty().setValue(topBox);
-
-        borderPane.setTop(topBox);
-
- */
-
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
@@ -352,6 +333,9 @@ public class ABcreate {
         Platform.runLater(() -> nameField.requestFocus());
     }
 
+    /*
+     * Update zoom value
+     */
     private void updateZoom() {
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
@@ -364,6 +348,9 @@ public class ABcreate {
         keyboardDiagram.update();
     }
 
+    /*
+     * The center statement area sizes as the stage is sized
+     */
     private void setCenterVgrow() {
         double fixedHeight = helpArea.getHeight() * scale + 500;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
@@ -374,6 +361,9 @@ public class ABcreate {
         statementRTA.prefHeightProperty().bind(centerHeightProperty);
     }
 
+    /*
+     * Close the create window
+     */
     private void closeWindow() {
         if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
             mainWindow.closeExercise();
@@ -381,6 +371,9 @@ public class ABcreate {
         }
     }
 
+    /*
+     * Clear the exercise (leaving explain prompt and checkbox setup)
+     */
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
@@ -393,6 +386,12 @@ public class ABcreate {
         }
     }
 
+    /*
+     * If modified, check to continue action
+     * @param title the title of the confirmation box
+     * @param content the content of the confirmation box
+     * @return true if ok to continue, and otherwise false
+     */
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
         if (fieldsModified || statementRTA.isModified()) {
@@ -403,6 +402,9 @@ public class ABcreate {
         return okcontinue;
     }
 
+    /*
+     * View the exercise as currently constructed
+     */
     private void viewExercise() {
         ABmodel model = extractModelFromWindow();
         ABexercise exercise = new ABexercise(model, mainWindow);
@@ -413,6 +415,10 @@ public class ABcreate {
         mainWindow.setUpExercise(exercise);
     }
 
+    /*
+     * Save the currently constructed exercise
+     * @param saveAs true if "save as" selected, and otherwise false
+     */
     private void saveExercise(boolean saveAs) {
         saveButton.setDisable(true);
         saveAsButton.setDisable(true);
@@ -431,6 +437,11 @@ public class ABcreate {
         saveAsButton.setDisable(false);
         fieldsModified = false;
     }
+
+    /*
+     * Generate an AB EditModel from window contents
+     * @return the simple edit model
+     */
     private ABmodel extractModelFromWindow() {
         String name = nameField.getText();
         String leader = leaderField.getText();
@@ -448,6 +459,11 @@ public class ABcreate {
         return model;
     }
 
+    /*
+     * Display and enable RTA toolbars
+     * @param decoratedRTA the RTA
+     * @param control the {@link slapp.editor.main_window.ControlType} for this RTA instance
+     */
     private void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
@@ -477,17 +493,17 @@ public class ABcreate {
         }
         sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
 
-
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
         editAndKbdBox.layout();
-
-
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, textFieldsPromptBox);
         borderPane.topProperty().setValue(topBox);
     }
 
+    /*
+     * When a text field is in focus, show deactivated toolbars for dummy RTA
+     */
     private void textFieldInFocus() {
         editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }

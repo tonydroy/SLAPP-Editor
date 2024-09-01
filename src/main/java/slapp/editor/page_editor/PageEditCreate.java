@@ -78,7 +78,7 @@ public class PageEditCreate {
 
 
     /**
-     * Construce page edit window from scratch
+     * Construct page edit create window from scratch
      * @param mainWindow the main window
      */
     public PageEditCreate(MainWindow mainWindow) {

@@ -43,6 +43,9 @@ import slapp.editor.page_editor.PageContent;
 
 import static javafx.scene.control.ButtonType.OK;
 
+/**
+ * AB exercise has binary choice and explain field
+ */
 public class ABexercise implements Exercise<ABmodel, ABview> {
     private MainWindow mainWindow;
     private ABmodel abModel;
@@ -52,6 +55,12 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
     private int lastPageNum = -1;
     private Font labelFont = new Font("Noto Serif Combo", 11);
 
+
+    /**
+     * Construct AB edit exercise
+     * @param model an AB edit model
+     * @param mainWindow the main window
+     */
     public ABexercise(ABmodel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.abModel = model;
@@ -62,6 +71,9 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         setEditView();
     }
 
+    /*
+     * Set up choices, statement, comment, and pagination view elements
+     */
     private void setEditView() {
 
         abView.setContentPrompt(abModel.getContentPrompt());
@@ -158,6 +170,9 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         abView.getRemovePageButton().setOnAction(e -> removePageAction());
     }
 
+    /*
+     * Add page after the current page
+     */
     private void addPageAction() {
         int newPageIndex = abView.getContentPageIndex() + 1;
         abModel.addBlankContentPage(newPageIndex);
@@ -181,6 +196,9 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         abView.addBlankContentPage(newPageIndex, drta);
     }
 
+    /*
+     * Remove the current page
+     */
     private void removePageAction() {
         if (abModel.getPageContents().size() <= 1) {
             EditorAlerts.showSimpleAlert("Cannot Remove", "Your response must include at least one page.");
@@ -201,23 +219,38 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         }
     }
 
+    /**
+     * Model for this AB edit exercise
+     * @return the model
+     */
     @Override
     public ABmodel getExerciseModel() {
         return abModel;
     }
+
+    /**
+     * View for this AB edit exercise
+     * @return the view
+     */
     @Override
     public ABview getExerciseView() {
         return abView;
     }
+
+    /**
+     * Save exercise to disk
+     * @param saveAs true if "save as" should be invoked, and otherwise false
+     */
     @Override
     public void saveExercise(boolean saveAs) {
         boolean success = DiskUtilities.saveExercise(saveAs, getABmodelFromView());
         if (success) exerciseModified = false;
     }
 
-
-
-
+    /**
+     * List of nodes to be sent to printer for this exercise
+     * @return the node list
+     */
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
@@ -313,6 +346,11 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
 
         return nodeList;
     }
+
+    /**
+     * Return to the initial (unworked) version of the exercise, retaining the comment only.
+     * @return the initial exercise
+     */
     @Override
     public ABexercise resetExercise() {
         RichTextArea commentRTA = abView.getExerciseComment().getEditor();
@@ -324,6 +362,10 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         return clearExercise;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @return true if exercise is modified, and otherwise false
+     */
     @Override
     public boolean isExerciseModified() {
         RichTextArea commentEditor = abView.getExerciseComment().getEditor();
@@ -338,22 +380,43 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
         }
         return exerciseModified;
     }
+
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @param modified true if exercise is modified, and otherwise false
+     */
     @Override
     public void setExerciseModified(boolean modified) {
         this.exerciseModified = modified;
     }
 
+    /**
+     * No FF view node for the page edit exercise
+     * @return null
+     */
+    @Override
+    public Node getFFViewNode() {return null;}
 
+    /**
+     * No FF print node for the page edit exercise
+     * @return null
+     */
+    @Override
+    public Node getFFPrintNode() {return null;}
+
+    /**
+     * Extract an {@link slapp.editor.main_window.ExerciseModel} from view of the exercise
+     * @return the exercise model
+     */
     @Override
     public ExerciseModel getExerciseModelFromView() {
         return (ExerciseModel) getABmodelFromView();
     }
 
-    @Override
-    public Node getFFViewNode() {return null;}
-    @Override
-    public Node getFFPrintNode() {return null;}
-
+    /*
+     * Extract AB edit model from view
+     * @return the page edit model
+     */
     private ABmodel getABmodelFromView() {
         RichTextArea commentRTA = abView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());

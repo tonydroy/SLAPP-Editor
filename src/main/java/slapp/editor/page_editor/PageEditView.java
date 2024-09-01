@@ -334,6 +334,7 @@ public class PageEditView implements ExerciseView<DecoratedRTA> {
      * The preferred height of the statement window
      * @param height the preferred height
      */
+    @Override
     public void setStatementPrefHeight(double height) {
         statementPrefHeight = height;
         exerciseStatement.getEditor().setPrefHeight(height);
