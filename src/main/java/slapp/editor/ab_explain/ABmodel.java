@@ -53,7 +53,7 @@ public class ABmodel implements ExerciseModel<Document>, Serializable {
      * @param started true if the exercise is started, and otherwise false
      * @param prompt The prompt to appear on the first page of a blank pagination
      * @param statementPrefHeight preferred height of the statement window
-     * @param exerciseStatement the statement Document
+     * @param exerciseStatement The statement Document
      * @param exerciseComment The comment Document
      * @param pageContents list of {@link slapp.editor.page_editor.PageContent}
      */
@@ -206,11 +206,15 @@ public class ABmodel implements ExerciseModel<Document>, Serializable {
     @Override
     public void setStatementPrefHeight(double statementPrefHeight) { this.statementPrefHeight = statementPrefHeight; }
 
+    /**
+     * The original model for the (unworked) exercise
+     * @return The Exercise Model
+     */
     @Override
     public ExerciseModel<Document> getOriginalModel() { return originalModel;  }
 
     /**
-     * The original model for the (unworked exercise)
+     * The original model for the (unworked) exercise
      * @param originalModel the original model
      */
     public void setOriginalModel(ExerciseModel<Document> originalModel) { this.originalModel = originalModel; }

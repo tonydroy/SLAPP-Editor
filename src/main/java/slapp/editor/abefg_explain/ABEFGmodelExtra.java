@@ -17,6 +17,9 @@ package slapp.editor.abefg_explain;
 
 import java.io.Serializable;
 
+/**
+ * Supplement to ABEFG model to support the choice fields
+ */
 public class ABEFGmodelExtra implements Serializable {
     private static final long serialVersionUID = 100L;
     private String leaderAB = "";
@@ -33,8 +36,26 @@ public class ABEFGmodelExtra implements Serializable {
     private boolean valueG = false;
 
 
-
+    /**
+     * Create ABmodelExtra with empty defaults
+     */
    public ABEFGmodelExtra() {}
+
+    /**
+     * Create ABEFG with parameters
+     * @param leaderAB the AB choice leaeder
+     * @param promptA prompt for the A choice
+     * @param valueA value of the A choice
+     * @param promptB prompt for the B choice
+     * @param valueB value of the B choice
+     * @param leaderEFG the EFG choice leader
+     * @param promptE prompt for the E choice
+     * @param valueE value of the E choice
+     * @param promptF prompt for the F choice
+     * @param valueF value of the F choice
+     * @param promptG prompt for the G choice
+     * @param valueG value of the G choice
+     */
     public ABEFGmodelExtra(String leaderAB, String promptA, boolean valueA, String promptB, boolean valueB, String leaderEFG, String promptE, boolean valueE, String promptF, boolean valueF, String promptG, boolean valueG) {
         this();
         this.leaderAB = leaderAB;
@@ -51,66 +72,97 @@ public class ABEFGmodelExtra implements Serializable {
         this.valueG = valueG;
     }
 
-    public String getLeaderAB() {
+    /**
+     * Leader to appear prior to the AB choice fields
+     * @return the string leader
+     */
+    String getLeaderAB() {
         return leaderAB;
     }
-    public String getLeaderEFG() { return leaderEFG; }
 
-    public String getPromptA() {
+    /**
+     * Leader to appear prior to the EFG choice fields
+     * @return the string leader
+     */
+    String getLeaderEFG() { return leaderEFG; }
+
+    /**
+     * The prompt for the A choice
+     * @return The string prompt
+     */
+    String getPromptA() {
         return promptA;
     }
 
-    public boolean getValueA() {
+    /**
+     * The value of the A check box
+     * @return true if selected and otherwise false
+     */
+    boolean getValueA() {
         return valueA;
     }
 
-    public void setValueA(boolean valueA) {
-        this.valueA = valueA;
-    }
-
-    public String getPromptB() {
+    /**
+     * The prompt for the B choice
+     * @return the string prompt
+     */
+    String getPromptB() {
         return promptB;
     }
 
-    public boolean getValueB() {
+    /**
+     * The value of the B check box
+     * @return true if selected and otherwise false
+     */
+    boolean getValueB() {
         return valueB;
     }
 
-    public void setValueB(boolean valueB) {
-        this.valueB = valueB;
-    }
-
-    public String getPromptE() {
+    /**
+     * The prompt for the E choice
+     * @return the string prompt
+     */
+    String getPromptE() {
         return promptE;
     }
 
-    public boolean getValueE() {
+    /**
+     * The value of the E check box
+     * @return true if selected and otherwise false
+     */
+    boolean getValueE() {
         return valueE;
     }
 
-    public void setValueE(boolean valueE) {
-        this.valueE = valueE;
-    }
+    /**
+     * The prompt for the F check box
+     * @return the string prompt
+     */
     public String getPromptF() {
         return promptF;
     }
 
-    public boolean getValueF() {
+    /**
+     * The value of the F check box
+     * @return true if selected and otherwise false
+     */
+    boolean getValueF() {
         return valueF;
     }
 
-    public void setValueF(boolean valueF) {
-        this.valueF = valueF;
-    }
-    public String getPromptG() {
+    /**
+     * The prompt for the G check box
+     * @return the string prompt
+     */
+    String getPromptG() {
         return promptG;
     }
 
-    public boolean getValueG() {
+    /**
+     * The value of the G check box
+     * @return true if selected and otherwise false
+     */
+    boolean getValueG() {
         return valueG;
-    }
-
-    public void setValueG(boolean valueG) {
-        this.valueG = valueG;
     }
 }

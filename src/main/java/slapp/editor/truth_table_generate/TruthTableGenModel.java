@@ -123,7 +123,7 @@ public class TruthTableGenModel implements ExerciseModel<Document>, Serializable
         this.columnHighlights = columnHighlights;
     }
 
-    void setConclusionDivider(boolean conclusionDivider) {
+    public void setConclusionDivider(boolean conclusionDivider) {
         this.conclusionDivider = conclusionDivider;
     }
 

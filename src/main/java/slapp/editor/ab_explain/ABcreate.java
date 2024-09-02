@@ -143,7 +143,6 @@ public class ABcreate {
             statementTextHeight = mainWindow.getMainView().getRTATextHeight(statementRTA);
         });
 
-
         statementRTA.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 editorInFocus(statementDRTA, ControlType.AREA);

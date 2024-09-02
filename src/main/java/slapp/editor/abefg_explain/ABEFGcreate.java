@@ -50,6 +50,9 @@ import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
+/**
+ * Create window for the AB/EFG edit exercise
+ */
 public class ABEFGcreate {
     private MainWindow mainWindow;
     private RichTextArea statementRTA;
@@ -83,18 +86,25 @@ public class ABEFGcreate {
     private Button saveButton;
     private Button saveAsButton;
     private ToolBar sizeToolBar;
-
     private DecoratedRTA dummyDRTA = new DecoratedRTA();
     private MenuBar menuBar;
     private HBox gridBox;
     private BorderPane borderPane;
 
-
+    /**
+     * Construct AB/EFG edit create window from scratch
+     * @param mainWindow the main window
+     */
     public ABEFGcreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
+    /**
+     * Open create window for modification of existing AB/EFG edit exercise
+     * @param mainWindow the main window
+     * @param originalModel model for the existing exercise
+     */
     public ABEFGcreate(MainWindow mainWindow, ABEFGmodel originalModel) {
         this(mainWindow);
 
@@ -123,6 +133,9 @@ public class ABEFGcreate {
         fieldsModified = false;
     }
 
+    /*
+     * Set up the create view
+     */
     private void setupWindow() {
         borderPane = new BorderPane();
 
@@ -279,7 +292,6 @@ public class ABEFGcreate {
             if (nv) textFieldInFocus();
         });
 
-
         Label explainPromptLabel = new Label("Explain prompt: ");
         explainPromptLabel.setPrefWidth(100);
         explainPromptField = new TextField();
@@ -297,9 +309,6 @@ public class ABEFGcreate {
             if (nv) textFieldInFocus();
         });
 
-
-
-
         GridPane checkboxPane = new GridPane();
         checkboxPane.addColumn(0, nameLabel, leaderLabelAB, promptLabelA, promptLabelB);
         checkboxPane.addColumn(1, nameField, leaderABfield, promptFieldA, promptFieldB);
@@ -312,14 +321,8 @@ public class ABEFGcreate {
         gridBox = new HBox(checkboxPane);
         gridBox.setAlignment(Pos.CENTER);
 
-
-
-
-
         String helpText = "AB/EFG Explain is appropriate for exercises that require choices from among two groups of mutually exclusive items: first, between some A and B, then between E, F and G, together with an explanation or justification.\n\n" +
                 "For the AB/EFG Explain exercise you supply the exercise name and, if desired, a prompt to appear in the explanation field.  Then each set of options has a Lead that appears prior to the check boxes, and labels to appear with the check boxes.";
-
-
         helpArea = new TextArea(helpText);
         helpArea.setWrapText(true);
         helpArea.setPrefHeight(130);
@@ -381,25 +384,6 @@ public class ABEFGcreate {
         sizeToolBar.setPrefHeight(38);
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
 
-/*
-        ToolBar editToolbar = statementDRTA.getKbdSelectorToolbar();
-        ToolBar fontsToolbar = statementDRTA.getEditToolbar();
-        ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
-        ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
-        kbdDiaToolBar.setPrefHeight(38);
-
-        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
-        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
-
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, gridBox);
-//        topBox.layout();
-        borderPane.topProperty().setValue(topBox);
-
-
-        borderPane.setTop(topBox);
-
- */
-
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
@@ -422,6 +406,9 @@ public class ABEFGcreate {
         Platform.runLater(() -> nameField.requestFocus());
     }
 
+    /*
+     * Update zoom value
+     */
     private void updateZoom() {
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
@@ -434,6 +421,9 @@ public class ABEFGcreate {
         keyboardDiagram.update();
     }
 
+    /*
+     * The center statement area sizes as the stage is sized
+     */
     private void setCenterVgrow() {
         double fixedHeight = helpArea.getHeight() * scale + 500;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
@@ -444,6 +434,9 @@ public class ABEFGcreate {
         statementRTA.prefHeightProperty().bind(centerHeightProperty);
     }
 
+    /*
+     * Close the create window
+     */
     private void closeWindow() {
         if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
             mainWindow.closeExercise();
@@ -451,11 +444,13 @@ public class ABEFGcreate {
         }
     }
 
+    /*
+     * Clear the exercise (leaving explain prompt and checkbox setup)
+     */
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             statementRTA.getActionFactory().newDocumentNow().execute(new ActionEvent());
  //           statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
- //           statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
             viewExercise();
@@ -463,6 +458,12 @@ public class ABEFGcreate {
         }
     }
 
+    /*
+     * If modified, check to continue action
+     * @param title the title of the confirmation box
+     * @param content the content of the confirmation box
+     * @return true if ok to continue, and otherwise false
+     */
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
         if (fieldsModified || statementRTA.isModified()) {
@@ -473,6 +474,9 @@ public class ABEFGcreate {
         return okcontinue;
     }
 
+    /*
+     * View the exercise as currently constructed
+     */
     private void viewExercise() {
         ABEFGmodel model = extractModelFromWindow();
         ABEFGexercise exercise = new ABEFGexercise(model, mainWindow);
@@ -484,6 +488,10 @@ public class ABEFGcreate {
         mainWindow.setUpExercise(exercise);
     }
 
+    /*
+     * Save the currently constructed exercise
+     * @param saveAs true if "save as" selected, and otherwise false
+     */
     private void saveExercise(boolean saveAs) {
         saveButton.setDisable(true);
         saveAsButton.setDisable(true);
@@ -501,6 +509,11 @@ public class ABEFGcreate {
         saveAsButton.setDisable(false);
         fieldsModified = false;
     }
+
+    /*
+     * Generate an AB/EFG EditModel from window contents
+     * @return the simple edit model
+     */
     private ABEFGmodel extractModelFromWindow() {
         String name = nameField.getText();
         String leaderAB = leaderABfield.getText();
@@ -524,6 +537,11 @@ public class ABEFGcreate {
         return model;
     }
 
+    /*
+     * Display and enable RTA toolbars
+     * @param decoratedRTA the RTA
+     * @param control the {@link slapp.editor.main_window.ControlType} for this RTA instance
+     */
     private void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
@@ -564,6 +582,9 @@ public class ABEFGcreate {
         borderPane.topProperty().setValue(topBox);
     }
 
+    /*
+     * When a text field is in focus, show deactivated toolbars for dummy RTA
+     */
     private void textFieldInFocus() {
         editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }

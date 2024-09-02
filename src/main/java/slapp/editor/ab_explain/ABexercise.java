@@ -391,7 +391,7 @@ public class ABexercise implements Exercise<ABmodel, ABview> {
     }
 
     /**
-     * No FF view node for the page edit exercise
+     * No FF view node for the AB page edit exercise
      * @return null
      */
     @Override

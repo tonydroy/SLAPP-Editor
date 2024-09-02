@@ -401,6 +401,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormModel = getFreeFormModelFromView();
 
         TruthTableGenModel newMod = new TruthTableGenModel();
+        newMod.setConclusionDivider(true);
         List<String> unaryList = new ArrayList<>();
         unaryList.add("\u223c");
         newMod.setUnaryOperators(unaryList);

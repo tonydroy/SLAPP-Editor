@@ -36,8 +36,10 @@ import slapp.editor.main_window.MainWindowView;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * View for the AB/EFG page edit exercise
+ */
 public class ABEFGview implements ExerciseView<DecoratedRTA> {
-
     private MainWindowView mainView;
     private Label leaderLabelAB = new Label("");
     private Label leaderLabelEFG = new Label("");
@@ -72,6 +74,10 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
     private Node currentSpinnerNode;
 
 
+    /**
+     * Construct AB/EFG page edit view
+     * @param mainView the main view
+     */
     public ABEFGview(MainWindowView mainView) {
         this.mainView = mainView;
         leaderLabelAB.setFont(labelFont); checkBoxA.setFont(labelFont); checkBoxB.setFont(labelFont);
@@ -86,7 +92,6 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
         checksBox.setStyle("-fx-border-color: gainsboro; -fx-border-width: 2.2; -fx-background-color: white");
         checksBox.setSpacing(10);
         checksBox.setPadding(new Insets(10));
-
 
         this.pagination = new Pagination();
         pagination.setMaxPageIndicatorCount(5);
@@ -124,6 +129,9 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
         controlBox.getChildren().addAll(addPageButton, removePageButton);
     }
 
+    /**
+     * Initialize page management for statement, comment, pagination, and choices box
+     */
     void initializeViewDetails() {
 
         //statement
@@ -143,7 +151,6 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
             Node decrement = statementHeightSpinner.lookup(".decrement-arrow-button");
             if (decrement != null) decrement.getOnMouseReleased().handle(null);
         });
-
 
         statementRTA.prefWidthProperty().bind(mainView.scalePageWidthProperty());
         statementWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
@@ -176,7 +183,6 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
             if (decrement != null) decrement.getOnMouseReleased().handle(null);
         });
 
-
         commentRTA.prefWidthProperty().bind(mainView.scalePageWidthProperty());
         commentWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
         commentWidthSpinner.setPrefWidth(60);
@@ -203,7 +209,6 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
             Node decrement = paginationHeightSpinner.lookup(".decrement-arrow-button");
             if (decrement != null) decrement.getOnMouseReleased().handle(null);
         });
-
 
         pagination.prefWidthProperty().bind(mainView.scalePageWidthProperty());
         paginationWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
@@ -262,15 +267,23 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
             choicesHeightSpinner.getValueFactory().setValue(choicesHeightValue);
 
         });
-
-
     }
 
+    /**
+     * Add DRTA to list at index position; the pagination page factory extracts the RTA.
+     * @param index index at which to insert the page
+     * @param drta the DecoratedRTA to insert
+     */
     void addBlankContentPage(int index, DecoratedRTA drta) {
         contentPageList.add(index, drta);
         pagination.setPageCount(contentPageList.size());
         pagination.setCurrentPageIndex(index);
     }
+
+    /**
+     * Remove DRTA at index position from list.
+     * @param index the index of the page to remove.
+     */
     void removeContentPage(int index) {
         if (index == 0) {
             EditorAlerts.showSimpleAlert("Cannot Remove", "Cannot remove top page with selection boxes.");
@@ -286,59 +299,180 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
         }
     }
 
-
-    public Label getLeaderLabelAB() {
+    /**
+     * The AB leader label appears before the AB choice check boxes
+     * @return the label
+     */
+    Label getLeaderLabelAB() {
         return leaderLabelAB;
     }
-    public Label getLeaderLabelEFG() { return leaderLabelEFG; }
-    public CheckBox getCheckBoxA() {
+
+    /**
+     * The EFG leader label appears before the EFG choice check boxes
+     * @return the label
+     */
+    Label getLeaderLabelEFG() { return leaderLabelEFG; }
+
+    /**
+     * The A choice check box
+     * @return the check box
+     */
+    CheckBox getCheckBoxA() {
         return checkBoxA;
     }
-    public CheckBox getCheckBoxB() {
+
+    /**
+     * The B choice check box
+     * @return the check box
+     */
+    CheckBox getCheckBoxB() {
         return checkBoxB;
     }
-    public CheckBox getCheckBoxE() { return checkBoxE; }
-    public CheckBox getCheckBoxF() { return checkBoxF; }
-    public CheckBox getCheckBoxG() { return checkBoxG; }
+
+    /**
+     * The E choice check box
+     * @return the check box
+     */
+    CheckBox getCheckBoxE() { return checkBoxE; }
+
+    /**
+     * The F choice check box
+     * @return the check box
+     */
+    CheckBox getCheckBoxF() { return checkBoxF; }
+
+    /**
+     * The G choice check box
+     * @return the check box
+     */
+    CheckBox getCheckBoxG() { return checkBoxG; }
+
+    /**
+     * The index for the pagination's current page
+     * @return the page index
+     */
     int getContentPageIndex() {return pagination.getCurrentPageIndex();  }
+
+    /**
+     * The add page button is used to add a page after the current page
+     * @return the button
+     */
     Button getAddPageButton() { return addPageButton; }
+
+    /**
+     * The remove page button is used to remove the current page
+     * @return the button
+     */
     Button getRemovePageButton() { return removePageButton; }
-    public List<DecoratedRTA> getContentPageList() {
+
+    /**
+     * The list of DecoratedRTA corresponding to the pagination's pages
+     * @return the list
+     */
+    List<DecoratedRTA> getContentPageList() {
         return contentPageList;
     }
-    public void setContentPageList(List<DecoratedRTA> contentPageList) { this.contentPageList = contentPageList; }
-    public void setContentPrompt(String prompt) {
-        contentPrompt = prompt;
-    }
-    public double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight();  }
-    public void setCommentPrefHeight(double commentPrefHeight) { this.commentPrefHeight = commentPrefHeight; }
-    public double getPaginationPrefHeight() {    return pagination.getPrefHeight(); }
-    public void setPaginationPrefHeight(double paginationPrefHeight) { this.paginationPrefHeight = paginationPrefHeight;   }
+    /**
+     * The list of DecoratedRTA corresponding to to pagination's pages
+     * @param contentPageList
+     */
+    void setContentPageList(List<DecoratedRTA> contentPageList) { this.contentPageList = contentPageList; }
 
+    /**
+     * The prompt to appear on a first (blank) page of the pagination
+     * @param prompt the string prompt
+     */
+    void setContentPrompt(String prompt) {    contentPrompt = prompt;   }
 
+    /**
+     * The preferred height of the comment window
+     * @return the height value
+     */
+    double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight();  }
+
+    /**
+     * The preferred height of the comment window
+     * @param commentPrefHeight the height value
+     */
+    void setCommentPrefHeight(double commentPrefHeight) { this.commentPrefHeight = commentPrefHeight; }
+
+    /**
+     * The preferred height of the pagination window
+     * @return the height value
+     */
+    double getPaginationPrefHeight() {    return pagination.getPrefHeight(); }
+
+    /**
+     * The preferred height of the pagination window
+     * @param paginationPrefHeight the height value
+     */
+    void setPaginationPrefHeight(double paginationPrefHeight) { this.paginationPrefHeight = paginationPrefHeight;   }
+
+    /**
+     * The comment decoratedRTA
+     * @return comment DecoratedRTA
+     */
     @Override
     public DecoratedRTA getExerciseComment() { return exerciseComment;  }
+
+    /**
+     * The comment decoratedRTA
+     * @param exerciseComment DecoratedRTA
+     */
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment; }
+
+    /**
+     * The exercise prompt DecoratedRTA
+     * @return the statement
+     */
     @Override
     public DecoratedRTA getExerciseStatement() { return exerciseStatement; }
+
+    /**
+     * The exercise prompt DecoratedRTA
+     * @param exerciseStatement the statement
+     */
     @Override
     public void setExerciseStatement(DecoratedRTA exerciseStatement) { this.exerciseStatement = exerciseStatement; }
+
+    /**
+     * The exercise prompt RTA node
+     * @return the statement node
+     */
     @Override
     public Node getExerciseStatementNode() {return exerciseStatement.getEditor();    }
+
+    /**
+     * The preferred height of the statement window
+     * @param height the preferred height
+     */
+    @Override
     public void setStatementPrefHeight(double height) {
         statementPrefHeight = height;
         exerciseStatement.getEditor().setPrefHeight(height);
     }
+
+    /**
+     * The content just is the pagination (which includes the choice boxes on its first page)
+     * @return the content node
+     */
     @Override
-    public Node getExerciseContentNode() {
-        return pagination;
-    }
+    public Node getExerciseContentNode() {     return pagination;  }
+
+    /**
+     * The left control node for this exercise
+     * @return the control node
+     */
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
+
+    /**
+     * The right control node for this exercise
+     * @return the null right control node
+     */
     @Override
     public Node getRightControl() { return null; }
-
 
 }
 

@@ -45,6 +45,9 @@ import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
+/**
+ * AB/EFG exercise has binary and tertiary choices and explain field
+ */
 public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
     private MainWindow mainWindow;
     private ABEFGmodel abefgModel;
@@ -54,6 +57,12 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
     private int lastPageNum = -1;
     private Font labelFont = new Font("Noto Serif Combo", 11);
 
+
+    /**
+     * Construct AB/EFG edit exercise
+     * @param model an AB/EFG edit model
+     * @param mainWindow the main window
+     */
     public ABEFGexercise(ABEFGmodel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.abefgModel = model;
@@ -64,6 +73,9 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         setEditView();
     }
 
+    /*
+     * Set up choices, statement, comment, and pagination view elements
+     */
     private void setEditView() {
 
         abefgView.setContentPrompt(abefgModel.getContentPrompt());
@@ -206,6 +218,9 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         abefgView.getRemovePageButton().setOnAction(e -> removePageAction());
     }
 
+    /*
+     * Add page after the current page
+     */
     private void addPageAction() {
         int newPageIndex = abefgView.getContentPageIndex() + 1;
         abefgModel.addBlankContentPage(newPageIndex);
@@ -229,6 +244,9 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         abefgView.addBlankContentPage(newPageIndex, drta);
     }
 
+    /*
+     * Remove the current page
+     */
     private void removePageAction() {
         if (abefgModel.getPageContents().size() <= 1) {
             EditorAlerts.showSimpleAlert("Cannot Remove", "Your response must include at least one page.");
@@ -249,20 +267,38 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         }
     }
 
+    /**
+     * Model for this AB/EFG edit exercise
+     * @return the model
+     */
     @Override
     public ABEFGmodel getExerciseModel() {
         return abefgModel;
     }
+
+    /**
+     * View for this AB/EFG edit exercise
+     * @return the view
+     */
     @Override
     public ABEFGview getExerciseView() {
         return abefgView;
     }
+
+    /**
+     * Save exercise to disk
+     * @param saveAs true if "save as" should be invoked, and otherwise false
+     */
     @Override
     public void saveExercise(boolean saveAs) {
         boolean success = DiskUtilities.saveExercise(saveAs, getABEFGmodelFromView());
         if (success) exerciseModified = false;
     }
 
+    /**
+     * List of nodes to be sent to printer for this exercise
+     * @return the node list
+     */
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
@@ -369,6 +405,11 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
 
         return nodeList;
     }
+
+    /**
+     * Return to the initial (unworked) version of the exercise, retaining the comment only.
+     * @return the initial exercise
+     */
     @Override
     public ABEFGexercise resetExercise() {
         RichTextArea commentRTA = abefgView.getExerciseComment().getEditor();
@@ -380,6 +421,10 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         return clearExercise;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @return true if exercise is modified, and otherwise false
+     */
     @Override
     public boolean isExerciseModified() {
         RichTextArea commentEditor = abefgView.getExerciseComment().getEditor();
@@ -394,21 +439,43 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
         }
         return exerciseModified;
     }
+
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @param modified true if exercise is modified, and otherwise false
+     */
     @Override
     public void setExerciseModified(boolean modified) {
         this.exerciseModified = modified;
     }
 
+    /**
+     * No FF view node for the AB/EFG page edit exercise
+     * @return null
+     */
     @Override
     public Node getFFViewNode() {return null;}
+
+    /**
+     * No FF print node for the AB/EFG page edit exercise
+     * @return null
+     */
     @Override
     public Node getFFPrintNode() {return null;}
 
+    /**
+     * Extract an {@link slapp.editor.main_window.ExerciseModel} from view of the exercise
+     * @return the exercise model
+     */
     @Override
     public ExerciseModel getExerciseModelFromView() {
         return (ExerciseModel) getABEFGmodelFromView();
     }
 
+    /*
+     * Extract AB/EFG edit model from view
+     * @return the page edit model
+     */
     private ABEFGmodel getABEFGmodelFromView() {
         RichTextArea commentRTA = abefgView.getExerciseComment().getEditor();
         commentRTA.getActionFactory().saveNow().execute(new ActionEvent());

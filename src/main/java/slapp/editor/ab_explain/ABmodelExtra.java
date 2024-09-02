@@ -69,7 +69,7 @@ class ABmodelExtra implements Serializable {
 
     /**
      * The value of the A check box
-     * @return
+     * @return true if selected and otherwise false
      */
     boolean getValueA() {
         return valueA;
@@ -85,7 +85,7 @@ class ABmodelExtra implements Serializable {
 
     /**
      * The value of the B check box.
-     * @return
+     * @return true if selected and otherwise false
      */
     boolean getValueB() {
         return valueB;

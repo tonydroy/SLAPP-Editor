@@ -67,7 +67,7 @@ public class ABview implements ExerciseView<DecoratedRTA> {
 
 
     /**
-     * Construct page edit view
+     * Construct AB page edit view
      * @param mainView the main view
      */
     public ABview(MainWindowView mainView) {
@@ -386,7 +386,7 @@ public class ABview implements ExerciseView<DecoratedRTA> {
     public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment; }
 
     /**
-     * The exercise DecoratedRTA prompt
+     * The exercise prompt DecoratedRTA
      * @return the statement
      */
     @Override
@@ -434,7 +434,7 @@ public class ABview implements ExerciseView<DecoratedRTA> {
 
     /**
      * The right control node for this exercise
-     * @return the control node
+     * @return the null control node
      */
     @Override
     public Node getRightControl() { return null; }
