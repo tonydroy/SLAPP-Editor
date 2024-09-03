@@ -29,6 +29,9 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
 
+/**
+ * View for the simple translate exercise
+ */
 public class SimpleTransView implements ExerciseView<DecoratedRTA> {
 
     private MainWindowView mainView;
@@ -36,7 +39,6 @@ public class SimpleTransView implements ExerciseView<DecoratedRTA> {
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private DecoratedRTA exerciseResponse = new DecoratedRTA();
     private DecoratedRTA exerciseInterpretation = new DecoratedRTA();
-
     private Node exerciseControlNode = new VBox();
     private double statementPrefHeight = 0;
     private double commentPrefHeight = 0;
@@ -53,15 +55,23 @@ public class SimpleTransView implements ExerciseView<DecoratedRTA> {
     private Node currentSpinnerNode;
 
 
+    /**
+     * Construct simple translate view
+     * @param mainView the main view
+     */
     public SimpleTransView(MainWindowView mainView) {
         this.mainView = mainView;
 
+        //the control box is empty, but want to hold the space
         Region spacer = new Region();
         spacer.setPrefWidth(150);
         VBox controlBox = (VBox) exerciseControlNode;
         controlBox.getChildren().add(spacer);
     }
 
+    /**
+     * Initialize page management for statement, comment, interpretation, and translate fields
+     */
     void initializeViewDetails() {
 
         //statement rta
@@ -213,39 +223,129 @@ public class SimpleTransView implements ExerciseView<DecoratedRTA> {
         });
     }
 
-
+    /**
+     * Preferred height of the comment window
+     * @return the height value
+     */
     public double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight();     }
+
+    /**
+     * Preferred height of the comment window
+     * @param commentPrefHeight the height value
+     */
     public void setCommentPrefHeight(double commentPrefHeight) {     this.commentPrefHeight = commentPrefHeight;   }
 
+    /**
+     * Preferred height of the response (translation) window
+     * @return the height value
+     */
     public double getResponsePrefHeight() {    return exerciseResponse.getEditor().getPrefHeight();   }
+
+    /**
+     * Preferred height of the response (translation) window
+     * @param responsePrefHeight the height value
+     */
     public void setResponsePrefHeight(double responsePrefHeight) {     this.responsePrefHeight = responsePrefHeight;  }
+
+    /**
+     * The the response (translation) area view
+     * @return the response DRTA
+     */
     public DecoratedRTA getExerciseResponse() {    return exerciseResponse;   }
+
+    /**
+     * The response (translation) area view
+     * @param exerciseResponse the response DRTA
+     */
     public void setExerciseResponse(DecoratedRTA exerciseResponse) {   this.exerciseResponse = exerciseResponse;  }
+
+    /**
+     * The interpretation area view
+     * @return the interpretation DRTA
+     */
     public DecoratedRTA getExerciseInterpretation() {  return exerciseInterpretation;   }
+
+    /**
+     * The interpretation area view
+     * @param exerciseInterpretation the interpretation DRTA
+     */
     public void setExerciseInterpretation(DecoratedRTA exerciseInterpretation) {     this.exerciseInterpretation = exerciseInterpretation;  }
+
+    /**
+     * The preferred height of the interpretation window
+     * @return the height value
+     */
     public double getInterpretationPrefHeight() {   return exerciseInterpretation.getEditor().getPrefHeight();  }
+
+    /**
+     * The preferred height of the interpretation window
+     * @param interpretationPrefHeight the height value
+     */
     public void setInterpretationPrefHeight(double interpretationPrefHeight) {   this.interpretationPrefHeight = interpretationPrefHeight;   }
 
 
-
+    /**
+     * The comment decoratedRTA
+     * @return comment DecoratedRTA
+     */
     @Override
     public DecoratedRTA getExerciseComment() { return exerciseComment; }
+
+    /**
+     * The comment decoratedRTA
+     * @param exerciseComment DecoratedRTA
+     */
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment; }
+
+    /**
+     * The exercise prompt (usually DecoratedRTA)
+     * @return the statement (T)
+     */
     @Override
     public DecoratedRTA getExerciseStatement() { return exerciseStatement; }
+
+    /**
+     * The exercise prompt (usually DecoratedRTA)
+     * @param exerciseStatement the statement (T)
+     */
     @Override
     public void setExerciseStatement(DecoratedRTA exerciseStatement) {  this.exerciseStatement = exerciseStatement;  }
+
+    /**
+     * The exercise prompt node (usually RTA)
+     * @return the statement node
+     */
     @Override
     public Node getExerciseStatementNode() {  return exerciseStatement.getEditor();  }
+
+    /**
+     * The preferred height of the statement window
+     * @param height the preferred height
+     */
      public void setStatementPrefHeight(double height) {
         statementPrefHeight = height;
         exerciseStatement.getEditor().setPrefHeight(height);
     }
+
+    /**
+     * The node which includes content of this exercise
+     * @return the content node
+     */
     @Override
     public Node getExerciseContentNode() {     return new VBox(2, exerciseInterpretation.getEditor(), exerciseResponse.getEditor());  }
+
+    /**
+     * The (empty) left control node for this exercise
+     * @return the control node
+     */
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
+
+    /**
+     * The (null) right control node for this exercise
+     * @return the control node
+     */
     @Override
     public Node getRightControl() { return null; }
 

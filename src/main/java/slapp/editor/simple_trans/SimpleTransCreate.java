@@ -50,6 +50,9 @@ import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
+/**
+ * Create window for the simple translate exercise
+ */
 public class SimpleTransCreate {
     private MainWindow mainWindow;
     private MenuBar menuBar;
@@ -57,11 +60,9 @@ public class SimpleTransCreate {
     private RichTextArea statementRTA;
     private DecoratedRTA statementDRTA;
     private double statementTextHeight;
-
     private RichTextArea interpretationRTA;
     private DecoratedRTA interpretationDRTA;
     private double interpretationTextHeight;
-
     private TextField nameField;
     private boolean fieldModified = false;
     private ChangeListener nameListener;
@@ -75,22 +76,23 @@ public class SimpleTransCreate {
     private Button saveButton;
     private Button saveAsButton;
     private ToolBar sizeToolBar;
-
-    private ToolBar editToolbar;
-    private ToolBar fontsToolbar;
-
-
-    private ToolBar paragraphToolbar;;
-    private ToolBar kbdDiaToolBar;
     private VBox nameVBox;
     private DecoratedRTA dummyDRTA = new DecoratedRTA();
 
-
+    /**
+     * Construct the simple translate create window from scratch
+     * @param mainWindow the main window
+     */
     public SimpleTransCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
+    /**
+     * Open create window for modification of existing simple translate exercise.
+     * @param mainWindow the main window
+     * @param originalModel model for the existing exercise
+     */
     public SimpleTransCreate(MainWindow mainWindow, SimpleTransModel originalModel) {
         this(mainWindow);
 
@@ -106,6 +108,10 @@ public class SimpleTransCreate {
         nameField.textProperty().addListener(nameListener);
         fieldModified = false;
     }
+
+    /*
+     * Set up the create view
+     */
     private void setupWindow() {
 
         borderPane = new BorderPane();
@@ -168,8 +174,6 @@ public class SimpleTransCreate {
         nameField.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) textFieldInFocus();
         });
-
-
 
         HBox nameBox = new HBox(nameLabel, nameField);
         nameBox.setAlignment(Pos.BASELINE_LEFT);
@@ -242,28 +246,6 @@ public class SimpleTransCreate {
         sizeToolBar.setPrefHeight(38);
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
 
-
-
-/*
-        ToolBar editToolbar = statementDRTA.getEditToolbar();
-        ToolBar fontsToolbar = statementDRTA.getFontsToolbar();
-        ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
-        ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
-        kbdDiaToolBar.setPrefHeight(38);
-
-        if (kbdDiaToolBar.getItems().isEmpty()) {
-            kbdDiaToolBar.getItems().addAll(statementDRTA.getKeyboardDiagramButton());
-        }
-
-        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
-        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
-
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, nameVBox);
-        borderPane.topProperty().setValue(topBox);
-        borderPane.setTop(topBox);
-
- */
-
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
@@ -286,6 +268,9 @@ public class SimpleTransCreate {
         Platform.runLater(() -> nameField.requestFocus());
     }
 
+    /*
+     * Update the zoom value
+     */
     private void updateZoom() {
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
@@ -298,6 +283,9 @@ public class SimpleTransCreate {
         keyboardDiagram.update();
     }
 
+    /*
+     * The center space for the interpretation function sizes as the stage is sized.
+     */
     private void setCenterVgrow() {
         double fixedHeight = (helpArea.getHeight() + statementRTA.getHeight()) * scale + 350;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
@@ -308,6 +296,9 @@ public class SimpleTransCreate {
         interpretationRTA.prefHeightProperty().bind(centerHeightProperty);
     }
 
+    /*
+     * Close the create window
+     */
     private void closeWindow() {
         if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
             mainWindow.closeExercise();
@@ -315,6 +306,9 @@ public class SimpleTransCreate {
         }
     }
 
+    /*
+     * Clear the exercise (leaving the interpretation area intact)
+     */
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
@@ -326,6 +320,12 @@ public class SimpleTransCreate {
         }
     }
 
+    /*
+     * If modified, check to continue action
+     * @param title the title of the confirmation box
+     * @param content the content of the confirmation box
+     * @return true if ok to continue, and otherwise false
+     */
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
 
@@ -337,6 +337,9 @@ public class SimpleTransCreate {
         return okcontinue;
     }
 
+    /*
+     * View the exercise as currently constructed
+     */
     private void viewExercise() {
         SimpleTransModel model = extractModelFromWindow();
         SimpleTransExercise exercise = new SimpleTransExercise(model, mainWindow);
@@ -352,26 +355,28 @@ public class SimpleTransCreate {
         mainWindow.setUpExercise(exercise);
     }
 
+    /*
+     * Save the currently constructed exercise
+     * @param saveAs true if "save as" selected, and otherwise false
+     */
     private void saveExercise(boolean saveAs) {
         saveButton.setDisable(true);
         saveAsButton.setDisable(true);
         nameField.textProperty().addListener(nameListener);
 
-
         SimpleTransModel model = extractModelFromWindow();
-
-
-
         boolean success = DiskUtilities.saveExercise(saveAs, model);
         if (success) {
             fieldModified = false;
-
         }
         saveButton.setDisable(false);
         saveAsButton.setDisable(false);
-   //     fieldModified = false;
     }
 
+    /*
+     * Generate simple translate model from window contents
+     * @return the simple translate model
+     */
     private SimpleTransModel extractModelFromWindow() {
         SimpleTransModel model = new SimpleTransModel(nameField.getText());
         if (statementRTA.isModified() || interpretationRTA.isModified()) fieldModified = true;
@@ -387,10 +392,14 @@ public class SimpleTransCreate {
         model.setInterpretationTextHeight(interpretationTextHeight);
         model.setInterpretationPrefHeight(Math.max(100, interpretationTextHeight + 25));
 
-
         return model;
     }
 
+    /*
+     * Display and enable RTA toolbars
+     * @param decoratedRTA the RTA
+     * @param control the {@link slapp.editor.main_window.ControlType} for this RTA instance
+     */
     private void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
@@ -420,17 +429,17 @@ public class SimpleTransCreate {
         }
         sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
 
-
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
         editAndKbdBox.layout();
-
-
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, nameVBox);
         borderPane.topProperty().setValue(topBox);
     }
 
+    /*
+     * When a text field is in focus, show deactivated toolbars for dummy RTA
+     */
     private void textFieldInFocus() {
         editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }

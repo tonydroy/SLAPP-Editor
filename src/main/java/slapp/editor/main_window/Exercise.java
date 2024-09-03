@@ -57,7 +57,8 @@ public interface Exercise<T,U> {
      */
     Exercise<T,U> resetExercise();
 
-    /**
+
+     /**
      * Exercise is modified if it is changed relative to last save
      * @return true if exercise is modified, and otherwise false
      */

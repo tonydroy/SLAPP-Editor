@@ -38,8 +38,10 @@ import slapp.editor.simple_trans.SimpleTransView;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Simple Translate exercise has separate text-entry areas for interpretation and translation.
+ */
 public class SimpleTransExercise implements Exercise<SimpleTransModel, SimpleTransView> {
-
     private MainWindow mainWindow;
     private SimpleTransModel transModel;
     private SimpleTransView transView;
@@ -47,6 +49,11 @@ public class SimpleTransExercise implements Exercise<SimpleTransModel, SimpleTra
     private boolean exerciseModified = false;
 
 
+    /**
+     * Construct simple translate exercise
+     * @param model a SimpleTransModel
+     * @param mainWindow the main window
+     */
     public SimpleTransExercise(SimpleTransModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.transModel = model;
@@ -57,6 +64,9 @@ public class SimpleTransExercise implements Exercise<SimpleTransModel, SimpleTra
         setTransView();
     }
 
+    /*
+     * Set up statement, comment, interpretation, and response view elements
+     */
     private void setTransView() {
 
         transView.setStatementPrefHeight(transModel.getStatementPrefHeight());
@@ -141,20 +151,34 @@ public class SimpleTransExercise implements Exercise<SimpleTransModel, SimpleTra
         transView.initializeViewDetails();
     }
 
+    /**
+     * The model for the simple translate exercise
+     * @return the SimpleTransModel
+     */
     @Override
-    public SimpleTransModel getExerciseModel() {
-        return transModel;
-    }
+    public SimpleTransModel getExerciseModel() {     return transModel;   }
+
+    /**
+     * The exercise view vor the simple translate exercise
+     * @return the SimpleTransView
+     */
     @Override
-    public SimpleTransView getExerciseView() {
-        return transView;
-    }
+    public SimpleTransView getExerciseView() {     return transView;   }
+
+    /**
+     * Save exercise to disk
+     * @param saveAs true if "save as" should be invoked, and otherwise false
+     */
     @Override
     public void saveExercise(boolean saveAs) {
         boolean success = DiskUtilities.saveExercise(saveAs, getSimpleTransModelFromView());
         if (success) exerciseModified = false;
     }
 
+    /**
+     * List of nodes to be sent to printer for this exercise
+     * @return the node list
+     */
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
@@ -245,6 +269,10 @@ public class SimpleTransExercise implements Exercise<SimpleTransModel, SimpleTra
         return nodeList;
     }
 
+    /**
+     * Return to the initial (unworked) version of the exercise, retaining the comment only.
+     * @return the initial exercise
+     */
     @Override
     public SimpleTransExercise resetExercise() {
         RichTextArea commentRTA = transView.getExerciseComment().getEditor();
@@ -256,6 +284,10 @@ public class SimpleTransExercise implements Exercise<SimpleTransModel, SimpleTra
         return clearExercise;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @return true if exercise is modified, and otherwise false
+     */
     @Override
     public boolean isExerciseModified() {
         RichTextArea commentEditor = transView.getExerciseComment().getEditor();
@@ -268,20 +300,40 @@ public class SimpleTransExercise implements Exercise<SimpleTransModel, SimpleTra
         return exerciseModified;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @param modified true if exercise is modified, and otherwise false
+     */
     @Override
-    public void setExerciseModified(boolean modified) {
-        this.exerciseModified = modified;
-    }
+    public void setExerciseModified(boolean modified) {     this.exerciseModified = modified;   }
+
+    /**
+     * There is no FF view for this exercise.
+     * @return the null view node
+     */
     @Override
     public Node getFFViewNode() {   return null;}
+
+    /**
+     * There is no FF print for this exercise
+     * @return the null print node
+     */
     @Override
     public Node getFFPrintNode() { return null;   }
 
+    /**
+     * Extract an {@link slapp.editor.main_window.ExerciseModel} from view of the exercise
+     * @return the exercise model
+     */
     @Override
     public ExerciseModel getExerciseModelFromView() {
         return (ExerciseModel) getSimpleTransModelFromView();
     }
 
+    /**
+     * Extract the SimpleTransModel from view of the exercise
+     * @return the exercise model
+     */
     private SimpleTransModel getSimpleTransModelFromView() {
         SimpleTransModel model = new SimpleTransModel(transModel.getExerciseName());
         model.setOriginalModel(transModel.getOriginalModel());
