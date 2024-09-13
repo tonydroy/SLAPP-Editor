@@ -91,7 +91,7 @@ public class BranchNode extends HBox {
 
  //       resizer.makeResizable(this);
 
-        self.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1.5 0");
+        self.setStyle("-fx-border-color: white white black white; -fx-border-width: 0 0 1.5 0");
         self.setPadding(new Insets(0, 4, 0, 2));
 
         annotationField.setPrefWidth(annotationWidth);

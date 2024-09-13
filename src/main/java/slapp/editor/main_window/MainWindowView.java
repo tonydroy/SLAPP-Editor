@@ -237,12 +237,12 @@ public class MainWindowView {
         }
 
         horizontalSizeSpinner = new Spinner<>(0.0, 999.0, 0.0, 5.0);
-        horizontalSizeSpinner.setPrefWidth(60);
+        horizontalSizeSpinner.setPrefWidth(65);
         horizontalSizeSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
         horizontalSizeSpinner.setDisable(true);
 
         verticalSizeSpinner = new Spinner<>(0.0, 999.0, 0.0, 5.0);
-        verticalSizeSpinner.setPrefWidth(60);
+        verticalSizeSpinner.setPrefWidth(65);
         verticalSizeSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         verticalSizeSpinner.setDisable(true);
 
@@ -409,7 +409,8 @@ public class MainWindowView {
         this.rightControlNode = currentExerciseView.getRightControl();
 
         //this prevents scrollpane from jumping to top (esp in derivations)
-        commentNode.setFocusTraversable(false);
+//        commentNode.setFocusTraversable(false);
+//        statementNode.setFocusTraversable(false);
 
         centerBox.getChildren().clear();
         centerBox.getChildren().addAll(commentNode, statementNode, contentNode);

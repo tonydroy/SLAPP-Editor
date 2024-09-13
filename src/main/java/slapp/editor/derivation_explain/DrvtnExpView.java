@@ -122,25 +122,25 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
         undoButton = new Button("Undo");
         redoButton = new Button("Redo");
 
-        insertLineButton.setPrefWidth(95);
+        insertLineButton.setPrefWidth(100);
         insertLineButton.setTooltip(new Tooltip("Insert blank line above current one"));
-        deleteLineButton.setPrefWidth(95);
+        deleteLineButton.setPrefWidth(100);
         deleteLineButton.setTooltip(new Tooltip("Delete current line"));
-        indentButton.setPrefWidth(95);
+        indentButton.setPrefWidth(100);
         indentButton.setTooltip(new Tooltip("Increase depth of current line"));
-        outdentButton.setPrefWidth(95);
+        outdentButton.setPrefWidth(100);
         outdentButton.setTooltip(new Tooltip("Decrease depth of current line"));
-        addShelfButton.setPrefWidth(95);
+        addShelfButton.setPrefWidth(100);
         addShelfButton.setTooltip(new Tooltip("Add shelf beneath current line"));
-        addGapButton.setPrefWidth(95);
+        addGapButton.setPrefWidth(100);
         addGapButton.setTooltip(new Tooltip("Add gap beneath current line"));
-        insertSubButton.setPrefWidth(95);
+        insertSubButton.setPrefWidth(100);
         insertSubButton.setTooltip(new Tooltip("Insert subderivation above current line"));
-        insertSubsButton.setPrefWidth(95);
+        insertSubsButton.setPrefWidth(100);
         insertSubsButton.setTooltip(new Tooltip("Insert subderivation pair above current line"));
-        undoButton.setPrefWidth(95);
+        undoButton.setPrefWidth(100);
         undoButton.setTooltip(new Tooltip("Undo last button action"));
-        redoButton.setPrefWidth(95);
+        redoButton.setPrefWidth(100);
         redoButton.setTooltip(new Tooltip("Redo button action"));
 
         VBox controlBox = new VBox(20, undoButton, redoButton, insertLineButton, deleteLineButton, insertSubButton, insertSubsButton, indentButton, outdentButton, addShelfButton, addGapButton);
@@ -162,7 +162,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
 
         double statementInitialHeight = Math.round(statementPrefHeight / mainView.getScalePageHeight() * 100.0 );
         statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
-        statementHeightSpinner.setPrefWidth(60);
+        statementHeightSpinner.setPrefWidth(65);
         statementHeightSpinner.setDisable(false);
         statementHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
@@ -175,7 +175,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
 
         statementRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
         statementWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
-        statementWidthSpinner.setPrefWidth(60);
+        statementWidthSpinner.setPrefWidth(65);
         statementWidthSpinner.setDisable(true);
         statementWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
@@ -194,7 +194,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
 
         double commentInitialHeight = Math.round(commentPrefHeight / mainView.getScalePageHeight() * 100.0 );
         commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
-        commentHeightSpinner.setPrefWidth(60);
+        commentHeightSpinner.setPrefWidth(65);
         commentHeightSpinner.setDisable(false);
         commentHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
@@ -208,7 +208,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
         commentRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
         commentRTA.minWidthProperty().bind(mainView.scalePageWidthProperty());
         commentWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
-        commentWidthSpinner.setPrefWidth(60);
+        commentWidthSpinner.setPrefWidth(65);
         commentWidthSpinner.setDisable(true);
         commentWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
@@ -227,7 +227,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
 
         double explanationInitialHeight = Math.round(explanationPrefHeight / mainView.getScalePageHeight() * 100.0 );
         explanationHeightSpinner = new Spinner<>(0.0, 999.0, explanationInitialHeight, 1.0);
-        explanationHeightSpinner.setPrefWidth(60);
+        explanationHeightSpinner.setPrefWidth(65);
         explanationHeightSpinner.setDisable(false);
         explanationHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         explanationRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(explanationHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
@@ -241,7 +241,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
         explanationRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
         explanationRTA.minWidthProperty().bind(mainView.scalePageWidthProperty());
         explanationWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
-        explanationWidthSpinner.setPrefWidth(60);
+        explanationWidthSpinner.setPrefWidth(65);
         explanationWidthSpinner.setDisable(true);
         explanationWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
@@ -255,7 +255,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
         //split pane
         double splitPaneInitialWidth = Math.round(splitPanePrefWidth / mainView.getScalePageWidth() * 20.0) * 5.0;
         splitPaneWidthSpinner = new Spinner<>(100.0, 999.0, splitPaneInitialWidth, 5.0);
-        splitPaneWidthSpinner.setPrefWidth(60);
+        splitPaneWidthSpinner.setPrefWidth(65);
         splitPaneWidthSpinner.setDisable(false);
         splitPaneWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
         contentSplitPane.prefWidthProperty().bind(Bindings.multiply(mainView.scalePageWidthProperty(), DoubleProperty.doubleProperty(splitPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0)));
@@ -268,7 +268,7 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
 
         contentSplitPane.setMinHeight(325);
         splitPaneHeightSpinner = new Spinner<>(0.0,999.0, 0,1.0);
-        splitPaneHeightSpinner.setPrefWidth(60);
+        splitPaneHeightSpinner.setPrefWidth(65);
         splitPaneHeightSpinner.setDisable(true);
         splitPaneHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
 
@@ -351,32 +351,38 @@ public class DrvtnExpView implements ExerciseView<DecoratedRTA> {
             }
             if (depth > 1) {
                 Pane spacer1 = new Pane();
-                if (isLeftmostScopeLine) spacer1.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1;");
-                else spacer1.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 0;");
+                if (isLeftmostScopeLine) spacer1.setStyle("-fx-border-color: white white white black; -fx-border-width: 0 0 0 1;");
+                else spacer1.setStyle("-fx-border-color: white white white white; -fx-border-width: 0 0 0 0;");
                 grid.add(spacer1, 1, index, 1, 1);
 
                 for (int i = 2; i < depth; i++) {
                     Pane spacer = new Pane();
-                    spacer.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1;");
+                    spacer.setStyle("-fx-border-color: white white white black; -fx-border-width: 0 0 0 1;");
                     grid.add(spacer, i, index, 1, 1);
                 }
             }
             if (LineType.isContentLine(lineType)) {
                 if (isLeftmostScopeLine || depth > 1)
-                    contentBox.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1;");
-                else contentBox.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 0;");
+                    contentBox.setStyle("-fx-border-color: white white white black; -fx-border-width: 0 0 0 1;");
+                else contentBox.setStyle("-fx-border-color: white white white white; -fx-border-width: 0 0 0 0;");
 
                 grid.add(contentBox, depth, index, 21 - depth, 1);
 
             } else {
                 Pane endSpacer = new Pane();
-                if (LineType.isGapLine(lineType)) endSpacer.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 0;");
-                if (LineType.isShelfLine(lineType) && (depth > 1 || isLeftmostScopeLine))  endSpacer.setStyle("-fx-border-color: black; -fx-border-width: 1 0 0 1;");
+                if (LineType.isGapLine(lineType)) endSpacer.setStyle("-fx-border-color: white white white white; -fx-border-width: 0 0 0 0;");
+                if (LineType.isShelfLine(lineType) && (depth > 1 || isLeftmostScopeLine))  endSpacer.setStyle("-fx-border-color: black white white black; -fx-border-width: 1 0 0 1;");
                 grid.add(endSpacer, depth, index, 1, 1);
             }
 
             if (viewLine.getJustificationFlow() != null) grid.add(viewLine.getJustificationFlow(), 22, index);
         }
+    }
+
+    void setJustificationFlowOnGrid(int index) {
+        ViewLine line = viewLines.get(index);
+        if (line.getJustificationFlow() != null) grid.add(line.getJustificationFlow(), 22, index);
+
     }
 
     public double getGridHeight() {

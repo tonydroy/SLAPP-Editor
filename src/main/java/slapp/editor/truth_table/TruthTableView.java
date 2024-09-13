@@ -164,7 +164,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
             if (!headItem.isBlankColumn()) {
                 TextFlow headFlow = headItem.getExpression();
-                headFlow.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0;");
+                headFlow.setStyle("-fx-border-color: white white black white; -fx-border-width: 0 0 1 0;");
                 tableGrid.add(headFlow, i, 0);
                 for (int j = 0; j < tableRows; j++) {
                     tableGrid.add(tableFields[i][j], i, j + 2);
@@ -179,17 +179,17 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
             } else if (headItem.isDividerColumn()) {
                 TextFlow headFlow = headItem.getExpression();
-                headFlow.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 1");
+                headFlow.setStyle("-fx-border-color: white white black black; -fx-border-width: 0 0 1 1");
                 tableGrid.add(headFlow, i, 0);
 
                 for (int j = 0; j < tableRows + 3; j++) {
                     Pane dividerPane = new Pane();
-                    dividerPane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 0 1");
+                    dividerPane.setStyle("-fx-border-color: white white white black; -fx-border-width: 0 0 0 1");
                     tableGrid.add(dividerPane, i, j + 1);
                 }
             } else if (headItem.isBlankColumn()) {
                 TextFlow headFlow = headItem.getExpression();
-                headFlow.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
+                headFlow.setStyle("-fx-border-color: white white black white; -fx-border-width: 0 0 1 0");
                 tableGrid.add(headFlow, i, 0);
             }
         }
@@ -202,7 +202,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         gridColConstraints.add(commentConstraints);
 
         endPane = new Pane();
-        endPane.setStyle("-fx-border-color: black; -fx-border-width: 0 0 1 0");
+        endPane.setStyle("-fx-border-color: white white black white; -fx-border-width: 0 0 1 0");
         tableGrid.add(endPane, tableHeadItemsList.size(), 0);
         for (int j = 0; j < tableRows; j++) {
             if (j != 0 && j % 4 == 0) {
@@ -406,7 +406,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
         double statementInitialHeight = Math.round(statementPrefHeight / mainView.getScalePageHeight() * 100.0 );
         statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
-        statementHeightSpinner.setPrefWidth(60);
+        statementHeightSpinner.setPrefWidth(65);
         statementHeightSpinner.setDisable(false);
         statementHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
@@ -419,7 +419,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
         statementRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
         statementWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
-        statementWidthSpinner.setPrefWidth(60);
+        statementWidthSpinner.setPrefWidth(65);
         statementWidthSpinner.setDisable(true);
         statementWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
@@ -437,7 +437,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
 
         double commentInitialHeight = Math.round(commentPrefHeight / mainView.getScalePageHeight() * 100.0 );
         commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
-        commentHeightSpinner.setPrefWidth(60);
+        commentHeightSpinner.setPrefWidth(65);
         commentHeightSpinner.setDisable(false);
         commentHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
@@ -451,7 +451,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         commentRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
         commentRTA.minWidthProperty().bind(mainView.scalePageWidthProperty());
         commentWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
-        commentWidthSpinner.setPrefWidth(60);
+        commentWidthSpinner.setPrefWidth(65);
         commentWidthSpinner.setDisable(true);
         commentWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
@@ -465,7 +465,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         //table grid
 
         tableGridHeightSpinner = new Spinner<>(0.0,999.0, 0,1.0);
-        tableGridHeightSpinner.setPrefWidth(60);
+        tableGridHeightSpinner.setPrefWidth(65);
         tableGridHeightSpinner.setDisable(true);
         tableGridHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         tableGrid.heightProperty().addListener((ob, ov, nv) -> {
@@ -473,7 +473,7 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         });
 
         tableGridWidthSpinner = new Spinner<>(0.0,999.0, 0,1.0);
-        tableGridWidthSpinner.setPrefWidth(60);
+        tableGridWidthSpinner.setPrefWidth(65);
         tableGridWidthSpinner.setDisable(true);
         tableGridWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
         tableGrid.widthProperty().addListener((ob, ov, nv) -> {

@@ -781,7 +781,7 @@ public class MainWindow {
         int spinnerInitialValue = (int) Math.round(getBaseScale() * 100);
         Spinner<Integer> baseScaleSpinner = new Spinner(50, 150, spinnerInitialValue, 1);
         baseScaleSpinner.setTooltip(new Tooltip("Print at selected percentage of full size"));
-        baseScaleSpinner.setPrefWidth(60);
+        baseScaleSpinner.setPrefWidth(65);
         Label baseScaleLabel = new Label("Base Scale");
         HBox spinnerBox = new HBox(10, baseScaleSpinner, baseScaleLabel);
         VBox choicesBox = new VBox(15, spinnerBox, fitToPageCheck);

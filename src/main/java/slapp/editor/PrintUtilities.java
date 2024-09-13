@@ -295,14 +295,15 @@ public class PrintUtilities {
      * @param footerInfo the footer info string
      */
     public static void sendBufferToPrint(String footerInfo) {
+
         PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null) {
             boolean proceed = job.showPrintDialog(null);
             if (proceed) printNodes(footerInfo, job);
+            else MainWindowView.deactivateProgressIndicator();
             job.endJob();
         }
         else  EditorAlerts.showSimpleAlert("Print Problem", "Failed to create printer job");
-
     }
 
     /**

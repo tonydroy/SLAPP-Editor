@@ -442,7 +442,9 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
         });
 
+        drvtnExpView.getGrid().getChildren().remove(flow);
         drvtnExpView.getGrid().add(rta, 22, rowIndex);
+        rta.requestFocus();
         mainView.editorInFocus(drta, ControlType.STATEMENT);
     }
 
@@ -471,7 +473,11 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         TextFlow justificationFlow = getJustificationFlow(justificationString, drvtnExpView.getViewLines());
         drvtnExpView.getViewLines().get(rowIndex).setJustificationFlow(justificationFlow);
 
-        drvtnExpView.setGridFromViewLines();
+//        drvtnExpView.getGrid().getChildren().remove(rta);
+
+        rta.getActionFactory().newDocumentNow().execute(new ActionEvent());
+        drvtnExpView.setJustificationFlowOnGrid(rowIndex);
+//       drvtnExpView.setGridFromViewLines();
 
         if (modified) {
             pushUndoRedo();

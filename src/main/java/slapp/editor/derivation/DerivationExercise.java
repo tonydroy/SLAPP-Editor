@@ -18,7 +18,6 @@ package slapp.editor.derivation;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -45,8 +44,6 @@ import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
-import slapp.editor.vertical_tree.VerticalTreeExercise;
-import slapp.editor.vertical_tree.VerticalTreeModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +61,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     private RichTextArea lastJustificationRTA;
     private int lastJustificationRow;
     private UndoRedoList<DerivationModel> undoRedoList = new UndoRedoList<>(20);
+
 
 
     public DerivationExercise(DerivationModel model, MainWindow mainWindow) {
@@ -409,7 +407,9 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
 
         });
 
+        derivationView.getGrid().getChildren().remove(flow);
         derivationView.getGrid().add(rta, 22, rowIndex);
+        rta.requestFocus();
         mainView.editorInFocus(drta, ControlType.STATEMENT);
     }
 
@@ -439,8 +439,12 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         derivationView.getViewLines().get(rowIndex).setJustificationFlow(justificationFlow);
 
 
+        rta.getActionFactory().newDocumentNow().execute(new ActionEvent());
+        derivationView.setJustificationFlowOnGrid(rowIndex);
 
-        derivationView.setGridFromViewLines();
+ //       derivationView.getGrid().getChildren().remove(rta);
+
+ //       derivationView.setGridFromViewLines();
 
         if (modified) {
             pushUndoRedo();

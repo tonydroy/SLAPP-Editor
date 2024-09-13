@@ -200,8 +200,8 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         connectRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
 //        connectRTA.setPrefWidth(branchModel.getConnectorPrefWidth());
-        if (!branchModel.isFormulaBranch()) branchNode.setStyle("-fx-border-width: 0 0 0 0");
-        if (branchModel.isIndefiniteNumBranch()) branchNode.setStyle("-fx-border-width: 0 0 0 0");
+        if (!branchModel.isFormulaBranch()) branchNode.setStyle("-fx-border-color: white white white white; -fx-border-width: 0 0 0 0");
+        if (branchModel.isIndefiniteNumBranch()) branchNode.setStyle("-fx-border-color: white white white white; -fx-border-width: 0 0 0 0");
 
 
         for (BranchModel dependentMod : branchModel.getDependents()) {

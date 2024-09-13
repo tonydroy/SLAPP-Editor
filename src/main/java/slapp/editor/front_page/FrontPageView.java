@@ -31,27 +31,18 @@ import slapp.editor.main_window.ExerciseView;
 import slapp.editor.main_window.MainWindowView;
 
 /**
- * Simple view including just comment area, to support FrontPageExercise
- * (need to update "logo here" to some final displayed content)
+ * The view has dummy statement and comment areas, with an animation for its main content
  */
 
 public class FrontPageView implements ExerciseView<Label> {
-
-
     private Label exerciseStatement;
     private DecoratedRTA exerciseComment;
     private Node exerciseControl;
     private MainWindowView mainView;
-
     private FrontPageAnimation frontAnimation = new FrontPageAnimation();
-
     private VBox exerciseContent;
-
     private boolean played = false;
-
     private ChangeListener contentFocusListener;
-    private EventHandler escapeFilter;
-
 
 
     public FrontPageView(MainWindowView mainView) {
@@ -71,8 +62,6 @@ public class FrontPageView implements ExerciseView<Label> {
         spacerPane.setMinWidth(centeringWidth);
         exerciseControl = spacerPane;
 
-
-
         RichTextArea commentRTA = exerciseComment.getEditor();
         commentRTA.getActionFactory().open(new Document("Logo Here")).execute(new ActionEvent());
         commentRTA.setEditable(false);
@@ -81,7 +70,6 @@ public class FrontPageView implements ExerciseView<Label> {
         commentRTA.setPrefHeight(500);
 
         commentRTA.setStyle("-fx-padding: 5; -fx-background-color: WHITE; -fx-border-width: 2; -fx-border-color: LIGHTGREY; ");
-  //      commentRTA.setStyle(".rich-text-area:focused {-fx-padding: 5; -fx-border-width: 2; -fx-border-color: LIGHTBLUE; }");
 
         exerciseComment.getEditToolbar().setFocusTraversable(false);
         exerciseComment.getEditToolbar().setMouseTransparent(true);
@@ -89,7 +77,7 @@ public class FrontPageView implements ExerciseView<Label> {
         exerciseComment.getParagraphToolbar().setMouseTransparent(true);
         exerciseComment.getKbdSelectorToolbar().setFocusTraversable(false);
         exerciseComment.getKbdSelectorToolbar().setMouseTransparent(true);
-        mainView.editorInFocus(exerciseComment, ControlType.NONE);
+        mainView.editorInFocus(exerciseComment, ControlType.STATEMENT);
 
         contentFocusListener = new ChangeListener() {
             @Override
@@ -99,10 +87,7 @@ public class FrontPageView implements ExerciseView<Label> {
             }
         };
         exerciseContent.focusedProperty().addListener(contentFocusListener);
-
-
     }
-
 
     @Override
     public DecoratedRTA getExerciseComment() { return exerciseComment; }
@@ -118,7 +103,6 @@ public class FrontPageView implements ExerciseView<Label> {
     public void setStatementPrefHeight(double height) { }
     @Override
     public Node getExerciseContentNode() { return exerciseContent; }
-
     @Override
     public Node getExerciseControl() { return exerciseControl; }
     @Override

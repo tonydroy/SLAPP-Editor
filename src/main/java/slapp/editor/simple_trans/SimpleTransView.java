@@ -81,7 +81,7 @@ public class SimpleTransView implements ExerciseView<DecoratedRTA> {
 
         double statementInitialHeight = Math.round(statementPrefHeight / mainView.getScalePageHeight() * 100.0);
         statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
-        statementHeightSpinner.setPrefWidth(60);
+        statementHeightSpinner.setPrefWidth(65);
         statementHeightSpinner.setDisable(false);
         statementHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
@@ -94,7 +94,7 @@ public class SimpleTransView implements ExerciseView<DecoratedRTA> {
 
         statementRTA.prefWidthProperty().bind(mainView.scalePageWidthProperty());
         statementWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
-        statementWidthSpinner.setPrefWidth(60);
+        statementWidthSpinner.setPrefWidth(65);
         statementWidthSpinner.setDisable(true);
         statementWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
@@ -112,7 +112,7 @@ public class SimpleTransView implements ExerciseView<DecoratedRTA> {
 
         double commentInitialHeight = Math.round(commentPrefHeight / mainView.getScalePageHeight() * 100.0);
         commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
-        commentHeightSpinner.setPrefWidth(60);
+        commentHeightSpinner.setPrefWidth(65);
         commentHeightSpinner.setDisable(false);
         commentHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
@@ -125,7 +125,7 @@ public class SimpleTransView implements ExerciseView<DecoratedRTA> {
 
         commentRTA.prefWidthProperty().bind(mainView.scalePageWidthProperty());
         commentWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
-        commentWidthSpinner.setPrefWidth(60);
+        commentWidthSpinner.setPrefWidth(65);
         commentWidthSpinner.setDisable(true);
         commentWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
@@ -147,7 +147,7 @@ public class SimpleTransView implements ExerciseView<DecoratedRTA> {
 
 
         interpretationHeightSpinner = new Spinner<>(0.0, 999.0, interpretationInitialHeight, 5.0);
-        interpretationHeightSpinner.setPrefWidth(60);
+        interpretationHeightSpinner.setPrefWidth(65);
         interpretationHeightSpinner.setDisable(false);
         interpretationHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         interpretationRTA.prefHeightProperty().bind(Bindings.max(15.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(interpretationHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
@@ -160,7 +160,7 @@ public class SimpleTransView implements ExerciseView<DecoratedRTA> {
 
         interpretationRTA.prefWidthProperty().bind(mainView.scalePageWidthProperty());
         interpretationWidthSpinner = new Spinner<>(0.0, 999.0, 100, 5.0);
-        interpretationWidthSpinner.setPrefWidth(60);
+        interpretationWidthSpinner.setPrefWidth(65);
         interpretationWidthSpinner.setDisable(true);
         interpretationWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
@@ -180,7 +180,7 @@ public class SimpleTransView implements ExerciseView<DecoratedRTA> {
 
 
         responseHeightSpinner = new Spinner<>(0.0, 999.0, responseInitialHeight, 5.0);
-        responseHeightSpinner.setPrefWidth(60);
+        responseHeightSpinner.setPrefWidth(65);
         responseHeightSpinner.setDisable(false);
         responseHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         responseRTA.prefHeightProperty().bind(Bindings.max(15.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(responseHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
@@ -193,7 +193,7 @@ public class SimpleTransView implements ExerciseView<DecoratedRTA> {
 
         responseRTA.prefWidthProperty().bind(mainView.scalePageWidthProperty());
         responseWidthSpinner = new Spinner<>(0.0, 999.0, 100, 5.0);
-        responseWidthSpinner.setPrefWidth(60);
+        responseWidthSpinner.setPrefWidth(65);
         responseWidthSpinner.setDisable(true);
         responseWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 

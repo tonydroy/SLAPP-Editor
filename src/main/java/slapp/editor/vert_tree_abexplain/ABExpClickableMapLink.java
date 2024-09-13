@@ -179,7 +179,7 @@ public class ABExpClickableMapLink extends Pane {
         Pane brackPane = new Pane();
         brackPane.setMinHeight(4.0); brackPane.setMaxHeight(4.0);
         brackPane.setMinWidth(width); brackPane.setMaxWidth(width);
-        brackPane.setStyle("-fx-border-width: 0 1 1 1; -fx-border-color: black; -fx-border-radius: 0 0 3 3");
+        brackPane.setStyle("-fx-border-width: 0 1 1 1; -fx-border-color: white black black black; -fx-border-radius: 0 0 3 3");
         return brackPane;
     }
 
@@ -187,7 +187,7 @@ public class ABExpClickableMapLink extends Pane {
         Pane brackPane = new Pane();
         brackPane.setMinHeight(4.0); brackPane.setMaxHeight(4.0);
         brackPane.setMinWidth(width); brackPane.setMaxWidth(width);
-        brackPane.setStyle("-fx-border-width: 1 1 0 1; -fx-border-color: black; -fx-border-radius: 3 3 0 0");
+        brackPane.setStyle("-fx-border-width: 1 1 0 1; -fx-border-color: black black white black; -fx-border-radius: 3 3 0 0");
         return brackPane;
     }
 

@@ -141,7 +141,7 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
 
         double statementInitialHeight = Math.round(statementPrefHeight / mainView.getScalePageHeight() * 100.0 );
         statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
-        statementHeightSpinner.setPrefWidth(60);
+        statementHeightSpinner.setPrefWidth(65);
         statementHeightSpinner.setDisable(false);
         statementHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
@@ -154,7 +154,7 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
 
         statementRTA.prefWidthProperty().bind(mainView.scalePageWidthProperty());
         statementWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
-        statementWidthSpinner.setPrefWidth(60);
+        statementWidthSpinner.setPrefWidth(65);
         statementWidthSpinner.setDisable(true);
         statementWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
@@ -172,7 +172,7 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
 
         double commentInitialHeight = Math.round(commentPrefHeight / mainView.getScalePageHeight() * 100.0 );
         commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
-        commentHeightSpinner.setPrefWidth(60);
+        commentHeightSpinner.setPrefWidth(65);
         commentHeightSpinner.setDisable(false);
         commentHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
@@ -185,7 +185,7 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
 
         commentRTA.prefWidthProperty().bind(mainView.scalePageWidthProperty());
         commentWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
-        commentWidthSpinner.setPrefWidth(60);
+        commentWidthSpinner.setPrefWidth(65);
         commentWidthSpinner.setDisable(true);
         commentWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
@@ -199,7 +199,7 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
         //pagination
         double paginationInitialHeight = Math.round(paginationPrefHeight / mainView.getScalePageHeight() * 20.0 ) * 5.0 ;
         paginationHeightSpinner = new Spinner<>(0.0, 999.0, paginationInitialHeight, 5.0);
-        paginationHeightSpinner.setPrefWidth(60);
+        paginationHeightSpinner.setPrefWidth(65);
         paginationHeightSpinner.setDisable(false);
         paginationHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         pagination.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(paginationHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
@@ -212,7 +212,7 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
 
         pagination.prefWidthProperty().bind(mainView.scalePageWidthProperty());
         paginationWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
-        paginationWidthSpinner.setPrefWidth(60);
+        paginationWidthSpinner.setPrefWidth(65);
         paginationWidthSpinner.setDisable(true);
         paginationWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
@@ -230,12 +230,12 @@ public class ABEFGview implements ExerciseView<DecoratedRTA> {
 
         //choices (null spinners)
         choicesHeightSpinner = new Spinner<>(0.0, 999.0, 0, 1.0);
-        choicesHeightSpinner.setPrefWidth(60);
+        choicesHeightSpinner.setPrefWidth(65);
         choicesHeightSpinner.setDisable(true);
         choicesHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
 
         choicesWidthSpinner = new Spinner<>(0.0, 999.0, 100.0, 1.0);
-        choicesWidthSpinner.setPrefWidth(60);
+        choicesWidthSpinner.setPrefWidth(65);
         choicesWidthSpinner.setDisable(true);
         choicesWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 

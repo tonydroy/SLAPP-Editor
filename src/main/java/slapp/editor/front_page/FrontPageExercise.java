@@ -22,7 +22,7 @@ import slapp.editor.main_window.MainWindow;
 import java.util.List;
 
 /**
- * Dummy exercise to fill the empty opening screen.
+ * Dummy exercise to fill the opening SLAPP screen.
  */
 public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView> {
     private FrontPageView view;
@@ -45,7 +45,6 @@ public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView
     public FrontPageView getExerciseView() { return view; }
     @Override
     public void saveExercise(boolean saveAs) { }
-
     @Override
     public List<Node> getPrintNodes() { return null; }
     @Override
@@ -54,7 +53,6 @@ public class FrontPageExercise implements Exercise<FrontPageModel, FrontPageView
     public boolean isExerciseModified() { return false; }
     @Override
     public void setExerciseModified(boolean modified) { }
-
     @Override
     public ExerciseModel<FrontPageModel> getExerciseModelFromView() { return (ExerciseModel) new FrontPageModel(); }
 

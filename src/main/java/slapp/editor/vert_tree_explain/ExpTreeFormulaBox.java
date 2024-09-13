@@ -707,7 +707,7 @@ public class ExpTreeFormulaBox extends AnchorPane {
             }
         } else {
             if (boxed) {
-                middleBox.setStyle("-fx-border-width: 0 0 0 0");
+                middleBox.setStyle("-fx-border-color: white white white white; -fx-border-width: 0 0 0 0");
                 boxed = false;
                 verticalTreeView.setUndoRedoFlag(true);
                 verticalTreeView.setUndoRedoFlag(false);

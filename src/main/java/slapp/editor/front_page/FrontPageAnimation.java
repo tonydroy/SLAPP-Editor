@@ -35,17 +35,17 @@ import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 import slapp.editor.main_window.MainWindowView;
 
+/**
+ * Animation to play on SLAPP opening screen
+ */
 public class FrontPageAnimation {
 
     ParallelTransition p;
-
     VBox root;
-
     public VBox getFrontPageBox() {
 
         AnchorPane treePane = new AnchorPane();
         treePane.setPrefHeight(370);
-
 
         Circle dot1 = new Circle(150,50,25, Paint.valueOf("2cf4e0"));
         Circle dot2 = new Circle(300, 50, 25, Paint.valueOf("50d0c3"));
@@ -76,7 +76,6 @@ public class FrontPageAnimation {
         line5.setStrokeWidth(3.0);
         line6.setStrokeWidth(3.0);
 
-
         treePane.getChildren().addAll(line1, line2, line3, line4, line5, line6, dot1, dot2, dot3, dot4, dot5, dot6, dot7);
 
         DropShadow shadow = new DropShadow();
@@ -94,8 +93,6 @@ public class FrontPageAnimation {
         Pane pane3 = new Pane(pane2);
         pane3.setStyle("-fx-background-color: transparent");
 //        pane3.setStyle("-fx-background-color: #AFEEEE");
-
-
 
         Text title0 = new Text("SLAPP");
         title0.setFont(Font.font("Noto Serif Combo", FontWeight.BOLD, FontPosture.ITALIC, 48));
@@ -115,7 +112,6 @@ public class FrontPageAnimation {
         VBox titleBox = new VBox(title0, title1, title2);
         titleBox.setPadding(new Insets(10, 20, 10, 20));
         titleBox.setAlignment(Pos.CENTER);
-
 
         RotateTransition rt = new RotateTransition(Duration.seconds(5), treePane);
         rt.setFromAngle(0.0);
@@ -153,29 +149,14 @@ public class FrontPageAnimation {
         fd.setToValue(1.0);
         fd.setInterpolator(Interpolator.EASE_IN);
 
-
         p = new ParallelTransition(rt, rt1, rt2, sc, fd);
 
-
         root = new VBox(30, pane3, titleBox);
-//        root.setStyle("-fx-background-color: white");
-//        root.setStyle("-fx-background-color: #AFEEEE");
-
-
-
-
         root.setStyle("-fx-background-color: linear-gradient(to bottom right, #afeef0, #3bd6da); -fx-background-radius: 10 10 10 10") ;
-
-
         root.setPrefWidth(600);
         root.setPrefHeight(600);
-
         root.setOpacity(0);
-
-
-
         return root;
-
     }
 
     public void playFrontAnimation() {

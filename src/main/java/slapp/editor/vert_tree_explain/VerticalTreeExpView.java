@@ -94,7 +94,7 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
 
         double statementInitialHeight = Math.round(statementPrefHeight / mainView.getScalePageHeight() * 100.0 );
         statementHeightSpinner = new Spinner<>(0.0, 999.0, statementInitialHeight, 1.0);
-        statementHeightSpinner.setPrefWidth(60);
+        statementHeightSpinner.setPrefWidth(65);
         statementHeightSpinner.setDisable(false);
         statementHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         statementRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(statementHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
@@ -107,7 +107,7 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
 
         statementRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
         statementWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
-        statementWidthSpinner.setPrefWidth(60);
+        statementWidthSpinner.setPrefWidth(65);
         statementWidthSpinner.setDisable(true);
         statementWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
@@ -125,7 +125,7 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
 
         double commentInitialHeight = Math.round(commentPrefHeight / mainView.getScalePageHeight() * 100.0 );
         commentHeightSpinner = new Spinner<>(0.0, 999.0, commentInitialHeight, 1.0);
-        commentHeightSpinner.setPrefWidth(60);
+        commentHeightSpinner.setPrefWidth(65);
         commentHeightSpinner.setDisable(false);
         commentHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         commentRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(commentHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
@@ -139,7 +139,7 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
         commentRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
         commentRTA.minWidthProperty().bind(mainView.scalePageWidthProperty());
         commentWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
-        commentWidthSpinner.setPrefWidth(60);
+        commentWidthSpinner.setPrefWidth(65);
         commentWidthSpinner.setDisable(true);
         commentWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
@@ -157,7 +157,7 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
 
         double explainInitialHeight = Math.round(explainPrefHeight / mainView.getScalePageHeight() * 100.0 );
         explainHeightSpinner = new Spinner<>(0.0, 999.0, explainInitialHeight, 1.0);
-        explainHeightSpinner.setPrefWidth(60);
+        explainHeightSpinner.setPrefWidth(65);
         explainHeightSpinner.setDisable(false);
         explainHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         explainRTA.prefHeightProperty().bind(Bindings.max(45.0, Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(explainHeightSpinner.getValueFactory().valueProperty()).divide(100.0))));
@@ -171,7 +171,7 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
         explainRTA.maxWidthProperty().bind(mainView.scalePageWidthProperty());
         explainRTA.minWidthProperty().bind(mainView.scalePageWidthProperty());
         explainWidthSpinner = new Spinner<>(0.0, 999.0, 100, 1.0);
-        explainWidthSpinner.setPrefWidth(60);
+        explainWidthSpinner.setPrefWidth(65);
         explainWidthSpinner.setDisable(true);
         explainWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
 
@@ -188,7 +188,7 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
         mainPane1.setMinHeight(10.0);
         double mainPaneInitialHeight = Math.round(mainPanePrefHeight / mainView.getScalePageHeight() * 20.0) * 5.0;
         mainPaneHeightSpinner = new Spinner<>(5, 999.0, mainPaneInitialHeight, 5.0);
-        mainPaneHeightSpinner.setPrefWidth(60);
+        mainPaneHeightSpinner.setPrefWidth(65);
         mainPaneHeightSpinner.setDisable(false);
         mainPaneHeightSpinner.setTooltip(new Tooltip("Height as % of selected paper"));
         mainPane1.prefHeightProperty().bind(Bindings.multiply(mainView.scalePageHeightProperty(), DoubleProperty.doubleProperty(mainPaneHeightSpinner.getValueFactory().valueProperty()).divide(100.0)));
@@ -202,7 +202,7 @@ public class VerticalTreeExpView implements ExerciseView<DecoratedRTA> {
 
         double mainPaneInitialWidth = Math.round(mainPanePrefWidth / mainView.getScalePageWidth() * 20.0) * 5.0;
         mainPaneWidthSpinner = new Spinner<>(100.0, 999.0, mainPaneInitialWidth, 5.0);
-        mainPaneWidthSpinner.setPrefWidth(60);
+        mainPaneWidthSpinner.setPrefWidth(65);
         mainPaneWidthSpinner.setDisable(false);
         mainPaneWidthSpinner.setTooltip(new Tooltip("Width as % of selected paper"));
         mainPane1.maxWidthProperty().bind(Bindings.multiply(mainView.scalePageWidthProperty(), DoubleProperty.doubleProperty(mainPaneWidthSpinner.getValueFactory().valueProperty()).divide(100.0)));
