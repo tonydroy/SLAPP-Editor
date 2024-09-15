@@ -71,7 +71,6 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
     private double contentRowHeight = 19.0;
     private double shelfRowHeight = 5.0;
     private double gapRowHeight = 7.0;
-    private DoubleProperty windowHeightProperty;
 
 
     /**
@@ -267,6 +266,9 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
 
     }
 
+    /**
+     * Update visible grid from view lines list
+     */
     void setGridFromViewLines() {
 
         grid.getChildren().clear();
@@ -305,7 +307,6 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
                 rta.setPrefWidth(100);
                 rta.getStylesheets().add("slappDerivation.css");
 
-
                 contentBox = bdrta.getBoxedRTA();
                 contentBox.setHgrow(bdrta.getRTA(), Priority.ALWAYS);
             }
@@ -341,56 +342,199 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
         }
     }
 
+    /**
+     * Set justification flow from a single view line on grid
+     * @param index the line index
+     */
     void setJustificationFlowOnGrid(int index) {
         ViewLine line = viewLines.get(index);
         if (line.getJustificationFlow() != null) grid.add(line.getJustificationFlow(), 22, index);
-
     }
 
+    /**
+     * The main grid for the derivation
+     * @return the grid pane
+     */
     GridPane getGrid() { return grid; }
+
+    /**
+     * Switch to to say whether the derivation should have a leftmost scope line
+     * @param leftmostScopeLine true if there is a leftmost line and otherwise false
+     */
     void setLeftmostScopeLine(boolean leftmostScopeLine) { isLeftmostScopeLine = leftmostScopeLine;  }
+
+    /**
+     * The default formula keyboard for the derivation
+     * @param keyboardSelector {@link com.gluonhq.richtextarea.RichTextAreaSkin.KeyMapValue}
+     */
     void setKeyboardSelector(RichTextAreaSkin.KeyMapValue keyboardSelector) {this.keyboardSelector = keyboardSelector;}
+
+    /**
+     * The list from which derivation grid is populated
+     * @return the list of {@link slapp.editor.derivation.ViewLine}
+     */
     List<ViewLine> getViewLines() { return viewLines; }
+
+    /**
+     * The list from which the derivation grid is populated
+     * @param viewLines the list of {@link slapp.editor.derivation.ViewLine}
+     */
     void setViewLines(List<ViewLine> viewLines) {this.viewLines = viewLines; }
+
+    /**
+     * The split pane with derivation grid in its left half
+     * @return the split pane
+     */
     SplitPane getContentSplitPane() { return contentSplitPane; }
 
+    /**
+     * The preferred height of the comment window
+     * @param commentPrefHeight the height value
+     */
     void setCommentPrefHeight(double commentPrefHeight) {   this.commentPrefHeight = commentPrefHeight;  }
+
+    /**
+     * The preferred height of the comment window
+     * @return the height value
+     */
     double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight(); }
+
+    /**
+     * The preferred width of the split pane window
+     * @return the width value
+     */
     double getSplitPanePrefWidth() {return contentSplitPane.getPrefWidth(); }
+
+    /**
+     * The preferred width of the split pane window
+     * @param splitPanePrefWidth the width value
+     */
     void setSplitPanePrefWidth(double splitPanePrefWidth) { this.splitPanePrefWidth = splitPanePrefWidth; }
 
-    public Button getInsertLineButton() { return insertLineButton;  }
-    public Button getDeleteLineButton() { return deleteLineButton; }
-    public Button getIndentButton() { return indentButton; }
-    public Button getOutdentButton() { return outdentButton; }
-    public Button getAddShelfButton() { return addShelfButton; }
-    public Button getAddGapButton() { return addGapButton; }
-    public Button getInsertSubButton() { return insertSubButton;  }
-    public Button getInsertSubsButton() { return insertSubsButton; }
-    public Button getUndoButton() { return undoButton;  }
-    public Button getRedoButton() {  return redoButton; }
+    /**
+     * Button to insert line above current line
+     * @return the button
+     */
+    Button getInsertLineButton() { return insertLineButton;  }
 
+    /**
+     * Button to remove current line
+     * @return the button
+     */
+    Button getDeleteLineButton() { return deleteLineButton; }
 
+    /**
+     * Button to increase scope depth by one
+     * @return the button
+     */
+    Button getIndentButton() { return indentButton; }
+
+    /**
+     * Button to decrease scope depth by one
+     * @return
+     */
+    Button getOutdentButton() { return outdentButton; }
+
+    /**
+     * Button to add small shelf under current line
+     * @retu the button
+     */
+    Button getAddShelfButton() { return addShelfButton; }
+
+    /**
+     * Button to add small gap under current line
+     * @return the button
+     */
+    Button getAddGapButton() { return addGapButton; }
+
+    /**
+     * Button to insert lines for a subderivation above current line
+     * @return the button
+     */
+    Button getInsertSubButton() { return insertSubButton;  }
+
+    /**
+     * Button to insert lines for a pair of subderivations above current line
+     * @return the button
+     */
+    Button getInsertSubsButton() { return insertSubsButton; }
+
+    /**
+     * Button to undo last main action
+     * @return the button
+     */
+    Button getUndoButton() { return undoButton;  }
+
+    /**
+     * Button to redo last undo
+     * @return the button
+     */
+    Button getRedoButton() {  return redoButton; }
+
+    /**
+     * The comment decoratedRTA
+     * @return comment DecoratedRTA
+     */
     @Override
     public DecoratedRTA getExerciseComment() { return exerciseComment; }
+
+    /**
+     * The comment decoratedRTA
+     * @param exerciseComment DecoratedRTA
+     */
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment; }
+
+    /**
+     * The exercise prompt
+     * @return the statement decorated RTA (T)
+     */
     @Override
     public DecoratedRTA getExerciseStatement() { return exerciseStatement; }
+
+    /**
+     * The exercise prompt
+     * @param exerciseStatement the statement decorated RTA (T)
+     */
     @Override
     public void setExerciseStatement(DecoratedRTA exerciseStatement) { this.exerciseStatement = exerciseStatement; }
+
+    /**
+     * The exercise prompt node (RTA)
+     * @return the statement node
+     */
     @Override
     public Node getExerciseStatementNode() { return exerciseStatement.getEditor(); }
+
+    /**
+     * The preferred height of the statement window
+     * @param height the preferred height
+     */
     @Override
     public void setStatementPrefHeight(double height) {
         statementPrefHeight = height;
         exerciseStatement.getEditor().setPrefHeight(height);
     }
+
+    /**
+     * The node which includes content of this exercise
+     * @return the content node
+     */
     @Override
     public Node getExerciseContentNode() { return new VBox(contentSplitPane); }
 
+
+    /**
+     * The left control node for this exercise
+     * @return the control node
+     */
     @Override
     public Node getExerciseControl() { return exerciseControlNode; }
+
+    /**
+     * The (null) right control node for this exercise
+     * @return the control node
+     */
     @Override
     public Node getRightControl() { return null; }
 

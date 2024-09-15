@@ -30,19 +30,26 @@ import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
 
+/**
+ * Adjunct to derivation create, for setup of a single derivation line
+ */
 public class SetupLine {
     private DerivationCreate derivationCreate;
     private BoxedDRTA formulaBoxedDRTA;
     private BoxedDRTA justificationBoxedDRTA;
     private Spinner<Integer> depthSpinner;
+    private HBox spinnerBox;
     private CheckBox premiseBox;
     private CheckBox conclusionBox;
     private CheckBox addShelfBox;
     private CheckBox addGapBox;
-    private HBox spinnerBox;
     private boolean modified = false;
     private double formulaBoxHeight = 27;
 
+    /**
+     * Construct setup line
+     * @param derivationCreate the controlling create window
+     */
     public SetupLine(DerivationCreate derivationCreate) {
         this.derivationCreate = derivationCreate;
         formulaBoxedDRTA = new BoxedDRTA();
@@ -141,35 +148,83 @@ public class SetupLine {
         });
     }
 
-
+    /**
+     * The main fomula field
+     * @return the formula boxed DRTA
+     */
     public BoxedDRTA getFormulaBoxedDRTA() {
         return formulaBoxedDRTA;
     }
+
+    /**
+     * The justification field
+     * @return the formula boxed DRTA
+     */
     public BoxedDRTA getJustificationBoxedDRTA() {
         return justificationBoxedDRTA;
     }
+
+    /**
+     * The scope depth spinner
+     * @return the spinner
+     */
     public Spinner getDepthSpinner() {
         return depthSpinner;
     }
-    public CheckBox getPremiseBox() {
-        return premiseBox;
-    }
-    public CheckBox getConclusionBox() {
-        return conclusionBox;
-    }
-    public CheckBox getAddShelfBox() {
-        return addShelfBox;
-    }
-    public CheckBox getAddGapBox() {
-        return addGapBox;
-    }
+
+    /**
+     * Box containing depth spinner
+     * @return the hbox
+     */
     public HBox getSpinnerBox() {
         return spinnerBox;
     }
 
+    /**
+     * Box to identify premise line
+     * @return the check box
+     */
+    public CheckBox getPremiseBox() {
+        return premiseBox;
+    }
+
+    /**
+     * Box to identify conclusion line
+     * @return the check box
+     */
+    public CheckBox getConclusionBox() {
+        return conclusionBox;
+    }
+
+    /**
+     * Box to add shelf under current line
+     * @return the checkbox
+     */
+    public CheckBox getAddShelfBox() {
+        return addShelfBox;
+    }
+
+    /**
+     * Box to add gap under current line
+     * @return the check box
+     */
+    public CheckBox getAddGapBox() {
+        return addGapBox;
+    }
+
+
+    /**
+     * Line is modified if checkbox or one of the RTAs is modified
+     * @return true if modified and otherwise false
+     */
     public boolean isModified() {
         return (modified || formulaBoxedDRTA.getRTA().isModified() || justificationBoxedDRTA.getRTA().isModified());
     }
+
+    /**
+     * Line is modified if checkbox or one of the RTAs is modified
+     * @param modified true if modified and otherwise false
+     */
     public void setModified(boolean modified) { this.modified = modified; }
 
 }

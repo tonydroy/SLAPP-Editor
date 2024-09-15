@@ -408,10 +408,6 @@ public class MainWindowView {
         this.leftControlNode = currentExerciseView.getExerciseControl();
         this.rightControlNode = currentExerciseView.getRightControl();
 
-        //this prevents scrollpane from jumping to top (esp in derivations)
-//        commentNode.setFocusTraversable(false);
-//        statementNode.setFocusTraversable(false);
-
         centerBox.getChildren().clear();
         centerBox.getChildren().addAll(commentNode, statementNode, contentNode);
 
