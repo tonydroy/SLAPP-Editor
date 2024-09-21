@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controller for the derivation exercise
+ * Controller for the derivation exercise.
  */
 public class DerivationExercise implements Exercise<DerivationModel, DerivationView> {
     private MainWindow mainWindow;

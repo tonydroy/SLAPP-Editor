@@ -31,7 +31,7 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
 
 /**
- * Adjunct to derivation create, for setup of a single derivation line
+ * Adjunct to derivation create, for setup of a single derivation line.
  */
 public class SetupLine {
     private DerivationCreate derivationCreate;

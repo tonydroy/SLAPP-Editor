@@ -20,7 +20,7 @@ import com.gluonhq.richtextarea.model.Document;
 import java.io.Serializable;
 
 /**
- * Supplement to DerivationModel for content of a single derivation line
+ * Supplement to DerivationModel for content of a single derivation line.
  */
 public class ModelLine implements Serializable {
     private static final long serialVersionUID = 100L;

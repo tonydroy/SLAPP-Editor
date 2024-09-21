@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Model for the derivation exercise
+ * Model for the derivation exercise.
  */
 public class DerivationModel implements ExerciseModel<Document>, Serializable {
     private static final long serialVersionUID = 100L;

@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * View for the derivation exercise
+ * View for the derivation exercise.
  */
 public class DerivationView implements ExerciseView<DecoratedRTA> {
     MainWindowView mainView;

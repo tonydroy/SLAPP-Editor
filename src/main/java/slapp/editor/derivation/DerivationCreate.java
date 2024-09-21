@@ -53,6 +53,9 @@ import java.util.Optional;
 import static com.gluonhq.richtextarea.RichTextAreaSkin.KeyMapValue.*;
 import static javafx.scene.control.ButtonType.OK;
 
+/**
+ * Create window for derivation exercise.
+ */
 public class DerivationCreate {
     private MainWindow mainWindow;
     private RichTextArea statementRTA;

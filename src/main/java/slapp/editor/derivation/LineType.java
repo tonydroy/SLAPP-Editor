@@ -15,6 +15,9 @@ You should have received a copy of the GNU General Public License along with SLA
 
 package slapp.editor.derivation;
 
+/**
+ * Enum for types of derivation line
+ */
 public enum LineType {
     /**
      * A content line that is not a premise or conclusion line

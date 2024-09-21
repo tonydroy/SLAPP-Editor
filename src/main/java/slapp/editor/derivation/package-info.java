@@ -1,4 +1,4 @@
 /**
- * Derivation exercise
+ * Derivation exercise.
  */
 package slapp.editor.derivation;

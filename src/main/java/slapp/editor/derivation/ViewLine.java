@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Adjunct to derivation view for the contents of a single derivation line
+ * Adjunct to derivation view for the contents of a single derivation line.
  */
 public class ViewLine {
     private Label lineNumberLabel = null;
