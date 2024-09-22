@@ -631,6 +631,10 @@ public class KeyboardDiagram {
     /**
      * Update the diagram based on maps from the selected DecoratedRTA
      */
+
+    /*
+
+     */
     public void update() {
         Map<Character, String> keyTypedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyTypedCharMap();
         Map<KeyCodeCombination, String> keyPressedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyPressedCharMap();

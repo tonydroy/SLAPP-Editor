@@ -223,6 +223,10 @@ public class DecoratedRTA {
             }
         });
 
+        /*
+
+         */
+
         //unicode field
         final TextField unicodeField = new TextField();
         unicodeField.setTooltip(new Tooltip("Unicode (x/hex, #/decimal)"));
