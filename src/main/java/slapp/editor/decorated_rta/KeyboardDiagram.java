@@ -469,15 +469,17 @@ public class KeyboardDiagram {
         ctrlShiftAltBoard.add(getFixedCharKey("\ue27f",4),13,3,4,1);
         ctrlShiftAltBoard.add(getFixedCharKey("\ue4ea",4),17,3,4,1);
         ctrlShiftAltBoard.add(getFixedCharKey("\ue69a",4),21,3,4,1);
-        ctrlShiftAltBoard.add(getFixedCharKey("\uf8dc",4),25,3,4,1);
-
-        ctrlShiftAltBoard.add(getFixedCharKey("\ue841",4),29,3,4,1);
-        ctrlShiftAltBoard.add(getFixedCharKey("\ue851",4),33,3,4,1);
+        ctrlShiftAltBoard.add(getFixedCharKey("\ue871",4),25,3,4,1);
         //
+
+
+
+        ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.N,4),29,3,4,1);
+        ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.M,4),33,3,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.COMMA,4),37,3,4,1);
         ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.PERIOD,4),41,3,4,1);
 
-        ctrlShiftAltBoard.add(getFixedCharKey("\ue871",4),45,3,4,1);
+        ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.SLASH,4),45,3,4,1);
 
 //        ctrlShiftAltBoard.add(getCtrlShiftAltKey(KeyCode.SLASH,4),45,3,4,1);
         ctrlShiftAltBoard.add(getControlKey("Shift",11),49,3,11,1);
@@ -636,14 +638,16 @@ public class KeyboardDiagram {
 
      */
     public void update() {
-        Map<Character, String> keyTypedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyTypedCharMap();
-        Map<KeyCodeCombination, String> keyPressedCharMap = ((RichTextAreaSkin) decoratedRTA.getEditor().getSkin()).getKeyPressedCharMap();
+        RichTextAreaSkin skin = (RichTextAreaSkin) decoratedRTA.getEditor().getSkin();
+
+        Map<Character, String> keyTypedCharMap = skin.getKeyTypedCharMap();
+        Map<KeyCodeCombination, String> keyPressedCharMap = skin.getKeyPressedCharMap();
 
         for (Map.Entry<Character, Text> entry : keyTypedTextMap.entrySet()) {
-            entry.getValue().setText(keyTypedCharMap.get(entry.getKey()));
+            entry.getValue().setText(skin.getModifiedChar(keyTypedCharMap.get(entry.getKey())));
         }
         for (Map.Entry<KeyCombination, Text> entry : keyPressedTextMap.entrySet()) {
-            entry.getValue().setText(keyPressedCharMap.get(entry.getKey()));
+            entry.getValue().setText(skin.getModifiedChar(keyPressedCharMap.get(entry.getKey())));
         }
         boardsBox.getChildren().clear();
         boardsBox.getChildren().addAll(title1, normalBoard, title2, shiftBoard, title3, altBoard, title4, shiftAltBoard, title5, ctrlShiftAltBoard, ctrlChars);

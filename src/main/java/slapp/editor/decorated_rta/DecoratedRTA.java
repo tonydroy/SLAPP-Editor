@@ -223,9 +223,8 @@ public class DecoratedRTA {
             }
         });
 
-        /*
 
-         */
+
 
         //unicode field
         final TextField unicodeField = new TextField();
@@ -348,6 +347,14 @@ public class DecoratedRTA {
                 keyboardDiagram.update();
             }
             editor.requestFocus();   //have not been able to find way to stop keyboard window from stealing focus see https://stackoverflow.com/questions/33151460/javafx-stop-new-window-stealing-focus
+        });
+
+        ((RichTextAreaSkin) editor.getSkin()).modificationProperty().addListener((v, ov, nv) -> {
+            KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
+            if (keyboardDiagram.isShowing()) {
+                keyboardDiagram.initialize(this);
+                keyboardDiagram.update();
+            }
         });
     }
 
