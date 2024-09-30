@@ -836,6 +836,7 @@ public class MainWindow {
      * @param height - height of view window
      */
     private void videoHelp(String urlString, double width, double height) {
+        if (mediaViewer == null) mediaViewer = new MediaViewer();
         mediaViewer.stopPlay();
         mediaViewer.play(urlString, width, height);
     }

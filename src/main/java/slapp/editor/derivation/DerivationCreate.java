@@ -107,11 +107,20 @@ public class DerivationCreate {
     private DecoratedRTA dummyDRTA = new DecoratedRTA();
 
 
+    /**
+     * Create new derivation exercise
+     * @param mainWindow the main window
+     */
     public DerivationCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
+    /**
+     * Open create window for existing exercise
+     * @param mainWindow the main window
+     * @param originalModel the model for the exercise to be modified
+     */
     public DerivationCreate(MainWindow mainWindow, DerivationModel originalModel) {
         this(mainWindow);
 
@@ -137,6 +146,9 @@ public class DerivationCreate {
         fieldModified = false;
     }
 
+    /*
+     * Set up the create window
+     */
     private void setupWindow() {
         borderPane = new BorderPane();
 
@@ -443,8 +455,6 @@ public class DerivationCreate {
         sizeToolBar.setPrefHeight(38);
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
 
-
-
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
@@ -468,6 +478,10 @@ public class DerivationCreate {
         Platform.runLater(() -> nameField.requestFocus());
     }
 
+    /*
+     * Update list of setup lines from derivation model
+     * @param originalModel the derivation model
+     */
     private void updateSetupLinesFromModel(DerivationModel originalModel) {
 
         List<ModelLine> modelLines = originalModel.getDerivationLines();
@@ -509,6 +523,9 @@ public class DerivationCreate {
         }
     }
 
+    /*
+     * Update gridpane from setup lines list
+     */
     private void updateGridFromSetupLines() {
         setupLinesPane.getChildren().clear();
         for (int i = 0; i < setupLines.size(); i++) {
@@ -527,6 +544,9 @@ public class DerivationCreate {
         }
     }
 
+    /*
+     * Update default keyboard for grid RTAs
+     */
     private void updateKeyboard() {
         for (int i = 0; i < setupLines.size(); i++) {
             SetupLine setupLine = setupLines.get(i);
@@ -535,6 +555,9 @@ public class DerivationCreate {
         }
     }
 
+    /*
+     * Update zoom setting
+     */
     private void updateZoom() {
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
@@ -547,6 +570,9 @@ public class DerivationCreate {
         keyboardDiagram.update();
     }
 
+    /*
+     *  Bind vertical height of statement field to window size
+     */
     private void setCenterVgrow() {
         double fixedHeight = helpArea.getHeight() * scale + 400;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
@@ -559,6 +585,9 @@ public class DerivationCreate {
         statementRTA.prefHeightProperty().bind(centerHeightProperty);
     }
 
+    /*
+     * Check for changes and close
+     */
     private void closeWindow() {
         if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
             mainWindow.closeExercise();
@@ -566,6 +595,9 @@ public class DerivationCreate {
         }
     }
 
+    /*
+     * Clear create window, leaving keyboard, scope, and shelf settings intact.
+     */
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
@@ -578,16 +610,18 @@ public class DerivationCreate {
             firstLine.getJustificationBoxedDRTA().getRTA().getActionFactory().saveNow().execute(new ActionEvent());
             setupLines.add(firstLine);
             updateGridFromSetupLines();
-
- //           statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
             statementRTA.getActionFactory().newDocumentNow().execute(new ActionEvent());
- //           statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
-
             fieldModified = false;
             viewExercise();
         }
     }
 
+    /*
+     * If exercise modified, check for continue
+     * @param title String title of confirmation box
+     * @param content String content of confirmation box
+     * @return true if ok to continue, and otherwise false
+     */
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
         for (SetupLine line : setupLines) {
@@ -601,6 +635,9 @@ public class DerivationCreate {
         return okcontinue;
     }
 
+    /*
+     * View the exercise as currently constructed
+     */
     private void viewExercise() {
         DerivationModel model = extractModelFromWindow();
         DerivationExercise exercise = new DerivationExercise(model, mainWindow);
@@ -611,6 +648,10 @@ public class DerivationCreate {
         mainWindow.setUpExercise(exercise);
     }
 
+    /*
+     * Save the currently constructed exercise to disk
+     * @param saveAs true to open save as window and otherwise false
+     */
     private void saveExercise(boolean saveAs) {
         lowerSaveButton.setDisable(true);
         saveAsButton.setDisable(true);
@@ -631,6 +672,11 @@ public class DerivationCreate {
         saveAsButton.setDisable(false);
 
     }
+
+    /*
+     * Get the derivation model for the currently constructed exercise
+     * @return the derivation model
+     */
     private DerivationModel extractModelFromWindow() {
         String name = nameField.getText();
 
@@ -680,6 +726,11 @@ public class DerivationCreate {
         return model;
     }
 
+    /*
+     * Update keyboard diagram and edit controls to currently selected DRTA
+     * @param decoratedRTA the DRTA
+     * @param control the {slapp.editor.main_window.ControlType}
+     */
     void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
@@ -719,10 +770,17 @@ public class DerivationCreate {
         borderPane.topProperty().setValue(topBox);
     }
 
+    /*
+     * With text field in focus, set disabled DRTA controls
+     */
     private void textFieldInFocus() {
         editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
 
+    /**
+     * The selected default {@link com.gluonhq.richtextarea.RichTextAreaSkin.KeyMapValue}
+     * @return
+     */
     public RichTextAreaSkin.KeyMapValue getKeyboardSelector() {return keyboardSelector;}
 
 }
