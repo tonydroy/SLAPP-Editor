@@ -91,6 +91,7 @@ public class MainWindowView {
     private Group dummyRoot;
     private Scene dummyScene;
     private Stage dummyStage;
+
     private RichTextAreaSkin dummyRTASkin;
     private MenuItem createNewExerciseItem = new MenuItem("Create New");
     private MenuItem createRevisedExerciseItem = new MenuItem("Create Revised");
@@ -152,6 +153,7 @@ public class MainWindowView {
     private void setupWindow() {
         //The dummy window is used for getting height of RTA text.
         setUpDummyWindow();
+
 
         //menu bars
 
@@ -320,8 +322,8 @@ public class MainWindowView {
         stage.setTitle("SLAPP Editor");
         stage.setMinWidth(minStageWidth);
 
-        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-        double mainWindowX = Math.max(0.0, (bounds.getMaxX() - bounds.getMinX())/8);
+        Rectangle2D mainBounds = Screen.getPrimary().getVisualBounds();
+        double mainWindowX = Math.max(0.0, (mainBounds.getMaxX() - mainBounds.getMinX())/8);
         double mainWindowY = 40;
         stage.setX(mainWindowX);
         stage.setY(mainWindowY);
@@ -395,6 +397,17 @@ public class MainWindowView {
     public void setUpLeftControl(Node leftControl) {
         borderPane.setLeft(leftControl);
     }
+
+
+
+    public static Rectangle2D getCurrentScreenBounds() {
+        Screen screen = Screen.getPrimary();
+        for (Screen s : Screen.getScreensForRectangle(EditorMain.mainStage.getX(), EditorMain.mainStage.getY(), EditorMain.mainStage.getWidth(), EditorMain.mainStage.getHeight())) {
+            if (s.getBounds().getMinX() > screen.getBounds().getMinX()) screen = s;
+        }
+        return screen.getVisualBounds();
+    }
+
 
     /**
      * Set an exercise on the main view
@@ -1017,6 +1030,7 @@ public class MainWindowView {
      * @return the scale property
      */
     public DoubleProperty scalePageWidthProperty() {    return scalePageWidth;  }
+
 
 
 }

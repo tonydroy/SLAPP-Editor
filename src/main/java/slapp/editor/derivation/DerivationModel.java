@@ -56,7 +56,7 @@ public class DerivationModel implements ExerciseModel<Document>, Serializable {
      * @param gridWidth fraction of split pane allocated to the derivation
      * @param isLeftmostScopeLine true if is leftmoset scope line and otherwise false
      * @param defaultShelf true if subderivations come with shelf line
-     * @param keyboardSelector default keyboard for content fields
+     * @param keyboardSelector default keyboard for formula fields
      * @param exerciseStatement the statement Document
      * @param exerciseComment the comment document
      * @param derivationLines the list of {@link slapp.editor.derivation.ModelLine}
@@ -90,7 +90,7 @@ public class DerivationModel implements ExerciseModel<Document>, Serializable {
 
     /**
      * The fraction of the split pane allocated to the derivation
-     * @return
+     * @return the fraction value
      */
     double getGridWidth() {return gridWidth; }
 

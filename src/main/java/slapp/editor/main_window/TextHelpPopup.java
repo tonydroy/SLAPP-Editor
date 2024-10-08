@@ -16,12 +16,14 @@ You should have received a copy of the GNU General Public License along with SLA
 package slapp.editor.main_window;
 
 import javafx.concurrent.Worker;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -77,8 +79,9 @@ static {
             "<li>In this version, SLAPP does not make use of the regular Mac menu bar -- the menu bar is rather a Windows-style bar across the top of the SLAPP window.</li>" +
             "</ul>" +
             "<li><h4>Edit Commands:</li>" +
-            "<ul><li>The button with the small keyboard icon pops up a keyboard diagram.  The diagram lists normal, shift, alt, shift-alt, and ctrl-shift-alt boards (mac: normal, shift, option, shift-option and command-shift-option). The content of these boards is modified by the keyboard selector dropdown (and, alternatively, by the F1-F9 keys).  The keyboard selector shifts base alphabet characters, while special characters remain the same.  Keyboard options are meant to group together characters you will need in a given context.<br><br>" +
-            "<i>Note:</i> You will not need all the characters from all the boards at once!  You should be able to go through a good part of <i>Symbolic Logic</i> using nothing but the few logic characters sprinkled into the alt- and shift-alt boards, and just the Base/Italic and Italic/Sans keyboard selections.<br><br></li>" +
+            "<ul><li>The button with the small keyboard icon pops up a keyboard diagram.  The diagram lists normal, shift, alt, shift-alt, and ctrl-shift-alt boards (mac: normal, shift, option, shift-option and command-shift-option). The content of these boards is modified by the keyboard selector dropdown.  The keyboard selector shifts base alphabet characters, while special characters remain the same.  Keyboard options are meant to group together characters you will need in a given context.<br><br>" +
+            "The bottom of the keyboard diagram lists keyboard shortcuts.  Note that there is no 'right-click' context menu so that these commands come only by edit controls and the shortcuts. <br><br>" +
+            "Also: You will not need all the characters from all the boards at once!  You should be able to go through a good part of <i>Symbolic Logic</i> using nothing but the few logic characters sprinkled into the alt- and shift-alt boards, and just the Base/Italic and Italic/Sans keyboard selections.<br><br></li>" +
             "<li>In the unlikely event that you need a symbol not on the keyboard diagrams, you can insert any Unicode character by the unicode field.  You may enter either a decimal (preceded by '#') or hexadecimal (preceded by 'x') code.  Unicode includes over 100,000 character codes. You will be able to display a Unicode character so long as that character exists in a font on your computer.  If you enter a code for which there is no representation, you usually see an empty box.<br><br></li> " +
             "<li>In Java (the computer language in which SLAPP is written), the ordinary representation for a character is a single 16-bit word.  But Unicode has more characters than can be represented in 16 bits.  The Java solution is to use just one 16-bit word in the ordinary case, but two words for character codes that fall outside of the 16-bit range.  This manifests itself in SLAPP especially when deleting characters -- the delete takes out one word at a time, where the second word typically does not represent anything, and so shows as an empty box.  If you see this, the program is not broken -- it is only that you have half the representation of a character in the underlying file and you can just delete again.<br><br></li>" +
             "<li>Many of the edit buttons: cut, copy, paste, and such are what you expect.  A couple call for special comment:<br><br></li>" +
@@ -104,7 +107,7 @@ static {
             "From System Settings / Keyboard / Input Sources, select 'show input menu in menu bar' (this will let you select among keyboard maps from a dropdown on the menu bar). Then you can choose which keyboards to show in the menu by the '+' and '-' buttons. From '+', select 'other' at the bottom of the language list, and add 'Unicode Hex Input'.  <br><br></li>" +
 
 
-            "<li><i>Function Keys:</i> SLAPP makes use of the function keys F1 - F12.  On many computers these keys are assigned to special functions (for volume and the like).  If this is the so, there are generally methods of changing the default behavior between regular F-key and the special assignments (different on different systems and keyboards).  Whichever is selected, holding down the Fn-key at the same time as you type a function key gives the non-default behavior.  <br><br>" +
+            "<li><i>Function Keys:</i> SLAPP makes use of the function keys F1 - F12.  On many computers these keys are assigned to special functions (for volume and the like).  If this is so, there are generally methods of changing the default behavior between regular F-key and the special assignments (different on different systems and keyboards).  Whichever is selected, holding down the Fn-key at the same time as you type a function key gives the non-default behavior.  <br><br>" +
             "As examples, a PC with the Logitech MX keyboard toggles function keys by Fn-Esc.  On Mac OS Sonoma, there are controls from System Settings / Keyboard / Keyboard Shortcuts / Function Keys, and then again from System Settings / Desktop & Dock / Shortcuts / Keyboard & Mouse Shortcuts.<br><br></li>" +
             "<li><i>Mouse Right-Click:</i> SLAPP makes use of right-click on the mouse.  On a PC, this is most always enabled.  There are different means of performing right-click on a Mac, including modifications from System Settings / Mouse / Secondary Click.<br><br></li>" +
             "<li><i>Scratch Window:</i> SLAPP uses an invisible 'scratch window' for certain functions.  You cannot access or work in this window.  However its existence may be indicated by an icon in the taskbar or dock.  If so, ignore the extra icon.<br><br></li>" +
@@ -324,8 +327,9 @@ static {
         stage.initModality(Modality.NONE);
         stage.getIcons().addAll(EditorMain.icons);
         stage.initOwner(EditorMain.mainStage);
-        stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
-        stage.setY(EditorMain.mainStage.getY() + 200);
+        Rectangle2D bounds = MainWindowView.getCurrentScreenBounds();
+        stage.setX(Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - 860));
+        stage.setY(Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - 850));
 
         stage.show();
     }

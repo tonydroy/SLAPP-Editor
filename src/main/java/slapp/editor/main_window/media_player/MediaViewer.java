@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License along with SLA
 
 package slapp.editor.main_window.media_player;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
@@ -24,6 +25,7 @@ import slapp.editor.EditorMain;
 
 import java.io.IOException;
 import slapp.editor.EditorAlerts;
+import slapp.editor.main_window.MainWindowView;
 
 /**
  * Window to contain the player media view / menu bar combination
@@ -58,8 +60,10 @@ public class MediaViewer {
         stage.initModality(Modality.NONE);
         stage.getIcons().addAll(EditorMain.icons);
         stage.initOwner(EditorMain.mainStage);
-        stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
-        stage.setY(EditorMain.mainStage.getY() + 200);
+
+        Rectangle2D bounds = MainWindowView.getCurrentScreenBounds();
+        stage.setX(Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - (width + 20)));
+        stage.setY(Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - (height + 20)));
 
         MediaView viewer = player.getView();
         viewer.fitWidthProperty().bind(stage.widthProperty() );

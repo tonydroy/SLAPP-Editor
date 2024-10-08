@@ -27,6 +27,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -45,6 +46,7 @@ import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.ControlType;
 import slapp.editor.main_window.MainWindow;
+import slapp.editor.main_window.MainWindowView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -463,8 +465,11 @@ public class DerivationCreate {
         stage.getIcons().addAll(EditorMain.icons);
         stage.setWidth(1030);
         stage.setHeight(900);
-        stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
-        stage.setY(EditorMain.mainStage.getY() + 200);
+
+        Rectangle2D bounds = MainWindowView.getCurrentScreenBounds();
+        stage.setX(Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - 1030));
+        stage.setY(Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - 900));
+
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setOnCloseRequest(e-> {
             e.consume();

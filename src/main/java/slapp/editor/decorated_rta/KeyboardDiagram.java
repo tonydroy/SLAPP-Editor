@@ -22,6 +22,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -32,8 +33,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import slapp.editor.EditorMain;
+import slapp.editor.main_window.MainWindowView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -659,14 +662,21 @@ public class KeyboardDiagram {
     public void updateAndShow() {
         update();
         if (!shown) {
-            stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
-            stage.setY(EditorMain.mainStage.getY() + 100);
             stage.setWidth(650);
             stage.setHeight(970);
+
+            Rectangle2D bounds = MainWindowView.getCurrentScreenBounds();
+            stage.setX(Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - 650));
+            stage.setY(Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - 970));
+
             shown = true;
         }
+
+
         stage.show();
     }
+
+
 
     /**
      * Hide the stage.  Hide and close are the same.  However conceptually, this method is for closing the diagram

@@ -24,6 +24,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -35,10 +36,7 @@ import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.PrintUtilities;
-import slapp.editor.main_window.Exercise;
-import slapp.editor.main_window.ExerciseModel;
-import slapp.editor.main_window.MainWindow;
-import slapp.editor.main_window.TypeSelectorFactories;
+import slapp.editor.main_window.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -380,8 +378,7 @@ public class CreateAssignment {
         stage.setScene(scene);
         stage.setTitle("Edit Assignment:");
         stage.getIcons().addAll(EditorMain.icons);
-        stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
-        stage.setY(EditorMain.mainStage.getY() + 200);
+
 
         //test for mac menu bar
         stage.initOwner(EditorMain.mainStage);
@@ -390,6 +387,10 @@ public class CreateAssignment {
 
         stage.setMinWidth(605);
         stage.setMinHeight(600);
+
+        Rectangle2D bounds = MainWindowView.getCurrentScreenBounds();
+        stage.setX(Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - 605));
+        stage.setY(Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - 600));
         stage.setOnCloseRequest(e-> {
             e.consume();
             closeWindow();

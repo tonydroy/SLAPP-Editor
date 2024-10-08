@@ -199,7 +199,7 @@ public class MainWindow {
     private void createNewExercise() {
         if (checkContinueAssignment("Confirm Create", "This assignment appears to have been changed, and will be overwritten in the create process.\n\nContinue to create exercise?")) {
             if (checkContinueExercise("Confirm Create", "This exercise appears to have been changed, and will be overwritten by the new one.\n\nContinue to create exercise?")) {
-                ExerciseType exerciseType = ExerciseTypePopup.getType();
+                ExerciseType exerciseType = ExerciseTypePopup.getType(mainView);
                 if (exerciseType != null) {
                     TypeSelectorFactories typeFactories = new TypeSelectorFactories(this);
                     typeFactories.createExerciseOfType(exerciseType);

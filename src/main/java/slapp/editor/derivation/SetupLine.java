@@ -152,7 +152,7 @@ public class SetupLine {
      * The main fomula field
      * @return the formula boxed DRTA
      */
-    public BoxedDRTA getFormulaBoxedDRTA() {
+    BoxedDRTA getFormulaBoxedDRTA() {
         return formulaBoxedDRTA;
     }
 
@@ -160,7 +160,7 @@ public class SetupLine {
      * The justification field
      * @return the formula boxed DRTA
      */
-    public BoxedDRTA getJustificationBoxedDRTA() {
+    BoxedDRTA getJustificationBoxedDRTA() {
         return justificationBoxedDRTA;
     }
 
@@ -168,7 +168,7 @@ public class SetupLine {
      * The scope depth spinner
      * @return the spinner
      */
-    public Spinner getDepthSpinner() {
+    Spinner getDepthSpinner() {
         return depthSpinner;
     }
 
@@ -176,7 +176,7 @@ public class SetupLine {
      * Box containing depth spinner
      * @return the hbox
      */
-    public HBox getSpinnerBox() {
+    HBox getSpinnerBox() {
         return spinnerBox;
     }
 
@@ -184,7 +184,7 @@ public class SetupLine {
      * Box to identify premise line
      * @return the check box
      */
-    public CheckBox getPremiseBox() {
+    CheckBox getPremiseBox() {
         return premiseBox;
     }
 
@@ -192,7 +192,7 @@ public class SetupLine {
      * Box to identify conclusion line
      * @return the check box
      */
-    public CheckBox getConclusionBox() {
+    CheckBox getConclusionBox() {
         return conclusionBox;
     }
 
@@ -200,7 +200,7 @@ public class SetupLine {
      * Box to add shelf under current line
      * @return the checkbox
      */
-    public CheckBox getAddShelfBox() {
+    CheckBox getAddShelfBox() {
         return addShelfBox;
     }
 
@@ -208,16 +208,15 @@ public class SetupLine {
      * Box to add gap under current line
      * @return the check box
      */
-    public CheckBox getAddGapBox() {
+    CheckBox getAddGapBox() {
         return addGapBox;
     }
-
 
     /**
      * Line is modified if checkbox or one of the RTAs is modified
      * @return true if modified and otherwise false
      */
-    public boolean isModified() {
+    boolean isModified() {
         return (modified || formulaBoxedDRTA.getRTA().isModified() || justificationBoxedDRTA.getRTA().isModified());
     }
 
@@ -225,6 +224,6 @@ public class SetupLine {
      * Line is modified if checkbox or one of the RTAs is modified
      * @param modified true if modified and otherwise false
      */
-    public void setModified(boolean modified) { this.modified = modified; }
+    void setModified(boolean modified) { this.modified = modified; }
 
 }

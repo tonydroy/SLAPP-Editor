@@ -701,7 +701,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     }
 
     /*
-     * Increase scopt depth by one
+     * Increase scope depth by one
      */
     private void indentLineAction() {
         int row = -1;
@@ -791,21 +791,21 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             ViewLine viewLine = viewLines.get(row);
             int depth = viewLine.getDepth();
             if (!LineType.isSetupLine(viewLine.getLineType())) {
-                    if (++row < viewLines.size()) {
-                        if (!(LineType.isShelfLine(viewLines.get(row).getLineType()) || LineType.isGapLine(viewLines.get(row).getLineType()))) {
-                            ViewLine shelfLine = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
-                            viewLines.add(row, shelfLine);
-                            viewLine.getLineContentBoxedDRTA().getRTA().requestFocus();
-                            derivationView.setGridFromViewLines();
-                            pushUndoRedo();
-                            exerciseModified = true;
+                if (++row < viewLines.size()) {
+                    if (!(LineType.isShelfLine(viewLines.get(row).getLineType()) || LineType.isGapLine(viewLines.get(row).getLineType()))) {
+                        ViewLine shelfLine = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
+                        viewLines.add(row, shelfLine);
+                        viewLine.getLineContentBoxedDRTA().getRTA().requestFocus();
+                        derivationView.setGridFromViewLines();
+                        pushUndoRedo();
+                        exerciseModified = true;
 
-                        } else {
-                            EditorAlerts.fleetingPopup("No shelf on top of shelf or gap.");
-                        }
                     } else {
-                        EditorAlerts.fleetingPopup("No shelf under last line.");
+                        EditorAlerts.fleetingPopup("No shelf on top of shelf or gap.");
                     }
+                } else {
+                    EditorAlerts.fleetingPopup("No shelf under last line.");
+                }
             } else {
                 EditorAlerts.fleetingPopup("Cannot modify setup line.");
             }

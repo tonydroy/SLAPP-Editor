@@ -17,6 +17,7 @@ package slapp.editor.main_window;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -46,7 +47,7 @@ public class ExerciseTypePopup {
      *
      * @return the exercise type
      */
-    public static ExerciseType getType() {
+    public static ExerciseType getType(MainWindowView mainView) {
 
         ListView<ExerciseType> typeList = new ListView();
         typeList.getItems().setAll(ExerciseType.values());
@@ -126,8 +127,15 @@ public class ExerciseTypePopup {
         //
 
         stage.getIcons().addAll(EditorMain.icons);
-        stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
-        stage.setY(EditorMain.mainStage.getY() + 200);
+
+
+
+
+
+        Rectangle2D bounds = MainWindowView.getCurrentScreenBounds();
+        stage.setX(Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - 400));
+        stage.setY(Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - 200));
+
         selectButton.setOnAction(e -> {
             ExerciseType selection = typeList.getSelectionModel().getSelectedItem();
             if (selection == null) EditorAlerts.showSimpleAlert("No Selection Made", "Please select an exercise type (or cancel)");
@@ -146,6 +154,8 @@ public class ExerciseTypePopup {
             stage.close();
         });
         stage.showAndWait();
+
+
 
         return selectedItem;
     }

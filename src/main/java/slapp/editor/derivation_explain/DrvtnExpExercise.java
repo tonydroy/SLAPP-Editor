@@ -56,14 +56,15 @@ import slapp.editor.vertical_tree.VerticalTreeModel;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Controller for the Derivation Explain Exercise
+ */
 public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     private MainWindow mainWindow;
     private DrvtnExpModel drvtnExpModel;
     private DrvtnExpView drvtnExpView;
     private MainWindowView mainView;
     private boolean exerciseModified = false;
-
     private Font labelFont = new Font("Noto Serif Combo", 11);
     private boolean editJustification;
     private EventHandler justificationClickFilter;
@@ -71,7 +72,11 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
     private int lastJustificationRow;
     private UndoRedoList<DrvtnExpModel> undoRedoList = new UndoRedoList<>(20);
 
-
+    /**
+     * Construct derivation explain exercise from model
+     * @param model the model
+     * @param mainWindow the main window
+     */
     public DrvtnExpExercise(DrvtnExpModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.drvtnExpModel = model;
@@ -87,6 +92,9 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
  //       pushUndoRedo();
     }
 
+    /*
+     * Set up the derivation view from the model
+     */
     private void setDrvtnExpView() {
 
         drvtnExpView.setContentPrompt(drvtnExpModel.getContentPrompt());
@@ -169,6 +177,9 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         setContentFocusListeners();
     }
 
+    /*
+     * Set the view lines
+     */
     private void setViewLinesFromModel() {
 
         List<ModelLine> modelLines = drvtnExpModel.getDerivationLines();
@@ -234,6 +245,9 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         drvtnExpView.setViewLines(viewLines);
     }
 
+    /*
+     * Add focus listener to RTA fields
+     */
     private void setContentFocusListeners() {
         List<ViewLine> viewLines = drvtnExpView.getViewLines();
         for (ViewLine viewLine : viewLines) {
@@ -287,6 +301,12 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         return line;
     }
 
+    /*
+     * Get a text flow from justification string.  The flow binds number values to numbered lines
+     * @param justificationString the justification string
+     * @param viewLines the collection of view lines
+     * @return the text flow
+     */
     private TextFlow getJustificationFlow(String justificationString, List<ViewLine> viewLines) {
         justificationString = justificationString.trim();
         TextFlow flow = getStyledJustificationFlow(new TextFlow());
@@ -345,6 +365,11 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         return flow;
     }
 
+    /*
+     * Set features for a justification text flow
+     * @param flow the input text flow
+     * @return the resultant text flow
+     */
     TextFlow getStyledJustificationFlow(TextFlow flow) {
         flow.setFocusTraversable(true);
         flow.setMouseTransparent(false);
@@ -362,6 +387,10 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         return flow;
     }
 
+    /*
+     * Convert text flow to RTA to enable editing the field
+     * @param flow the text flow
+     */
     private void editJustificationField(TextFlow flow) {
         int rowIndex = drvtnExpView.getGrid().getRowIndex(flow);
         DecoratedRTA drta = new DecoratedRTA();
@@ -369,13 +398,6 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         rta.setContentAreaWidth(200);
         rta.setPrefHeight(20);
         rta.setPrefWidth(100);
-//        rta.setMaxWidth(100);
-//        rta.setMinWidth(100);
-
-
-
-
-
         rta.getStylesheets().add("slappDerivation.css");
         rta.getActionFactory().open(new Document(getStringFromJustificationFlow(flow))).execute(new ActionEvent());
         rta.getActionFactory().saveNow().execute(new ActionEvent());
@@ -409,7 +431,6 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                 }
             }
         });
-
 
         rta.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
 
@@ -448,7 +469,13 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         mainView.editorInFocus(drta, ControlType.STATEMENT);
     }
 
-    public static boolean inHierarchy(Node node, Node potentialHierarchyElement) {
+    /*
+     * Determine whether one node is an ancestor of another
+     * @param node the potentential descendant
+     * @param potentialHierarchyElement the potentential ancestor
+     * @return true if the second is an ancestor of the first
+     */
+    private static boolean inHierarchy(Node node, Node potentialHierarchyElement) {
         if (potentialHierarchyElement == null) {
             return true;
         }
@@ -461,6 +488,11 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         return false;
     }
 
+    /*
+     * Save text from justification RTA into text flow, and place on grid
+     * @param rta the justification RTA
+     * @param rowIndex the row index of the justification field
+     */
     private void saveJustificationRTA(RichTextArea rta, int rowIndex) {
 
         mainView.getMainScene().removeEventFilter(MouseEvent.MOUSE_PRESSED, justificationClickFilter);
@@ -473,11 +505,8 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         TextFlow justificationFlow = getJustificationFlow(justificationString, drvtnExpView.getViewLines());
         drvtnExpView.getViewLines().get(rowIndex).setJustificationFlow(justificationFlow);
 
-//        drvtnExpView.getGrid().getChildren().remove(rta);
-
         rta.getActionFactory().newDocumentNow().execute(new ActionEvent());
         drvtnExpView.setJustificationFlowOnGrid(rowIndex);
-//       drvtnExpView.setGridFromViewLines();
 
         if (modified) {
             pushUndoRedo();
@@ -485,6 +514,11 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         }
     }
 
+    /*
+     * Extract text string from flow consisting of labels and texts
+     * @param flow the text flow
+     * @return the extracted string
+     */
     private String getStringFromJustificationFlow(TextFlow flow) {
         StringBuilder sb = new StringBuilder();
         ObservableList<Node> list = flow.getChildren();
@@ -495,12 +529,22 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         return sb.toString();
     }
 
+    /*
+     * Identify digit (or point) character
+     * @param character the character
+     * @return true if the character is a digit and otherwise false
+     */
     private boolean charIsDigit(char character) {
         boolean result = false;
         if (('0' <= character && character <= '9') || character == '.') result = true;
         return result;
     }
 
+    /*
+     * Create and add empty view line at supplied row position, pushing others down
+     * @param newRow the new row position
+     * @param depth scope depth of the line
+     */
     private void addEmptyViewContentRow(int newRow, int depth) {
         Label numLabel = new Label();
         numLabel.setFont(labelFont);
@@ -548,6 +592,9 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         drvtnExpView.getViewLines().add(newRow, viewLine);
     }
 
+    /*
+     * Perform undo action
+     */
     private void undoAction() {
         DrvtnExpModel undoElement = undoRedoList.getUndoElement();
         if (undoElement != null) {
@@ -560,6 +607,9 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         }
     }
 
+    /*
+     * Perform redo action
+     */
     private void redoAction() {
         DrvtnExpModel redoElement = undoRedoList.getRedoElement();
         if (redoElement != null) {
@@ -572,11 +622,17 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         }
     }
 
+    /*
+     * Enable/Disable undo and redo buttons depending on current state
+     */
     private void updateUndoRedoButtons() {
         drvtnExpView.getUndoButton().setDisable(!undoRedoList.canUndo());
         drvtnExpView.getRedoButton().setDisable(!undoRedoList.canRedo());
     }
 
+    /*
+     * Push current state onto undo/redo stack
+     */
     private void pushUndoRedo() {
         DrvtnExpModel model = getDrvtnExpModelFromView();
         DrvtnExpModel deepCopy = (DrvtnExpModel) SerializationUtils.clone(model);
@@ -584,6 +640,9 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         updateUndoRedoButtons();
     }
 
+    /*
+     * Insert new line at current position
+     */
     private void insertLineAction() {
         int row = -1;
         Node lastFocusedNode = mainWindow.getLastFocusOwner();
@@ -604,21 +663,6 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                 rta.applyCss();
                 rta.layout();
                 exerciseModified = true;
-
-                /*
-                mainView.editorInFocus(drta, ControlType.FIELD);
-                rta.focusedProperty().addListener((o, ov, nv) -> {
-                    if (nv) {
-                        mainView.editorInFocus(drta, ControlType.FIELD);
-                    } else {
-                        if (rta.isModified()) {
-                            pushUndoRedo();
-                            exerciseModified = true;
-                        }
-                    }
-                });
-
-                 */
             } else {
                 EditorAlerts.fleetingPopup("Cannot modify setup lines.");
             }
@@ -628,6 +672,9 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         }
     }
 
+    /*
+     * Delete the line at the current position
+     */
     private void deleteLineAction() {
         int row = -1;
         Node lastFocusedNode = mainWindow.getLastFocusOwner();
@@ -674,6 +721,9 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         }
     }
 
+    /*
+     * Increase scope depth by one
+     */
     private void indentLineAction() {
         int row = -1;
         Node lastFocusedNode = mainWindow.getLastFocusOwner();
@@ -697,8 +747,6 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                     drvtnExpView.setGridFromViewLines();
                     pushUndoRedo();
                     exerciseModified = true;
-
-
                 } else {
                     EditorAlerts.fleetingPopup("19 is the maximum scope depth.");
                 }
@@ -709,6 +757,10 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             EditorAlerts.fleetingPopup("Select derivation row to indent.");
         }
     }
+
+    /*
+     * Decrease scope depth by one
+     */
     private void outdentLineAction() {
         int row = -1;
         Node lastFocusedNode = mainWindow.getLastFocusOwner();
@@ -733,7 +785,6 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                             }
                         }
                     }
-
                     drvtnExpView.setGridFromViewLines();
                     pushUndoRedo();
                     exerciseModified = true;
@@ -747,6 +798,10 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             EditorAlerts.fleetingPopup("Select derivation row to outdent.");
         }
     }
+
+    /*
+     * Add premise/assumption shelf under current line
+     */
     private void addShelfLineAction() {
         int row = -1;
         Node lastFocusedNode = mainWindow.getLastFocusOwner();
@@ -757,25 +812,21 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             ViewLine viewLine = viewLines.get(row);
             int depth = viewLine.getDepth();
             if (!LineType.isSetupLine(viewLine.getLineType())) {
-//                if (depth > 1) {
-                    if (++row < viewLines.size()) {
-                        if (!(LineType.isShelfLine(viewLines.get(row).getLineType()) || LineType.isGapLine(viewLines.get(row).getLineType()))) {
-                            ViewLine shelfLine = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
-                            viewLines.add(row, shelfLine);
-                            viewLine.getLineContentBoxedDRTA().getRTA().requestFocus();
-                            drvtnExpView.setGridFromViewLines();
-                            pushUndoRedo();
-                            exerciseModified = true;
+                if (++row < viewLines.size()) {
+                    if (!(LineType.isShelfLine(viewLines.get(row).getLineType()) || LineType.isGapLine(viewLines.get(row).getLineType()))) {
+                        ViewLine shelfLine = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
+                        viewLines.add(row, shelfLine);
+                        viewLine.getLineContentBoxedDRTA().getRTA().requestFocus();
+                        drvtnExpView.setGridFromViewLines();
+                        pushUndoRedo();
+                        exerciseModified = true;
 
-                        } else {
-                            EditorAlerts.fleetingPopup("No shelf on top of shelf or gap.");
-                        }
                     } else {
-                        EditorAlerts.fleetingPopup("No shelf under last line.");
+                        EditorAlerts.fleetingPopup("No shelf on top of shelf or gap.");
                     }
- //               } else {
- //                   EditorAlerts.fleetingPopup("Cannot modify at leftmost scope depth.");
-  //              }
+                } else {
+                    EditorAlerts.fleetingPopup("No shelf under last line.");
+                }
             } else {
                 EditorAlerts.fleetingPopup("Cannot modify setup line.");
             }
@@ -783,6 +834,10 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             EditorAlerts.fleetingPopup("Select row to have shelf.");
         }
     }
+
+    /*
+     * add gap between content lines at current depth
+     */
     private void addGapLineAction() {
         int row = -1;
         Node lastFocusedNode = mainWindow.getLastFocusOwner();
@@ -802,8 +857,6 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                             drvtnExpView.setGridFromViewLines();
                             pushUndoRedo();
                             exerciseModified = true;
-
-
                         } else {
                             EditorAlerts.fleetingPopup("No gap on top of shelf or gap.");
                         }
@@ -820,6 +873,10 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             EditorAlerts.fleetingPopup("Select row to have gap.");
         }
     }
+
+    /*
+     * Insert lines for a subderivation above current line
+     */
     private void insertSubAction() {
         int row = -1;
         Node lastFocusedNode = mainWindow.getLastFocusOwner();
@@ -832,7 +889,6 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             if (!LineType.isSetupLine(viewLine.getLineType()) || viewLine.getLineType() == LineType.CONCLUSION_LINE) {
                 addEmptyViewContentRow(row, depth);
                 addEmptyViewContentRow(row, depth);
-//                addEmptyViewContentRow(row, depth);
                 if (drvtnExpModel.isDefaultShelf()) {
                     ViewLine shelfLine = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
                     drvtnExpView.getViewLines().add(row, shelfLine);
@@ -852,6 +908,10 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             EditorAlerts.fleetingPopup("Select derivation row for insert above.");
         }
     }
+
+    /*
+     * Add lines for a pair of subderivations above current line
+     */
     private void insertSubsAction() {
         int row = -1;
         Node lastFocusedNode = mainWindow.getLastFocusOwner();
@@ -864,7 +924,6 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
             if (!LineType.isSetupLine(viewLine.getLineType()) || viewLine.getLineType() == LineType.CONCLUSION_LINE) {
                 addEmptyViewContentRow(row, depth);
                 addEmptyViewContentRow(row, depth);
-//                addEmptyViewContentRow(row, depth);
                 if (drvtnExpModel.isDefaultShelf()) {
                     ViewLine shelfLine1 = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
                     drvtnExpView.getViewLines().add(row, shelfLine1);
@@ -876,7 +935,6 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
                 addEmptyViewContentRow(row, depth);
                 addEmptyViewContentRow(row, depth);
- //               addEmptyViewContentRow(row, depth);
                 if (drvtnExpModel.isDefaultShelf()) {
                     ViewLine shelfLine2 = new ViewLine(null, depth, LineType.SHELF_LINE, null, null, null);
                     drvtnExpView.getViewLines().add(row, shelfLine2);
@@ -896,17 +954,34 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         }
     }
 
+    /**
+     * The derivation model
+     * @return the model
+     */
     @Override
     public DrvtnExpModel getExerciseModel() { return drvtnExpModel; }
+
+    /**
+     * The derivation view
+     * @return the view
+     */
     @Override
     public DrvtnExpView getExerciseView() { return drvtnExpView; }
+
+    /**
+     * Save exercise to disk
+     * @param saveAs true if "save as" should be invoked, and otherwise false
+     */
     @Override
     public void saveExercise(boolean saveAs) {
         boolean success = DiskUtilities.saveExercise(saveAs, getDrvtnExpModelFromView());
         if (success) exerciseModified = false;
     }
 
-
+    /**
+     * List of nodes to be sent to printer for this exercise
+     * @return the node list
+     */
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
@@ -993,6 +1068,10 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         return nodeList;
     }
 
+    /**
+     * Return to the initial (unworked) version of the exercise, retaining the comment only.
+     * @return the initial exercise
+     */
     @Override
     public Exercise<DrvtnExpModel, DrvtnExpView> resetExercise() {
         RichTextArea commentRTA = drvtnExpView.getExerciseComment().getEditor();
@@ -1004,17 +1083,17 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         return clearExercise;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @return true if exercise is modified, and otherwise false
+     */
     @Override
     public boolean isExerciseModified() {
-
-
         RichTextArea commentEditor = drvtnExpView.getExerciseComment().getEditor();
         if (commentEditor.isModified()) exerciseModified = true;
 
-
         RichTextArea explanationEditor = drvtnExpView.getExplanationDRTA().getEditor();
         if (explanationEditor.isModified()) exerciseModified = true;
-
 
         List<ViewLine> viewLines = drvtnExpView.getViewLines();
         for (ViewLine viewLine : viewLines) {
@@ -1023,21 +1102,43 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
                 if (rta.isModified()) exerciseModified = true;
             }
         }
-
         return exerciseModified;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @param modified true if exercise is modified, and otherwise false
+     */
     @Override
     public void setExerciseModified(boolean modified) { this.exerciseModified = modified; }
+
+    /**
+     * There is no Derivation Explain free form option
+     * @return null
+     */
     @Override
     public Node getFFViewNode() {return null;}
+
+    /**
+     * There is no Derivation Explain free form option
+     * @return null
+     */
     @Override
     public Node getFFPrintNode() {return null;}
+
+    /**
+     * Extract an {@link slapp.editor.main_window.ExerciseModel} from view of the exercise
+     * @return the exercise model
+     */
     @Override
     public ExerciseModel<DrvtnExpModel> getExerciseModelFromView() {
         return (ExerciseModel) getDrvtnExpModelFromView();
     }
 
+    /*
+     * Extract the derivation explain model from view
+     * @return the model
+     */
     private DrvtnExpModel getDrvtnExpModelFromView() {
         String name = drvtnExpModel.getExerciseName();
         String prompt = drvtnExpView.getContentPrompt();
@@ -1098,7 +1199,6 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         newModel.setCommentTextHeight(drvtnExpModel.getCommentTextHeight());
         newModel.setStatementTextHeight(drvtnExpModel.getStatementTextHeight());
         newModel.setExplanationTextHeight(drvtnExpModel.getExplanationTextHeight());
-
 
         return newModel;
     }
