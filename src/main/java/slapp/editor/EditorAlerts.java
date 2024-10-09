@@ -45,6 +45,11 @@ public class EditorAlerts {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.initModality(Modality.APPLICATION_MODAL);
+        Stage mainStage = EditorMain.mainStage;
+        alert.setX(mainStage.getX() + mainStage.getWidth()/3);
+        alert.setY(mainStage.getY() + mainStage.getHeight()/3);
+
+
 //        alert.initOwner(EditorMain.mainStage);
         alert.showAndWait();
 
@@ -61,6 +66,9 @@ public class EditorAlerts {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.initModality(Modality.APPLICATION_MODAL);
+        Stage mainStage = EditorMain.mainStage;
+        alert.setX(mainStage.getX() + mainStage.getWidth()/3);
+        alert.setY(mainStage.getY() + mainStage.getHeight()/3);
 //        alert.initOwner(EditorMain.mainStage);
         PauseTransition delay = new PauseTransition(Duration.seconds(2));
         delay.setOnFinished(e -> alert.hide());
@@ -81,6 +89,9 @@ public class EditorAlerts {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.initModality(Modality.APPLICATION_MODAL);
+        Stage mainStage = EditorMain.mainStage;
+        alert.setX(mainStage.getX() + mainStage.getWidth()/3);
+        alert.setY(mainStage.getY() + mainStage.getHeight()/3);
  //       alert.initOwner(EditorMain.mainStage);
         return alert;
     }
