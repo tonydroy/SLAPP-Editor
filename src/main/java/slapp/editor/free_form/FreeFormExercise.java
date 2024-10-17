@@ -64,6 +64,9 @@ import java.util.List;
 import static com.gluonhq.richtextarea.RichTextAreaSkin.KeyMapValue.*;
 import static slapp.editor.derivation.DerivationExercise.inHierarchy;
 
+/**
+ * Controller for the free form exercise
+ */
 public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
 
     private MainWindow mainWindow;
@@ -77,7 +80,11 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
     private EventHandler exerciseClickFilter;
     private ModelElement lastRemovedElement;
 
-
+    /**
+     * Construct free form exercise from model
+     * @param model the model
+     * @param mainWindow the main window
+     */
     public FreeFormExercise(FreeFormModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         freeFormModel = model;
@@ -123,6 +130,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         setActiveExercise(0);
     }
 
+    /*
+     * Set up the free form view from the model
+     */
     private void setFreeFormView() {
         freeFormView.setStatementPrefHeight(freeFormModel.getStatementPrefHeight());
         freeFormView. setCommentPrefHeight(freeFormModel.getCommentPrefHeight());
@@ -191,6 +201,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.updateContentFromViewElements();
     }
 
+    /*
+     * Fill the free form control based on selected buttons
+     */
     private void populateRightControlBox() {
         VBox controlBox = (VBox) freeFormView.getRightControl();
         ObservableList<Node> members = controlBox.getChildren();
@@ -261,6 +274,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         controlBox.setMargin(freeFormView.getIndentButton(), new Insets(25,0,0,0));
     }
 
+    /*
+     * Populate the view element list from model
+     */
     private void setElementsFromModel() {
         TypeSelectorFactories typeFactory = new TypeSelectorFactories(mainWindow);
         List<ViewElement> viewElements = freeFormView.getViewElements();
@@ -280,7 +296,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         }
     }
 
-
+    /*
+     * Increase indent of current view element
+     */
     private void indentAction() {
         int index = exerciseList.indexOf(activeExercise);
         ViewElement viewElement = freeFormView.getViewElements().get(index);
@@ -290,6 +308,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         exerciseModified = true;
     }
 
+    /*
+     * Decrease indent of current view element
+     */
     private void outdentAction() {
         int index = exerciseList.indexOf(activeExercise);
         ViewElement viewElement = freeFormView.getViewElements().get(index);
@@ -299,6 +320,10 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         exerciseModified = true;
     }
 
+    /*
+     * Make view element the active exercise
+     * @param index index of the element to activate
+     */
     private void setActiveExercise(int index) {
         Exercise exer = exerciseList.get(index);
         activeExercise = exer;
@@ -318,6 +343,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.getRemoveButton().setDisable(false);
     }
 
+    /*
+     * Remove the active exercise
+     */
     private void removeAction()  {
         freeFormModel = getFreeFormModelFromView();
         List<ModelElement> modelElements = freeFormModel.getModelElements();
@@ -325,8 +353,6 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
             int index = exerciseList.indexOf(activeExercise);
             lastRemovedElement = modelElements.get(index);
             modelElements.remove(index);
- //           lastRemovedElement = freeFormModel.getModelElements().get(index);
- //           freeFormModel.getModelElements().remove(index);
             setElementsFromModel();
             freeFormView.updateContentFromViewElements();
 
@@ -339,6 +365,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         }
     }
 
+    /*
+     * Restore last removed view element
+     */
     private void restoreAction() {
         freeFormModel = getFreeFormModelFromView();
         List<ModelElement> modelElements = freeFormModel.getModelElements();
@@ -352,6 +381,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         exerciseModified = true;
     }
 
+    /*
+     * Exchange position of current element with one above
+     */
     private void moveUpAction() {
         freeFormModel = getFreeFormModelFromView();
         List<ModelElement> modelElements = freeFormModel.getModelElements();
@@ -367,6 +399,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         }
     }
 
+    /*
+     * Exchange position of current element with one below
+     */
     private void moveDownAction() {
         freeFormModel = getFreeFormModelFromView();
         List<ModelElement> modelElements = freeFormModel.getModelElements();
@@ -382,6 +417,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         }
     }
 
+    /*
+     * Add Simple Edit exercise after active exercise
+     */
     private void addEditAction() {
         freeFormModel = getFreeFormModelFromView();
         SimpleEditModel newMod = new SimpleEditModel("", "Simple Edit");
@@ -396,7 +434,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
     }
 
 
-
+    /*
+     * Add Truth Table exercise after active exercise
+     */
     private void addTTableAction() {
         freeFormModel = getFreeFormModelFromView();
 
@@ -410,8 +450,6 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         newMod.setBinaryOperators(binaryList);
         TruthTableGenExercise exer = new TruthTableGenExercise(newMod, mainWindow, true);
 
-
-
         int index = exerciseList.indexOf(activeExercise);
         ModelElement element = new ModelElement(newMod, 0);
         freeFormModel.getModelElements().add(++index, element);
@@ -423,6 +461,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         exerciseModified = true;
     }
 
+    /*
+     * Add Horizontal Tree exercise after active exercise
+     */
     private void addHTreeAction() {
         freeFormModel = getFreeFormModelFromView();
         HorizontalTreeModel newMod = new HorizontalTreeModel();
@@ -436,6 +477,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         exerciseModified = true;
     }
 
+    /*
+     * Add Vertical Tree exercise (with Base/Italic default font) after active exercise
+     */
     private void addVTreeBaseItalAction() {
         freeFormModel = getFreeFormModelFromView();
         VerticalTreeModel newMod = new VerticalTreeModel();
@@ -455,6 +499,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         exerciseModified = true;
     }
 
+    /*
+     * Add Vertical Tree exercise (with Italic/Sans default font) after active exercise
+     */
     private void addVTreeItalSansAction() {
         freeFormModel = getFreeFormModelFromView();
         VerticalTreeModel newMod = new VerticalTreeModel();
@@ -474,6 +521,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         exerciseModified = true;
     }
 
+    /*
+     * Add Vertical Tree exercise (with Script/Italic default font) after active exercise
+     */
     private void addVTreeScriptItalAction() {
         freeFormModel = getFreeFormModelFromView();
         VerticalTreeModel newMod = new VerticalTreeModel();
@@ -493,6 +543,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         exerciseModified = true;
     }
 
+    /*
+     * Add Derivation exercise (with natural derivation settings, and Italic/Sans default font) after active exercise
+     */
     private void addNDrvtnItalSansAction() {
         freeFormModel = getFreeFormModelFromView();
 
@@ -515,6 +568,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         exerciseModified = true;
     }
 
+    /*
+     * Add Derivation exercise (with natural derivation settings, and Script/Italic default font) after active exercise
+     */
     private void addNDrvtnScriptItalAction() {
         freeFormModel = getFreeFormModelFromView();
 
@@ -536,6 +592,10 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.getRemoveButton().setDisable(false);
         exerciseModified = true;
     }
+
+    /*
+     * Add Derivation exercise (with natural derivation settings, and Script/Sans default font) after active exercise
+     */
     private void addNDrvtnScriptSansAction() {
         freeFormModel = getFreeFormModelFromView();
 
@@ -557,6 +617,10 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         freeFormView.getRemoveButton().setDisable(false);
         exerciseModified = true;
     }
+
+    /*
+     * Add Derivation exercise (with natural derivation settings, and Italic/Blackboard default font) after active exercise
+     */
     private void addNDrvtnItalBBAction() {
         freeFormModel = getFreeFormModelFromView();
 
@@ -579,6 +643,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         exerciseModified = true;
     }
 
+    /*
+     * Add Derivation exercise (with axiomatic derivation settings, and Italic/Sans default font) after active exercise
+     */
     private void addADrvtnItalSansAction() {
         freeFormModel = getFreeFormModelFromView();
 
@@ -601,6 +668,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         exerciseModified = true;
     }
 
+    /*
+     * Add Derivation exercise (with axiomatic derivation settings, and Script/Italic default font) after active exercise
+     */
     private void addADrvtnScriptItalicAction() {
         freeFormModel = getFreeFormModelFromView();
 
@@ -623,6 +693,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         exerciseModified = true;
     }
 
+    /*
+     * Add Derivation exercise (with axiomatic derivation settings, and Script/Sans default font) after active exercise
+     */
     private void addADrvtnScriptSansAction() {
         freeFormModel = getFreeFormModelFromView();
 
@@ -645,6 +718,9 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         exerciseModified = true;
     }
 
+    /*
+     * Add Derivation exercise (with axiomatic derivation settings, and Italic/Blackboard default font) after active exercise
+     */
     private void addADrvtnItalBBAction() {
         freeFormModel = getFreeFormModelFromView();
 
@@ -667,16 +743,38 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         exerciseModified = true;
     }
 
-
+    /**
+     * The free form exercise does not contribute any node to a free form exercise
+     * @return null
+     */
     @Override
     public Node getFFViewNode() {return null;}
+
+    /**
+     * The free form exercise does not contribute any node to a free form exercise
+     * @return null
+     */
     @Override
     public Node getFFPrintNode() {return null;}
+
+    /**
+     * The free form model
+     * @return the model
+     */
     @Override
     public FreeFormModel getExerciseModel() { return freeFormModel;   }
+
+    /**
+     * The free form view
+     * @return the view
+     */
     @Override
     public FreeFormView getExerciseView() { return freeFormView;   }
 
+    /**
+     * Save exercise to disk
+     * @param saveAs true if "save as" should be invoked, and otherwise false
+     */
     @Override
     public void saveExercise(boolean saveAs) {
         boolean success = DiskUtilities.saveExercise(saveAs, getFreeFormModelFromView());
@@ -686,6 +784,10 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         }
     }
 
+    /**
+     * List of nodes to be sent to printer for this exercise
+     * @return the node list
+     */
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
@@ -730,8 +832,6 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         nodeList.add(statementSepBox);
 
         //content nodes
-
-
         for (int i = 0; i < exerciseList.size(); i++) {
             Exercise exerElement = exerciseList.get(i);
             ViewElement viewElement = freeFormView.getViewElements().get(i);
@@ -764,6 +864,10 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         return nodeList;
     }
 
+    /**
+     * Return to the initial (unworked) version of the exercise, retaining the comment only.
+     * @return the initial exercise
+     */
     @Override
     public Exercise<FreeFormModel, FreeFormView> resetExercise() {
         RichTextArea commentRTA = freeFormView.getExerciseComment().getEditor();
@@ -776,6 +880,10 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         return clearExercise;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @return true if exercise is modified, and otherwise false
+     */
     @Override
     public boolean isExerciseModified() {
 
@@ -787,6 +895,10 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         return exerciseModified;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @param modified true if exercise is modified, and otherwise false
+     */
     @Override
     public void setExerciseModified(boolean modified) {
         if (modified) exerciseModified = true;
@@ -798,11 +910,19 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         }
     }
 
+    /**
+     * Extract an {@link slapp.editor.main_window.ExerciseModel} from view of the exercise
+     * @return the exercise model
+     */
     @Override
     public ExerciseModel<FreeFormModel> getExerciseModelFromView() {
         return (ExerciseModel) getFreeFormModelFromView();
     }
 
+    /*
+     * Extract the free form model from view
+     * @return the model
+     */
     private FreeFormModel getFreeFormModelFromView() {
         FreeFormModel model = new FreeFormModel(freeFormModel.getExerciseName(), freeFormModel.getElementTypes());
         model.setOriginalModel(freeFormModel.getOriginalModel());

@@ -76,7 +76,7 @@ public class KeyboardDiagram {
      * Set up window
      */
     static {
-        titleFont = titleFont = Font.font("Noto Sans", FontWeight.BOLD, FontPosture.REGULAR, 20);
+        titleFont = Font.font("Noto Sans", FontWeight.BOLD, FontPosture.REGULAR, 20);
         baseKeyWidth = 10;
         boardsBox = new VBox();
         boardsBox.setAlignment(Pos.CENTER_LEFT);

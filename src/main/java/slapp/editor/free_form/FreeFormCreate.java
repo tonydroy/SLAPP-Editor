@@ -51,8 +51,10 @@ import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
+/**
+ * Create window for derivation exercise
+ */
 public class FreeFormCreate {
-
     private MainWindow mainWindow;
     private TextField nameField;
     private DecoratedRTA statementDRTA;
@@ -75,7 +77,6 @@ public class FreeFormCreate {
     private CheckBox axDrvtnScriptItalicCheck;
     private CheckBox axDrvtnScriptSansCheck;
     private CheckBox axDrvtnItalBBCheck;
-
     private double scale = 1.0;
     private Stage stage;
     private Scene scene;
@@ -85,17 +86,25 @@ public class FreeFormCreate {
     private Button saveAsButton;
     private ToolBar sizeToolBar;
     private List<ElementTypes> elementTypes = new ArrayList<>();
-
     private DecoratedRTA dummyDRTA = new DecoratedRTA();
     private MenuBar menuBar;
     private VBox fieldsBox;
     private BorderPane borderPane;
 
+    /**
+     * Create new Free Form exercise
+     * @param mainWindow the main window
+     */
     public FreeFormCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
+    /**
+     * Open create window for existing exercise
+     * @param mainWindow the main window
+     * @param originalModel the model for the exercise to be modified
+     */
     public FreeFormCreate(MainWindow mainWindow, FreeFormModel originalModel) {
         this(mainWindow);
 
@@ -105,9 +114,12 @@ public class FreeFormCreate {
         nameField.setText(originalModel.getExerciseName());
         setChecks(originalModel);
         modified = false;
-
     }
 
+    /*
+     * Set checks based on existing model
+     * @param originalModel the model
+     */
     private void setChecks(FreeFormModel originalModel) {
         simpleEditCheck.setSelected(false); truthTableCheck.setSelected(false); horizTreeCheck.setSelected(false);
         vertTreeBaseItalCheck.setSelected(false); vertTreeItalSansCheck.setSelected(false); vertTreeScriptItalCheck.setSelected(false);
@@ -177,6 +189,9 @@ public class FreeFormCreate {
         }
     }
 
+    /*
+     * Set up the create window
+     */
     private void setupWindow() {
         borderPane = new BorderPane();
 
@@ -433,25 +448,6 @@ public class FreeFormCreate {
         sizeToolBar.setPrefHeight(38);
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
 
-/*
-        ToolBar editToolbar = statementDRTA.getKbdSelectorToolbar();
-        ToolBar fontsToolbar = statementDRTA.getEditToolbar();
-        ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
-        ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
-        kbdDiaToolBar.setPrefHeight(38);
-
-        if (kbdDiaToolBar.getItems().isEmpty()) {
-            kbdDiaToolBar.getItems().addAll(statementDRTA.getKeyboardDiagramButton());
-        }
-
-        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
-        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
-
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, fieldsBox);
-        borderPane.topProperty().setValue(topBox);
-
- */
-
         //generate view
         scene = new Scene(borderPane);
         scene.getStylesheets().add(DecoratedRTA.class.getClassLoader().getResource("slappEditor.css").toExternalForm());
@@ -480,9 +476,11 @@ public class FreeFormCreate {
         centerBox.layout();
         setCenterVgrow();
         Platform.runLater(() -> nameField.requestFocus());
-
-
     }
+
+    /*
+     * Update zoom setting
+     */
     private void updateZoom() {
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
@@ -495,6 +493,9 @@ public class FreeFormCreate {
         keyboardDiagram.update();
     }
 
+    /*
+     *  Bind vertical height of statement field to window size
+     */
     private void setCenterVgrow() {
         double fixedHeight = helpArea.getHeight() * scale + 500;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
@@ -505,6 +506,12 @@ public class FreeFormCreate {
         statementRTA.prefHeightProperty().bind(centerHeightProperty);
     }
 
+    /*
+     * If exercise modified, check for continue
+     * @param title String title of confirmation box
+     * @param content String content of confirmation box
+     * @return true if ok to continue, and otherwise false
+     */
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
         if (modified || statementRTA.isModified()) {
@@ -514,23 +521,33 @@ public class FreeFormCreate {
         }
         return okcontinue;
     }
+
+    /*
+     * Check for changes and close
+     */
     private void closeWindow() {
         if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
             mainWindow.closeExercise();
             stage.close();
         }
     }
+
+    /*
+     * Clear create window, leaving checks intact
+     */
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             statementRTA.getActionFactory().newDocumentNow().execute(new ActionEvent());
- //           statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
-  //          statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
             modified = false;
         }
 
     }
+
+    /*
+     * View the exercise as currently constructed
+     */
     private void viewExercise() {
         FreeFormModel model = extractModelFromWindow();
         FreeFormExercise exercise = new FreeFormExercise(model, mainWindow);
@@ -540,6 +557,11 @@ public class FreeFormCreate {
         exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         mainWindow.setUpExercise(exercise);
     }
+
+    /*
+     * Save the currently constructed exercise to disk
+     * @param saveAs true to open save as window and otherwise false
+     */
     private void saveExercise(boolean saveAs) {
         saveButton.setDisable(true);
         saveAsButton.setDisable(true);
@@ -556,9 +578,10 @@ public class FreeFormCreate {
         modified = false;
     }
 
-
-
-
+    /*
+     * Get the free form model for the currently constructed exercise
+     * @return the model
+     */
     private FreeFormModel extractModelFromWindow() {
         populateElementTypesFromWindow();
         FreeFormModel model = new FreeFormModel(nameField.getText(), elementTypes);
@@ -572,6 +595,9 @@ public class FreeFormCreate {
         return model;
     }
 
+    /*
+     * Populate the element types list based on checkmarks
+     */
     private void populateElementTypesFromWindow() {
         elementTypes.clear();
         if (simpleEditCheck.isSelected()) elementTypes.add(ElementTypes.SIMPLE_EDIT);
@@ -590,6 +616,11 @@ public class FreeFormCreate {
         if (axDrvtnItalBBCheck.isSelected()) elementTypes.add(ElementTypes.A_DERIVATION_ITAL_BB);
     }
 
+    /*
+     * Update keyboard diagram and edit controls to currently selected DRTA
+     * @param decoratedRTA the DRTA
+     * @param control the {slapp.editor.main_window.ControlType}
+     */
     private void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
@@ -619,17 +650,17 @@ public class FreeFormCreate {
         }
         sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
 
-
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
         editAndKbdBox.layout();
-
-
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, fieldsBox);
         borderPane.topProperty().setValue(topBox);
     }
 
+    /*
+     * With text field in focus, set disabled DRTA controls
+     */
     private void textFieldInFocus() {
         editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }

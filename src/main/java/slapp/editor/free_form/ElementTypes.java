@@ -15,6 +15,9 @@ You should have received a copy of the GNU General Public License along with SLA
 
 package slapp.editor.free_form;
 
+/**
+ * Enum of element types that may be accommodated by the free form exercise
+ */
 public enum ElementTypes {
     SIMPLE_EDIT,
     TRUTH_TABLE,

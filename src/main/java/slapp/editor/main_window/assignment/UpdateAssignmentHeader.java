@@ -15,10 +15,7 @@ You should have received a copy of the GNU General Public License along with SLA
 
 package slapp.editor.main_window.assignment;
 
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
+import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -28,6 +25,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
+import slapp.editor.main_window.MainWindowView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -194,12 +192,15 @@ public class UpdateAssignmentHeader {
         stage.setScene(scene);
         stage.setTitle("Create Assignment Header");
         stage.getIcons().addAll(EditorMain.icons);
-        stage.setX(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth());
-        stage.setY(EditorMain.mainStage.getY() + 200);
+
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setMinWidth(600);
-        stage.setMaxWidth(600);
-        stage.setMinHeight(500);
+        stage.setWidth(600);
+        stage.setHeight(500);
+
+        Rectangle2D bounds = MainWindowView.getCurrentScreenBounds();
+        stage.setX(Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - 600));
+        stage.setY(Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - 500));
+
         stage.setOnCloseRequest(e-> {
             e.consume();
             closeWindow();

@@ -86,7 +86,11 @@ public class CreateAssignment {
         this.assignment = assignment;
         this.mainWindow = mainWindow;
 
+        System.out.println("create assignment");
+
         setUpWindow();
+
+
     }
 
 
@@ -381,12 +385,12 @@ public class CreateAssignment {
 
 
         //test for mac menu bar
-        stage.initOwner(EditorMain.mainStage);
+ //       stage.initOwner(EditorMain.mainStage);
         stage.initModality(Modality.APPLICATION_MODAL);
         //
 
-        stage.setMinWidth(605);
-        stage.setMinHeight(600);
+        stage.setWidth(605);
+        stage.setHeight(675);
 
         Rectangle2D bounds = MainWindowView.getCurrentScreenBounds();
         stage.setX(Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - 605));

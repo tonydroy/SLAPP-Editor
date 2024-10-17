@@ -20,23 +20,46 @@ import slapp.editor.main_window.ExerciseModel;
 
 import java.io.Serializable;
 
+/**
+ * Exercise model for a single element of the free form exercise
+ */
 public class ModelElement implements Serializable {
     private static final long serialVersionUID = 100L;
-
     private ExerciseModel model = null;
     private int indentLevel = 0;
 
-    public ModelElement(ExerciseModel model, int indentLevel) {
+    /**
+     * Construct the model element
+     * @param model The exercise model for this element
+     * @param indentLevel the indent level of this element
+     */
+    ModelElement(ExerciseModel model, int indentLevel) {
         this.model = model;
         this.indentLevel = indentLevel;
     }
 
-    public ExerciseModel getModel() {      return model;  }
+    /**
+     * The exercise model for this element
+     * @return the exercise model
+     */
+    ExerciseModel getModel() {      return model;  }
 
-    public void setModel(ExerciseModel model) {     this.model = model;  }
+    /**
+     * The exercise model for this element
+     * @param model the model
+     */
+    void setModel(ExerciseModel model) {     this.model = model;  }
 
-    public int getIndentLevel() {     return indentLevel;  }
+    /**
+     * The indent level for this element
+     * @return the indent level
+     */
+    int getIndentLevel() {     return indentLevel;  }
 
-    public void setIndent(int indent) {     this.indentLevel = indent;  }
+    /**
+     * The indent level for this element
+     * @param indent the indent level
+     */
+    void setIndent(int indent) {     this.indentLevel = indent;  }
 
 }

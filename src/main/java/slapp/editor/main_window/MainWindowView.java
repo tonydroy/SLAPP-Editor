@@ -358,6 +358,7 @@ public class MainWindowView {
         dummyStage = new Stage();
         dummyStage.setScene(dummyScene);
 
+        dummyStage.initStyle(StageStyle.UTILITY);
         dummyStage.initOwner(EditorMain.mainStage);
         dummyStage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon32x32.png")));
         dummyStage.getIcons().add(new Image(EditorMain.class.getResourceAsStream("/icon16x16.png")));

@@ -17,23 +17,47 @@ package slapp.editor.free_form;
 
 import javafx.scene.Node;
 
+/**
+ * Single member of the free-form mvew
+ */
 public class ViewElement {
 
     private Node node;
     private int indentLevel = 0;
 
 
-    public ViewElement(Node node, int indentLevel) {
+    /**
+     * Construct view element
+     * @param node the view node
+     * @param indentLevel indent level of the node
+     */
+    ViewElement(Node node, int indentLevel) {
         this.node = node;
         this.indentLevel = indentLevel;
     }
 
-    public Node getNode() {     return node;  }
+    /**
+     * The node of this element
+     * @return the node
+     */
+    Node getNode() {     return node;  }
 
-    public void setNode(Node node) {     this.node = node;   }
+    /**
+     * The node of this element
+     * @param node tghe node
+     */
+    void setNode(Node node) {     this.node = node;   }
 
-    public int getIndentLevel() {     return indentLevel;   }
+    /**
+     * The indent level for this node
+     * @return the indent level
+     */
+    int getIndentLevel() {     return indentLevel;   }
 
-    public void setIndentLevel(int indentLevel) {     this.indentLevel = indentLevel;   }
+    /**
+     * The indent level for this node
+     * @param indentLevel the indent level
+     */
+    void setIndentLevel(int indentLevel) {     this.indentLevel = indentLevel;   }
 
 }
