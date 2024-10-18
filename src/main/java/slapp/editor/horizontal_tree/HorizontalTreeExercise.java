@@ -47,8 +47,10 @@ import slapp.editor.vertical_tree.VerticalTreeExercise;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller for the horizontal tree exercise
+ */
 public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, HorizontalTreeView> {
-
     private MainWindow mainWindow;
     private MainWindowView mainView;
     private HorizontalTreeModel horizontalTreeModel;
@@ -58,6 +60,11 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
     public BooleanProperty undoRedoFlag = new SimpleBooleanProperty();
 
+    /**
+     * Construct horizontal tree exercise from model
+     * @param model the model
+     * @param mainWindow the main window
+     */
     public HorizontalTreeExercise(HorizontalTreeModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.horizontalTreeModel = model;
@@ -76,6 +83,9 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         pushUndoRedo();
     }
 
+    /*
+     * Set up the horizontal tree view from the model
+     */
     private void setHorizontalTreeView() {
         horizontalTreeView.setStatementPrefHeight(horizontalTreeModel.getStatementPrefHeight());
         horizontalTreeView.setCommentPrefHeight(horizontalTreeModel.getCommentPrefHeight());
@@ -142,8 +152,10 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         horizontalTreeView.setAnnotationModified(false);
     }
 
+    /*
+     * Refresh view including panes and ruler axis from model
+     */
     private void refreshViewFromModel() {
-
         populateTreePanes();
         horizontalTreeView.refreshTreePanes();
 
@@ -155,11 +167,11 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
             horizontalTreeView.simpleRemoveAxis();
             horizontalTreeView.getRulerButton().setSelected(false);
         }
-
-
     }
 
-
+    /*
+     * Populate view tree pane list from model
+     */
     private void populateTreePanes() {
         horizontalTreeView.getTreePanes().clear();
 
@@ -175,6 +187,11 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         }
     }
 
+    /*
+     * Recursively fill out nodes on branch
+     * @param branchNode current node to update
+     * @param branchModel model for the node
+     */
     private void setTreeNodes(BranchNode branchNode, BranchModel branchModel) {
         if (branchModel.isAnnotation()) {
             branchNode.addAnnotation();
@@ -189,17 +206,13 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
         RichTextArea formulaRTA = branchNode.getFormulaBoxedDRTA().getRTA();
         formulaRTA.getActionFactory().open(branchModel.getFormulaDoc()).execute(new ActionEvent());
-
         formulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
-
-//        formulaRTA.setPrefWidth(branchModel.getFormulaPrefWidth());
 
         RichTextArea connectRTA = branchNode.getConnectorBoxedDRTA().getRTA();
         connectRTA.getActionFactory().open(branchModel.getConnectorDoc()).execute(new ActionEvent());
-
         connectRTA.getActionFactory().saveNow().execute(new ActionEvent());
 
-//        connectRTA.setPrefWidth(branchModel.getConnectorPrefWidth());
+
         if (!branchModel.isFormulaBranch()) branchNode.setStyle("-fx-border-color: white white white white; -fx-border-width: 0 0 0 0");
         if (branchModel.isIndefiniteNumBranch()) branchNode.setStyle("-fx-border-color: white white white white; -fx-border-width: 0 0 0 0");
 
@@ -212,6 +225,9 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         }
     }
 
+    /*
+     * Perform undo action
+     */
     private void undoAction() {
         HorizontalTreeModel undoElement = undoRedoList.getUndoElement();
         if (undoElement != null) {
@@ -221,6 +237,10 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
             horizontalTreeView.deselectToggles();
         }
     }
+
+    /*
+     * Perform redo action
+     */
     private void redoAction() {
         HorizontalTreeModel redoElement = undoRedoList.getRedoElement();
         if (redoElement != null) {
@@ -230,10 +250,18 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
             horizontalTreeView.deselectToggles();
         }
     }
+
+    /*
+     * Update undo/redo button disable based on undo redo stack
+     */
     private void updateUndoRedoButtons() {
         horizontalTreeView.getUndoButton().setDisable(!undoRedoList.canUndo());
         horizontalTreeView.getRedoButton().setDisable(!undoRedoList.canRedo());
     }
+
+    /*
+     * Push current state onto undo/redo stack
+     */
     private void pushUndoRedo() {
         HorizontalTreeModel model = getHorizontalTreeModelFromView();
         HorizontalTreeModel deepCopy = (HorizontalTreeModel) SerializationUtils.clone(model);
@@ -242,12 +270,24 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
     }
 
 
+    /**
+     * The Horizontal tree model
+     * @return the model
+     */
     @Override
     public HorizontalTreeModel getExerciseModel() { return horizontalTreeModel;  }
 
+    /**
+     * The horizontal tree view
+     * @return the view
+     */
     @Override
     public HorizontalTreeView getExerciseView() { return horizontalTreeView;  }
 
+    /**
+     * Save exercise to disk
+     * @param saveAs true if "save as" should be invoked, and otherwise false
+     */
     @Override
     public void saveExercise(boolean saveAs) {
         boolean success = DiskUtilities.saveExercise(saveAs, getHorizontalTreeModelFromView());
@@ -257,6 +297,10 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         }
     }
 
+    /**
+     * List of nodes to be sent to printer for this exercise
+     * @return the node list
+     */
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
@@ -366,7 +410,6 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         explainSepBox.setAlignment(Pos.CENTER);
         nodeList.add(explainSepBox);
 
-
         //comment node
         RichTextArea commentRTA = printExercise.getExerciseView().getExerciseComment().getEditor();
         commentRTA.prefHeightProperty().unbind();
@@ -380,6 +423,10 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         return nodeList;
     }
 
+    /**
+     * Return to the initial (unworked) version of the exercise, retaining the comment only.
+     * @return the initial exercise
+     */
     @Override
     public Exercise<HorizontalTreeModel, HorizontalTreeView> resetExercise() {
         RichTextArea commentRTA = horizontalTreeView.getExerciseComment().getEditor();
@@ -391,15 +438,34 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         return clearExercise;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @return true if exercise is modified, and otherwise false
+     */
     @Override
     public boolean isExerciseModified() {
         return exerciseModified || horizontalTreeView.isAnnotationModified();
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @param modified true if exercise is modified, and otherwise false
+     */
     @Override
     public void setExerciseModified(boolean modified) { exerciseModified = modified;   }
+
+    /**
+     * The view node to be displayed as a component of the free form exercise.  This will be a (possibly modified)
+     * portion of the regular exercise view.
+     * @return the view node
+     */
     @Override
     public Node getFFViewNode() {return horizontalTreeView.getMainPane();}
+
+    /**
+     * The node to be printed as a component of the free form exercise.
+     * @return the print node
+     */
     @Override
     public Node getFFPrintNode() {
         HorizontalTreeExercise printExercise = this;
@@ -451,11 +517,19 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         return contentHBox;
     }
 
+    /**
+     * Extract an {@link slapp.editor.main_window.ExerciseModel} from view of the exercise
+     * @return the exercise model
+     */
     @Override
     public ExerciseModel<HorizontalTreeModel> getExerciseModelFromView() {
         return (ExerciseModel) getHorizontalTreeModelFromView();
     }
 
+    /*
+     * Extract the horizontal tree model from view
+     * @return the model
+     */
     private HorizontalTreeModel getHorizontalTreeModelFromView() {
         HorizontalTreeModel model = new HorizontalTreeModel();
 
@@ -501,12 +575,15 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
 
             treeModels.add(treeModel);
         }
-
-
         return model;
     }
 
-    void setBranchModel(BranchModel model, BranchNode node) {
+    /*
+     * Recursively populate nodes on branch from view
+     * @param model the current branch model
+     * @param node the current branch node
+     */
+    private void setBranchModel(BranchModel model, BranchNode node) {
         model.setAnnotation(node.isAnnotation());
         model.setFormulaBranch(node.isFormulaNode());
         model.setIndefiniteNumBranch(node.isIndefiniteNode());
@@ -518,12 +595,10 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         RichTextArea formulaRTA = node.getFormulaBoxedDRTA().getRTA();
         formulaRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setFormulaDoc(formulaRTA.getDocument());
-//        model.setFormulaPrefWidth(formulaRTA.getPrefWidth());
 
         RichTextArea connectRTA = node.getConnectorBoxedDRTA().getRTA();
         connectRTA.getActionFactory().saveNow().execute(new ActionEvent());
         model.setConnectorDoc(connectRTA.getDocument());
-//        model.setConnectorPrefWidth(connectRTA.getPrefWidth());
 
         for (BranchNode dependentNode : node.getDependents()) {
             BranchModel dependentMod = new BranchModel();

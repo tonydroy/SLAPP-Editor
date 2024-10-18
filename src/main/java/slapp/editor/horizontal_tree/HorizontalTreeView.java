@@ -45,10 +45,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * View for the horizontal tree exercise
+ */
 public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
-
     private HorizontalTreeView self;
-
     private MainWindowView mainView;
     private DecoratedRTA exerciseComment = new DecoratedRTA();
     private DecoratedRTA exerciseStatement = new DecoratedRTA();
@@ -68,16 +69,8 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     private Spinner<Double> mainPaneHeightSpinner;
     private Spinner<Double> mainPaneWidthSpinner;
     private Node currentSpinnerNode;
-    VBox choicesBox;
-
-
-
-
     private AnchorPane mainPane;
-
-
     private VBox centerBox;
-
     private Button undoButton;
     private Button redoButton;
     public BooleanProperty undoRedoFlag = new SimpleBooleanProperty();
@@ -105,15 +98,14 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     private EventHandler dotsClickFilter;
     private EventHandler oneBranchTermClickFilter;
     private EventHandler twoBranchTermClickFilter;
-
     private Ruler axisNode;
-
-
     private boolean axis = false;
-
-
     private static BranchNode clickNode = null;
 
+    /**
+     * Construct the horizontal tree view
+     * @param mainView the main view
+     */
     HorizontalTreeView(MainWindowView mainView) {
         self = this;
         this.mainView = mainView;
@@ -124,7 +116,6 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
         centerBox = new VBox(3, mainPane, explainDRTA.getEditor());
         mainPane.setPadding(new Insets(5));
-
 
         undoButton = new Button("Undo");
         redoButton = new Button("Redo");
@@ -202,23 +193,19 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         indefiniteBranchToggle.setPrefWidth(64);
         indefiniteBranchToggle.setMinHeight(28);
         indefiniteBranchToggle.setMaxHeight(28);
+
         Line indefStub = new Line(0,6,3,6);
         Line indefBrack = new Line(3, 0,3, 12);
         Line indefLine = new Line(3,0,24,0);
-
         indefStub.setStyle("-fx-stroke-width: 1.5");
         indefBrack.setStyle("-fx-stroke-width: 1.5");
         indefLine.setStyle("-fx-stroke-width: 1.5");
-
         Line indefDots = new Line(10,4,10,14);
         indefDots.getStrokeDashArray().addAll(1.0,3.0);
         Group indefPane = new Group(indefStub, indefBrack, indefLine, indefDots);
-
         HBox indefHBox = new HBox(indefPane);
         indefHBox.setAlignment(Pos.CENTER);
         indefiniteBranchToggle.setAlignment(Pos.CENTER);
-
-
         indefiniteBranchToggle.setGraphic(indefPane);
         indefiniteBranchToggle.setTooltip(new Tooltip("Add indefinite branch to selected node"));
         indefiniteBranchToggle.setToggleGroup(buttonGroup);
@@ -309,7 +296,6 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
         axisNode = new Ruler();
         axisNode.setManaged(false);
-
         rulerButton = new ToggleButton();
         rulerButton.setPrefWidth(64);
         rulerButton.setMinHeight(28);
@@ -322,7 +308,6 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         tick1.setStyle("-fx-stroke-width: 0.75");
         tick2.setStyle("-fx-stroke-width: 0.75");
         tick3.setStyle("-fx-stroke-width: 0.75");
-
         Pane rulerPane = new Pane(ruler, tick1, tick2, tick3);
         HBox rulerHBox = new HBox(rulerPane);
         rulerHBox.setAlignment(Pos.CENTER);
@@ -336,19 +321,18 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         spacer.setMinWidth(5);
         spacer.setMaxWidth(5);
         controlBox.getChildren().addAll(undoButton, redoButton, formulaNodeToggle, oneBranchToggle, twoBranchToggle, threeBranchToggle, indefiniteBranchToggle, verticalDotsToggle, oneBranchTermToggle, twoBranchTermToggle, spacer, annotationBox, rulerButton);
-//        controlBox.setMargin(annotationBox, new Insets(0, 0, -20, 0));
-//        controlBox.setMargin(indefiniteBranchToggle, new Insets(12, 0, -10, 0));
         controlBox.setMargin(rulerButton, new Insets(-10, 0, 0, 0));
 
         controlBox.setAlignment(Pos.BASELINE_RIGHT);
         controlBox.setPadding(new Insets(20,20,0,20));
         controlBox.setMinWidth(150); controlBox.setMaxWidth(150);
-
         exerciseControlNode = controlBox;
-
     }
 
-    public void deselectToggles() {
+    /**
+     * Deselect all the toggle buttons
+     */
+    void deselectToggles() {
         formulaNodeToggle.setSelected(false);
         oneBranchToggle.setSelected(false);
         twoBranchToggle.setSelected(false);
@@ -360,8 +344,9 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         annotationToggle.setSelected(false);
     }
 
-
-
+    /**
+     * Initialize statement, comment, explain, main pane, and button click filters
+     */
     void initializeViewDetails() {
         //statement
         RichTextArea statementRTA = exerciseStatement.getEditor();
@@ -814,20 +799,30 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
 
     }
 
+    /**
+     * Add ruler axis to main pane
+     */
     void simpleAddAxis() {
         axis = true;
         mainPane.getChildren().add(0, axisNode);
         axisNode.setLayoutX(5.0);
 
     }
+
+    /**
+     * Remove ruler axis from main pane
+     */
     void simpleRemoveAxis() {
         axis = false;
         mainPane.getChildren().remove(axisNode);
     }
 
 
-
-    //dependents empty or all formulaNodes
+    /**
+     * There are formula dependents if (dependent list is empty or) all immediate children are formula nodes
+     * @param dependentList the list of dependents
+     * @return true if there are formula dependents and otherwise false
+     */
     boolean formulaDependents(ArrayList<BranchNode> dependentList) {
         boolean formulaDependents = true;
         for (BranchNode node : dependentList) {
@@ -840,6 +835,11 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     }
 
 
+    /**
+     * There are term dependents if (dependent list is empty or) all immediate children are term nodes
+     * @param dependentList the list of dependents
+     * @return true if there are term dependents and otherwise false
+     */
     //dependents empty or all termNodes
     boolean termDependents(ArrayList<BranchNode> dependentList) {
         boolean termDependents = true;
@@ -852,6 +852,11 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         return termDependents;
     }
 
+    /**
+     * Add or remove annotation fields on node and its children
+     * @param node the node
+     * @param add true if add, and otherwise (if remove) false
+     */
     void setAnnotations(BranchNode node, boolean add) {
         node.processAnnotationRequest(add);
         for (BranchNode child : node.getDependents()) {
@@ -859,7 +864,13 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         }
     }
 
-    public static boolean inHierarchy(Node node, Node potentialHierarchyElement) {
+    /**
+     * A node is inHierarchy if it is among the ancestors of a given node
+     * @param node the given (child node)
+     * @param potentialHierarchyElement the potential ancestor
+     * @return true if the potential ancestor is among the ancestors of the given node, and otherwise false
+     */
+    static boolean inHierarchy(Node node, Node potentialHierarchyElement) {
         if (potentialHierarchyElement == null) {
             return true;
         }
@@ -872,10 +883,21 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         return false;
     }
 
+    /**
+     * Identify branch node for mouse event among descendants of given node
+     * @param event the mouse event
+     * @param node the parent node
+     */
     void setClickedNode(MouseEvent event, BranchNode node) {
         clickNode = null;
         findClickNodeInTree(event, node);
     }
+
+    /**
+     * Recursively run through tree, to find selected branch node
+     * @param event the mouse event
+     * @param node the parent node
+     */
     void findClickNodeInTree(MouseEvent event, BranchNode node) {
         if ((inHierarchy(event.getPickResult().getIntersectedNode(), node))) {
             clickNode = node;
@@ -888,6 +910,9 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         }
     }
 
+    /**
+     * Refresh the main pane by refreshing tree panes and ruler axis
+     */
     void refreshTreePanes() {
         mainPane.getChildren().clear();
 
@@ -905,74 +930,173 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
         }
     }
 
-    public Button getUndoButton() {    return undoButton;  }
+    /**
+     * Button to undo last main action
+     * @return the button
+     */
+    Button getUndoButton() {    return undoButton;  }
 
-    public Button getRedoButton() {  return redoButton;  }
+    /**
+     * Button to redo last main action
+     * @return the button
+     */
+    Button getRedoButton() {  return redoButton;  }
 
-    public BooleanProperty undoRedoFlagProperty() {    return undoRedoFlag;    }
+    /**
+     * Boolean property which initiates an undo/redo push when it flips to true
+     * @return the boolean property
+     */
+    BooleanProperty undoRedoFlagProperty() {    return undoRedoFlag;    }
 
-    public void setUndoRedoFlag(boolean undoRedoFlag) {  this.undoRedoFlag.set(undoRedoFlag);  }
+    /**
+     * Boolean propertyh which initiates an undo/redo push when it flips to true
+     * @param undoRedoFlag the boolean value
+     */
+    void setUndoRedoFlag(boolean undoRedoFlag) {  this.undoRedoFlag.set(undoRedoFlag);  }
 
-    public ToggleButton getRulerButton() {    return rulerButton;  }
+    /**
+     * Button to add or remove ruler from main pane
+     * @return the button
+     */
+    ToggleButton getRulerButton() {    return rulerButton;  }
 
-    public MainWindowView getMainView() { return mainView; }
+    /**
+     * The MainWindowView
+     * @return the view
+     */
+    MainWindowView getMainView() { return mainView; }
 
-    public DecoratedRTA getExplainDRTA() { return explainDRTA; }
+    /**
+     * The DecoratedRTA for the explain field
+     * @return the DRTA
+     */
+    DecoratedRTA getExplainDRTA() { return explainDRTA; }
 
-    public void setExplainPrompt(String explainPrompt) {  this.explainPrompt = explainPrompt; }
+    /**
+     * The prompt for the explain field
+     * @param explainPrompt the String prompt
+     */
+    void setExplainPrompt(String explainPrompt) {  this.explainPrompt = explainPrompt; }
 
-    public AnchorPane getMainPane() { return mainPane;}
+    /**
+     * The main (drawing) pain containing tree and ruler panes
+     * @return the pane
+     */
+    AnchorPane getMainPane() { return mainPane;}
 
-    public boolean isAxis() {   return axis; }
+    /**
+     * True if ruler axis is showing and otherwise false
+     * @return the boolean value
+     */
+    boolean isAxis() {   return axis; }
 
-    public void setAxis(boolean axis) {    this.axis = axis;   }
+    /**
+     * List of TreePanes to show on the main pane
+     * @return the list
+     */
+    List<TreePane> getTreePanes() { return treePanes;   }
 
-    public List<TreePane> getTreePanes() { return treePanes;   }
+    /**
+     * True if an annotation field on a branch node is modified, and otherwise false
+     * @return the boolean value
+     */
+    boolean isAnnotationModified() {    return annotationModified;  }
 
-    public boolean isAnnotationModified() {    return annotationModified;  }
+    /**
+     * True if an annotation field on a branch node is modified, and otherwise false
+     * @param annotationModified the boolean value
+     */
+    void setAnnotationModified(boolean annotationModified) {      this.annotationModified = annotationModified;  }
 
-    public void setAnnotationModified(boolean annotationModified) {      this.annotationModified = annotationModified;  }
+    /**
+     * The preferred height of the comment field
+     * @return the height value
+     */
+    double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight();   }
 
-    public Ruler getAxisNode() {     return axisNode; }
-    public double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight();   }
+    /**
+     * The preferred height of the comment field
+     * @param commentPrefHeight the height value
+     */
+    void setCommentPrefHeight(double commentPrefHeight) {   this.commentPrefHeight = commentPrefHeight;  }
 
-    public void setCommentPrefHeight(double commentPrefHeight) {   this.commentPrefHeight = commentPrefHeight;  }
+    /**
+     * The preferred height of the explanation field
+     * @return the height value
+     */
+    double getExplainPrefHeight() { return explainDRTA.getEditor().getPrefHeight();    }
 
-    public double getExplainPrefHeight() { return explainDRTA.getEditor().getPrefHeight();    }
+    /**
+     * The preferred height of the explanation field
+     * @param explainPrefHeight the height value
+     */
+    void setExplainPrefHeight(double explainPrefHeight) {   this.explainPrefHeight = explainPrefHeight;  }
 
-    public void setExplainPrefHeight(double explainPrefHeight) {   this.explainPrefHeight = explainPrefHeight;  }
-
-
-
+    /**
+     * The comment decoratedRTA
+     * @return comment DecoratedRTA
+     */
     @Override
     public DecoratedRTA getExerciseComment() { return exerciseComment;  }
 
+    /**
+     * The comment decoratedRTA
+     * @param exerciseComment DecoratedRTA
+     */
     @Override
     public void setExerciseComment(DecoratedRTA exerciseComment) { this.exerciseComment = exerciseComment;  }
 
+    /**
+     * The exercise prompt
+     * @return the statement decorated RTA (T)
+     */
     @Override
     public DecoratedRTA getExerciseStatement() { return exerciseStatement; }
 
+    /**
+     * The exercise prompt
+     * @param exerciseStatement the statement decorated RTA (T)
+     */
     @Override
     public void setExerciseStatement(DecoratedRTA exerciseStatement) { this.exerciseStatement = exerciseStatement;  }
 
+    /**
+     * The exercise prompt node (RTA)
+     * @return the statement node
+     */
     @Override
     public Node getExerciseStatementNode() { return exerciseStatement.getEditor();  }
 
+    /**
+     * The preferred height of the statement window
+     * @param height the preferred height
+     */
     @Override
     public void setStatementPrefHeight(double height) {
         statementPrefHeight = height;
         exerciseStatement.getEditor().setPrefHeight(height);
     }
 
+    /**
+     * The node which includes content of this exercise
+     * @return the content node
+     */
     @Override
     public Node getExerciseContentNode() { return centerBox; }
 
+    /**
+     * The left control node for this exercise
+     * @return the control node
+     */
     @Override
     public Node getExerciseControl() { return exerciseControlNode;  }
+
+    /**
+     * The (null) right control node for this exercise
+     * @return the control node
+     */
     @Override
     public Node getRightControl() { return null; }
-
 
 
 }

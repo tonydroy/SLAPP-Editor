@@ -28,10 +28,12 @@ import slapp.editor.EditorMain;
 import slapp.editor.vertical_tree.drag_drop.DragContainer;
 import slapp.editor.vertical_tree.drag_drop.Point2dSerial;
 
+/**
+ * Pane containing a simple root branch node (and so single tree structure)
+ */
 public class TreePane extends Pane {
 
     TreePane self;
-
     HorizontalTreeView horizontalTreeView;
     BranchNode rootBranchNode;
     Label leftDragLabel;
@@ -41,6 +43,10 @@ public class TreePane extends Pane {
     private boolean numberAxis = false;
 
 
+    /**
+     * Construct Tree Pane with a single root branch node
+     * @param horizontalTreeView the horizontal tree view
+     */
     TreePane(HorizontalTreeView horizontalTreeView) {
         self = this;
         this.horizontalTreeView = horizontalTreeView;
@@ -66,10 +72,12 @@ public class TreePane extends Pane {
         rootBranchNode.getChildren().add(0, leftDragLabel);
         rootBranchNode.setPadding(new Insets(0, 4, 0, 0));
 
-
         buildNodeDragHandlers();
     }
 
+    /**
+     * Redraw tree on pane, moving pane to keep rootBranchNode in the same visual position (if possible)
+     */
     void refresh() {
 
         double startX = rootBranchNode.getLayoutX();
@@ -88,11 +96,14 @@ public class TreePane extends Pane {
         if (newY < 5.0) self.setLayoutY(5.0001);
     }
 
-
+    /**
+     * Processing for drag event
+     */
     public void buildNodeDragHandlers() {
+
+        //process drag event (keeping pane within upper bound of window)
         mContextDragOver = new EventHandler<DragEvent>() {
 
-            //dragover to handle node dragging in the right pane view
             @Override
             public void handle(DragEvent event) {
 
@@ -108,9 +119,8 @@ public class TreePane extends Pane {
             }
         };
 
-        //dragdrop for node dragging
+        //process drag dropped
         mContextDragDropped = new EventHandler <DragEvent> () {
-
             @Override
             public void handle(DragEvent event) {
 
@@ -118,7 +128,7 @@ public class TreePane extends Pane {
                 getParent().setOnDragDropped(null);
                 event.setDropCompleted(true);
 
-                relocateToGridPoint(new Point2D(event.getX(), event.getY()));
+ //               relocateToGridPoint(new Point2D(event.getX(), event.getY()));
                 relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));
 
                 horizontalTreeView.setUndoRedoFlag(true);
@@ -128,22 +138,17 @@ public class TreePane extends Pane {
             }
         };
 
-
-
-
+        //for drag detected on left drag label
         leftDragLabel.setOnDragDetected ( new EventHandler <MouseEvent> () {
             @Override
             public void handle(MouseEvent event) {
-
 
                 getParent().setOnDragOver(null);
                 getParent().setOnDragDropped(null);
                 getParent().setOnDragOver (mContextDragOver);
                 getParent().setOnDragDropped (mContextDragDropped);
 
-
                 //begin drag ops
- //               mDragOffset = new Point2D(event.getX(), event.getY());
 
                 if (self.getLayoutY() > 5.0) {
                     relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));
@@ -151,8 +156,6 @@ public class TreePane extends Pane {
                 else {
                     relocateToGridPoint(new Point2D(event.getX(), 5.001));
                 }
-
-
 
                 ClipboardContent content = new ClipboardContent();
                 DragContainer container = new DragContainer();
@@ -163,7 +166,6 @@ public class TreePane extends Pane {
                 Dragboard db = startDragAndDrop(TransferMode.MOVE);
                 db.setDragView(EditorMain.emptyImage);
                 db.setContent(content);
-      //          startDragAndDrop (TransferMode.ANY).setContent(content);
                 event.consume();
             }
 
@@ -171,32 +173,28 @@ public class TreePane extends Pane {
 
     }
 
-
-    public void relocateToGridPoint(Point2D p) {
-        //for object dropped onto pane
-        relocate ((int) p.getX(), p.getY());
-//        Point2D localCoords = getParent().sceneToLocal(p);
-//        relocate ((int) localCoords.getX(),  (int) localCoords.getY() );
-    }
-
-    public void relocateToPoint (Point2D p) {
-
-        //relocates the object to a point that has been converted to
-        //scene coordinates
+    /*
+     * Given scene coordinates, relocate
+     * @param p
+     */
+    private void relocateToPoint (Point2D p) {
         Point2D localCoords = getParent().sceneToLocal(p);
-
-
-        //       double localY = Math.round(localCoords.getY() / 24.0) * 24.0;
-
-        relocate (
-                (int) localCoords.getX(),
-                //           (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
-                (int) ((localCoords.getY() - (getBoundsInLocal().getHeight()) / 2 ))
-        );
+        relocate ( (int) localCoords.getX(),  (int) ((localCoords.getY() - (getBoundsInLocal().getHeight()) / 2 ))  );
     }
 
+    /**
+     * Relocate to given coordinates in parent
+     * @param p the point
+     */
+    void relocateToGridPoint(Point2D p) {
+        relocate ((int) p.getX(), p.getY());
+    }
 
-    public BranchNode getRootBranchNode() { return rootBranchNode; }
+    /**
+     * The branch node (containing the tree structure)
+     * @return the node
+     */
+    BranchNode getRootBranchNode() { return rootBranchNode; }
 
 
 

@@ -20,7 +20,10 @@ import com.gluonhq.richtextarea.model.Document;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class BranchModel implements Serializable {
+/**
+ * Model for node which may itself have child nodes -- and so constitute a branching structure
+ */
+class BranchModel implements Serializable {
     private static final long serialVersionUID = 100L;
     private boolean annotation;
     private boolean formulaBranch;
@@ -29,53 +32,111 @@ public class BranchModel implements Serializable {
     private boolean rootBranch;
     private String annotationText;
     private Document formulaDoc;
-//    private double formulaPrefWidth;
     private Document connectorDoc;
-//    private double connectorPrefWidth;
     private ArrayList<BranchModel> dependents = new ArrayList<>();
 
 
+    /**
+     * The list of child nodes
+      * @return the list
+     */
+    ArrayList<BranchModel> getDependents() {   return dependents;  }
 
-    public ArrayList<BranchModel> getDependents() {   return dependents;  }
+    /**
+     * True if the node includes an annotation field and otherwise false.
+     * @param annotation the boolean value
+     */
+    void setAnnotation(boolean annotation) {    this.annotation = annotation;   }
 
-    public void setAnnotation(boolean annotation) {    this.annotation = annotation;   }
+    /**
+     * True if node includes an annotation field and otherwise false.
+     * @return the boolean value
+     */
+    boolean isAnnotation() {     return annotation;  }
 
-    public boolean isAnnotation() {     return annotation;  }
+    /**
+     * True if node is for a formula field and otherwise (if term branch) false
+     * @param formulaBranch the boolean value
+     */
+    void setFormulaBranch(boolean formulaBranch) {    this.formulaBranch = formulaBranch;  }
 
-    public void setFormulaBranch(boolean formulaBranch) {    this.formulaBranch = formulaBranch;  }
+    /**
+     * True is node is for formula field and otherwise (if term branch) false3
+     * @return the boolean value
+     */
+    boolean isFormulaBranch() {     return formulaBranch;  }
 
-    public boolean isFormulaBranch() {     return formulaBranch;  }
+    /**
+     * True if node holds just the three vertical dots and otherwise false
+     * @param indefiniteNumBranch the boolean value
+     */
+    void setIndefiniteNumBranch(boolean indefiniteNumBranch) {   this.indefiniteNumBranch = indefiniteNumBranch;   }
 
-    public void setIndefiniteNumBranch(boolean indefiniteNumBranch) {   this.indefiniteNumBranch = indefiniteNumBranch;   }
+    /**
+     * True if node holds just the three vertical dots and otherwise false
+     * @return the boolean value3
+     */
+    boolean isIndefiniteNumBranch() {   return indefiniteNumBranch;  }
 
-    public boolean isIndefiniteNumBranch() {   return indefiniteNumBranch;  }
+    /**
+     * True if node includes the vertical (formula/term) dotted divider
+     * @param dotDivider the boolean value
+     */
+    void setDotDivider(boolean dotDivider) {    this.dotDivider = dotDivider;  }
 
-    public void setDotDivider(boolean dotDivider) {    this.dotDivider = dotDivider;  }
+    /**
+     * True if node includes the (formula/term) dotted divider
+     * @return the boolean value
+     */
+    boolean isDotDivider() { return dotDivider; }
 
-    public boolean isDotDivider() { return dotDivider; }
+    /**
+     * True if this is a root node (not a child)
+     * @param rootBranch the boolean value
+     */
+    void setRootBranch(boolean rootBranch) {   this.rootBranch = rootBranch;   }
 
-    public void setRootBranch(boolean rootBranch) {   this.rootBranch = rootBranch;   }
+    /**
+     * True if this is a root node (not a child)
+     * @return the boolean value
+     */
+    boolean isRootBranch() {  return rootBranch;  }
 
-    public boolean isRootBranch() {  return rootBranch;  }
+    /**
+     * Annotation text for this node (if there is an annotation)
+     * @param annotationText the String text
+     */
+    void setAnnotationText(String annotationText) {     this.annotationText = annotationText;   }
 
-    public void setAnnotationText(String annotationText) {     this.annotationText = annotationText;   }
+    /**
+     * Annotation text for this node (if there is an annotation)
+     * @return the string text
+     */
+    String getAnnotationText() {    return annotationText;  }
 
-    public String getAnnotationText() {    return annotationText;  }
+    /**
+     * The Document for the formula or term at this node
+     * @param formulaDoc The Document
+     */
+    void setFormulaDoc(Document formulaDoc) {     this.formulaDoc = formulaDoc;   }
 
-    public void setFormulaDoc(Document formulaDoc) {     this.formulaDoc = formulaDoc;   }
+    /**
+     * The Document for the formula or term at this node
+     * @return the Document
+     */
+    Document getFormulaDoc() {    return formulaDoc;   }
 
-    public Document getFormulaDoc() {    return formulaDoc;   }
 
-//    public void setFormulaPrefWidth(double formulaPrefWidth) {     this.formulaPrefWidth = formulaPrefWidth;   }
+    /**
+     * The Document for the connector at this node (if it is a formula node)
+     * @param connectorDoc the Document
+     */
+    void setConnectorDoc(Document connectorDoc) {    this.connectorDoc = connectorDoc;   }
 
-//    public double getFormulaPrefWidth() {     return formulaPrefWidth; }
-
-    public void setConnectorDoc(Document connectorDoc) {    this.connectorDoc = connectorDoc;   }
-
-    public Document getConnectorDoc() {    return connectorDoc;  }
-
-//    public double getConnectorPrefWidth() {    return connectorPrefWidth;  }
-
-//    public void setConnectorPrefWidth(double connectorPrefWidth) {     this.connectorPrefWidth = connectorPrefWidth;  }
+    /**
+     * The Documment for the connector at this node (if it is a formula node)
+     * @return the Document
+     */
+    Document getConnectorDoc() {    return connectorDoc;  }
 
 }

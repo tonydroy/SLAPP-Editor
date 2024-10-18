@@ -23,28 +23,34 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 
+//JavaFX NumberAxis is not right as its tick gap, rather than number of ticks, changes with width
+
+/**
+ * Pane with ruler line to appear at top of horizontal tree window
+ */
 public class Ruler extends Pane {
     double tickGap = 20.0;
 
-    DoubleProperty rulerWidth = new SimpleDoubleProperty();
-
+    /**
+     * Create the ruler pane
+     */
     public Ruler() {
         this.setPadding(new Insets(5, 0, 0, 0));
     }
 
-
+    /**
+     * Update the ruler based on the desired witdth
+     * @param width the width value
+     */
     public void updateRuler(double width) {
         this.getChildren().clear();
         width = width - 10;
 
-
         int totalTicks = (int)(width/tickGap);
-
 
         Line axis = new Line(0,0, width,0);
         axis.setStyle("-fx-stroke-width: 1.2; -fx-stroke: grey");
         this.getChildren().add(axis);
-
 
         for (int tickCount = 0; tickCount <= totalTicks; tickCount++) {
             double xPos = tickCount * tickGap;

@@ -1089,8 +1089,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
     public Node getFFViewNode() {return derivationView.getExerciseContentNode();}
 
     /**
-     * The node to be printed as a component of the free form exercise.  This will be a (possibly modified)
-     * portion of the regular print nodes.
+     * The node to be printed as a component of the free form exercise.
      * @return the print node
      */
     @Override

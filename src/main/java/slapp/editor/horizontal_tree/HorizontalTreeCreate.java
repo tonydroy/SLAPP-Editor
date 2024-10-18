@@ -50,8 +50,10 @@ import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
+/**
+ * Create window for horizontal tree exercise
+ */
 public class HorizontalTreeCreate {
-
     private MainWindow mainWindow;
     private RichTextArea statementRTA;
     private DecoratedRTA statementDRTA;
@@ -76,10 +78,20 @@ public class HorizontalTreeCreate {
     private BorderPane borderPane;
 
 
+    /**
+     * Create new horizontal tree exercise
+     * @param mainWindow the main window
+     */
     public HorizontalTreeCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
+
+    /**
+     * Open create window for existing exercise
+     * @param mainWindow the main window
+     * @param originalModel the model for the exercise to be modified
+     */
     public HorizontalTreeCreate(MainWindow mainWindow, HorizontalTreeModel originalModel) {
         this(mainWindow);
 
@@ -92,6 +104,9 @@ public class HorizontalTreeCreate {
         fieldModified = false;
     }
 
+    /*
+     * Set up the create window
+     */
     private void setupWindow() {
         borderPane = new BorderPane();
 
@@ -229,36 +244,11 @@ public class HorizontalTreeCreate {
         sizeToolBar.setPrefHeight(38);
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
 
-        /*
-        ToolBar editToolbar = statementDRTA.getKbdSelectorToolbar();
-        ToolBar fontsToolbar = statementDRTA.getEditToolbar();
-        ToolBar paragraphToolbar = statementDRTA.getParagraphToolbar();
-        ToolBar kbdDiaToolBar = statementDRTA.getKbdDiaToolbar();
-        kbdDiaToolBar.setPrefHeight(38);
-
-        if (kbdDiaToolBar.getItems().isEmpty()) {
-            kbdDiaToolBar.getItems().addAll(statementDRTA.getKeyboardDiagramButton());
-        }
-
-        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
-        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
-
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, topFieldsBox);
-//        topBox.layout();
-        borderPane.topProperty().setValue(topBox);
-
-        borderPane.setTop(topBox);
-
-         */
-
         stage = new Stage();
         stage.initOwner(EditorMain.mainStage);
         stage.setScene(scene);
         stage.setTitle("Create Horizontal Tree Explain Exercise:");
         stage.getIcons().addAll(EditorMain.icons);
-
-
-
         stage.setWidth(860);
         stage.setHeight(700);
 
@@ -278,6 +268,9 @@ public class HorizontalTreeCreate {
         Platform.runLater(() -> nameField.requestFocus());
     }
 
+    /*
+     * update zoom setting
+     */
     private void updateZoom() {
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
@@ -290,6 +283,9 @@ public class HorizontalTreeCreate {
         keyboardDiagram.update();
     }
 
+    /*
+     * Bind vertical height of statement field to window size
+     */
     private void setCenterVgrow() {
         double fixedHeight = helpArea.getHeight() * scale + 400;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
@@ -300,6 +296,9 @@ public class HorizontalTreeCreate {
         statementRTA.prefHeightProperty().bind(centerHeightProperty);
     }
 
+    /*
+     * Check for changes and close
+     */
     private void closeWindow() {
         if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
             mainWindow.closeExercise();
@@ -307,18 +306,25 @@ public class HorizontalTreeCreate {
         }
     }
 
+    /*
+     * Clear create window, leaving just the prompt intact
+     */
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-   //         statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
             statementRTA.getActionFactory().newDocumentNow().execute(new ActionEvent());
-   //         statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
             fieldModified = false;
         }
     }
 
+    /*
+     * If exercise modified, check for continue
+     * @param title String title of confirmation box
+     * @param content String content of confirmation box
+     * @return true if ok to continue, and otherwise false
+     */
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
         if (fieldModified || statementRTA.isModified()) {
@@ -329,6 +335,9 @@ public class HorizontalTreeCreate {
         return okcontinue;
     }
 
+    /*
+     * View the exercise as currently constructed
+     */
     private void viewExercise() {
         HorizontalTreeModel model = extractModelFromWindow();
         HorizontalTreeExercise exercise = new HorizontalTreeExercise(model, mainWindow);
@@ -339,6 +348,10 @@ public class HorizontalTreeCreate {
         mainWindow.setUpExercise(exercise);
     }
 
+    /*
+     * Save the currently constructed exercise to disk
+     * @param saveAs true to open save as window and otherwise false
+     */
     private void saveExercise(boolean saveAs) {
         saveButton.setDisable(true);
         saveAsButton.setDisable(true);
@@ -357,6 +370,10 @@ public class HorizontalTreeCreate {
         fieldModified = false;
     }
 
+    /*
+     * Get the horizontal tree model for the currently constructed exercise
+     * @return the horizontal tree model
+     */
     private HorizontalTreeModel extractModelFromWindow() {
         HorizontalTreeModel model = new HorizontalTreeModel();
         model.setExerciseName(nameField.getText());
@@ -369,6 +386,11 @@ public class HorizontalTreeCreate {
         return model;
     }
 
+    /*
+     * Update keyboard diagram and edit controls to currently selected DRTA
+     * @param decoratedRTA the DRTA
+     * @param control the {slapp.editor.main_window.ControlType}
+     */
     private void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
@@ -409,6 +431,9 @@ public class HorizontalTreeCreate {
         borderPane.topProperty().setValue(topBox);
     }
 
+    /*
+     * With text field in focus, set disabled DRTA controls
+     */
     private void textFieldInFocus() {
         editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }
