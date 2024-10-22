@@ -15,9 +15,8 @@ You should have received a copy of the GNU General Public License along with SLA
 
 package slapp.editor.main_window.media_player;
 
+import javafx.scene.layout.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
@@ -33,6 +32,7 @@ import java.net.UnknownHostException;
  * Media view / menu bar combined into border pane
  */
 public class Player extends BorderPane {
+
     Media media;
     MediaPlayer player;
     MediaView view;
@@ -66,9 +66,16 @@ public class Player extends BorderPane {
 
         // inorder to add the view
         setCenter(mpane);
-        bar = new MediaBar(player); // Passing the player to MediaBar
+
+        bar = new MediaBar(this);
+//        bar = new MediaBar(player); // Passing the player to MediaBar
+
         setBottom(bar); // Setting the MediaBar at bottom
         setStyle("-fx-background-color:#bfc2c7"); // Adding color to the mediabar
+
+
+
+
 
 
         player.setOnReady(new Runnable() {
@@ -102,4 +109,6 @@ public class Player extends BorderPane {
     public MediaPlayer getPlayer() {
         return player;
     }
+
+    public Pane getMpane() { return mpane; }
 }

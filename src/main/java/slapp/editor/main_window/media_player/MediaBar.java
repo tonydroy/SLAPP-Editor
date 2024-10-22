@@ -30,6 +30,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 
 /**
  * Control bar across bottom of player
@@ -39,20 +42,34 @@ public class MediaBar extends HBox {
     // introducing Sliders
     Slider time = new Slider(); // Slider for time
     Slider vol = new Slider(); // Slider for volume
-    Button PlayButton = new Button("||"); // For pausing the player
+    Button PlayButton;
     Label volume = new Label("Volume: ");
     MediaPlayer player;
     Label totalTime = new Label("");
+    Player myPlayer;
+
+    Font iconFont;
 
     /**
      * Create media bar
      *
-     * @param play the media player to which the bar applies
+     * @param myPlayer the media player to which the bar applies
      */
-    public MediaBar(MediaPlayer play)
+
+    public MediaBar(Player myPlayer)
+//    public MediaBar(MediaPlayer play)
     { // Default constructor taking
         // the MediaPlayer object
-        player = play;
+        this.myPlayer = myPlayer;
+        player = myPlayer.getPlayer();
+
+        PlayButton = new Button();
+        iconFont = Font.font("la-solid-900", FontWeight.BOLD, FontPosture.REGULAR, 12);
+        PlayButton.setFont(iconFont);
+        PlayButton.setText("\uf04c");
+
+
+
 
 
 
@@ -76,33 +93,20 @@ public class MediaBar extends HBox {
         getChildren().add(volume); // volume slider
         getChildren().add(vol);
 
-        // Adding Functionality
-        // to play the media player
-        PlayButton.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e)
-            {
-                Status status = player.getStatus(); // To get the status of Player
-                if (status == status.PLAYING) {
+        setPrefHeight(60);
+        setMinHeight(60);
+        setMaxHeight(60);
 
-                    // If the status is Video playing
-                    if (player.getCurrentTime().greaterThanOrEqualTo(player.getTotalDuration())) {
 
-                        // If the player is at the end of video
-                        player.seek(player.getStartTime()); // Restart the video
-                        player.play();
-                    }
-                    else {
-                        // Pausing the player
-                        player.pause();
 
-                        PlayButton.setText(">");
-                    }
-                } // If the video is stopped, halted or paused
-                if (status == Status.HALTED || status == Status.STOPPED || status == Status.PAUSED) {
-                    player.play(); // Start the video
-                    PlayButton.setText("||");
-                }
-            }
+        // Adding Functionality to play the media player
+
+        PlayButton.setOnAction(e -> {
+            playPause();
+        });
+
+        myPlayer.getMpane().setOnMousePressed(e -> {
+            playPause();
         });
 
         // Providing functionality to time slider
@@ -137,6 +141,34 @@ public class MediaBar extends HBox {
     }
 
     // Outside the constructor
+
+    private void playPause() {
+        Status status = player.getStatus(); // To get the status of Player
+        if (status == status.PLAYING) {
+
+            // If the status is Video playing
+            if (player.getCurrentTime().greaterThanOrEqualTo(player.getTotalDuration())) {
+
+                // If the player is at the end of video
+                player.seek(player.getStartTime()); // Restart the video
+                player.play();
+            }
+            else {
+                // Pausing the player
+                player.pause();
+                PlayButton.setText("\uf04b");
+
+
+         //       PlayButton.setText(">");
+            }
+        } // If the video is stopped, halted or paused
+        if (status == Status.HALTED || status == Status.STOPPED || status == Status.PAUSED) {
+            player.play(); // Start the video
+       //     PlayButton.setText("||");
+            PlayButton.setText("\uf04c");
+
+        }
+    }
 
     /**
      * Move slider as video plays

@@ -27,6 +27,10 @@ import slapp.editor.decorated_rta.ExtractSubText;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Generate from fromula Document list of truth table Text column head items.  Parses even in context where basic
+ * sentences are not from a sentential language
+ */
 public class ParseDocForTTable {
     private static List<TableHeadItem> headItems = new ArrayList<>();
     private List<String> unaryOperators;
@@ -38,6 +42,11 @@ public class ParseDocForTTable {
     private int formulaLength;
     private ColumnConstraints constraints;
 
+    /**
+     * Construct the parser based on lists of sentential operators
+     * @param unaryOperators the unary operator String list
+     * @param binaryOperators the binary operator String list
+     */
     public ParseDocForTTable(List unaryOperators, List binaryOperators ) {
         this.unaryOperators = unaryOperators;
         this.binaryOperators = binaryOperators;
@@ -47,6 +56,11 @@ public class ParseDocForTTable {
 
     }
 
+    /**
+     * Populate the list of table head items
+     * @param document The Document from which to extract the items
+     * @return the head item list
+     */
     public List<TableHeadItem> generateHeadItems(Document document) {
         headItems.clear();
         start = 0;
@@ -73,10 +87,13 @@ public class ParseDocForTTable {
         return headItems;
     }
 
+    /*
+     * Current character is an operator
+     * @param c the current character
+     */
     private void operatorSequence(char c) {
         TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
         flow.setTextAlignment(TextAlignment.CENTER);
-
 
         if (isBinaryOperator(c)) {
             flow.getChildren().add(0, new Text(" "));
@@ -87,6 +104,9 @@ public class ParseDocForTTable {
         start = start + span;
     }
 
+    /*
+     * Current character is an open bracket
+     */
     private void openBracketSequence() {
 
         while (start + span < formulaLength && isOpenBracket(formulaString.charAt(start + span))) {
@@ -115,6 +135,9 @@ public class ParseDocForTTable {
         start = start + span;
     }
 
+    /*
+     * Current character is a relation symbol
+     */
     private void relationSequence() {
         while (start + span < formulaLength && isRelationChar(formulaString.charAt(start + span))) {
             span++;
@@ -132,23 +155,36 @@ public class ParseDocForTTable {
         while (start + span < formulaLength && isCloseBracket(formulaString.charAt(start + span))) {
             span++;
         }
-
-
         TextFlow flow = ExtractSubText.getTextFromDoc(start, span, doc);
         flow.setTextAlignment(TextAlignment.CENTER);
-
-
         TableHeadItem headItem = new TableHeadItem(flow, constraints);
         headItems.add(headItem);
         start = start + span;
     }
 
+    /*
+     * An open bracket is one of '(' or '['
+     * @param c the character to evaluate
+     * @return true if is open bracket, and otherwise false
+     */
     private boolean isOpenBracket(char c) {
         return (c == '(' || c == '[');
     }
+
+    /*
+     * A close bracket is one of ')' or ']'
+     * @param c the character to evaluate
+     * @return true if is close bracket, and otherwise false
+     */
     private boolean isCloseBracket(char c) {
         return (c == ')' || c == ']');
     }
+
+    /*
+     * The list of unary operators isa parameter to the constructor
+     * @param c the character to evaluate
+     * @return true if unary operator, and otherwise false
+     */
     private boolean isUnaryOperator(char c) {
         boolean isUnaryOperator = false;
         for (String ops : unaryOperators) {
@@ -157,6 +193,12 @@ public class ParseDocForTTable {
         }
         return isUnaryOperator;
     }
+
+    /*
+     * The list of binary operators is a parameter to the constructor
+     * @param c the character to evaluate
+     * @return true if binary operator, and otherwise false
+     */
     private boolean isBinaryOperator(char c) {
         boolean isBinaryOperator = false;
         for (String ops : binaryOperators) {
@@ -165,18 +207,42 @@ public class ParseDocForTTable {
         }
         return isBinaryOperator;
     }
+
+    /*
+     * A symbol is an operator if it is a unary or binary sentential operator
+     * @param c the character to evaluate
+     * @return true if operator, and otherwise false
+     */
     private boolean isOperator(char c) {
         return (isBinaryOperator(c) || isUnaryOperator(c));
     }
+
+    /*
+     * A relation character is one that is not a bracket or an operator
+     * @param c the character to evaluate
+     * @return true if relation symbol and otherwise false
+     */
     private boolean isRelationChar(char c) {
         return (!isOpenBracket(c) && !isCloseBracket(c) && !isOperator(c)  );
     }
+
+    /*
+     * A bracket pair matches if they are '('  and ')' or '[' and ']'
+     * @param open the 'open' character
+     * @param test the 'close' character to test
+     * @return true if matching pair and otherwise false
+     */
     private boolean isMatchingBracket(char open, char test) {
         boolean match = false;
         if (open == '(' && test == ')') match = true;
         if (open == '[' && test == ']') match = true;
         return match;
     }
+
+    /*
+     * Increase span from an open bracket to its mate
+     * @param c the starting character
+     */
     private void bracketMatch(char c) {
         if (isOpenBracket(c)) {
             int count = 1;

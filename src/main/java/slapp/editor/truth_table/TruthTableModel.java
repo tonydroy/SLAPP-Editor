@@ -23,13 +23,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Model for the truth table exercise
+ */
 public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     private static final long serialVersionUID = 100L;
     private String exerciseName = new String("");
     private ExerciseType exerciseType = ExerciseType.TRUTH_TABLE;
     private ExerciseModel<Document> originalModel = null;
     private boolean started = false;
-
     private Document exerciseStatement = new Document();
     private double statementPrefHeight = 80;
     private double statementTextHeight = 0;
@@ -43,15 +45,20 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     private List<Document> basicFormulas = new ArrayList<>();
     private String[][]  tableValues;   //[w][h]
     private double gridWidth;
-
     private Document[] rowComments; //[h]
     private boolean[] columnHighlights; //[w]
     private boolean conclusionDivider = false;
     private int tableRows = 0;
 
-
+    /**
+     * Construct truth table model
+     */
     public TruthTableModel(){}
 
+    /**
+     * Fill in empty values for table contents
+     * @param columns number of table columns
+     */
     void setEmptyTableContents(int columns) {
         String[][] mainValues = new String[columns][tableRows];
         for (int i = 0; i < columns; i++) {
@@ -76,52 +83,118 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
         rowComments = cmts;
     }
 
+    /**
+     * The exercise name (doubles as file name)
+     * @param exerciseName the string name
+     */
+    void setExerciseName(String exerciseName) {     this.exerciseName = exerciseName;   }
 
-    void setExerciseName(String exerciseName) {
-        this.exerciseName = exerciseName;
-    }
+    /**
+     * The Document for the exercise prompt field
+     * @param exerciseStatement the Document
+     */
+    void setExerciseStatement(Document exerciseStatement) {     this.exerciseStatement = exerciseStatement;   }
 
-    void setExerciseStatement(Document exerciseStatement) {
-        this.exerciseStatement = exerciseStatement;
-    }
+    /**
+     * The array Document[] of row comments
+     * @param rowComments the array
+     */
+    void setRowComments(Document[] rowComments) {     this.rowComments = rowComments;   }
 
-    void setUnaryOperators(List<String> unaryOperators) {
-        this.unaryOperators = unaryOperators;
-    }
+    /**
+     * The number of (non-header, footer) rows for this table
+     * @param tableRows the rows value
+     */
+    void setTableRows(int tableRows) { this.tableRows = tableRows;  }
 
-    void setBinaryOperators(List<String> binaryOperators) {
-        this.binaryOperators = binaryOperators;
-    }
+    /**
+     * The number of (non-header, footer) rows for this table
+     * @return the rows value
+     */
+    int getTableRows() { return tableRows; }
 
-    void setMainFormulas(List<Document> mainFormulas) {
-        this.mainFormulas = mainFormulas;
-    }
+    /**
+     * The array Document[] of comments on the rows
+     * @return the array
+     */
+    Document[] getRowComments() { return rowComments;}
 
-    void setTableValues(String[][] tableValues) {
-        this.tableValues = tableValues;
-    }
-
-    void setRowComments(Document[] rowComments) {
-        this.rowComments = rowComments;
-    }
-
+    /**
+     * The array Boolean[] of columns to be shown with highlight
+     * @param columnHighlights true if highlight and otherwise false
+     */
     void setColumnHighlights(boolean[] columnHighlights) {
         this.columnHighlights = columnHighlights;
     }
 
+    /**
+     * The array Boolean[] of columns to be shown with highlight
+     * @return true if heighlight and otherwise false
+     */
+    boolean[] getColumnHighlights() { return columnHighlights; }
+
+    /**
+     * The array String[][] of values (usually 'T' or 'F' appearing in the table
+     * @param tableValues the array
+     */
+    void setTableValues(String[][] tableValues) {
+        this.tableValues = tableValues;
+    }
+
+    /**
+     * The array String[][] of values (usually 'T' or 'F' appearing in the table
+     * @return the array
+     */
+    String[][] getTableValues() { return tableValues; }
+
+    /**
+     * The conclusion divider adds ' / ' before the final formula column
+     * @param conclusionDivider true if is divider and otherwise false
+     */
     void setConclusionDivider(boolean conclusionDivider) {
         this.conclusionDivider = conclusionDivider;
     }
 
-    void setTableRows(int tableRows) { this.tableRows = tableRows;  }
-
-    int getTableRows() { return tableRows; }
-    Document[] getRowComments() { return rowComments;}
-    boolean[] getColumnHighlights() { return columnHighlights; }
-    String[][] getTableValues() { return tableValues; }
+    /**
+     * The conclusion divider adds ' / ' before the final formula column
+     * @return true if is divider and otherwise false
+     */
     boolean isConclusionDivider() { return conclusionDivider; }
+
+    /**
+     * The list of formulas to be evaluated in the main part of this table
+     * @param mainFormulas the list of formula Documents
+     */
+    void setMainFormulas(List<Document> mainFormulas) {    this.mainFormulas = mainFormulas;  }
+
+    /**
+     * The list of formulas to be evaluated in the main part of this table
+     * @return the list of formula documents
+     */
     List<Document> getMainFormulas() { return mainFormulas; }
+
+    /**
+     * The list of unary operators for this sentential language
+     * @param unaryOperators the list of Strings
+     */
+    void setUnaryOperators(List<String> unaryOperators) {     this.unaryOperators = unaryOperators;  }
+
+    /**
+     * The list of unary operators for this sentential language
+     * @return the list of Strings
+     */
     List<String> getUnaryOperators() { return unaryOperators; }
+
+    /**
+     * The list of binary operators for this sentential language
+     * @param binaryOperators the list of strings
+     */
+    void setBinaryOperators(List<String> binaryOperators) {      this.binaryOperators = binaryOperators;  }
+
+    /**
+     * The list of binary operators for this sentential language
+     * @return the list of strings
+     */
     List<String> getBinaryOperators() { return binaryOperators; }
     void setBasicFormulas(List<Document> basicFormulas) { this.basicFormulas = basicFormulas;  }
     List<Document> getBasicFormulas() { return basicFormulas; }

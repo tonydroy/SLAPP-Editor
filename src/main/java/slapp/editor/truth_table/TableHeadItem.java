@@ -21,35 +21,67 @@ import javafx.scene.text.TextFlow;
 
 import java.util.List;
 
+/**
+ * Contains information for head of a truth table column
+ */
 public class TableHeadItem {
-
     private TextFlow expression;
     private ColumnConstraints columnConstraints;
     boolean blankColumn = false;
     boolean dividerColumn = false;
 
+    /**
+     * Construct the head item
+     * @param expression The TextFlow content
+     * @param columnConstraints constraints to be applied to grid pane for this column
+     */
     public TableHeadItem(TextFlow expression, ColumnConstraints columnConstraints) {
         this.expression = expression;
         this.columnConstraints = columnConstraints;
     }
 
-    public void setDividerColumn(boolean dividerColumn) { this.dividerColumn = dividerColumn; }
-
+    /**
+     * The expression to appear in the column head
+     * @return the TextFlow expression
+     */
     public TextFlow getExpression() {
         return expression;
     }
 
+    /**
+     * The constraints that apply to this column of the table GridPane
+     * @return
+     */
     public ColumnConstraints getColumnConstraints() {
         return columnConstraints;
     }
 
+    /**
+     * A blank column is one that does not take values (usually T or F)
+     * @return true if blank column and otherwise false
+     */
     public boolean isBlankColumn() { return blankColumn; }
 
-    public boolean isDividerColumn() { return dividerColumn; }
-
+    /**
+     * A blank column is one that does not take values (usually T or F)
+     * @param blankColumn true if blank column and otherwise false
+     */
     public void setBlankColumn(boolean blankColumn) {this.blankColumn = blankColumn;  }
 
-//    public String toString() {
-//        return expression.getChildren().toString();    }
+    /**
+     * A divider column separates the basic sentences from the rest of the table
+     * @return true if divder column and otherwise false
+     */
+    public boolean isDividerColumn() { return dividerColumn; }
+
+    /**
+     * Divider column separates basic sentences from rest of table
+     * @param dividerColumn true if divider column and otherwise false
+     */
+    public void setDividerColumn(boolean dividerColumn) { this.dividerColumn = dividerColumn; }
+
+
+
+
 
 }

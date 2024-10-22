@@ -228,7 +228,7 @@ public class MainWindowView {
 
         saveButton = new Button("\uf0c7");  //LineAwesome.SAVE
         saveButton.getStyleClass().add("lasolid-icon");
-        saveButton.setTooltip(new Tooltip("Save assignment if open and otherwise exercise"));
+        saveButton.setTooltip(new Tooltip("Save assignment if an assignment is open, and otherwise save open exercise"));
 
         if (EditorMain.secondaryCopy) {
             saveButton.setDisable(true);
@@ -321,6 +321,7 @@ public class MainWindowView {
         stage.setScene(mainScene);
         stage.setTitle("SLAPP Editor");
         stage.setMinWidth(minStageWidth);
+ //       stage.setWidth(minStageWidth);
 
         Rectangle2D mainBounds = Screen.getPrimary().getVisualBounds();
         double mainWindowX = Math.max(0.0, (mainBounds.getMaxX() - mainBounds.getMinX())/8);
@@ -991,6 +992,7 @@ public class MainWindowView {
      *
      * @return tghe main scene
      */
+
     public Scene getMainScene() {
         return mainScene;
     }

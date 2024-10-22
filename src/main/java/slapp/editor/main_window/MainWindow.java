@@ -26,9 +26,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Popup;
 import javafx.util.Callback;
 import slapp.editor.*;
@@ -44,6 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static javafx.scene.control.ButtonType.OK;
+import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 /**
  * Controller for the SLAPP main window
@@ -94,6 +99,9 @@ public class MainWindow {
         mainView.scalePageWidthProperty().bind(Bindings.divide(PrintUtilities.pageWidthProperty(), mainWindow.baseScaleProperty()));
 
         mainView.getCreateNewExerciseItem().setOnAction(e -> createNewExercise());
+//        mainView.getCreateNewExerciseItem().addEventFilter(KeyEvent.ANY, e -> {if (e.getCode() == KeyCode.ENTER) createNewExercise();});
+
+
         mainView.getCreateRevisedExerciseItem().setOnAction(e -> createRevisedExercise());
         mainView.getSaveExerciseItem().setOnAction(e -> saveExercise(false));
         mainView.getSaveAsExerciseItem().setOnAction(e -> saveExercise(true));
@@ -126,13 +134,13 @@ public class MainWindow {
         if (EditorMain.os.startsWith("Mac")) mainView.getExportSetupItem().setDisable(true);
         mainView.getScaleSetupItem().setOnAction(e -> scaleSetup());
 
-        mainView.getQuickStartItem().setOnAction(e -> videoHelp("https://www.slappservices.net/quick_start.mp4", 900, 650));
-        mainView.getSlappEditorItem().setOnAction(e -> videoHelp("https://www.slappservices.net/slapp_editor.mp4", 800, 750));
+        mainView.getQuickStartItem().setOnAction(e -> videoHelp("https://www.slappservices.net/quick_start.mp4", 900, 580));  //650
+        mainView.getSlappEditorItem().setOnAction(e -> videoHelp("https://www.slappservices.net/slapp_editor.mp4", 800, 661));
         mainView.getVerticalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/vertical_trees.mp4", 600, 900));
         mainView.getHorizontalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/horizontal_trees.mp4", 600, 900));
         mainView.getTruthTableItem().setOnAction(e -> videoHelp("https://www.slappservices.net/truth_tables.mp4", 600, 800));
         mainView.getDerivationItem().setOnAction(e -> videoHelp("https://www.slappservices.net/derivations.mp4", 700, 835));
-        mainView.getInstructorInfoItem().setOnAction(e -> videoHelp("https://www.slappservices.net/instructor_info.mp4", 900, 600));
+        mainView.getInstructorInfoItem().setOnAction(e -> videoHelp("https://www.slappservices.net/instructor_info.mp4", 900, 650));
 
         mainView.getCommonElementsTextItem().setOnAction(e -> generalTextHelp());
         mainView.getAboutItem().setOnAction(e -> aboutTextHelp());
@@ -151,6 +159,7 @@ public class MainWindow {
         mainView.getPreviousExerciseMenu().setGraphic(previousExerciseLabel);
 
 
+
         Label nextExerciseLabel = new Label("Next");
         nextExerciseLabel.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -159,7 +168,6 @@ public class MainWindow {
             }
         });
         mainView.getNextExerciseMenu().setGraphic(nextExerciseLabel);
-
 
         Label goToExerciseLabel = new Label("Jump");
         goToExerciseLabel.setOnMousePressed(new EventHandler<MouseEvent>() {

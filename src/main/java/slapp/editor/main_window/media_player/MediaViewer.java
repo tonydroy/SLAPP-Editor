@@ -15,8 +15,12 @@ You should have received a copy of the GNU General Public License along with SLA
 
 package slapp.editor.main_window.media_player;
 
+import javafx.beans.value.ChangeListener;
+import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
@@ -27,6 +31,8 @@ import java.io.IOException;
 import slapp.editor.EditorAlerts;
 import slapp.editor.main_window.MainWindowView;
 
+import static javafx.beans.binding.Bindings.subtract;
+
 /**
  * Window to contain the player media view / menu bar combination
  */
@@ -34,6 +40,9 @@ public class MediaViewer {
 
     private Player player;
     private Stage stage;
+
+    private ChangeListener<? super Number>  widthChangeListener;
+    private ChangeListener<? super Number> heightChangeListener;
 
 
     /**
@@ -65,6 +74,20 @@ public class MediaViewer {
         stage.setX(Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - (width + 20)));
         stage.setY(Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - (height + 20)));
 
+        stage.setMaxHeight(bounds.getMaxY());
+        stage.setMaxWidth((bounds.getMaxY() - 100) * (width / (height + 10)));
+
+
+
+
+
+        stage.minWidthProperty().bind((scene.heightProperty().subtract(60)).multiply(width/(height + 10)));
+        stage.maxWidthProperty().bind((scene.heightProperty().subtract(60)).multiply(width/(height + 10)));
+
+ //       stage.minHeightProperty().bind((scene.widthProperty().multiply((height + 10)/width)).add(60));
+ //       stage.minWidthProperty().bind((scene.heightProperty().subtract(60)).multiply(width/(height + 10)));
+
+
         MediaView viewer = player.getView();
         viewer.fitWidthProperty().bind(stage.widthProperty() );
         viewer.fitHeightProperty().bind(stage.heightProperty());
@@ -74,6 +97,7 @@ public class MediaViewer {
         });
 
         stage.show();
+
     }
 
     /**
