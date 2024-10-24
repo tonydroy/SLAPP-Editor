@@ -47,7 +47,6 @@ public class MediaViewer {
 
     /**
      * Set player in window
-     *
      * @param file the url of file to play
      * @param width width of scene
      * @param height height of scene
@@ -68,35 +67,33 @@ public class MediaViewer {
         stage.setTitle("SLAPP Video Help");
         stage.initModality(Modality.NONE);
         stage.getIcons().addAll(EditorMain.icons);
-        stage.initOwner(EditorMain.mainStage);
+ //       stage.initOwner(EditorMain.mainStage);
 
         Rectangle2D bounds = MainWindowView.getCurrentScreenBounds();
         stage.setX(Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - (width + 20)));
         stage.setY(Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - (height + 20)));
 
         stage.setMaxHeight(bounds.getMaxY());
-        stage.setMaxWidth((bounds.getMaxY() - 100) * (width / (height + 10)));
+        stage.setMaxWidth((bounds.getMaxY() - 100) * (width / (height)));
 
 
-
-
-
-        stage.minWidthProperty().bind((scene.heightProperty().subtract(60)).multiply(width/(height + 10)));
-        stage.maxWidthProperty().bind((scene.heightProperty().subtract(60)).multiply(width/(height + 10)));
-
- //       stage.minHeightProperty().bind((scene.widthProperty().multiply((height + 10)/width)).add(60));
- //       stage.minWidthProperty().bind((scene.heightProperty().subtract(60)).multiply(width/(height + 10)));
+//        stage.minWidthProperty().bind((scene.heightProperty().subtract(60)).multiply(width/(height + 10)));
+//        stage.maxWidthProperty().bind((scene.heightProperty().subtract(60)).multiply(width/(height + 10)));
 
 
         MediaView viewer = player.getView();
         viewer.fitWidthProperty().bind(stage.widthProperty() );
-        viewer.fitHeightProperty().bind(stage.heightProperty());
+        viewer.fitHeightProperty().bind(stage.heightProperty().subtract(100));
+
+        stage.setHeight(height + 100);
+        stage.setWidth(width + 10);
 
         stage.setOnCloseRequest(e -> {
             stopPlay();
         });
 
         stage.show();
+
 
     }
 

@@ -77,7 +77,7 @@ public class DerivationView implements ExerciseView<DecoratedRTA> {
      * Construct the derivation view
      * @param mainView the main view
      */
-    public DerivationView(MainWindowView mainView) {
+    DerivationView(MainWindowView mainView) {
         this.mainView = mainView;
         Pane blankPane = new Pane();
         blankPane.setMinWidth(0);

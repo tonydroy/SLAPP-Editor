@@ -78,6 +78,7 @@ public class Player extends BorderPane {
 
 
 
+
         player.setOnReady(new Runnable() {
             @Override
             public void run() {
@@ -111,4 +112,5 @@ public class Player extends BorderPane {
     }
 
     public Pane getMpane() { return mpane; }
+
 }

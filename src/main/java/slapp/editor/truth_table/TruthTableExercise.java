@@ -43,6 +43,9 @@ import slapp.editor.main_window.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller for the truth table exercise
+ */
 public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableView> {
     private MainWindow mainWindow;
     private TruthTableModel truthTableModel;
@@ -55,6 +58,12 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
 
 
     //applies when table elements are set to model with rows != 0
+
+    /**
+     * Create truth table exercise with rows!= 0
+     * @param model the model
+     * @param mainWindow the main window
+     */
     public TruthTableExercise(TruthTableModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.truthTableModel = model;
@@ -67,7 +76,14 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
     }
 
     //applies when table elements need to be set to empty table
-    public TruthTableExercise(TruthTableModel model, MainWindow mainWindow, boolean create) {
+
+    /**
+     * Create truth table exercise with rows == 0
+     * @param model the model
+     * @param mainWindow
+     * @param createEmpty dummy parameter to differentiate constructors
+     */
+    public TruthTableExercise(TruthTableModel model, MainWindow mainWindow, boolean createEmpty) {
         this.mainWindow = mainWindow;
         this.truthTableModel = model;
         if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
@@ -79,11 +95,17 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         setTruthTableView();
     }
 
-    public void generateEmptyTableModel() {
+    /**
+     * Set model for empty table
+     */
+    void generateEmptyTableModel() {
         setupHeadItemsFromModel();
         truthTableModel.setEmptyTableContents(tableColumns);
     }
 
+    /**
+     * Setup truth table view from model
+     */
     private void setTruthTableView() {
         truthTableView.setStatementPrefHeight(truthTableModel.getStatementPrefHeight());
         truthTableView.setCommentPrefHeight(truthTableModel.getCommentPrefHeight());
@@ -153,17 +175,18 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
             updateViewTableItems();
             truthTableView.updateTableGridFromTableItems();
             exerciseModified = true;
-
         });
 
         //table contents
-
         updateViewTableItems();
         truthTableView.updateTableGridFromTableItems();
 
         truthTableView.initializeViewDetails();
     }
 
+    /**
+     * Update view items from model
+     */
     private void updateViewTableItems() {
         setupHeadItemsFromModel();
 
@@ -207,6 +230,9 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         truthTableView.setHighlightButtons(buttons);
     }
 
+    /**
+     * Update view head items from model
+     */
     private void setupHeadItemsFromModel() {
 
         List<TableHeadItem> headList = new ArrayList<>();
@@ -258,21 +284,34 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         tableColumns = headList.size();
     }
 
+    /**
+     * The truth table model
+     * @return the model
+     */
     @Override
     public TruthTableModel getExerciseModel() { return truthTableModel;  }
 
+    /**
+     * The truth table view
+     * @return the view
+     */
     @Override
     public TruthTableView getExerciseView() { return truthTableView; }
 
+    /**
+     * Save exercise to disk
+     * @param saveAs true if "save as" should be invoked, and otherwise false
+     */
     @Override
     public void saveExercise(boolean saveAs) {
         boolean success = DiskUtilities.saveExercise(saveAs, getTruthTableModelFromView());
         if (success) exerciseModified = false;
     }
 
-
-
-
+    /**
+     * List of nodes to be sent to printer for this exercise
+     * @return the node list
+     */
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
@@ -355,6 +394,10 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         return nodeList;
     }
 
+    /**
+     * Return to the initial (unworked) version of the exercise, retaining the comment only.
+     * @return the initial exercise
+     */
     @Override
     public Exercise<TruthTableModel, TruthTableView> resetExercise() {
         RichTextArea commentRTA = truthTableView.getExerciseComment().getEditor();
@@ -366,34 +409,57 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         return clearExercise;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @return true if exercise is modified, and otherwise false
+     */
     @Override
     public boolean isExerciseModified() {
-
         RichTextArea commentEditor = truthTableView.getExerciseComment().getEditor();
         if (commentEditor.isModified()) exerciseModified = true;
-
-
 
         BoxedDRTA[] rowComments = truthTableView.getRowCommentsArray();
         for (int i = 0; i < rowComments.length; i++) {
             RichTextArea rowCommentEditor = rowComments[i].getRTA();
             if (rowCommentEditor.isModified()) exerciseModified = true;
         }
-
         return exerciseModified;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @param modified true if exercise is modified, and otherwise false
+     */
     @Override
     public void setExerciseModified(boolean modified) { exerciseModified = modified; }
+
+    /**
+     * The (null) view node to be displayed as a component of the free form exercise.
+     * @return null
+     */
     @Override
-    public Node getFFViewNode() {return truthTableView.getExerciseContentNode();}
+    public Node getFFViewNode() {return null;}
+
+    /**
+     * The (null) node to be printed as a component of the free form exercise.
+     * @return null
+     */
     @Override
     public Node getFFPrintNode() {return null;}
+
+    /**
+     * Extract an {@link slapp.editor.main_window.ExerciseModel} from view of the exercise
+     * @return the exercise model
+     */
     @Override
     public ExerciseModel<TruthTableModel> getExerciseModelFromView() {
         return (ExerciseModel) getTruthTableModelFromView();
     }
 
+    /*
+     * Extract the truth table model from view
+     * @return the model
+     */
     private TruthTableModel getTruthTableModelFromView() {
         TruthTableModel model = new TruthTableModel();
         model.setExerciseName(truthTableModel.getExerciseName());

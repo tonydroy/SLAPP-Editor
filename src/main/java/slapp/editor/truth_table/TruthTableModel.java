@@ -196,70 +196,157 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
      * @return the list of strings
      */
     List<String> getBinaryOperators() { return binaryOperators; }
+
+    /**
+     * The list of basic formula Documents
+     * @param basicFormulas the list
+     */
     void setBasicFormulas(List<Document> basicFormulas) { this.basicFormulas = basicFormulas;  }
+
+    /**
+     * The list of basic formula Documents
+     * @return the list
+     */
     List<Document> getBasicFormulas() { return basicFormulas; }
 
+    /**
+     * The preferred height of the comment window
+     * @return the height value
+     */
     double getCommentPrefHeight() {    return commentPrefHeight;  }
 
+    /**
+     * The preferred height of the comment window
+     * @param commentPrefHeight the height value
+     */
     void setCommentPrefHeight(double commentPrefHeight) {  this.commentPrefHeight = commentPrefHeight;  }
 
+    /**
+     * The height of text in the statement (prompt) window
+     * @return the height value
+     */
     double getStatementTextHeight() {     return statementTextHeight;  }
 
+    /**
+     * The height of text in the statement (prompt) window
+     * @param statementTextHeight the height value
+     */
     void setStatementTextHeight(double statementTextHeight) {    this.statementTextHeight = statementTextHeight;  }
 
+    /**
+     * The height of text in the comment window
+     * @return the height value
+     */
     double getCommentTextHeight() {    return commentTextHeight;  }
 
+    /**
+     * The height of text in the comment window
+     * @param commentTextHeight the height value
+     */
     void setCommentTextHeight(double commentTextHeight) {
         this.commentTextHeight = commentTextHeight;
     }
 
-    void setExerciseType(ExerciseType exerciseType) {     this.exerciseType = exerciseType;  }
-
+    /**
+     * The width of the table grid pane
+     * @return the width value
+     */
     double getGridWidth() {    return gridWidth;   }
 
+    /**
+     * The width of the table grid pane
+     * @param gridWidth the width value
+     */
     void setGridWidth(double gridWidth) {     this.gridWidth = gridWidth;  }
 
+    /**
+     * The exercise name (used also as file name)
+     * @return the name string
+     */
     @Override
     public String getExerciseName() {
         return exerciseName;
     }
+
+    /**
+     * The {@link slapp.editor.main_window.ExerciseType}
+     * @return the TRUTH_TABLE exercise type
+     */
     @Override
     public ExerciseType getExerciseType() { return exerciseType; }
 
+    /**
+     * Exercise is <em>started</em> if it is differs from the originally created version.
+     * @return true if started, and otherwise false.
+     */
     @Override
     public boolean isStarted() {
         return started;
     }
 
+    /**
+     * Exercise is <em>started</em> if it differs from the originally created version.
+     * @param started true if started, and otherwise false
+     */
     @Override
     public void setStarted(boolean started) { this.started = started; }
 
+    /**
+     * The comment on this exercise, which may be by either an instructor or student
+     * @return the comment Document.
+     */
     @Override
     public Document getExerciseComment() {
         return exerciseComment;
     }
 
+    /**
+     * The exercise prompt
+     * @return The statement document (T)
+     */
     @Override
     public Document getExerciseStatement() {
         return exerciseStatement;
     }
 
+    /**
+     * The exercise comment on this exercise, which may be by either an instructor or student
+     * @param comment the comment Document
+     */
     @Override
     public void setExerciseComment(Document comment) { exerciseComment = comment;    }
 
+    /**
+     * The pref height of the exercise statement window
+     * @return the statement height
+     */
     @Override
-    public double getStatementPrefHeight() {
-        return statementPrefHeight;
-    }
+    public double getStatementPrefHeight() {     return statementPrefHeight;  }
 
+    /**
+     * The height of the exercise statement window.
+     * @param height the statement height
+     */
     @Override
     public void setStatementPrefHeight(double height) { statementPrefHeight = height;  }
 
+    /**
+     * The original model for the (unworked) exercise
+     * @return the original model
+     */
     @Override
     public ExerciseModel<Document> getOriginalModel() { return originalModel; }
 
+    /**
+     * The original model for the (unworked exercise)
+     * @param originalModel the original model
+     */
     public void setOriginalModel(ExerciseModel<Document> originalModel) { this.originalModel = originalModel;  }
 
+    /**
+     * Override toString with the exercise name
+     * @return the string representation
+     */
     @Override
     public String toString() {
         return exerciseName;

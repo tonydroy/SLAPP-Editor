@@ -93,8 +93,6 @@ public class DerivationCreate {
     private ChangeListener defaultWidthListener;
     private Label zoomLabel;
     private Spinner<Integer> zoomSpinner;
-    private Button updateHeightButton;
-    private Button saveButton;
     private MenuBar menuBar;
     private BorderPane borderPane;
     private VBox upperFieldsBox;

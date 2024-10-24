@@ -136,11 +136,11 @@ public class MainWindow {
 
         mainView.getQuickStartItem().setOnAction(e -> videoHelp("https://www.slappservices.net/quick_start.mp4", 900, 580));  //650
         mainView.getSlappEditorItem().setOnAction(e -> videoHelp("https://www.slappservices.net/slapp_editor.mp4", 800, 661));
-        mainView.getVerticalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/vertical_trees.mp4", 600, 900));
-        mainView.getHorizontalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/horizontal_trees.mp4", 600, 900));
-        mainView.getTruthTableItem().setOnAction(e -> videoHelp("https://www.slappservices.net/truth_tables.mp4", 600, 800));
-        mainView.getDerivationItem().setOnAction(e -> videoHelp("https://www.slappservices.net/derivations.mp4", 700, 835));
-        mainView.getInstructorInfoItem().setOnAction(e -> videoHelp("https://www.slappservices.net/instructor_info.mp4", 900, 650));
+        mainView.getVerticalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/vertical_trees.mp4", 600, 849));
+        mainView.getHorizontalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/horizontal_trees.mp4", 600, 834.8));
+        mainView.getTruthTableItem().setOnAction(e -> videoHelp("https://www.slappservices.net/truth_tables.mp4", 600, 746.4));
+        mainView.getDerivationItem().setOnAction(e -> videoHelp("https://www.slappservices.net/derivations.mp4", 700, 774));
+        mainView.getInstructorInfoItem().setOnAction(e -> videoHelp("https://www.slappservices.net/instructor_info.mp4", 900, 536.9));
 
         mainView.getCommonElementsTextItem().setOnAction(e -> generalTextHelp());
         mainView.getAboutItem().setOnAction(e -> aboutTextHelp());
@@ -838,14 +838,13 @@ public class MainWindow {
 
     /*
      * Open help video
-     *
      * @param urlString - video location
      * @param width - widith of view window
      * @param height - height of view window
      */
     private void videoHelp(String urlString, double width, double height) {
         if (mediaViewer == null) mediaViewer = new MediaViewer();
-        mediaViewer.stopPlay();
+        else mediaViewer.stopPlay();
         mediaViewer.play(urlString, width, height);
     }
 
@@ -871,6 +870,7 @@ public class MainWindow {
         MailHelper.generate("messaging@slappservices.net", "SLAPP: (your issue)", message);
     }
 
+    MediaViewer getMediaViewer() {     return mediaViewer;  }
 
     /**
      * The MainWindowView is the main SLAPP window
