@@ -324,7 +324,7 @@ public class TruthTableModel implements ExerciseModel<Document>, Serializable {
     public double getStatementPrefHeight() {     return statementPrefHeight;  }
 
     /**
-     * The height of the exercise statement window.
+     * The pref height of the exercise statement window.
      * @param height the statement height
      */
     @Override

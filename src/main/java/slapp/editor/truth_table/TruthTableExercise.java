@@ -57,8 +57,6 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
     private int tableRows = 0;
 
 
-    //applies when table elements are set to model with rows != 0
-
     /**
      * Create truth table exercise with rows!= 0
      * @param model the model
@@ -74,8 +72,6 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         tableRows = truthTableModel.getTableRows();
         setTruthTableView();
     }
-
-    //applies when table elements need to be set to empty table
 
     /**
      * Create truth table exercise with rows == 0
@@ -103,7 +99,7 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         truthTableModel.setEmptyTableContents(tableColumns);
     }
 
-    /**
+    /*
      * Setup truth table view from model
      */
     private void setTruthTableView() {
@@ -184,7 +180,7 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         truthTableView.initializeViewDetails();
     }
 
-    /**
+    /*
      * Update view items from model
      */
     private void updateViewTableItems() {
@@ -230,7 +226,7 @@ public class TruthTableExercise implements Exercise<TruthTableModel, TruthTableV
         truthTableView.setHighlightButtons(buttons);
     }
 
-    /**
+    /*
      * Update view head items from model
      */
     private void setupHeadItemsFromModel() {

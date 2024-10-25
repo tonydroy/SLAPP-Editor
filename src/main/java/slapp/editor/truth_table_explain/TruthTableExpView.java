@@ -44,6 +44,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
+/**
+ * View for the truth table explain exercise
+ */
 public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private MainWindowView mainView;
     private String explainPrompt = "";
@@ -64,7 +67,6 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private Spinner<Double> tableGridHeightSpinner;
     private Spinner<Double> tableGridWidthSpinner;
     private Node currentSpinnerNode;
-
     private GridPane basicFormulasPane;
     private List<BoxedDRTA> basicFormulasBoxedDRTAs;
     private VBox controlBox;
@@ -77,25 +79,20 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     private VBox resultsBox;
     private HBox choiceBox;
     private VBox centerBox;
-
-
-
     private double formulaBoxHeight = 22;
-
     private List<TableHeadItem> tableHeadItemsList;
     private TextField[][]  tableFields; //list of text field columns
     private BoxedDRTA[] rowCommentsArray;
     private ToggleButton[] highlightButtons;
     private int tableRows = 0;
     private VBox[] sizers;
-
     private Pane endPane;
-
     BoxedDRTA focusedBoxedDRTA;
 
-
-
-
+    /**
+     * Construct the truth table explain view
+     * @param mainView the main window
+     */
     TruthTableExpView(MainWindowView mainView) {
         this.mainView = mainView;
 
@@ -187,6 +184,9 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
 
     }
 
+    /**
+     * Initialize table structure
+     */
     public void updateTableGridFromTableItems() {
         tableGrid.getChildren().clear();
         List<ColumnConstraints> gridColConstraints =  tableGrid.getColumnConstraints();
@@ -275,6 +275,9 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         tableRowConstraints.add(new RowConstraints());
     }
 
+    /**
+     * Update the (left-hand) basic formulas pane from the basicFormulasBoxedDRTAList
+     */
     public void updateBasicFormulasPaneFromList() {
         basicFormulasPane.getChildren().clear();
         for (int i = 0; i < basicFormulasBoxedDRTAs.size(); i++) {
@@ -282,13 +285,17 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         }
     }
 
+    /**
+     * New character field for colum and row
+     * @param column the column
+     * @param row the row
+     * @return the text field
+     */
     TextField newSingleCharTextField(int column, int row) {
         TextField singleCharField = new TextField();
 
         singleCharField.setPadding(new Insets(0));
         singleCharField.setMaxWidth(18);
-
-
 
         singleCharField.setAlignment(Pos.CENTER);
         singleCharField.setStyle("-fx-background-radius: 2");
@@ -312,7 +319,6 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
            } else {
                 tableFields[column][0].requestFocus();
            }
-
         });
 
         singleCharField.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
@@ -330,12 +336,16 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
                 tableFields[tableColToLeft(column)][row].requestFocus();
                 e.consume();
             }
-
         });
 
         return singleCharField;
     }
 
+    /**
+     * First non-blank column to the right of given column
+     * @param column the given column index
+     * @return the index of column to right
+     */
     private int tableColToRight(int column) {
         int rightCol = column;
         for (int i = column + 1; i < tableHeadItemsList.size(); i++) {
@@ -348,6 +358,11 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         return rightCol;
     }
 
+    /**
+     * First non-blank column to left of given column
+     * @param column the given column index
+     * @return index of column to left
+     */
     private int tableColToLeft(int column) {
         int leftCol = column;
         for (int i = column - 1; i >= 0; i--) {
@@ -360,7 +375,11 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         return leftCol;
     }
 
-
+    /**
+     * Highlight button for column at index
+     * @param index the column index
+     * @return the ToggleButton
+     */
     ToggleButton newHighlightButton(int index) {
         ToggleButton button = new ToggleButton();
         button.setPadding(new Insets(0));
@@ -374,19 +393,20 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
                 for (int j = 0; j < tableRows; j++) {
                     tableFields[index][j].setStyle("-fx-background-radius: 2; -fx-background-color: pink");
                 }
-
             } else {
                 button.setStyle("-fx-border-radius: 10; -fx-border-color: lightblue; -fx-background-color: ghostwhite;");
                 for (int j = 0; j < tableRows; j++) {
                     tableFields[index][j].setStyle("-fx-background-radius: 2; -fxBackground-color: white");
                 }
             }
-
         });
-
         return button;
     }
 
+    /**
+     * Boxed DRTA for formula content (as basic formula, or table head item)
+     * @return the BoxedDRTA
+     */
     public BoxedDRTA newFormulaBoxedDRTA() {
         BoxedDRTA bdrta = new BoxedDRTA();
         DecoratedRTA drta = bdrta.getDRTA();
@@ -407,6 +427,10 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         return bdrta;
     }
 
+    /**
+     * Boxed DRTA for a comment field
+     * @return the BoxedDRTA
+     */
     public BoxedDRTA newCommentBoxedDRTA() {
         BoxedDRTA bdrta = new BoxedDRTA();
         RichTextArea rta = bdrta.getRTA();
@@ -429,6 +453,9 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         return bdrta;
     }
 
+    /**
+     * Setup size controls for statement, comment, explain, and table grid
+     */
     void initializeViewDetails() {
         //statement
         RichTextArea statementRTA = exerciseStatement.getEditor();
@@ -595,93 +622,210 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
         mainView.scalePageWidthProperty().addListener((ob, ov, nv) -> {
             tableGridWidthSpinner.getValueFactory().setValue((double) Math.round(tableGrid.getWidth() / mainView.getScalePageWidth() * 100.0));
         });
-
-
-
     }
 
+    /**
+     * The table grid pane
+     * @return tghe grid
+     */
+    GridPane getTableGrid() { return tableGrid; }
 
+    /**
+     * Number of table (content) rows
+     * @param tableRows the rows value
+     */
+    void setTableRows(int tableRows) { this.tableRows = tableRows;  }
 
-    public VBox[] getSizers() {  return sizers; }
+    /**
+     * The TextField[][] of table values
+     * @param tableFields the array
+     */
+    void setTableFields(TextField[][] tableFields) {  this.tableFields = tableFields; }
 
-    public GridPane getTableGrid() { return tableGrid; }
+    /**
+     * The list of {@link slapp.editor.truth_table.TableHeadItem}
+     * @return the list
+     */
+    List<TableHeadItem> getTableHeadItemsList() { return tableHeadItemsList;  }
 
-    public void setTableRows(int tableRows) { this.tableRows = tableRows;  }
+    /**
+     * The list of {@link slapp.editor.truth_table.TableHeadItem}
+     * @param tableHeadItemsList the list
+     */
+    void setTableHeadItemsList(List<TableHeadItem> tableHeadItemsList) {   this.tableHeadItemsList = tableHeadItemsList;  }
 
-    public void setTableFields(TextField[][] tableFields) {  this.tableFields = tableFields; }
+    /**
+     * The BoxedDRTA[] of row comments
+     * @param rowComments the array
+     */
+    void setRowCommentsArray(BoxedDRTA[] rowComments) {  this.rowCommentsArray = rowComments;   }
 
-    public List<TableHeadItem> getTableHeadItemsList() { return tableHeadItemsList;  }
+    /**
+     * The ToggleButton[] of highlight buttons
+     * @param highlightButtons the array
+     */
+    void setHighlightButtons(ToggleButton[] highlightButtons) {   this.highlightButtons = highlightButtons; }
 
-    public void setTableHeadItemsList(List<TableHeadItem> tableHeadItemsList) {   this.tableHeadItemsList = tableHeadItemsList;  }
+    /**
+     * The BoxedDRTA[] of row comments
+     * @return the array
+     */
+    BoxedDRTA[] getRowCommentsArray() { return rowCommentsArray; }
 
-    public void setRowCommentsArray(BoxedDRTA[] rowComments) {  this.rowCommentsArray = rowComments;   }
+    /**
+     * The ToggleButton[] of highlight buttons
+     * @return the array
+     */
+    ToggleButton[] getHighlightButtons() { return highlightButtons; }
 
-    public void setHighlightButtons(ToggleButton[] highlightButtons) {   this.highlightButtons = highlightButtons; }
+    /**
+     * The TextField[][] of table values
+     * @return the array
+     */
+    TextField[][] getTableFields() { return tableFields; }
 
-    public BoxedDRTA[] getRowCommentsArray() { return rowCommentsArray; }
+    /**
+     * The (left-hand) setup table button
+     * @return the button
+     */
+    Button getSetupTableButton() { return setupTableButton; }
 
-    public ToggleButton[] getHighlightButtons() { return highlightButtons; }
+    /**
+     * The list of basic formula Boxed DRTAs
+     * @return the bdrta list
+     */
+    List<BoxedDRTA> getBasicFormulasBoxedDRTAs() {return basicFormulasBoxedDRTAs; }
 
-    public TextField[][] getTableFields() { return tableFields; }
+    /**
+     * The spinner to set the number of table rows
+     * @return the spinner
+     */
+    Spinner getRowsSpinner() { return rowsSpinner;  }
 
-    public Button getSetupTableButton() { return setupTableButton; }
+    /**
+     * The box including the table grid, choices, and explain field
+     * @return the VBox
+     */
+    VBox getCenterBox() {return centerBox; }
 
-    public List<BoxedDRTA> getBasicFormulasBoxedDRTAs() {return basicFormulasBoxedDRTAs; }
+    /**
+     * The label for the choices lead
+     * @return the label
+     */
+    Label getChoiceLeadLabel() { return choiceLeadLabel; }
 
-    public Spinner getRowsSpinner() { return rowsSpinner;  }
+    /**
+     * The A check box
+     * @return The CheckBox
+     */
+    CheckBox getaCheckBox() { return aCheckBox;  }
 
-    public VBox getResultsBox() { return resultsBox; }
+    /**
+     * The B check box
+     * @return the CheckBox
+     */
+    CheckBox getbCheckBox() { return bCheckBox; }
 
-    public VBox getCenterBox() {return centerBox; }
+    /**
+     * The Decorated RTA for the explain field
+     * @return
+     */
+    DecoratedRTA getExplainDRTA() {return explainDRTA; }
 
-    public Label getChoiceLeadLabel() { return choiceLeadLabel; }
+    /**
+     * The prompt for the explain field
+     * @param explainPrompt the String prompt
+     */
+    void setExplainPrompt(String explainPrompt) {    this.explainPrompt = explainPrompt; }
 
-    public CheckBox getaCheckBox() { return aCheckBox;  }
+    /**
+     * The preferred height of the comment window
+     * @return the height value
+     */
+    double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight();  }
 
-    public CheckBox getbCheckBox() { return bCheckBox; }
+    /**
+     * The preferred height of the comment window
+     * @param commentPrefHeight the height value
+     */
+    void setCommentPrefHeight(double commentPrefHeight) { this.commentPrefHeight = commentPrefHeight;  }
 
-    public DecoratedRTA getExplainDRTA() {return explainDRTA; }
+    /**
+     * The preferred height of the explain window
+     * @return the height value
+     */
+    double getExplainPrefHeight() { return explainDRTA.getEditor().getPrefHeight();  }
 
-    public void setExplainPrompt(String explainPrompt) {    this.explainPrompt = explainPrompt; }
+    /**
+     * The pref height of the explain window
+     * @param explainPrefHeight the height value
+     */
+    void setExplainPrefHeight(double explainPrefHeight) { this.explainPrefHeight = explainPrefHeight;  }
 
-    public double getCommentPrefHeight() { return exerciseComment.getEditor().getPrefHeight();  }
-
-    public void setCommentPrefHeight(double commentPrefHeight) { this.commentPrefHeight = commentPrefHeight;  }
-
-    public double getExplainPrefHeight() { return explainDRTA.getEditor().getPrefHeight();  }
-
-    public void setExplainPrefHeight(double explainPrefHeight) { this.explainPrefHeight = explainPrefHeight;  }
-
-
+    /**
+     * The comment decoratedRTA
+     * @return comment DecoratedRTA
+     */
     @Override
     public DecoratedRTA getExerciseComment() { return exerciseComment; }
 
+    /**
+     * The comment decoratedRTA
+     * @param comment DecoratedRTA
+     */
     @Override
     public void setExerciseComment(DecoratedRTA comment) { exerciseComment = comment;  }
 
+    /**
+     * The exercise prompt
+     * @return the statement decorated RTA (T)
+     */
     @Override
     public DecoratedRTA getExerciseStatement() { return exerciseStatement;  }
 
+    /**
+     * The exercise prompt
+     * @param statement the statement decorated RTA (T)
+     */
     @Override
     public void setExerciseStatement(DecoratedRTA statement) { exerciseStatement = statement; }
 
+    /**
+     * The exercise prompt node (RTA)
+     * @return the statement node
+     */
     @Override
     public Node getExerciseStatementNode() { return exerciseStatement.getEditor();  }
 
+    /**
+     * The preferred height of the statement window
+     * @param height the preferred height
+     */
     @Override
     public void setStatementPrefHeight(double height) {
         statementPrefHeight = height;
         exerciseStatement.getEditor().setPrefHeight(height);
     }
 
-
+    /**
+     * The node which includes content of this exercise
+     * @return the content node
+     */
     @Override
     public Node getExerciseContentNode() {return centerBox; }
 
+    /**
+     * The left control node for this exercise
+     * @return the control node
+     */
     @Override
     public Node getExerciseControl() { return controlBox; }
+
+    /**
+     * The (null) right control node for this exercise
+     * @return the control node
+     */
     @Override
     public Node getRightControl() { return null; }
-
 
 }

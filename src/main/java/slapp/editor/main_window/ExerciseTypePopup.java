@@ -56,7 +56,6 @@ public class ExerciseTypePopup {
         typeList.setPrefWidth(200);
         typeList.getSelectionModel().select(lastSelectedItem);
 
-
         typeList.setCellFactory(cell -> new ListCell<ExerciseType>() {
             final Tooltip tooltip = new Tooltip();
 
@@ -83,7 +82,6 @@ public class ExerciseTypePopup {
                                     selectedItem = selection;
                                     lastSelectedItem = selection;
                                     stage.close();
-
                                 }
                             }
                         }
@@ -92,6 +90,20 @@ public class ExerciseTypePopup {
             }
 
         });
+
+        typeList.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent e) {
+                if (e.getCode() == KeyCode.ENTER)  {
+                    ExerciseType selection = typeList.getSelectionModel().getSelectedItem();
+                    selectedItem = selection;
+                    lastSelectedItem = selection;
+                    e.consume();
+                    stage.close();
+                }
+            }
+        });
+
 
         Button selectButton = new Button("Select");
         Button cancelButton = new Button("Cancel");
@@ -116,6 +128,7 @@ public class ExerciseTypePopup {
 
         StackPane pane = new StackPane(titledBox);
         Scene scene = new Scene(pane);
+
         stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("Exercise Type");
@@ -154,10 +167,9 @@ public class ExerciseTypePopup {
             selectedItem = null;
             stage.close();
         });
+
+
         stage.showAndWait();
-
-
-
         return selectedItem;
     }
 

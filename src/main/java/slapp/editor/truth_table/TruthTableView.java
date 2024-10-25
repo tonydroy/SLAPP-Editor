@@ -254,8 +254,6 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         for (int i = 0; i < basicFormulasBoxedDRTAList.size(); i++) {
             basicFormulasPane.add(basicFormulasBoxedDRTAList.get(i).getBoxedRTA(),0, i);
         }
-
-
     }
 
     /**
@@ -317,8 +315,8 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     }
 
     /**
-     * First non-blank column to the right of current column
-     * @param column the current column index
+     * First non-blank column to the right of given column
+     * @param column the given column index
      * @return the index of column to right
      */
     private int tableColToRight(int column) {
@@ -334,8 +332,8 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
     }
 
     /**
-     * First non-blank column to left of current column
-     * @param column the current column index
+     * First non-blank column to left of given column
+     * @param column the given column index
      * @return index of column to left
      */
     private int tableColToLeft(int column) {
@@ -412,7 +410,6 @@ public class TruthTableView implements ExerciseView<DecoratedRTA> {
         RichTextArea rta = bdrta.getRTA();
         rta.setMaxHeight(formulaBoxHeight);
         rta.setMinHeight(formulaBoxHeight);
-
 
         RichTextAreaSkin rtaSkin = (RichTextAreaSkin) rta.getSkin();
         rta.prefWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 3), 100));

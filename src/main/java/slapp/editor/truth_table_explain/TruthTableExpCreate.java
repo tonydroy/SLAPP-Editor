@@ -58,9 +58,11 @@ import java.util.Optional;
 
 import static javafx.scene.control.ButtonType.OK;
 
+/**
+ * Create window for the truth table explain exercise
+ */
 public class TruthTableExpCreate {
     private MainWindow mainWindow;
-    private MainWindowView mainView;
     private TextField nameField;
     private TextField explainPromptField;
     private RichTextArea statementRTA;
@@ -86,15 +88,8 @@ public class TruthTableExpCreate {
     private GridPane mainFormulasPane;
     private Label zoomLabel;
     private Spinner<Integer> zoomSpinner;
-    private Button updateHeightButton;
-    private Button saveButton;
     private MenuBar menuBar;
     private VBox upperFieldsBox;
-    private ToolBar editToolbar;
-    private ToolBar fontsToolbar;
-    private ToolBar insertToolbar;
-    private ToolBar paragraphToolbar;
-    private ToolBar kbdDiaToolBar;
     private ToolBar sizeToolBar;
     private ChangeListener nameListener;
     private ChangeListener choiceLeadListener;
@@ -108,12 +103,20 @@ public class TruthTableExpCreate {
     private DecoratedRTA dummyDRTA = new DecoratedRTA();
 
 
-
+    /**
+     * Create new truth table explain exercise
+     * @param mainWindow the main window
+     */
     public TruthTableExpCreate(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setupWindow();
     }
 
+    /**
+     * Create window for existing exercise
+     * @param mainWindow the main window
+     * @param originalModel the model for the exercise to be modified
+     */
     public TruthTableExpCreate(MainWindow mainWindow, TruthTableExpModel originalModel) {
         this(mainWindow);
 
@@ -135,6 +138,9 @@ public class TruthTableExpCreate {
         fieldModified = false;
     }
 
+    /*
+     * Set up the create window
+     */
     private void setupWindow(){
         borderPane = new BorderPane();
 
@@ -427,8 +433,6 @@ public class TruthTableExpCreate {
         };
         conclusionDividerCheck.selectedProperty().addListener(conclusionDividerCheckListener);
 
-
-
         HBox mainFormulasTop = new HBox(10, mainFormulaLabel, addMainFormulaButton, removeMainFormulaButton, conclusionDividerCheck);
         mainFormulasTop.setAlignment(Pos.CENTER_LEFT);
         mainFormulasTop.setMargin(conclusionDividerCheck, new Insets(0, 0, 0, 100));
@@ -534,6 +538,10 @@ public class TruthTableExpCreate {
 
     }
 
+    /*
+     * Update operator Boxed DRTA fields from model
+     * @param model the model
+     */
     private void updateOperatorFieldsFromModel(TruthTableExpModel model){
         unaryOperatorList.clear();
         List<String> unaryList = model.getUnaryOperators();
@@ -554,6 +562,10 @@ public class TruthTableExpCreate {
            binaryOperatorList.add(bdrta);
        }
     }
+
+    /*
+     * Update the unary operator grid pane from bdrta fields
+     */
     private void updateUnaryOperatorGridFromFields(){
         unaryOperatorsPane.getChildren().clear();
         for (int i = 0; i < unaryOperatorList.size(); i++) {
@@ -561,6 +573,10 @@ public class TruthTableExpCreate {
             unaryOperatorsPane.add(bdrta.getBoxedRTA(), i, 0);
         }
     }
+
+    /*
+     * Update the binary operator grid pane from bdrta fields
+     */
     private void updateBinaryOperatorGridFromFields(){
         binaryOperatorsPane.getChildren().clear();
         for (int i = 0; i < binaryOperatorList.size(); i++) {
@@ -569,6 +585,10 @@ public class TruthTableExpCreate {
         }
     }
 
+    /*
+     * Update Boxed DRTA main formula fields from model
+     * @param model the model
+     */
     private void updateMainFormulaFieldsFromModel(TruthTableExpModel model){
         mainFormulaList.clear();
         List<Document> formulasList = model.getMainFormulas();
@@ -582,6 +602,9 @@ public class TruthTableExpCreate {
         }
     }
 
+    /*
+     * Update the main operator grid pane from the bdrta fields
+     */
     private void updateMainFormulaGridFromFields(){
         mainFormulasPane.getChildren().clear();
 
@@ -591,6 +614,10 @@ public class TruthTableExpCreate {
         }
     }
 
+    /*
+     * Boxed DRTA for an operator field
+     * @return the bdrta
+     */
     private BoxedDRTA newOperatorBoxedDRTA() {
         BoxedDRTA bdrta = new BoxedDRTA();
         DecoratedRTA drta = bdrta.getDRTA();
@@ -601,10 +628,6 @@ public class TruthTableExpCreate {
         rta.setPrefWidth(30);
         rta.getStylesheets().add("RichTextFieldWide.css");
 
- // Center text in field?  This doesn't work.
- //       RichTextAreaViewModel rtaViewModel = ((RichTextAreaSkin) rta.getSkin()).getViewModel();
- //       new ActionCmdFactory().decorate(ParagraphDecoration.builder().presets().alignment(TextAlignment.CENTER).build()).apply(rtaViewModel);
-
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 editorInFocus(drta, ControlType.STATEMENT);
@@ -613,6 +636,11 @@ public class TruthTableExpCreate {
         return bdrta;
     }
 
+    /*
+     * Boxed DRTA given a specific content operator
+     * @param operator the operator
+     * @return the Boxed DRTA
+     */
     private BoxedDRTA contentOperatorBoxedDRTA(String operator) {
         BoxedDRTA bdrta = newOperatorBoxedDRTA();
         RichTextArea rta = bdrta.getRTA();
@@ -621,6 +649,10 @@ public class TruthTableExpCreate {
         return bdrta;
     }
 
+    /*
+     * Boxed DRTA for a formula field
+     * @return the bdrta
+     */
     private BoxedDRTA newMainFormulaBoxedDRTA() {
         BoxedDRTA bdrta = new BoxedDRTA();
         DecoratedRTA drta = bdrta.getDRTA();
@@ -641,12 +673,19 @@ public class TruthTableExpCreate {
         return bdrta;
     }
 
+    /*
+     * Check for changes and close
+     */
     private void closeWindow() {
         if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
             mainWindow.closeExercise();
             stage.close();
         }
     }
+
+    /*
+     * View the exercise as currently constructed
+     */
     private void viewExercise() {
         TruthTableExpModel model = extractModelFromWindow();
         TruthTableExpExercise exercise = new TruthTableExpExercise(model, mainWindow, true);
@@ -657,33 +696,31 @@ public class TruthTableExpCreate {
         exercise.getExerciseView().setStatementPrefHeight(Math.min(PrintUtilities.getPageHeight(), model.getStatementPrefHeight()));
         mainWindow.setUpExercise(exercise);
     }
+
+    /*
+     * Clear create window, leaving operator, checkbox, explain prompt, and divider settings intact.
+     */
     private void clearExercise() {
         if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
-//            choiceLeadField.clear();
             choiceLeadField.textProperty().addListener(choiceLeadListener);
-//            aPromptField.clear();
             aPromptField.textProperty().addListener(aPromptListener);
-//            bPromptField.clear();
             bPromptField.textProperty().addListener(bPromptListener);
-//            conclusionDividerCheck.setSelected(false);
-//            unaryOperatorList.clear();
-//            updateUnaryOperatorGridFromFields();
-//            binaryOperatorList.clear();
-//            updateBinaryOperatorGridFromFields();
             mainFormulaList.clear();
             BoxedDRTA mainFormulaBoxedDRTA = newMainFormulaBoxedDRTA();
             mainFormulaList.add(mainFormulaBoxedDRTA);
             updateMainFormulaGridFromFields();
-
-//            statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
             statementRTA.getActionFactory().newDocumentNow().execute(new ActionEvent());
- //           statementRTA.getActionFactory().saveNow().execute(new ActionEvent());
             viewExercise();
             fieldModified = false;
         }
     }
+
+    /*
+     * Save the currently constructed exercise to disk
+     * @param saveAs true to open save as window and otherwise false
+     */
     private void saveExercise(boolean saveAs) {
         lowerSaveButton.setDisable(true);
         saveAsButton.setDisable(true);
@@ -705,6 +742,12 @@ public class TruthTableExpCreate {
         fieldModified = false;
     }
 
+    /*
+     * If exercise modified, check for continue
+     * @param title String title of confirmation box
+     * @param content String content of confirmation box
+     * @return true if ok to continue, and otherwise false
+     */
     private boolean checkContinue(String title, String content) {
         boolean okcontinue = true;
 
@@ -728,6 +771,9 @@ public class TruthTableExpCreate {
         return okcontinue;
     }
 
+    /*
+     * Update zoom setting
+     */
     private void updateZoom() {
         centerBox.setScaleX(scale);
         centerBox.setScaleY(scale);
@@ -740,6 +786,9 @@ public class TruthTableExpCreate {
         keyboardDiagram.update();
     }
 
+    /*
+     *  Bind vertical height of statement field to window size
+     */
     private void setCenterVgrow() {
         double fixedHeight = helpArea.getHeight() * scale + 550;
         DoubleProperty fixedValueProperty = new SimpleDoubleProperty(fixedHeight);
@@ -752,7 +801,11 @@ public class TruthTableExpCreate {
         statementRTA.prefHeightProperty().bind(centerHeightProperty);
     }
 
-    //this leaves tableValues, rowComments, columnHighlights to be initialized by the TruthTableExercise (based on the model mainFormulas).
+    /*
+     * Get the truth table model for the currently constructed exercise.
+     * This leaves tableValues, rowComments, columnHighlights to be initialized by the TruthTableExercise (based on the model mainFormulas).
+     * @return the derivation model
+     */
     private TruthTableExpModel extractModelFromWindow() {
         TruthTableExpModel model = new TruthTableExpModel();
 
@@ -804,7 +857,11 @@ public class TruthTableExpCreate {
         return model;
     }
 
-
+    /*
+     * Update keyboard diagram and edit controls to currently selected DRTA
+     * @param decoratedRTA the DRTA
+     * @param control the {slapp.editor.main_window.ControlType}
+     */
     private void editorInFocus(DecoratedRTA decoratedRTA, ControlType control) {
 
         KeyboardDiagram keyboardDiagram = KeyboardDiagram.getInstance();
@@ -839,12 +896,13 @@ public class TruthTableExpCreate {
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
         editAndKbdBox.layout();
 
-
-
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, upperFieldsBox);
         borderPane.topProperty().setValue(topBox);
     }
 
+    /*
+     * With text field in focus, set disabled DRTA controls
+     */
     private void textFieldInFocus() {
         editorInFocus(dummyDRTA, ControlType.STATEMENT);
     }

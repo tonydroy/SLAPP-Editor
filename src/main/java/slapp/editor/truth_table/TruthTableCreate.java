@@ -175,8 +175,6 @@ public class TruthTableCreate {
         HBox nameBox = new HBox(10, nameLabel, nameField);
         nameBox.setAlignment(Pos.CENTER_LEFT);
 
-
-
         //language presets
         Label operatorPresetLabel = new Label("Preset operators: ");
         Button baseLangPresetButton = new Button();
@@ -354,8 +352,6 @@ public class TruthTableCreate {
         };
         conclusionDividerCheck.selectedProperty().addListener(conclusionDividerCheckListener);
 
-
-
         HBox mainFormulasTop = new HBox(10, mainFormulaLabel, addMainFormulaButton, removeMainFormulaButton, conclusionDividerCheck);
         mainFormulasTop.setAlignment(Pos.CENTER_LEFT);
         mainFormulasTop.setMargin(conclusionDividerCheck, new Insets(0, 0, 0, 100));
@@ -427,8 +423,6 @@ public class TruthTableCreate {
         sizeToolBar = new ToolBar();
         sizeToolBar.setPrefHeight(38);
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
-
-
 
         //setup  window
         scene = new Scene(borderPane);
@@ -574,7 +568,7 @@ public class TruthTableCreate {
 
     /*
      * Boxed DRTA for a formula field
-     * @return
+     * @return the bdrta
      */
     private BoxedDRTA newMainFormulaBoxedDRTA() {
         BoxedDRTA boxedDRTA = new BoxedDRTA();
@@ -803,12 +797,9 @@ public class TruthTableCreate {
         }
         sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
 
-
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
         editAndKbdBox.layout();
-
-
 
         VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, upperFieldsBox);
         borderPane.topProperty().setValue(topBox);
