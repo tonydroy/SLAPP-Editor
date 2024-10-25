@@ -802,7 +802,7 @@ public class TruthTableExpCreate {
     }
 
     /*
-     * Get the truth table model for the currently constructed exercise.
+     * Get the truth table explain model for the currently constructed exercise.
      * This leaves tableValues, rowComments, columnHighlights to be initialized by the TruthTableExercise (based on the model mainFormulas).
      * @return the derivation model
      */

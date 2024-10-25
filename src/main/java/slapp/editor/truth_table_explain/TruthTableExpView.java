@@ -703,12 +703,6 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
     Spinner getRowsSpinner() { return rowsSpinner;  }
 
     /**
-     * The box including the table grid, choices, and explain field
-     * @return the VBox
-     */
-    VBox getCenterBox() {return centerBox; }
-
-    /**
      * The label for the choices lead
      * @return the label
      */
@@ -728,7 +722,7 @@ public class TruthTableExpView implements ExerciseView<DecoratedRTA> {
 
     /**
      * The Decorated RTA for the explain field
-     * @return
+     * @return the DRTA
      */
     DecoratedRTA getExplainDRTA() {return explainDRTA; }
 

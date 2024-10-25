@@ -104,12 +104,12 @@ public class TruthTableExpExercise implements Exercise<TruthTableExpModel, Truth
     /**
      * Set model for empty table
      */
-    public void generateEmptyTableModel() {
+    void generateEmptyTableModel() {
         setupHeadItemsFromModel();
         truthTableExpModel.setEmptyTableContents(tableColumns);
     }
 
-    /**
+    /*
      * Setup truth table explain view from model
      */
     private void setTruthTableView() {

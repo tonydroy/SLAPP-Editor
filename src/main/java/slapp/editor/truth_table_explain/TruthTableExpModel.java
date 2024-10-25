@@ -235,7 +235,7 @@ public class TruthTableExpModel implements ExerciseModel<Document>, Serializable
     boolean[] getColumnHighlights() { return columnHighlights; }
 
     /**
-     * The array String[][] of values (usually 'T' or 'F' appearing in the table
+     * The array String[][] of values (usually 'T' or 'F') appearing in the table
      * @return the array
      */
     String[][] getTableValues() { return tableValues; }

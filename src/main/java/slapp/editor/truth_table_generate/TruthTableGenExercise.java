@@ -60,8 +60,11 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
     private ColumnConstraints spacerConstraint;
 
 
-
-    //applies when table elements are set to model with rows != 0
+    /**
+     * Create truth table exercise with rows!= 0
+     * @param model the model
+     * @param mainWindow the main window
+     */
     public TruthTableGenExercise(TruthTableGenModel model, MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         this.truthTableGenModel = model;
@@ -74,8 +77,13 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
 
     }
 
-    //applies when table elements need to be set to empty table
-    public TruthTableGenExercise(TruthTableGenModel model, MainWindow mainWindow, boolean create) {
+    /**
+     * Create truth table exercise with rows == 0
+     * @param model the model
+     * @param mainWindow
+     * @param createEmpty dummy parameter to differentiate constructors
+     */
+    public TruthTableGenExercise(TruthTableGenModel model, MainWindow mainWindow, boolean createEmpty) {
         this.mainWindow = mainWindow;
         this.truthTableGenModel = model;
         if (model.getOriginalModel() == null) {model.setOriginalModel(model); }
@@ -87,12 +95,18 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         setTruthTableView();
     }
 
-    public void generateEmptyTableModel() {
+    /**
+     * Set model for empty table
+     */
+    void generateEmptyTableModel() {
         setupHeadItemsFromModel();
         truthTableGenModel.setEmptyTableContents(tableColumns);
         truthTableGenView.getTableGrid().setPrefHeight(100);
     }
 
+    /*
+     * Setup truth table explain view from model
+     */
     private void setTruthTableView() {
         spacerConstraint = new ColumnConstraints(10);
         truthTableGenView.setInterpretationPrompt(truthTableGenModel.getInterpretationPrompt());
@@ -254,13 +268,15 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         });
 
         //table contents
-
         updateViewTableItems();
         truthTableGenView.updateTableGridFromTableItems();
 
         truthTableGenView.initializeViewDetails();
     }
 
+    /*
+     * Update view items from model
+     */
     private void updateViewTableItems() {
         setupHeadItemsFromModel();
 
@@ -304,6 +320,9 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         truthTableGenView.setHighlightButtons(buttons);
     }
 
+    /*
+     * Update view head items from model
+     */
     private void setupHeadItemsFromModel() {
 
         List<TableHeadItem> headList = new ArrayList<>();
@@ -355,20 +374,34 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         tableColumns = headList.size();
     }
 
+    /**
+     * The truth table generate model
+     * @return the model
+     */
     @Override
     public TruthTableGenModel getExerciseModel() { return truthTableGenModel;  }
 
+    /**
+     * The truth table generate view
+     * @return the view
+     */
     @Override
     public TruthTableGenView getExerciseView() { return truthTableGenView; }
 
+    /**
+     * Save exercise to disk
+     * @param saveAs true if "save as" should be invoked, and otherwise false
+     */
     @Override
     public void saveExercise(boolean saveAs) {
         boolean success = DiskUtilities.saveExercise(saveAs, getTruthTableGenModelFromView());
         if (success) exerciseModified = false;
     }
 
-
-
+    /**
+     * List of nodes to be sent to printer for this exercise
+     * @return the node list
+     */
     @Override
     public List<Node> getPrintNodes() {
         List<Node> nodeList = new ArrayList<>();
@@ -482,6 +515,10 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         return nodeList;
     }
 
+    /**
+     * Return to the initial (unworked) version of the exercise, retaining the comment only.
+     * @return the initial exercise
+     */
     @Override
     public Exercise<TruthTableGenModel, TruthTableGenView> resetExercise() {
         RichTextArea commentRTA = truthTableGenView.getExerciseComment().getEditor();
@@ -493,9 +530,12 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         return clearExercise;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @return true if exercise is modified, and otherwise false
+     */
     @Override
     public boolean isExerciseModified() {
-
         RichTextArea commentEditor = truthTableGenView.getExerciseComment().getEditor();
         if (commentEditor.isModified()) exerciseModified = true;
 
@@ -510,14 +550,27 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
             RichTextArea rowCommentEditor = rowComments[i].getRTA();
             if (rowCommentEditor.isModified()) exerciseModified = true;
         }
-
         return exerciseModified;
     }
 
+    /**
+     * Exercise is modified if it is changed relative to last save
+     * @param modified true if exercise is modified, and otherwise false
+     */
     @Override
     public void setExerciseModified(boolean modified) { exerciseModified = modified; }
+
+    /**
+     * The view node to be displayed as a component of the free form exercise
+     * @return the node
+     */
     @Override
     public Node getFFViewNode() {return truthTableGenView.getTableGrid();}
+
+    /**
+     * The node to be printed as a component of the free form exercise
+     * @return the node
+     */
     @Override
     public Node getFFPrintNode() {
         TruthTableGenModel printModel = truthTableGenModel;
@@ -538,11 +591,19 @@ public class TruthTableGenExercise implements Exercise<TruthTableGenModel, Truth
         return gridBox;
     }
 
+    /**
+     * Extract an {@link slapp.editor.main_window.ExerciseModel} from view of the exercise
+     * @return the exercise model
+     */
     @Override
     public ExerciseModel<TruthTableGenModel> getExerciseModelFromView() {
         return (ExerciseModel) getTruthTableGenModelFromView();
     }
 
+    /*
+     * Extract the truth table generate model from view
+     * @return the model
+     */
     private TruthTableGenModel getTruthTableGenModelFromView() {
         TruthTableGenModel model = new TruthTableGenModel();
         model.setExerciseName(truthTableGenModel.getExerciseName());
