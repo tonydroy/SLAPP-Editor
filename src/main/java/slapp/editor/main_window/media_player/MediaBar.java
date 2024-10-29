@@ -46,6 +46,8 @@ public class MediaBar extends HBox {
     Label volume = new Label("Volume: ");
     MediaPlayer player;
     Label totalTime = new Label("");
+
+    Label currentTime = new Label("");
     Player myPlayer;
 
     Font iconFont;
@@ -87,8 +89,11 @@ public class MediaBar extends HBox {
 
         // Adding the components to the bottom
 
-        getChildren().add(totalTime);
         getChildren().add(PlayButton); // Playbutton
+        getChildren().add(new Label(" "));
+        getChildren().add(currentTime) ;
+        getChildren().add(new Label("/"));
+        getChildren().add(totalTime);
         getChildren().add(time); // time slider
         getChildren().add(volume); // volume slider
         getChildren().add(vol);
@@ -180,10 +185,15 @@ public class MediaBar extends HBox {
             {
                 // Updating to the new time value
                 // This will move the slider while running your video
-                time.setValue(player.getCurrentTime().toMillis() /
-                        player.getTotalDuration()
-                                .toMillis()
-                                * 100);
+                time.setValue(player.getCurrentTime().toMillis() / player.getTotalDuration().toMillis() * 100);
+
+                double seconds = player.getCurrentTime().toSeconds();
+                int hours = (int) (seconds/3600);
+                int min = (int) ((seconds % 3600) / 60);
+                int sec = (int) (seconds % 60);
+                String timeString = String.format("%02d:%02d:%02d ", hours, min, sec);
+                currentTime.setText(timeString);
+
             }
         });
     }

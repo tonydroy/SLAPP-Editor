@@ -20,62 +20,76 @@ import com.gluonhq.richtextarea.model.Document;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Model for the map formula box
+ */
 public class MapFormulaBoxMod implements Serializable {
     private static final long serialVersionUID = 100L;
     private String idString;
     private double layoutX;
     private double layoutY;
-//    private double width;
     private Document text;
     private List<String> linkIdStrings;
 
 
+    /**
+     * id string for this node
+     * @return the id string
+     */
+    public String getIdString() {       return idString;   }
 
-    public String getIdString() {
-        return idString;
-    }
+    /**
+     * id string for this node
+     * @param idString the id string
+     */
+    public void setIdString(String idString) {       this.idString = idString;   }
 
-    public void setIdString(String idString) {
-        this.idString = idString;
-    }
+    /**
+     * The x layout of the map formula box in the main pane
+     * @return the x layout value
+     */
+    public double getLayoutX() {       return layoutX;  }
 
-    public double getLayoutX() {
-        return layoutX;
-    }
+    /**
+     * The x layout of the map formula box in the main pane
+     * @param layoutX the x layout value
+     */
+    public void setLayoutX(double layoutX) {       this.layoutX = layoutX;   }
 
-    public void setLayoutX(double layoutX) {
-        this.layoutX = layoutX;
-    }
+    /**
+     * The y layout of the map formula box in the main pane
+     * @return the y layout value
+     */
+    public double getLayoutY() {       return layoutY;   }
 
-    public double getLayoutY() {
-        return layoutY;
-    }
+    /**
+     * The y layout of the map formula box in the main pane
+     * @param layoutY the y layout value
+     */
+    public void setLayoutY(double layoutY) {       this.layoutY = layoutY;   }
 
-    public void setLayoutY(double layoutY) {
-        this.layoutY = layoutY;
-    }
+    /**
+     * The content of this box
+     * @return the content Document
+     */
+    public Document getText() {       return text;   }
 
- //   public double getWidth() {
-   //     return width;
-//    }
+    /**
+     * The content of this box
+     * @param text the content Document
+     */
+    public void setText(Document text) {       this.text = text;   }
 
-//    public void setWidth(double width) {
-//        this.width = width;
-//    }
+    /**
+     * The list of String IDs linked to this box
+     * @return the String list
+     */
+    public List<String> getLinkIdStrings() {       return linkIdStrings;   }
 
-    public Document getText() {
-        return text;
-    }
+    /**
+     * The list of String IDs linked to this box
+     * @param linkIdStrings the String list
+     */
+    public void setLinkIdStrings(List<String> linkIdStrings) {       this.linkIdStrings = linkIdStrings;   }
 
-    public void setText(Document text) {
-        this.text = text;
-    }
-
-    public List<String> getLinkIdStrings() {
-        return linkIdStrings;
-    }
-
-    public void setLinkIdStrings(List<String> linkIdStrings) {
-        this.linkIdStrings = linkIdStrings;
-    }
 }

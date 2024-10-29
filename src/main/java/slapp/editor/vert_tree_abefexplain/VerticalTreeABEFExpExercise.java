@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License along with SLA
 package slapp.editor.vert_tree_abefexplain;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -43,7 +42,6 @@ import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.*;
-import slapp.editor.vert_tree_abefexplain.*;
 import slapp.editor.vertical_tree.drag_drop.DragIconType;
 import slapp.editor.vertical_tree.object_models.*;
 
@@ -348,7 +346,7 @@ public class VerticalTreeABEFExpExercise implements Exercise<VerticalTreeABEFExp
                     boxButton.setToggleGroup(buttonGroup);
                     break;
                 }
-                case OPERATOR_CIRCLE: {
+                case CIRCLE: {
                     ToggleButton circleButton = layout.getCircleToggle();
                     controlBox.getChildren().add(circleButton);
                     circleButton.setToggleGroup(buttonGroup);

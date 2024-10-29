@@ -579,7 +579,8 @@ public class MainWindowView {
         if (mainWindow.checkCloseWindow()) {
             KeyboardDiagram.getInstance().close();
             dummyStage.close();
-            if (mainWindow.getMediaViewer() != null) {  mainWindow.getMediaViewer().stopPlay();    }
+            mainWindow.closeVideoHelp();
+//            if (mainWindow.getMediaViewer() != null) {  mainWindow.getMediaViewer().stopPlay();    }
             stage.close();
         }
     }

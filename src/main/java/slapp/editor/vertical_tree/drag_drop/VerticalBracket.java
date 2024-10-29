@@ -29,16 +29,11 @@ public class VerticalBracket extends AnchorPane {
     private VerticalTreeView verticalTreeView;
     private Label topDragLabel;
     private Label closeLabel;
-
     private EventHandler<DragEvent> mContextDragOver;
     private EventHandler <DragEvent> mContextDragDropped;
-
     private DragIconType mType = DragIconType.bracket;
-
     private Point2D mDragOffset = new Point2D (0.0, 0.0);
-
     private final VerticalBracket self;
-
     private VBox mainPane;
 
 

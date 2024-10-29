@@ -17,6 +17,9 @@ package slapp.editor.vertical_tree.object_models;
 
 import java.io.Serializable;
 
+/**
+ * Model for clickable node link.  Line dragged from source tree formula box to target formula box.
+ */
 public class ClickableNodeLinkMod implements Serializable {
     private static final long serialVersionUID = 100L;
     private String idString;
@@ -24,20 +27,38 @@ public class ClickableNodeLinkMod implements Serializable {
     private String targetId;
 
 
+    /**
+     * Construct clickable node link model
+     * @param idString id of this node
+     * @param sourceId id of source node
+     * @param targetId ide of target node
+     */
     public ClickableNodeLinkMod(String idString, String sourceId, String targetId) {
         this.idString = idString;
         this.sourceId = sourceId;
         this.targetId = targetId;
     }
 
+    /**
+     * id of this node
+     * @return the id string
+     */
     public String getIdString() {
         return idString;
     }
 
+    /**
+     * id of source node
+     * @return the id string
+     */
     public String getSourceId() {
         return sourceId;
     }
 
+    /**
+     * id of target node
+     * @return the id string
+     */
     public String getTargetId() {
         return targetId;
     }

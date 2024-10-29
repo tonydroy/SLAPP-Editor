@@ -453,7 +453,7 @@ public class CreateAssignment {
     private void clearAssignment() {
         boolean okContinue = true;
         if (isModified) {
-            Alert confirm = EditorAlerts.confirmationAlert("Confirm Clear", "This assignment appears to have been changed.\n\nContinue to clear exercise?");
+            Alert confirm = EditorAlerts.confirmationAlert("Confirm Clear", "This assignment appears to have unsaved changes.\n\nContinue to clear exercise?");
             Optional<ButtonType> result = confirm.showAndWait();
             if (result.get() != OK) okContinue = false;
         }
@@ -473,7 +473,7 @@ public class CreateAssignment {
     private void closeWindow() {
         boolean okContinue = true;
         if (isModified) {
-            Alert confirm = EditorAlerts.confirmationAlert("Confirm Close", "This assignment appears to have been changed.\n\nContinue to close window?");
+            Alert confirm = EditorAlerts.confirmationAlert("Confirm Close", "This assignment appears to have unsaved changes.\n\nContinue to close window?");
             Optional<ButtonType> result = confirm.showAndWait();
             if (result.get() != OK) okContinue = false;
         }

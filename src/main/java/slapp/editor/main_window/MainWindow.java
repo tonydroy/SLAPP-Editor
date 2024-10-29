@@ -24,16 +24,23 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Modality;
 import javafx.stage.Popup;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import slapp.editor.*;
 import slapp.editor.front_page.FrontPageExercise;
@@ -66,6 +73,11 @@ public class MainWindow {
     private boolean isExerciseOpen = false;
     private DoubleProperty baseScale = new SimpleDoubleProperty(1.0);
     private boolean fitToPage = false;
+    private WebEngine videoWebEngine;
+    private WebView videoWebView;
+
+    private Stage videoStage;
+
 
     /**
      * Create main SLAPP main window
@@ -76,6 +88,11 @@ public class MainWindow {
         mainView = new MainWindowView(this);
         setupMainWindow();
         mainView.setupDummyWindowRTASize();
+
+        videoWebView = new WebView();
+
+//        WebEngine videoWebEngine = videoWebView.getEngine();
+
 
         focusListener = (ob, ov, nv) ->  {
             if (nv != null) {
@@ -134,6 +151,17 @@ public class MainWindow {
         if (EditorMain.os.startsWith("Mac")) mainView.getExportSetupItem().setDisable(true);
         mainView.getScaleSetupItem().setOnAction(e -> scaleSetup());
 
+
+
+        mainView.getQuickStartItem().setOnAction(e -> videoHelp("https://www.slappservices.net/quick_start/quick_start_player.html", 900, 580));
+        mainView.getSlappEditorItem().setOnAction(e -> videoHelp("https://www.slappservices.net/slapp_editor/slapp_editor_player.html", 800, 661));
+        mainView.getVerticalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/vertical_trees/vertical_trees_player.html",600, 849));
+        mainView.getHorizontalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/horizontal_trees/horizontal_trees_player.html", 600, 835));
+        mainView.getTruthTableItem().setOnAction(e -> videoHelp("https://www.slappservices.net/truth_tables/truth_tables_player.html", 600, 746));
+        mainView.getDerivationItem().setOnAction(e -> videoHelp("https://www.slappservices.net/derivations/derivations_player.html", 700, 774));
+        mainView.getInstructorInfoItem().setOnAction(e -> videoHelp("https://www.slappservices.net/instructor/instructor_player.html", 900, 537));
+
+        /*
         mainView.getQuickStartItem().setOnAction(e -> videoHelp("https://www.slappservices.net/quick_start.mp4", 900, 580));  //650
         mainView.getSlappEditorItem().setOnAction(e -> videoHelp("https://www.slappservices.net/slapp_editor.mp4", 800, 661));
         mainView.getVerticalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/vertical_trees.mp4", 600, 849));
@@ -141,6 +169,12 @@ public class MainWindow {
         mainView.getTruthTableItem().setOnAction(e -> videoHelp("https://www.slappservices.net/truth_tables.mp4", 600, 746.4));
         mainView.getDerivationItem().setOnAction(e -> videoHelp("https://www.slappservices.net/derivations.mp4", 700, 774));
         mainView.getInstructorInfoItem().setOnAction(e -> videoHelp("https://www.slappservices.net/instructor_info.mp4", 900, 536.9));
+         */
+
+
+
+
+
 
         mainView.getCommonElementsTextItem().setOnAction(e -> generalTextHelp());
         mainView.getAboutItem().setOnAction(e -> aboutTextHelp());
@@ -205,8 +239,8 @@ public class MainWindow {
      * Open open window to get type, and then window to create exercise.
      */
     private void createNewExercise() {
-        if (checkContinueAssignment("Confirm Create", "This assignment appears to have been changed, and will be overwritten in the create process.\n\nContinue to create exercise?")) {
-            if (checkContinueExercise("Confirm Create", "This exercise appears to have been changed, and will be overwritten by the new one.\n\nContinue to create exercise?")) {
+        if (checkContinueAssignment("Confirm Create", "This assignment appears to have unsaved changes, and will be overwritten in the create process.\n\nContinue to create exercise?")) {
+            if (checkContinueExercise("Confirm Create", "This exercise appears to have unsaved changes, and will be overwritten by the new one.\n\nContinue to create exercise?")) {
                 ExerciseType exerciseType = ExerciseTypePopup.getType(mainView);
                 if (exerciseType != null) {
                     TypeSelectorFactories typeFactories = new TypeSelectorFactories(this);
@@ -222,8 +256,8 @@ public class MainWindow {
      * Open exercise in create window for revision.  This gets blocked (at TypeSelectorFactories) if the exercise has been even partially worked.
      */
     private void createRevisedExercise() {
-        if (checkContinueAssignment("Confirm Create", "This assignment appears to have been changed, and will be overwritten in the create process.\n\nContinue to create exercise?")) {
-            if (checkContinueExercise("Confirm Create", "This exercise appears to have been changed, and will be overwritten by the new one.\n\nContinue to create exercise?")) {
+        if (checkContinueAssignment("Confirm Create", "This assignment appears to have unsaved changes, and will be overwritten in the create process.\n\nContinue to create exercise?")) {
+            if (checkContinueExercise("Confirm Create", "This exercise appears to have unsaved changes, and will be overwritten by the new one.\n\nContinue to create exercise?")) {
                 Object exerciseModelObject = DiskUtilities.openExerciseModelObject();
                 if (exerciseModelObject != null) {
                     TypeSelectorFactories typeFactories = new TypeSelectorFactories(this);
@@ -296,7 +330,7 @@ public class MainWindow {
      */
     public void closeExercise() {
         if (currentAssignment == null) {
-            if (checkContinueExercise("Confirm Close", "This exercise appears to have been changed.\n\nContinue to close exercise?")) {
+            if (checkContinueExercise("Confirm Close", "This exercise appears to have unsaved changes.\n\nContinue to close exercise?")) {
                 setUpExercise(getEmptyExercise());
                 isExerciseOpen = false;
             }
@@ -309,8 +343,8 @@ public class MainWindow {
      * Open exercise from disk
      */
     private void openExercise(){
-        if (checkContinueAssignment("Confirm Open", "This assignment appears to have been changed, and will be overwritten by the new exercise.  Continue to open exercise?")) {
-            if (checkContinueExercise("Confirm Open", "This exercise appears to have been changed, and will be overwritten by the new one.  Continue to open exercise?")) {
+        if (checkContinueAssignment("Confirm Open", "This assignment appears to have unsaved changes, and will be overwritten by the new exercise.  Continue to open exercise?")) {
+            if (checkContinueExercise("Confirm Open", "This exercise appears to have unsaved changes, and will be overwritten by the new one.  Continue to open exercise?")) {
                 Object exerciseModelObject = DiskUtilities.openExerciseModelObject();
                 if (exerciseModelObject != null) {
                     TypeSelectorFactories typeFactories = new TypeSelectorFactories(this);
@@ -481,8 +515,8 @@ public class MainWindow {
      * Open assignment from disk
      */
     public void openAssignment(){
-        if (checkContinueAssignment("Confirm Open", "The current assignment appears to have been changed, and will be overwritten by the new one.\n\nContinue to open assignment?")) {
-            if (checkContinueExercise("Confirm Open", "The current exercise appears to have been changed, and will be overwritten by the new assignment.\n\nContinue to open assignment?")) {
+        if (checkContinueAssignment("Confirm Open", "The current assignment appears to have unsaved changes, and will be overwritten by the new one.\n\nContinue to open assignment?")) {
+            if (checkContinueExercise("Confirm Open", "The current exercise appears to have unsaved changes, and will be overwritten by the new assignment.\n\nContinue to open assignment?")) {
                 isExerciseOpen = false;
                 Assignment assignment = DiskUtilities.openAssignment();
                 if (assignment != null) {
@@ -515,7 +549,7 @@ public class MainWindow {
         if (currentAssignment == null) {
             EditorAlerts.fleetingPopup("There is no open assignment to close.");
         } else {
-            if (checkContinueAssignment("Confirm Close", "This assignment appears to have been changed.\n\nContinue to close assignment?")) {
+            if (checkContinueAssignment("Confirm Close", "This assignment appears to have unsaved changes.\n\nContinue to close assignment?")) {
 
                 setUpExercise(getEmptyExercise());
                 isExerciseOpen = false;
@@ -641,8 +675,8 @@ public class MainWindow {
      * If assignment is not started (if it does not have a completed header), open for revision in create window
      */
     private void createRevisedAssignment() {
-        if (checkContinueAssignment("Confirm Create", "The current assignment appears to have been changed, and will be overwritten in the creation process.\n\nContinue to create assignment?")) {
-             if (checkContinueExercise("Confirm Create", "The current exercise appears to have been changed, and will be overwritten in the creation process.\n\nContinue to create assignment?")) {
+        if (checkContinueAssignment("Confirm Create", "The current assignment appears to have unsaved changes, and will be overwritten in the creation process.\n\nContinue to create assignment?")) {
+             if (checkContinueExercise("Confirm Create", "The current exercise appears to have unsaved changes, and will be overwritten in the creation process.\n\nContinue to create assignment?")) {
                 isExerciseOpen = false;
                 Assignment assignment = DiskUtilities.openAssignment();
                 if (assignment != null) {
@@ -661,9 +695,9 @@ public class MainWindow {
      * Open window to create a new assignment
      */
     private void createNewAssignment(){
-        if (checkContinueAssignment("Confirm Create", "The current assignment appears to have been changed, and will be overwritten in the creation process.\n\nContinue to create assignment?")) {
+        if (checkContinueAssignment("Confirm Create", "The current assignment appears to have unsaved changes, and will be overwritten in the creation process.\n\nContinue to create assignment?")) {
             currentAssignment = null;
-            if (checkContinueExercise("Confirm Create", "The current exercise appears to have been changed, and will be overwritten in the creation process.\n\n Continue to create assignment?")) {
+            if (checkContinueExercise("Confirm Create", "The current exercise appears to have unsaved changes, and will be overwritten in the creation process.\n\n Continue to create assignment?")) {
                 isExerciseOpen = false;
                 new CreateAssignment(new Assignment(), this);
             }
@@ -821,8 +855,8 @@ public class MainWindow {
      */
     boolean checkCloseWindow() {
         boolean continueClose = false;
-        if (checkContinueAssignment("Confirm Close", "The current assignment appears to have been changed.\n\nContinue to close?")) {
-            if (checkContinueExercise("Confirm Close", "The current exercise appears to have been changed.\n\nContinue to close exercise?")) {
+        if (checkContinueAssignment("Confirm Close", "The current assignment appears to have unsaved changes.\n\nContinue to close?")) {
+            if (checkContinueExercise("Confirm Close", "The current exercise appears to have unsaved changes.\n\nContinue to close exercise?")) {
                 continueClose = true;
             }
         }
@@ -842,11 +876,57 @@ public class MainWindow {
      * @param width - widith of view window
      * @param height - height of view window
      */
+
+    /*
     private void videoHelp(String urlString, double width, double height) {
         if (mediaViewer == null) mediaViewer = new MediaViewer();
         else mediaViewer.stopPlay();
         mediaViewer.play(urlString, width, height);
     }
+     */
+
+    private void videoHelp(String urlString, double width, double height) {
+ //       WebView videoWebView = new WebView();
+        if (videoWebEngine != null) closeVideoHelp();
+
+
+        videoWebEngine = videoWebView.getEngine();
+        videoWebEngine.setUserStyleSheetLocation("data:, body {font: 16px Noto Serif Combo; }");
+        videoWebEngine.load(urlString);
+
+        VBox root = new VBox(videoWebView);
+        root.setVgrow(videoWebView, Priority.ALWAYS);
+        Scene scene = new Scene(root);
+
+        videoStage = new Stage();
+        videoStage.setScene(scene);
+        videoStage.setTitle("SLAPP Video Help");
+        videoStage.initModality(Modality.NONE);
+        videoStage.getIcons().addAll(EditorMain.icons);
+//        stage.initOwner(EditorMain.mainStage);
+        Rectangle2D bounds = MainWindowView.getCurrentScreenBounds();
+//        stage.setX(Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - 860));
+//        stage.setY(Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - 850));
+
+        videoStage.setX(Math.max(5, Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - (width + 20))));
+        videoStage.setY(Math.max(5, Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - (height + 20))));
+
+
+        videoStage.setWidth(width);
+        videoStage.setHeight(height);
+
+        videoStage.setOnCloseRequest(e -> { closeVideoHelp(); });
+
+        videoStage.show();
+    }
+
+    void closeVideoHelp() {
+        if (videoWebEngine != null) videoWebEngine.load(null);
+        if (videoStage != null) videoStage.close();
+    }
+
+
+
 
     /*
      * Open 'general info' text help item

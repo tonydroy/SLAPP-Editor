@@ -15,10 +15,13 @@ You should have received a copy of the GNU General Public License along with SLA
 
 package slapp.editor.vertical_tree.object_models;
 
+/**
+ * Enum for control types that may be included in exercise
+ */
 public enum ObjectControlType {
 
     FORMULA_BOX,
-    OPERATOR_CIRCLE,
+    CIRCLE,
     UNDERLINE,
     STAR,
     ANNOTATION,

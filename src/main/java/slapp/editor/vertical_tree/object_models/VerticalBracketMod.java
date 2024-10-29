@@ -17,21 +17,42 @@ package slapp.editor.vertical_tree.object_models;
 
 import java.io.Serializable;
 
+/**
+ * Model for the vertical bracket
+ */
 public class VerticalBracketMod implements Serializable {
     private static final long serialVersionUID = 100L;
     private double layoutX;
     private double layoutY;
     private double height;
 
+    /**
+     * Construct bracket model
+     * @param layoutX  bracket layout X
+     * @param layoutY bracket layout Y
+     * @param height bracket height
+     */
     public VerticalBracketMod(double layoutX, double layoutY, double height) {
         this.layoutX = layoutX;
         this.layoutY = layoutY;
         this.height = height;
     }
 
+    /**
+     * The layout x value
+     * @return the double layout value
+     */
     public double getLayoutX() { return layoutX;  }
 
+    /**
+     * The layout y value
+     * @return the double layout value
+     */
     public double getLayoutY() { return layoutY;  }
 
+    /**
+     * The height value
+     * @return the double height value
+     */
     public double getHeight() { return height; }
 }

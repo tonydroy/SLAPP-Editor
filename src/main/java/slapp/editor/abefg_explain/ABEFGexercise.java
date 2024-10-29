@@ -255,7 +255,7 @@ public class ABEFGexercise implements Exercise<ABEFGmodel, ABEFGview> {
             int currentPageIndex = abefgView.getContentPageIndex();
             boolean okContinue = true;
             if (abefgView.getContentPageList().get(currentPageIndex).getEditor().isModified()) {
-                Alert confirm = EditorAlerts.confirmationAlert("Confirm Remove", "This page appears to have been changed.  Continue to remove?");
+                Alert confirm = EditorAlerts.confirmationAlert("Confirm Remove", "This page appears to have unsaved changes.  Continue to remove?");
                 Optional<ButtonType> result = confirm.showAndWait();
                 if (result.get() != OK) okContinue = false;
             }

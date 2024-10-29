@@ -131,7 +131,7 @@ public class VerticalTreeABExpCreate {
         mapFormulaBoxCheck.setSelected(dragIconList.contains(map_field));
         List<ObjectControlType> objectControlList = originalModel.getObjectControlList();
         boxingFormulaCheck.setSelected(objectControlList.contains(FORMULA_BOX));
-        circleCheck.setSelected(objectControlList.contains(OPERATOR_CIRCLE));
+        circleCheck.setSelected(objectControlList.contains(CIRCLE));
         starCheck.setSelected(objectControlList.contains(STAR));
         annotationCheck.setSelected(objectControlList.contains(ANNOTATION));
         underlineCheck.setSelected(objectControlList.contains(UNDERLINE));
@@ -489,7 +489,7 @@ public class VerticalTreeABExpCreate {
     }
 
     private void closeWindow() {
-        if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
+        if (checkContinue("Confirm Close", "This exercise appears to have unsaved changes.\nContinue to close window?")) {
             mainWindow.closeExercise();
             stage.close();
         }
@@ -497,7 +497,7 @@ public class VerticalTreeABExpCreate {
 
 
     private void clearExercise() {
-        if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
+        if (checkContinue("Confirm Clear", "This exercise appears to have unsaved changes.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
             choiceLeadField.textProperty().addListener(choiceLeadListener);
@@ -562,7 +562,7 @@ public class VerticalTreeABExpCreate {
 
         List<ObjectControlType> controlList = model.getObjectControlList();
         if (boxingFormulaCheck.isSelected()) controlList.add(FORMULA_BOX);
-        if (circleCheck.isSelected()) controlList.add(OPERATOR_CIRCLE);
+        if (circleCheck.isSelected()) controlList.add(CIRCLE);
         if (starCheck.isSelected()) controlList.add(STAR);
         if (annotationCheck.isSelected()) controlList.add(ANNOTATION);
         if (underlineCheck.isSelected()) controlList.add(UNDERLINE);

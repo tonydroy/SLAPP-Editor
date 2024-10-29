@@ -22,12 +22,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Model for the tree formula box
+ */
 public class TreeFormulaBoxMod implements Serializable {
     private static final long serialVersionUID = 100L;
     private String idString;
     private double layoutX;
     private double layoutY;
-    private double width;
     private Document text;
     private List<String> linkIdStrings;
     boolean boxed;
@@ -41,132 +43,177 @@ public class TreeFormulaBoxMod implements Serializable {
     List<UnderlineMod> underlineList = new ArrayList<>();
     List<Integer> baseline;
 
+    /**
+     * id string for this node
+     * @return the string
+     */
+    public String getIdString() {      return idString;   }
 
-    public String getIdString() {
-        return idString;
-    }
+    /**
+     * id string for this node
+     * @param idString the string
+     */
+    public void setIdString(String idString) {      this.idString = idString;   }
 
-    public void setIdString(String idString) {
-        this.idString = idString;
-    }
+    /**
+     * layout X in main pane
+     * @return the layout value
+     */
+    public double getLayoutX() {       return layoutX;   }
 
-    public double getLayoutX() {
-        return layoutX;
-    }
+    /**
+     * layout X in main pane
+     * @param layoutX the layout value
+     */
+    public void setLayoutX(double layoutX) {       this.layoutX = layoutX;   }
 
-    public void setLayoutX(double layoutX) {
-        this.layoutX = layoutX;
-    }
+    /**
+     * layout y in main pane
+     * @return the layout value
+     */
+    public double getLayoutY() {       return layoutY;   }
 
-    public double getLayoutY() {
-        return layoutY;
-    }
+    /**
+     * layout y in main pane
+     * @param layoutY the layout value
+     */
+    public void setLayoutY(double layoutY) {       this.layoutY = layoutY;   }
 
-    public void setLayoutY(double layoutY) {
-        this.layoutY = layoutY;
-    }
+    /**
+     * The box content
+     * @return the content Document
+     */
+    public Document getText() {       return text;   }
 
-//    public double getWidth() {
-//        return width;
- //   }
+    /**
+     * The box content
+     * @param text the content Document
+     */
+    public void setText(Document text) {       this.text = text;   }
 
-//    public void setWidth(double width) {
-//        this.width = width;
-//    }
+    /**
+     * id strings for connectors linked to this node
+     * @return the list of strings
+     */
+    public List<String> getLinkIdStrings() {       return linkIdStrings;   }
 
-    public Document getText() {
-        return text;
-    }
+    /**
+     * id strings for connectors linked to this node
+     * @param linkIdStrings the list of strings
+     */
+    public void setLinkIdStrings(List<String> linkIdStrings) {       this.linkIdStrings = linkIdStrings;   }
 
-    public void setText(Document text) {
-        this.text = text;
-    }
+    /**
+     * A boxed node has a solid border around the middle box, including the formula and lines pane
+     * @return true if boxed and otherwise false
+     */
+    public boolean isBoxed() {       return boxed;   }
 
-    public List<String> getLinkIdStrings() {
-        return linkIdStrings;
-    }
+    /**
+     * A boxed node has a solid border around the middle box, including the formula and lines pane
+     * @param boxed true if boxed and otherwise false
+     */
+    public void setBoxed(boolean boxed) {       this.boxed = boxed;   }
 
-    public void setLinkIdStrings(List<String> linkIdStrings) {
-        this.linkIdStrings = linkIdStrings;
-    }
+    /**
+     * A starred node has a superscript star in its upper right corner
+     * @return true if starred and otherwise false
+     */
+    public boolean isStarred() {       return starred;   }
 
-    public boolean isBoxed() {
-        return boxed;
-    }
+    /**
+     * A starred node has a superscript star in its upper right corner
+     * @param starred true if starred and otherwise false
+     */
+    public void setStarred(boolean starred) {       this.starred = starred;   }
 
-    public void setBoxed(boolean boxed) {
-        this.boxed = boxed;
-    }
+    /**
+     * An annotated node has a superscript text field in its upper right corner
+     * @return true if annotated and otherwise false
+     */
+    public boolean isAnnotation() {       return annotation;   }
 
-    public boolean isStarred() {
-        return starred;
-    }
+    /**
+     * An annotated node has a superscript text field in its upper right corner
+     * @param annotation true if annotated and otherwise false
+     */
+    public void setAnnotation(boolean annotation) {       this.annotation = annotation;   }
 
-    public void setStarred(boolean starred) {
-        this.starred = starred;
-    }
+    /**
+     * The text for the annotation field
+     * @return the String text
+     */
+    public String getAnnotationText() {       return annotationText;   }
 
-    public boolean isAnnotation() {
-        return annotation;
-    }
+    /**
+     * The text for the annotation field
+     * @param annotationText the String text
+     */
+    public void setAnnotationText(String annotationText) {       this.annotationText = annotationText;   }
 
-    public void setAnnotation(boolean annotation) {
-        this.annotation = annotation;
-    }
+    /**
+     * Anchor positions for the left and right edges of a circle
+     * @return the anchors
+     */
+    public Double[] getCircleXAnchors() {       return circleXAnchors;   }
 
-    public String getAnnotationText() {
-        return annotationText;
-    }
+    /**
+     * Anchor positions for the left and right edges of a circle
+     * @param circleXAnchors the anchors
+     */
+    public void setCircleXAnchors(Double[] circleXAnchors) {       this.circleXAnchors = circleXAnchors;   }
 
-    public void setAnnotationText(String annotationText) {
-        this.annotationText = annotationText;
-    }
+    /**
+     * A box is circled if it contains a circle with edges at the circle x anchors
+     * @return true if circled and otherwise false
+     */
+    public boolean isCircled() {       return circled;   }
 
-    public Double[] getCircleXAnchors() {
-        return circleXAnchors;
-    }
+    /**
+     * A box is circled if it contains a circle with edges at the circle x anchors
+     * @param circled
+     */
+    public void setCircled(boolean circled) {       this.circled = circled;   }
 
-    public void setCircleXAnchors(Double[] circleXAnchors) {
-        this.circleXAnchors = circleXAnchors;
-    }
+    /**
+     * List of {@link slapp.editor.vertical_tree.object_models.UnderlineMod} for this node
+     */
+    public List<UnderlineMod> getUnderlineList() {       return underlineList;   }
 
-    public boolean isCircled() {
-        return circled;
-    }
+    /**
+     * As a function of x position, the baseline list "traces" y position of top lines as distance from bottom of the lines pane
+     * @return the baseline list
+     */
+    public List<Integer> getBaseline() {       return baseline;   }
 
-    public void setCircled(boolean circled) {
-        this.circled = circled;
-    }
+    /**
+     * As a function of x position, the baseline list "traces" y position of top lines as distance from bottom of the lines pane
+     * @param baseline the baseline list
+     */
+    public void setBaseline(List<Integer> baseline) {       this.baseline = baseline;   }
 
-    public List<UnderlineMod> getUnderlineList() {
-        return underlineList;
-    }
+    /**
+     * Height of bounds for the RTA in the tree formula box
+     * @return the height value
+     */
+    public double getRtaBoundsHeight() {       return rtaBoundsHeight;   }
 
-    public void setUnderlineList(List<UnderlineMod> underlineList) {
-        this.underlineList = underlineList;
-    }
+    /**
+     * Height of bounds for the RTA in the tree formula box
+     * @param rtaBoundsHeight the height value
+     */
+    public void setRtaBoundsHeight(double rtaBoundsHeight) {       this.rtaBoundsHeight = rtaBoundsHeight;   }
 
-    public List<Integer> getBaseline() {
-        return baseline;
-    }
+    /**
+     * The least Y position of bounds for the RTA in the tree formula box
+     * @return the y position value
+     */
+    public double getRtaBoundsMinY() {       return rtaBoundsMinY;   }
 
-    public void setBaseline(List<Integer> baseline) {
-        this.baseline = baseline;
-    }
+    /**
+     * The least Y position of bounds for the RTA in the tree formula box
+     * @param rtaBoundsMinY the y position value
+     */
+    public void setRtaBoundsMinY(double rtaBoundsMinY) {       this.rtaBoundsMinY = rtaBoundsMinY;   }
 
-    public double getRtaBoundsHeight() {
-        return rtaBoundsHeight;
-    }
-
-    public void setRtaBoundsHeight(double rtaBoundsHeight) {
-        this.rtaBoundsHeight = rtaBoundsHeight;
-    }
-
-    public double getRtaBoundsMinY() {
-        return rtaBoundsMinY;
-    }
-
-    public void setRtaBoundsMinY(double rtaBoundsMinY) {
-        this.rtaBoundsMinY = rtaBoundsMinY;
-    }
 }

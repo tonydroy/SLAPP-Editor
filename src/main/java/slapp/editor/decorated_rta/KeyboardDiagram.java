@@ -25,6 +25,7 @@ import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -558,6 +559,9 @@ public class KeyboardDiagram {
         pane.setBorder(new Border(new BorderStroke(Color.GREY, BorderStrokeStyle.SOLID, new CornerRadii(3),new BorderWidths(2.0))));
         pane.setAlignment(Pos.CENTER);
         pane.setMinWidth(baseKeyWidth * width);
+        Tooltip t = new Tooltip("Do not type: Key initiates logout on Mac!");
+        Tooltip.install(pane, t);
+
         return pane;
     }
 

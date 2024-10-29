@@ -443,7 +443,7 @@ public class ABEFGcreate {
      * Close the create window
      */
     private void closeWindow() {
-        if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
+        if (checkContinue("Confirm Close", "This exercise appears to have unsaved changes.\nContinue to close window?")) {
             mainWindow.closeExercise();
             stage.close();
         }
@@ -453,7 +453,7 @@ public class ABEFGcreate {
      * Clear the exercise (leaving explain prompt and checkbox setup)
      */
     private void clearExercise() {
-        if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
+        if (checkContinue("Confirm Clear", "This exercise appears to have unsaved changes.\nContinue to clear exercise?")) {
             statementRTA.getActionFactory().newDocumentNow().execute(new ActionEvent());
  //           statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());
             nameField.clear();

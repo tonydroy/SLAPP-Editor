@@ -57,6 +57,8 @@ public class Player extends BorderPane {
             throw e;
         }
 
+//        if (media == null) System.out.println("null media!");
+
         player = new MediaPlayer(media);
         view = new MediaView(player);
         mpane = new Pane();

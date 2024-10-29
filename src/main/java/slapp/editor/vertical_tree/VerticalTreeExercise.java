@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License along with SLA
 package slapp.editor.vertical_tree;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -277,7 +276,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
                     boxButton.setToggleGroup(buttonGroup);
                     break;
                 }
-                case OPERATOR_CIRCLE: {
+                case CIRCLE: {
                     ToggleButton circleButton = layout.getCircleToggle();
                     controlBox.getChildren().add(circleButton);
                     circleButton.setToggleGroup(buttonGroup);

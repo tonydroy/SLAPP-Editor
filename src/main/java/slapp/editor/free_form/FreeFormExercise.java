@@ -16,11 +16,9 @@ You should have received a copy of the GNU General Public License along with SLA
 package slapp.editor.free_form;
 
 import com.gluonhq.richtextarea.RichTextArea;
-import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -28,27 +26,22 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import org.apache.commons.lang3.SerializationUtils;
 import slapp.editor.DiskUtilities;
 import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.DecoratedRTA;
-import slapp.editor.derivation.DerivationExercise;
 import slapp.editor.derivation.DerivationModel;
 import slapp.editor.derivation.LineType;
 import slapp.editor.derivation.ModelLine;
 import slapp.editor.horizontal_tree.HorizontalTreeModel;
 import slapp.editor.main_window.*;
-import slapp.editor.simple_edit.SimpleEditExercise;
 import slapp.editor.simple_edit.SimpleEditModel;
 import slapp.editor.truth_table_generate.TruthTableGenExercise;
 import slapp.editor.truth_table_generate.TruthTableGenModel;
@@ -485,7 +478,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         VerticalTreeModel newMod = new VerticalTreeModel();
 
         newMod.getDragIconList().addAll(Arrays.asList(DragIconType.tree_field, DragIconType.bracket, DragIconType.dashed_line, DragIconType.map_field));
-        newMod.getObjectControlList().addAll(Arrays.asList(ObjectControlType.FORMULA_BOX, ObjectControlType.OPERATOR_CIRCLE, ObjectControlType.STAR,
+        newMod.getObjectControlList().addAll(Arrays.asList(ObjectControlType.FORMULA_BOX, ObjectControlType.CIRCLE, ObjectControlType.STAR,
                 ObjectControlType.ANNOTATION, ObjectControlType.UNDERLINE, ObjectControlType.MAPPING));
         newMod.setDefaultKeyboardType(BASE);
 
@@ -507,7 +500,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         VerticalTreeModel newMod = new VerticalTreeModel();
 
         newMod.getDragIconList().addAll(Arrays.asList(DragIconType.tree_field, DragIconType.bracket, DragIconType.dashed_line, DragIconType.map_field));
-        newMod.getObjectControlList().addAll(Arrays.asList(ObjectControlType.FORMULA_BOX, ObjectControlType.OPERATOR_CIRCLE, ObjectControlType.STAR,
+        newMod.getObjectControlList().addAll(Arrays.asList(ObjectControlType.FORMULA_BOX, ObjectControlType.CIRCLE, ObjectControlType.STAR,
                 ObjectControlType.ANNOTATION, ObjectControlType.UNDERLINE, ObjectControlType.MAPPING));
         newMod.setDefaultKeyboardType(ITALIC_AND_SANS);
 
@@ -529,7 +522,7 @@ public class FreeFormExercise implements Exercise<FreeFormModel, FreeFormView> {
         VerticalTreeModel newMod = new VerticalTreeModel();
 
         newMod.getDragIconList().addAll(Arrays.asList(DragIconType.tree_field, DragIconType.bracket, DragIconType.dashed_line, DragIconType.map_field));
-        newMod.getObjectControlList().addAll(Arrays.asList(ObjectControlType.FORMULA_BOX, ObjectControlType.OPERATOR_CIRCLE, ObjectControlType.STAR,
+        newMod.getObjectControlList().addAll(Arrays.asList(ObjectControlType.FORMULA_BOX, ObjectControlType.CIRCLE, ObjectControlType.STAR,
                 ObjectControlType.ANNOTATION, ObjectControlType.UNDERLINE, ObjectControlType.MAPPING));
         newMod.setDefaultKeyboardType(SCRIPT_AND_ITALIC);
 

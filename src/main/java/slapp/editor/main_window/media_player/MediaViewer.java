@@ -70,11 +70,11 @@ public class MediaViewer {
  //       stage.initOwner(EditorMain.mainStage);
 
         Rectangle2D bounds = MainWindowView.getCurrentScreenBounds();
-        stage.setX(Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - (width + 20)));
-        stage.setY(Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - (height + 20)));
+        stage.setX(Math.max(5, Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - (width + 20))));
+        stage.setY(Math.max(5, Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - (height + 20))));
 
-        stage.setMaxHeight(bounds.getMaxY());
-        stage.setMaxWidth((bounds.getMaxY() - 100) * (width / (height)));
+        stage.setMaxHeight(Math.min(bounds.getMaxY(), bounds.getMaxX() * (height / width)));
+        stage.setMaxWidth(Math.min(bounds.getMaxX(), (bounds.getMaxY() - 100) * (width / (height))));
 
 
 //        stage.minWidthProperty().bind((scene.heightProperty().subtract(60)).multiply(width/(height + 10)));

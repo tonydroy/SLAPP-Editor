@@ -298,7 +298,7 @@ public class PageEditCreate {
      * Close the create window
      */
     private void closeWindow() {
-        if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
+        if (checkContinue("Confirm Close", "This exercise appears to have unsaved changes.\nContinue to close window?")) {
             mainWindow.closeExercise();
             stage.close();
         }
@@ -308,7 +308,7 @@ public class PageEditCreate {
      * Clear the exercise (leaving prompt value)
      */
     private void clearExercise() {
-        if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
+        if (checkContinue("Confirm Clear", "This exercise appears to have unsaved changes.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
  //           statementRTA.getActionFactory().open(new Document()).execute(new ActionEvent());

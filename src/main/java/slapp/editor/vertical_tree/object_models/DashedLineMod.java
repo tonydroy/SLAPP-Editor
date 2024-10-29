@@ -17,21 +17,42 @@ package slapp.editor.vertical_tree.object_models;
 
 import java.io.Serializable;
 
+/**
+ * Model for the horizontal dashed line
+ */
 public class DashedLineMod implements Serializable {
     private static final long serialVersionUID = 100L;
     private double layoutX;
     private double layoutY;
     private double width;
 
+    /**
+     * Construct the dashed line model
+     * @param layoutX X layout position in the main pane
+     * @param layoutY Y layout position in the main pane
+     * @param width width (length) of line
+     */
     public DashedLineMod(double layoutX, double layoutY, double width) {
         this.layoutX = layoutX;
         this.layoutY = layoutY;
         this.width = width;
     }
 
+    /**
+     * X layout in the main pane
+     * @return the double layout value
+     */
     public double getLayoutX() {  return layoutX;  }
 
+    /**
+     * Y layout in the main pane
+     * @return the double layout value
+     */
     public double getLayoutY() { return layoutY;   }
 
+    /**
+     * The width (length) of line
+     * @return the double length value
+     */
     public double getWidth() { return width;  }
 }

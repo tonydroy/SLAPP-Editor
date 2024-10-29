@@ -192,7 +192,7 @@ public class DecoratedRTA {
 
         //overline button
         overlineButton = new ToggleButton();
-        overlineButton.setTooltip(new Tooltip("Overline (best on symbol fonts)"));
+        overlineButton.setTooltip(new Tooltip("Overline (Ctrl/Cmd-0 (zero))"));
         Font overlineButtonFont = Font.font("Noto Serif Combo", FontWeight.LIGHT, FontPosture.REGULAR, 18);
         Text overlineButtonText = new Text("\ue03e");
         overlineButtonText.setFont(overlineButtonFont);
@@ -240,7 +240,7 @@ public class DecoratedRTA {
         keyboardSelector = new ChoiceBox<>();
         keyboardSelector.getItems().setAll(RichTextAreaSkin.KeyMapValue.values());
         keyboardSelector.setValue(RichTextAreaSkin.KeyMapValue.BASE);
-        keyboardSelector.setTooltip(new Tooltip("Select Keyboard"));
+        keyboardSelector.setTooltip(new Tooltip("Select Keyboard (F1-F8, F9 toggles previous)"));
         keyboardSelector.setPrefWidth(120);
 
         //toolbars
@@ -262,11 +262,11 @@ public class DecoratedRTA {
         editToolbar = new ToolBar();
         editToolbar.setStyle("-fx-spacing: 12");
         editToolbar.getItems().setAll(
-                actionButton("\uf0c4", "Cut",   editor.getActionFactory().cut()),  //LineAwesomeSolid.CUT
-                actionButton("\uf0c5", "Copy",  editor.getActionFactory().copy()), //LineAwesomeSolid.COPY
-                actionButton("\uf0ea", "Paste", editor.getActionFactory().paste()), //LineAwesomeSolid.PASTE
-                actionButton("\uf0e2", "Undo",  editor.getActionFactory().undo()),  //LineAwesomeSolid.UNDO
-                actionButton("\uf01e", "Redo",  editor.getActionFactory().redo()),  //LineAwesomeLolid.REDO
+                actionButton("\uf0c4", "Cut (Ctrl/Cmd-X)",   editor.getActionFactory().cut()),  //LineAwesomeSolid.CUT
+                actionButton("\uf0c5", "Copy (Ctrl/Cmd-C)",  editor.getActionFactory().copy()), //LineAwesomeSolid.COPY
+                actionButton("\uf0ea", "Paste (Ctrl/Cmd-V)", editor.getActionFactory().paste()), //LineAwesomeSolid.PASTE
+                actionButton("\uf0e2", "Undo (Ctrl/Cmd-Z)",  editor.getActionFactory().undo()),  //LineAwesomeSolid.UNDO
+                actionButton("\uf01e", "Redo (Shift-Ctrl/Cmd-Z)",  editor.getActionFactory().redo()),  //LineAwesomeLolid.REDO
 
                 wideSeparator(0),
 
@@ -277,12 +277,12 @@ public class DecoratedRTA {
                 wideSeparator(0),
 
                 createToggleButton("\uf0cc", "Strikethrough", property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
-                createToggleButton("\uf0cd", "Underline", property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
+                createToggleButton("\uf0cd", "Underline (Ctrl/Cmd-U)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
                 overlineButton,
-                createToggleButton("\uf12b", "Superscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).transSuperscript(false).transSubscript(false).build())),
-                createColoredToggleButton("\uf12b", "Superscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
-                createToggleButton("\uf12c", "Subscript", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).transSuperscript(false).transSubscript(false).build())),
-                createColoredToggleButton("\uf12c", "Subscript (translated back)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build()))
+                createToggleButton("\uf12b", "Superscript (PgUp)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).transSuperscript(false).transSubscript(false).build())),
+                createColoredToggleButton("\uf12b", "Shifted superscript (Shift-PgUp)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
+                createToggleButton("\uf12c", "Subscript (PgDn)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).transSuperscript(false).transSubscript(false).build())),
+                createColoredToggleButton("\uf12c", "Shifted Subscript (Shift-PgDn)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build()))
                 );
 
         paragraphToolbar = new ToolBar();
@@ -303,13 +303,13 @@ public class DecoratedRTA {
 
                 actionImage("\uf03e", "Insert Image"),
                 actionEmoji("Insert Emoji"),
-                actionHyperlink("\uf0c1", "Insert Hyperlink"),
+                actionHyperlink("\uf0c1", "Insert Hyperlink on selected text"),
                 actionTable("\uf0ce", "Insert Table", td -> editor.getActionFactory().insertTable(td)),
 
                 wideSeparator(4),
 
-                createToggleButton("\uf032", "Bold (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
-                createToggleButton("\uf033", "Italic (not for symbol fonts)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build()))
+                createToggleButton("\uf032", "Bold - not for symbol fonts (Ctrl/Cmd-B)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
+                createToggleButton("\uf033", "Italic - not for symbol fonts (Ctrl/Cmd-I)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build()))
 
                 //LineAwesomeSolid ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT, ALIGN_JUSTIFY, LIST_OL, LIST_UL, IMAGE, LINK, TABLE, BOLD, ITALIC
             );

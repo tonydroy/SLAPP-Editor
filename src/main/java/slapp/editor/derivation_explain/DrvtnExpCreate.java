@@ -617,7 +617,7 @@ public class DrvtnExpCreate {
      * Check for changes and close
      */
     private void closeWindow() {
-        if (checkContinue("Confirm Close", "This exercise appears to have been changed.\nContinue to close window?")) {
+        if (checkContinue("Confirm Close", "This exercise appears to have unsaved changes.\nContinue to close window?")) {
             mainWindow.closeExercise();
             stage.close();
         }
@@ -627,7 +627,7 @@ public class DrvtnExpCreate {
      * Clear create window, leaving keyboard, scope, shelf, and prompt settings intact.
      */
     private void clearExercise() {
-        if (checkContinue("Confirm Clear", "This exercise appears to have been changed.\nContinue to clear exercise?")) {
+        if (checkContinue("Confirm Clear", "This exercise appears to have unsaved changes.\nContinue to clear exercise?")) {
             nameField.clear();
             nameField.textProperty().addListener(nameListener);
             promptField.textProperty().addListener(promptFieldListener);
