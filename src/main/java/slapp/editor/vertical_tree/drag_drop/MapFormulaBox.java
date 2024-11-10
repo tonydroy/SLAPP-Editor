@@ -45,38 +45,26 @@ import java.util.UUID;
 
 public class MapFormulaBox extends AnchorPane {
     private VerticalTreeView verticalTreeView;
-
     private Label leftDragLabel;
     private Label closeLabel;
     private EventHandler<DragEvent> mContextDragOver;
     private EventHandler <DragEvent> mContextDragDropped;
-
     private AnchorPane right_pane = null;
     private List<String> mLinkIds = new ArrayList<>();
-
     private DragIconType mType = DragIconType.map_field;
-
     private Point2D mDragOffset = new Point2D (0.0, 0.0);
-
     private final MapFormulaBox self;
-
     private BoxedDRTA formulaBox;
-
     private HBox mainBox;
     private GridPane labelPane;
     private VBox centerBox;
-
     private String idString = "";
-
-
-
-
-
     Rectangle oval = new Rectangle();
     EventHandler mappingKeyFilter;
     int mapStage = 0;
     Label[] mapMarkers;
     Double[] mapXAnchors = new Double[2];
+
 
     public MapFormulaBox(VerticalTreeView verticalTreeView) {
         this.verticalTreeView = verticalTreeView;
@@ -88,7 +76,6 @@ public class MapFormulaBox extends AnchorPane {
         leftDragLabel.setMinWidth(10);
         leftDragLabel.setMaxHeight(10);
         leftDragLabel.setPadding(new Insets(0));
-        //       leftDragLabel.setStyle("-fx-background-color: red");
 
         closeLabel = new Label();
         closeLabel.setMaxHeight(10);
@@ -356,7 +343,7 @@ public class MapFormulaBox extends AnchorPane {
  //       rta.setContentAreaWidth(500);
 
         RichTextAreaSkin rtaSkin = (RichTextAreaSkin) rta.getSkin();
-        rta.prefWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 3), 10));
+        rta.prefWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 6), 12));
         rta.addEventFilter(KeyEvent.ANY, e -> {
             if (e.getCode() == KeyCode.ENTER) e.consume();
         });

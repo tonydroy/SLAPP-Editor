@@ -48,77 +48,63 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
 
+/**
+ * Draggable formula box for vertical tree diagrams
+ */
 public class TreeFormulaBox extends AnchorPane {
     private VerticalTreeView verticalTreeView;
-
     private AnchorPane top_link_handle;
     private AnchorPane bottom_link_handle;
     private Label leftDragLabel;
     private Label closeLabel;
-
     private EventHandler <MouseEvent> mLinkHandleDragDetected;
     private EventHandler <DragEvent> mLinkHandleDragDropped;
     private EventHandler <DragEvent> mContextLinkDragOver;
     private EventHandler <DragEvent> mContextLinkDragDropped;
     private EventHandler<DragEvent> mContextDragOver;
     private EventHandler <DragEvent> mContextDragDropped;
-
-//    private ClickableNodeLink mDragLink = null;
     private NodeLink mDragLink = null;
     private AnchorPane right_pane = null;
     private List<String> mLinkIds = new ArrayList<>();
-
     private DragIconType mType = DragIconType.tree_field;
-
     private Point2D mDragOffset = new Point2D (0.0, 0.0);
-
     private final TreeFormulaBox self;
-
     private BoxedDRTA formulaBox;
-
     private HBox mainBox;
     private GridPane labelPane;
     private VBox centerBox;
     private VBox middleBox;
     private AnchorPane linesPane = new AnchorPane();
-
     private String idString;
     private boolean boxed = false;
     private boolean starred = false;
     private boolean annotation = false;
     private boolean annotationChanged = false;
     private TextField annotationField;
+    private Rectangle oval = new Rectangle();
+    private EventHandler circleKeyFilter;
+    private int circleStage = 0;
+    private Label[] circleMarkers;
+    private Double[] circleXAnchors = new Double[2];
+    private double rtaBoundsHeight;
+    private double rtaBoundsMinY;
+    private boolean circled = false;
+    private EventHandler ulineKeyFilter;
+    private int ulineStage = 0;
+    private Label[] ulineMarkers;
+    private Double[] ulineXAnchors = new Double[2];
+    private double ulineSpace = 3.0;
+    private List<Integer> baseline = new ArrayList<>();
 
-
-
-    Rectangle oval = new Rectangle();
-    EventHandler circleKeyFilter;
-    int circleStage = 0;
-    Label[] circleMarkers;
-    Double[] circleXAnchors = new Double[2];
-    double rtaBoundsHeight;
-    double rtaBoundsMinY;
-    boolean circled = false;
-    EventHandler ulineKeyFilter;
-    int ulineStage = 0;
-    Label[] ulineMarkers;
-    Double[] ulineXAnchors = new Double[2];
-    double ulineSpace = 3.0;
-    List<Integer> baseline = new ArrayList<>();
-
-
-
-
-
-
-
+    /**
+     * Construct the tree formula box
+     * @param verticalTreeView the {@link slapp.editor.vertical_tree.VerticalTreeView}
+     */
     public TreeFormulaBox(VerticalTreeView verticalTreeView) {
         this.verticalTreeView = verticalTreeView;
         self = this;
         circleMarkers = new Label[]{new Label("|"), new Label("|")};
         ulineMarkers = new Label[]{new Label("|"), new Label("|")};
-
-
 
         top_link_handle = new AnchorPane();
         top_link_handle.setPrefHeight(9);
@@ -137,14 +123,11 @@ public class TreeFormulaBox extends AnchorPane {
         bottom_link_handle.setOnMouseExited(e -> bottom_link_handle.setStyle("fx-background-color: transparent"));
         bottom_link_handle.setOnDragExited(e ->  bottom_link_handle.setStyle("-fx-background-color: transparent"));
 
-
-
         leftDragLabel = new Label("");
         leftDragLabel.setMaxWidth(10);
         leftDragLabel.setMinWidth(10);
         leftDragLabel.setMaxHeight(10);
         leftDragLabel.setPadding(new Insets(0));
-        //       leftDragLabel.setStyle("-fx-background-color: red");
 
         closeLabel = new Label();
         closeLabel.setMaxHeight(10);
@@ -162,56 +145,47 @@ public class TreeFormulaBox extends AnchorPane {
         labelPane.getRowConstraints().addAll(closeRowConstraints, moveRowConstraints);
         labelPane.add(closeLabel, 0, 0); labelPane.add(leftDragLabel, 0, 1);
 
-
         leftDragLabel.setOnMouseEntered(e -> {
             leftDragLabel.setStyle("-fx-background-color: grey; -fx-background-radius: 0 0 0 5;");
             closeLabel.setStyle("-fx-background-color: black; -fx-background-radius: 5 0 0 0;");
-//            leftDragLabel.setCursor(Cursor.MOVE);
         });
+
         leftDragLabel.setOnMouseExited(e -> {
             leftDragLabel.setStyle("-fx-background-color: transparent");
             closeLabel.setStyle("-fx-background-color:transparent");
-            //           leftDragLabel.setCursor(Cursor.DEFAULT);
         });
 
         closeLabel.setOnMouseEntered(e -> {
             leftDragLabel.setStyle("-fx-background-color: grey; -fx-background-radius: 0 0 0 5");
             closeLabel.setStyle("-fx-background-color: black; -fx-background-radius: 5 0 0 0");
-//            leftDragLabel.setCursor(Cursor.MOVE);
         });
+
         closeLabel.setOnMouseExited(e -> {
             leftDragLabel.setStyle("-fx-background-color: transparent");
             closeLabel.setStyle("-fx-background-color:transparent");
-            //           leftDragLabel.setCursor(Cursor.DEFAULT);
         });
 
-
         formulaBox = newFormulaBoxedDRTA();
-//        RightDragResizer resizer = new RightDragResizer(verticalTreeView);
-//        resizer.makeResizable(formulaBox.getRTA());
-
         middleBox = new VBox(formulaBox.getBoxedRTA(), linesPane);
-
-
         centerBox = new VBox(top_link_handle, middleBox, bottom_link_handle);
         centerBox.setAlignment(Pos.CENTER);
 
         mainBox = new HBox(labelPane, centerBox);
         mainBox.setAlignment(Pos.TOP_CENTER);
         mainBox.setMargin(labelPane, new Insets(10, 0, 0, 0));
- //       mainBox.setMargin(annotationField, new Insets(0,0, 14, 0));
 
         self.getChildren().addAll(mainBox);
-//        self.setBottomAnchor(mainBox, 0.0);
         self.setLeftAnchor(mainBox, 0.0);
         self.setTopAnchor(mainBox, 0.0);
- //       self.setRightAnchor(mainBox, 0.0);
 
         setId(UUID.randomUUID().toString());
         idString = getId();
         initialize();
     }
 
+    /*
+     * Set up handlers
+     */
     private void initialize() {
         buildNodeDragHandlers();
         buildLinkDragHandlers();
@@ -222,7 +196,6 @@ public class TreeFormulaBox extends AnchorPane {
         top_link_handle.setOnDragDropped(mLinkHandleDragDropped);
         bottom_link_handle.setOnDragDropped(mLinkHandleDragDropped);
 
-  //      mDragLink = new ClickableNodeLink();
         mDragLink = new NodeLink();
         mDragLink.setVisible(false);
 
@@ -276,7 +249,6 @@ public class TreeFormulaBox extends AnchorPane {
             }
         };
 
-
         ulineKeyFilter = new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent e) {
@@ -317,106 +289,6 @@ public class TreeFormulaBox extends AnchorPane {
             }
         };
 
-
-    }
-
-    public void setCircle() {
-
-        double minX = Math.min(circleXAnchors[0], circleXAnchors[1]);
-        double maxX = Math.max(circleXAnchors[0], circleXAnchors[1]);
-        self.getChildren().removeAll(circleMarkers);
-        self.getChildren().add(oval);
-        oval.setWidth(maxX - minX);
-
-        oval.setHeight(rtaBoundsHeight - 6.0);
-        oval.setStyle("-fx-fill: transparent; -fx-stroke: black; -fx-stroke-width: 1;");
-        oval.setArcHeight(rtaBoundsHeight - 6.0);
-        oval.setArcWidth((maxX - minX));
-        self.setLeftAnchor(oval, minX);
-        self.setTopAnchor(oval, rtaBoundsMinY + 2.0);
-        verticalTreeView.setUndoRedoFlag(true);
-        verticalTreeView.setUndoRedoFlag(false);
-    }
-
-    private void setLine(double startX, double endX) {
-        //make sure there is a baseline for new line by extending baseline to endX
-        int intStartX = (int) Math.round(startX);
-        int intEndX = (int) Math.round(endX);
-        for (int i = baseline.size(); i <= intEndX; i++) {
-            baseline.add(-((int) ulineSpace));
-        }
-
-        //find base for new line
-        int maxBase = 0;
-        for (int i = intStartX; i <= intEndX; i++) {
-            if (baseline.get(i) > maxBase) {
-                maxBase = baseline.get(i);
-            }
-        }
-
-        //get yPosition of new line and update baseline
-        double yPos = (double) maxBase + ulineSpace;
-        for (int i = intStartX; i <= intEndX; i++) {
-            baseline.set(i, (int) Math.round(yPos));
-        }
-
-        //add line to linesPane
-        addLineToPane(startX, endX - startX, yPos);
-        verticalTreeView.setUndoRedoFlag(true);
-        verticalTreeView.setUndoRedoFlag(false);
-    }
-
-    public void addLineToPane(double startX, double length, double yPos) {
-        Line line = new Line(0, 0, length, 0);
-        linesPane.getChildren().add(line);
-        linesPane.setLeftAnchor(line, startX);
-        linesPane.setBottomAnchor(line, yPos);
-    }
-
-    public void registerLink(String linkId) {mLinkIds.add(linkId); }
-
-    public void setType (DragIconType type) {
-        mType = type;
-    }
-
-
-
-    public void buildNodeDragHandlers() {
-
-
-        mContextDragOver = new EventHandler <DragEvent>() {
-
-            //dragover to handle node dragging in the right pane view
-            @Override
-            public void handle(DragEvent event) {
-
-                event.acceptTransferModes(TransferMode.ANY);
-                relocateToPoint(new Point2dSerial( event.getSceneX(), event.getSceneY()));
-
-                event.consume();
-            }
-        };
-
-
-
-        //dragdrop for node dragging
-        mContextDragDropped = new EventHandler <DragEvent> () {
-
-            @Override
-            public void handle(DragEvent event) {
-
-                getParent().setOnDragOver(null);
-                getParent().setOnDragDropped(null);
-                event.setDropCompleted(true);
-
-                relocateToGridPoint2( new Point2D(event.getSceneX(), event.getSceneY())  );
-                self.setCursor(Cursor.DEFAULT);
-                verticalTreeView.setUndoRedoFlag(true);
-                verticalTreeView.setUndoRedoFlag(false);
-            }
-        };
-
-
         //close button click
         closeLabel.setOnMouseClicked( new EventHandler <MouseEvent> () {
             @Override
@@ -454,10 +326,112 @@ public class TreeFormulaBox extends AnchorPane {
             }
         });
 
+    }
 
+    /*
+     * Add circle at anchor points
+     */
+    public void setCircle() {
+        double minX = Math.min(circleXAnchors[0], circleXAnchors[1]);
+        double maxX = Math.max(circleXAnchors[0], circleXAnchors[1]);
+        self.getChildren().removeAll(circleMarkers);
+        self.getChildren().add(oval);
+        oval.setWidth(maxX - minX);
+
+        oval.setHeight(rtaBoundsHeight - 6.0);
+        oval.setStyle("-fx-fill: transparent; -fx-stroke: black; -fx-stroke-width: 1;");
+        oval.setArcHeight(rtaBoundsHeight - 6.0);
+        oval.setArcWidth((maxX - minX));
+        self.setLeftAnchor(oval, minX);
+        self.setTopAnchor(oval, rtaBoundsMinY + 2.0);
+        verticalTreeView.setUndoRedoFlag(true);
+        verticalTreeView.setUndoRedoFlag(false);
+    }
+
+    /*
+     * Add line at anchor points
+     */
+    private void setLine(double startX, double endX) {
+        //make sure there is a baseline for new line by extending baseline to endX
+        int intStartX = (int) Math.round(startX);
+        int intEndX = (int) Math.round(endX);
+        for (int i = baseline.size(); i <= intEndX; i++) {
+            baseline.add(-((int) ulineSpace));
+        }
+
+        //find base for new line
+        int maxBase = 0;
+        for (int i = intStartX; i <= intEndX; i++) {
+            if (baseline.get(i) > maxBase) {
+                maxBase = baseline.get(i);
+            }
+        }
+
+        //get yPosition of new line and update baseline
+        double yPos = (double) maxBase + ulineSpace;
+        for (int i = intStartX; i <= intEndX; i++) {
+            baseline.set(i, (int) Math.round(yPos));
+        }
+
+        //add line to linesPane
+        addLineToPane(startX, endX - startX, yPos);
+        verticalTreeView.setUndoRedoFlag(true);
+        verticalTreeView.setUndoRedoFlag(false);
+    }
+
+    /**
+     * Add line
+     * @param startX starting x position in pane
+     * @param length length of line in pane
+     * @param yPos distance from bottom of lines pane
+     */
+    public void addLineToPane(double startX, double length, double yPos) {
+        Line line = new Line(0, 0, length, 0);
+        linesPane.getChildren().add(line);
+        linesPane.setLeftAnchor(line, startX);
+        linesPane.setBottomAnchor(line, yPos);
+    }
+
+    /**
+     * Add link id to list of links for this node
+     * @param linkId The string id
+     */
+    public void registerLink(String linkId) {mLinkIds.add(linkId); }
+
+    /**
+     * Build handlers for node dragging
+     */
+    public void buildNodeDragHandlers() {
+        mContextDragOver = new EventHandler <DragEvent>() {
+
+            //dragover to handle node dragging in the right pane view
+            @Override
+            public void handle(DragEvent event) {
+
+                event.acceptTransferModes(TransferMode.ANY);
+                relocateToPoint(new Point2dSerial( event.getSceneX(), event.getSceneY()));
+
+                event.consume();
+            }
+        };
+
+        //dragdrop for node dragging
+        mContextDragDropped = new EventHandler <DragEvent> () {
+            @Override
+            public void handle(DragEvent event) {
+
+                getParent().setOnDragOver(null);
+                getParent().setOnDragDropped(null);
+                event.setDropCompleted(true);
+
+                relocateToGridPoint2( new Point2D(event.getSceneX(), event.getSceneY())  );
+                self.setCursor(Cursor.DEFAULT);
+                verticalTreeView.setUndoRedoFlag(true);
+                verticalTreeView.setUndoRedoFlag(false);
+            }
+        };
 
         leftDragLabel.setOnDragDetected ( new EventHandler <MouseEvent> () {
-
             @Override
             public void handle(MouseEvent event) {
 
@@ -467,13 +441,10 @@ public class TreeFormulaBox extends AnchorPane {
                 getParent().setOnDragOver (mContextDragOver);
                 getParent().setOnDragDropped (mContextDragDropped);
 
-
                 //begin drag ops
                 mDragOffset = new Point2D(event.getX(), event.getY());
 
-                relocateToPoint(
-                        new Point2D(event.getSceneX(), event.getSceneY())
-                );
+                relocateToPoint( new Point2D(event.getSceneX(), event.getSceneY())  );
 
                 ClipboardContent content = new ClipboardContent();
                 DragContainer container = new DragContainer();
@@ -481,27 +452,22 @@ public class TreeFormulaBox extends AnchorPane {
                 container.addData ("type", mType.toString());
                 content.put(DragContainer.AddNode, container);
 
-
                 Dragboard db = startDragAndDrop(TransferMode.MOVE);
                 db.setDragView(EditorMain.emptyImage);
                 db.setContent(content);
 
- //               startDragAndDrop (TransferMode.ANY).setContent(content);
-
                 event.consume();
             }
-
         });
-
     }
 
+    /**
+     * Build handlers for link dragging
+     */
     private void buildLinkDragHandlers() {
-
         mLinkHandleDragDetected = new EventHandler <MouseEvent> () {
-
             @Override
             public void handle(MouseEvent event) {
-
 
                 getParent().setOnDragOver(null);
                 getParent().setOnDragDropped(null);
@@ -509,26 +475,16 @@ public class TreeFormulaBox extends AnchorPane {
                 getParent().setOnDragOver(mContextLinkDragOver);
                 getParent().setOnDragDropped(mContextLinkDragDropped);
 
-
-
                 //Set up user-draggable link
                 right_pane.getChildren().add(0,mDragLink);
-
                 mDragLink.setVisible(false);
 
-                Point2D p = new Point2D(
-                        getLayoutX() + (getWidth() / 2.0),
-                        getLayoutY() + (middleBox.getHeight()/2) + 9
-
- //                       getLayoutY() + (getHeight() / 2.0)
-                );
-
+                Point2D p = new Point2D(getLayoutX() + (getWidth() / 2.0), getLayoutY() + (middleBox.getHeight()/2) + 9  );
                 mDragLink.setStart(p);
 
                 //Drag content code
                 ClipboardContent content = new ClipboardContent();
                 DragContainer container = new DragContainer();
-
 
                 //pass the UUID of the source node for later lookup
                 container.addData("source", getId());
@@ -539,13 +495,11 @@ public class TreeFormulaBox extends AnchorPane {
                 db.setDragView(EditorMain.emptyImage);
                 db.setContent(content);
 
-
                 event.consume();
             }
         };
 
         mLinkHandleDragDropped = new EventHandler <DragEvent> () {
-
             @Override
             public void handle(DragEvent event) {
 
@@ -554,28 +508,20 @@ public class TreeFormulaBox extends AnchorPane {
 
                 //get the drag data.  If it's null, abort.
                 //This isn't the drag event we're looking for.
-                DragContainer container =
-                        (DragContainer) event.getDragboard().getContent(DragContainer.AddLink);
+                DragContainer container = (DragContainer) event.getDragboard().getContent(DragContainer.AddLink);
 
-                if (container == null)
-                    return;
+                if (container == null)  return;
 
                 //hide the draggable NodeLink and remove it from the right-hand AnchorPane's children
                 mDragLink.setVisible(false);
                 right_pane.getChildren().remove(0);
 
-     //           bottom_link_handle.setStyle("-fx-background-color: transparent");
-     //           top_link_handle.setStyle("-fx-background-color: transparent");
-
                 AnchorPane link_handle = (AnchorPane) event.getSource();
-
                 ClipboardContent content = new ClipboardContent();
 
                 //pass the UUID of the target node for later lookup
                 container.addData("target", getId());
-
                 content.put(DragContainer.AddLink, container);
-
                 event.getDragboard().setContent(content);
                 event.setDropCompleted(true);
                 event.consume();
@@ -583,30 +529,22 @@ public class TreeFormulaBox extends AnchorPane {
         };
 
         mContextLinkDragOver = new EventHandler <DragEvent> () {
-
             @Override
             public void handle(DragEvent event) {
                 event.acceptTransferModes(TransferMode.ANY);
 
-
-
                 //Relocate end of user-draggable link
-                if (!mDragLink.isVisible())
-                    mDragLink.setVisible(true);
-
+                if (!mDragLink.isVisible())  mDragLink.setVisible(true);
                 mDragLink.setEnd(new Point2D(event.getX(), event.getY()));
 
                 event.consume();
-
             }
         };
 
         //drop event for link creation
         mContextLinkDragDropped = new EventHandler <DragEvent> () {
-
             @Override
             public void handle(DragEvent event) {
-
 
                 getParent().setOnDragOver(null);
                 getParent().setOnDragDropped(null);
@@ -618,59 +556,42 @@ public class TreeFormulaBox extends AnchorPane {
                 event.setDropCompleted(true);
                 event.consume();
             }
-
         };
-
     }
 
-
+    /**
+     * Relocate object to grid point.  Used for initial drop.
+     * @param p the point in scene coordinates
+     */
     public void relocateToGridPoint (Point2D p) {
-
-        //relocates the object to a point that has been converted to
-        //scene coordinates
         Point2D localCoords = getParent().sceneToLocal(p);
         double localY = Math.round((localCoords.getY() - 16) / 24.0) * 24.0;
-
-        relocate (
-                (int) localCoords.getX() - 36,
-                (int) (localY - 7 )
-        );
+        relocate ((int) localCoords.getX() - 36, (int) (localY - 7 )   );
     }
 
-
-    // I don't understand why both this and the following method are required to drop on line - should be same w/o offset localY??
+    /**
+     * Relocate object to grid point.  Used for dropping from within pane
+     * @param p the point in scene coordinates
+     */
     public void relocateToGridPoint2 (Point2D p) {
-
-        //relocates the object to a point that has been converted to
-        //scene coordinates
         Point2D localCoords = getParent().sceneToLocal(p);
         double localY = Math.round((localCoords.getY() - 16) / 24.0) * 24.0 ;
 
-        relocate (
-                (int) localCoords.getX(),
-                (int) (localY - 7)
-        );
+        relocate ( (int) localCoords.getX(), (int) (localY - 7)  );
     }
 
-
-
-
+    /**
+     * Relocate object to point.  Used for dragging in work area
+     * @param p the point in scene coordinates
+     */
     public void relocateToPoint (Point2D p) {
-
-        //relocates the object to a point that has been converted to
-        //scene coordinates
         Point2D localCoords = getParent().sceneToLocal(p);
-
-
-        //       double localY = Math.round(localCoords.getY() / 24.0) * 24.0;
-
-        relocate (
-                (int) localCoords.getX(),
-                //           (int) ((localCoords.getX() - (getBoundsInLocal().getWidth()) / 2)),
-                (int) ((localCoords.getY() - (getBoundsInLocal().getHeight()) / 2 ))
-        );
+        relocate ((int) localCoords.getX(),  (int) ((localCoords.getY() - (getBoundsInLocal().getHeight()) / 2 )) );
     }
 
+    /*
+     * Get "growable" boxed DRTA
+     */
     private BoxedDRTA newFormulaBoxedDRTA() {
         BoxedDRTA boxedDRTA = new BoxedDRTA();
         DecoratedRTA drta = boxedDRTA.getDRTA();
@@ -678,19 +599,16 @@ public class TreeFormulaBox extends AnchorPane {
         RichTextArea rta = boxedDRTA.getRTA();
         rta.setMaxHeight(24);
         rta.setMinHeight(24);
- //       rta.setPrefWidth(36);
 
         RichTextAreaSkin rtaSkin = (RichTextAreaSkin) rta.getSkin();
-        rta.prefWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 4), 10));
+        rta.prefWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 6), 12));
         rta.addEventFilter(KeyEvent.ANY, e -> {
            if (e.getCode() == KeyCode.ENTER) e.consume();
         });
 
-
-//        rta.setContentAreaWidth(500);
        rta.getStylesheets().add("blueFormulaBox.css");
         rta.setPromptText("");
- //       rta.getActionFactory().saveNow().execute(new ActionEvent());   ---------- this blanks text on open exercise.
+
         rta.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
                 verticalTreeView.getMainView().editorInFocus(drta, ControlType.FIELD);
@@ -700,13 +618,16 @@ public class TreeFormulaBox extends AnchorPane {
                     verticalTreeView.setUndoRedoFlag(false);
                     rta.getActionFactory().saveNow().execute(new ActionEvent());
                 }
-
             }
         });
         return boxedDRTA;
     }
 
-    public void processBoxRequest(boolean add) {
+    /**
+     * Add or remove solid (box) outline
+     * @param add true if add and otherwise false
+     */
+    void processBoxRequest(boolean add) {
         if (add) {
             if (!boxed) {
                 middleBox.setStyle("-fx-border-color: black; -fx-border-width: 1 1 1 1");
@@ -724,12 +645,18 @@ public class TreeFormulaBox extends AnchorPane {
         }
     }
 
-    //for repopulating window (when we do not desire undo/redo push
+    /**
+     * Add solid (box) outline without trigering undo/redo push
+     */
     public void addBox() {
         middleBox.setStyle("-fx-border-color: black; -fx-border-width: 1 1 1 1");
         boxed = true;
     }
 
+    /**
+     * Add or remove superscript star notation
+     * @param add true if add and otherwise false
+     */
     public void processStarRequest(boolean add) {
         if (add) {
             if (!starred) {
@@ -748,6 +675,9 @@ public class TreeFormulaBox extends AnchorPane {
         }
     }
 
+    /**
+     * Add star without triggering push undo/redo
+     */
     public void addStar() {
         Label star = new Label("\u2605");
         star.setStyle("-fx-font-size: 8");
@@ -757,6 +687,10 @@ public class TreeFormulaBox extends AnchorPane {
         starred = true;
     }
 
+    /**
+     * Add or remove annotation field
+     * @param add true if add and otherwise false
+     */
     public void processAnnotationRequest(boolean add) {
         if (add) {
             if (!annotation) {
@@ -777,6 +711,9 @@ public class TreeFormulaBox extends AnchorPane {
         }
     }
 
+    /**
+     * Add annotation field without triggering push undo/redo
+     */
     public void addAnnotation() {
         annotationField = new TextField();
         annotationField.setPrefWidth(28);
@@ -794,6 +731,9 @@ public class TreeFormulaBox extends AnchorPane {
         annotation = true;
     }
 
+    /**
+     * Add change listener to annotation field
+     */
     public void setAnnotationTextListener() {
         annotationField.textProperty().addListener((ob, ov, nv) -> {
             verticalTreeView.setUndoRedoFlag(true);
@@ -801,14 +741,20 @@ public class TreeFormulaBox extends AnchorPane {
         });
     }
 
-
-
+    /**
+     * Set the text of the annotation field
+     * @param text the string text
+     */
     public void setAnnotationText(String text) {
         if (annotationField != null) {
             annotationField.setText(text);
         }
     }
 
+    /**
+     * Get the text of the annotation field
+     * @return the string text
+     */
     public String getAnnotationText() {
         if (annotationField != null) {
             return annotationField.getText();
@@ -817,8 +763,10 @@ public class TreeFormulaBox extends AnchorPane {
         }
     }
 
-
-
+    /**
+     * Remove circle or set up circle process
+     * @param add true if set up and otherwise false
+     */
     public void processCircleRequest(boolean add) {
         if (add) {
             RichTextArea rta = formulaBox.getRTA();
@@ -833,11 +781,19 @@ public class TreeFormulaBox extends AnchorPane {
         }
     }
 
+    /**
+     * Stop circle processing
+     */
     public void undoCircleRequest() {
         self.removeEventFilter(KeyEvent.KEY_PRESSED, circleKeyFilter);
         self.getChildren().removeAll(circleMarkers[0], circleMarkers[1]);
         circleStage = 0;
     }
+
+    /**
+     * Remove underlines or set up underline process
+     * @param add true if set up and otherwise false
+     */
     public void processUnderlineRequest(boolean add) {
         if (add) {
             RichTextArea rta = formulaBox.getRTA();
@@ -852,94 +808,149 @@ public class TreeFormulaBox extends AnchorPane {
         }
     }
 
+    /**
+     * Stop underline processing
+     */
     public void undoUnderlineRequest() {
         self.removeEventFilter(KeyEvent.KEY_PRESSED, ulineKeyFilter);
         self.getChildren().removeAll(ulineMarkers[0], ulineMarkers[1]);
         ulineStage = 0;
     }
 
-    public VBox getMiddleBox() {
-        return middleBox;
-    }
+    /**
+     * Box containing the formula and underline pane
+     * @return the VBox
+     */
+    public VBox getMiddleBox() {     return middleBox;   }
 
-    public List<String> getmLinkIds() {
-        return mLinkIds;
-    }
+    /**
+     * List of link IDs to connected to this node
+     * @return The list of strings
+     */
+    public List<String> getmLinkIds() {    return mLinkIds;  }
 
-    public void setmLinkIds(List<String> mLinkIds) {
-        this.mLinkIds = mLinkIds;
-    }
+    /**
+     * List of link IDs connected to this node
+     * @param mLinkIds The list of strings
+     */
+    public void setmLinkIds(List<String> mLinkIds) {     this.mLinkIds = mLinkIds;  }
 
-    public String getIdString() {
-        return idString;
-    }
+    /**
+     * The ID for this node
+     * @return the string id
+     */
+    public String getIdString() {      return idString;  }
 
+    /**
+     * The ID for this node
+     * @param idString the string id
+     */
     public void setIdString(String idString) {
         this.idString = idString;
         setId(idString);
-
     }
 
-    public BoxedDRTA getFormulaBox() {
-        return formulaBox;
-    }
+    /**
+     * The boxed drta
+     * @return the drta
+     */
+    public BoxedDRTA getFormulaBox() {      return formulaBox;  }
 
+    /**
+     * Box including formula drta, underlines pane, with top and bottom link nodes
+     * @return the VBox
+     */
     public VBox getCenterBox() {return centerBox;}
 
-    public boolean isBoxed() {
-        return boxed;
-    }
+    /**
+     * True if solid (box) outline is on and otherwise false
+     * @return the boolean value
+     */
+    public boolean isBoxed() {      return boxed;   }
 
-    public boolean isStarred() {
-        return starred;
-    }
+    /**
+     * True if star superscript is on and otherwise false
+     * @return the boolean value
+     */
+    public boolean isStarred() {      return starred;   }
 
-    public boolean isAnnotation() {
-        return annotation;
-    }
+    /**
+     * True if annotation field is on and otherwise false
+     * @return the boolean value
+     */
+    public boolean isAnnotation() {     return annotation;  }
 
+    /**
+     * The superscript annotation field
+     * @return the annotation TextField
+     */
     public TextField getAnnotationField() {return annotationField; }
 
-    public boolean isCircled() {
-        return circled;
-    }
+    /**
+     * True if circle is on and otherwise false
+     * @return the boolean value
+     */
+    public boolean isCircled() {      return circled;   }
 
-    public void setCircled(boolean circled) {
-        this.circled = circled;
-    }
+    /**
+     * True if circle is on and otherwise false
+     * @param circled the boolean value
+     */
+    public void setCircled(boolean circled) {      this.circled = circled;   }
 
-    public Double[] getCircleXAnchors() {
-        return circleXAnchors;
-    }
+    /**
+     * The array of x anchors for the circle
+     * @return the Double[] array
+     */
+    public Double[] getCircleXAnchors() {     return circleXAnchors;   }
 
-    public void setCircleXAnchors(Double[] circleXAnchors) {
-        this.circleXAnchors = circleXAnchors;
-    }
+    /**
+     * The array of x anchors for the underline
+     * @param circleXAnchors the Double[] array
+     */
+    public void setCircleXAnchors(Double[] circleXAnchors) {     this.circleXAnchors = circleXAnchors;   }
 
-    public double getRtaBoundsHeight() {
-        return rtaBoundsHeight;
-    }
 
-    public void setRtaBoundsHeight(double rtaBoundsHeight) {
-        this.rtaBoundsHeight = rtaBoundsHeight;
-    }
-    public double getRtaBoundsMinY() {
-        return rtaBoundsMinY;
-    }
+    /**
+     * Height of the RTA in the tree formula box
+     * @return the height value
+     */
+    public double getRtaBoundsHeight() {    return rtaBoundsHeight;   }
 
-    public void setRtaBoundsMinY(double rtaBoundsMinY) {
-        this.rtaBoundsMinY = rtaBoundsMinY;
-    }
+    /**
+     * Height of the RTA in the tree formula box
+     * @param rtaBoundsHeight the height value
+     */
+    public void setRtaBoundsHeight(double rtaBoundsHeight) {    this.rtaBoundsHeight = rtaBoundsHeight;   }
 
-    public AnchorPane getLinesPane() {
-        return linesPane;
-    }
+    /**
+     * Position of RTA top in the tree formula box
+     * @return the position value
+     */
+    public double getRtaBoundsMinY() {     return rtaBoundsMinY;  }
 
-    public List<Integer> getBaseline() {
-        return baseline;
-    }
+    /**
+     * Position of the RTA top in the tree formula box
+     * @param rtaBoundsMinY the position value
+     */
+    public void setRtaBoundsMinY(double rtaBoundsMinY) {     this.rtaBoundsMinY = rtaBoundsMinY;   }
 
-    public void setBaseline(List<Integer> baseline) {
-        this.baseline = baseline;
-    }
+    /**
+     * The underlines pane
+     * @return the Anchor Pane
+     */
+    public AnchorPane getLinesPane() {     return linesPane;   }
+
+    /**
+     * List which "traces" offset of the topmost lines from bottom of lines pane as a function of x
+     * @return the List
+     */
+    public List<Integer> getBaseline() {      return baseline;   }
+
+    /**
+     * List which "traces" offset of the topmost lines from bottom of lines pane as a function of x
+     * @param baseline
+     */
+    public void setBaseline(List<Integer> baseline) {     this.baseline = baseline;   }
+
 }

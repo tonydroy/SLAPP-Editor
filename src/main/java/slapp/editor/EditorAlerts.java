@@ -22,6 +22,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
@@ -48,7 +49,6 @@ public class EditorAlerts {
         Stage mainStage = EditorMain.mainStage;
         alert.setX(mainStage.getX() + mainStage.getWidth()/3);
         alert.setY(mainStage.getY() + mainStage.getHeight()/3);
-
 
 //        alert.initOwner(EditorMain.mainStage);
         alert.showAndWait();

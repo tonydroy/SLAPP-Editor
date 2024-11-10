@@ -15,13 +15,14 @@ You should have received a copy of the GNU General Public License along with SLA
 
 package slapp.editor.vertical_tree.drag_drop;
 
+/**
+ * Enum of draggable object types
+ */
 public enum DragIconType {
 
     tree_field,
     bracket,
     dashed_line,
     map_field
-
-
 
 }

@@ -21,6 +21,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -37,6 +38,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebErrorEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
@@ -75,8 +77,9 @@ public class MainWindow {
     private boolean fitToPage = false;
     private WebEngine videoWebEngine;
     private WebView videoWebView;
-
     private Stage videoStage;
+
+
 
 
     /**
@@ -886,12 +889,18 @@ public class MainWindow {
      */
 
     private void videoHelp(String urlString, double width, double height) {
- //       WebView videoWebView = new WebView();
-        if (videoWebEngine != null) closeVideoHelp();
-
+        closeVideoHelp();
 
         videoWebEngine = videoWebView.getEngine();
         videoWebEngine.setUserStyleSheetLocation("data:, body {font: 16px Noto Serif Combo; }");
+
+        videoWebEngine.getLoadWorker().stateProperty().addListener((ob, ov, nv) -> {
+            if (nv == Worker.State.FAILED) {
+                EditorAlerts.showSimpleAlert("Connection Error", "Error connecting to https://www.slappservices.net.");
+                closeVideoHelp();
+            }
+        });
+
         videoWebEngine.load(urlString);
 
         VBox root = new VBox(videoWebView);
@@ -905,13 +914,8 @@ public class MainWindow {
         videoStage.getIcons().addAll(EditorMain.icons);
 //        stage.initOwner(EditorMain.mainStage);
         Rectangle2D bounds = MainWindowView.getCurrentScreenBounds();
-//        stage.setX(Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - 860));
-//        stage.setY(Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - 850));
-
         videoStage.setX(Math.max(5, Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - (width + 20))));
         videoStage.setY(Math.max(5, Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - (height + 20))));
-
-
         videoStage.setWidth(width);
         videoStage.setHeight(height);
 
@@ -924,9 +928,6 @@ public class MainWindow {
         if (videoWebEngine != null) videoWebEngine.load(null);
         if (videoStage != null) videoStage.close();
     }
-
-
-
 
     /*
      * Open 'general info' text help item

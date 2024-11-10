@@ -252,7 +252,7 @@ public class BranchNode extends HBox {
         rta.setMinHeight(formulaBoxHeight);
 
         RichTextAreaSkin rtaSkin = (RichTextAreaSkin) rta.getSkin();
-        rta.prefWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 3), 10));
+        rta.prefWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 5), 12));
         rta.prefWidthProperty().addListener((ob, ov, nv) -> {
             horizontalTreeView.refreshTreePanes();
         });

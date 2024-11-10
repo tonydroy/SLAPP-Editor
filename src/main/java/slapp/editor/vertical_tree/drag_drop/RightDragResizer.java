@@ -11,21 +11,20 @@ import slapp.editor.vertical_tree.VerticalTreeView;
  * and make it resizable by the user by clicking and dragging the border in the
  * same way as a window.
  * <p>
- * Only height resizing is currently implemented. Usage: <pre>DragResizer.makeResizable(myAnchorPane);</pre>
+ * Only width resizing is currently implemented. Usage: <pre>DragResizer.makeResizable(myAnchorPane);</pre>
  *
- * @author atill
+ * @author atill (modified for SLAPP)
  *
  * https://gist.github.com/andytill/4369729
  *
  */
 public class RightDragResizer {
 
-    /**
-     * The margin around the control that a user can click in to start resizing
-     * the region.
-     */
-
     VerticalTreeView verticalTreeView;
+
+    /**
+     * The margin around the control that a user can click in to start resizing the region.
+     */
     private static final int RESIZE_MARGIN = 12;
 
     private Region region;

@@ -11,6 +11,11 @@
     -fx-border-color: LIGHTBLUE;
 }
 
+.rich-text-area .paragraph-tile {
+    -fx-background-color: white;
+    -fx-padding: 0 0 0 2;
+}
+
 
 .rich-text-area > .paragraph-list-view {
     -fx-padding: 5;

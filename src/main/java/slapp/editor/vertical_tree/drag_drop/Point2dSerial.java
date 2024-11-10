@@ -19,6 +19,9 @@ import javafx.geometry.Point2D;
 
 import java.io.Serializable;
 
+/**
+ * Serializable version of {@link javafx.geometry.Point2D}
+ */
 public class Point2dSerial extends Point2D implements Serializable {
     private static final long serialVersionUID = 100L;
 
