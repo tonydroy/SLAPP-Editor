@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>net.tonyroyphilosophy</groupId>
-        <artifactId>SLAPP-2</artifactId>
+        <artifactId>Symbolic-Logic-APPlication</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
