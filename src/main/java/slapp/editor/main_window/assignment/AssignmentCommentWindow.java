@@ -145,9 +145,12 @@ public class AssignmentCommentWindow {
 
         });
 
+
         ToolBar sizeToolBar = new ToolBar();
         sizeToolBar.setPrefHeight(38);
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label("     "));
+
+        /*
 
         ToolBar editToolbar = commentDRTA.getKbdSelectorToolbar();
         ToolBar fontsToolbar = commentDRTA.getEditToolbar();
@@ -159,7 +162,36 @@ public class AssignmentCommentWindow {
 
         HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox);
+
+
+         */
+
+        ToolBar paragraphToolbar = commentDRTA.getParagraphToolbar();
+        paragraphToolbar.setMinWidth(870);
+
+        ToolBar fontsToolbar = commentDRTA.getFontsToolbar();
+        fontsToolbar.setMinWidth(520);
+
+        ToolBar editToolbar = commentDRTA.getEditToolbar();
+        editToolbar.setMinWidth(300);
+
+        ToolBar kbdSelectorToolBar = commentDRTA.getKbdSelectorToolbar();
+        ToolBar kbdDiaToolBar = commentDRTA.getKbdDiaToolbar();
+
+
+        editToolbar.setPrefHeight(38);
+        fontsToolbar.setPrefHeight(38);
+        kbdDiaToolBar.setPrefHeight(38);
+
+        HBox fontsAndEditBox = new HBox(fontsToolbar, editToolbar);
+        HBox kbdBox = new HBox(kbdSelectorToolBar, kbdDiaToolBar, sizeToolBar);
+
+        fontsAndEditBox.setHgrow(editToolbar, Priority.ALWAYS);
+        kbdBox.setHgrow(sizeToolBar, Priority.ALWAYS);
+
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsAndEditBox, kbdBox);
+
+ //       VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox);
         borderPane.topProperty().setValue(topBox);
 
         scene = new Scene(borderPane);

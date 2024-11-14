@@ -88,10 +88,19 @@ public class DecoratedRTA {
     private ToolBar editToolbar;
     private ToolBar paragraphToolbar;
     private ToolBar kbdDiaToolbar;
+    private ToolBar fontsToolbar;
     private ToggleButton overlineButton;
+    private TextField unicodeField;
+
 
     private Button keyboardDiagramButton;
     ChoiceBox<RichTextAreaSkin.KeyMapValue> keyboardSelector;
+
+    private Button cutButton;
+    private Button copyButton;
+    private Button pasteButton;
+    private Button undoButton;
+    private Button redoButton;
 
     /**
      * Create the decoratedRTA with RTA editor as component.
@@ -203,6 +212,7 @@ public class DecoratedRTA {
         overlineButton.setPadding(new Insets(-10,0,-10,11));
         overlineButton.setMaxHeight(28);
         overlineButton.setPrefSize(34,28);
+        overlineButton.setFocusTraversable(false);
 
         //keyboardDiagramButton
         keyboardDiagramButton = new Button("\uf11c");  //line awesome KEYBOARD
@@ -227,7 +237,7 @@ public class DecoratedRTA {
 
 
         //unicode field
-        final TextField unicodeField = new TextField();
+        unicodeField = new TextField();
         unicodeField.setTooltip(new Tooltip("Unicode (x/hex, #/decimal)"));
         unicodeField.setPrefWidth(90);
         unicodeField.setPromptText("unicode value");
@@ -236,54 +246,24 @@ public class DecoratedRTA {
             editor.getActionFactory().insertUnicode(text).execute(e);
         });
 
+
+
         //keyboard selector
         keyboardSelector = new ChoiceBox<>();
         keyboardSelector.getItems().setAll(RichTextAreaSkin.KeyMapValue.values());
         keyboardSelector.setValue(RichTextAreaSkin.KeyMapValue.BASE);
-        keyboardSelector.setTooltip(new Tooltip("Select Keyboard (F1-F8, F9 toggles previous)"));
+        keyboardSelector.setTooltip(new Tooltip("Select Keyboard"));
         keyboardSelector.setPrefWidth(120);
+        keyboardSelector.setFocusTraversable(false);
+
+        //action buttons
+        cutButton = actionButton("\uf0c4", "Cut (Ctrl/Cmd-X)",   editor.getActionFactory().cut());  //LineAwesomeSolid.CUT
+        copyButton = actionButton("\uf0c5", "Copy (Ctrl/Cmd-C)",  editor.getActionFactory().copy()); //LineAwesomeSolid.COPY
+        pasteButton = actionButton("\uf0ea", "Paste (Ctrl/Cmd-V)", editor.getActionFactory().paste()); //LineAwesomeSolid.PASTE
+        undoButton = actionButton("\uf0e2", "Undo (Ctrl/Cmd-Z)",  editor.getActionFactory().undo());  //LineAwesomeSolid.UNDO
+        redoButton = actionButton("\uf01e", "Redo (Shift-Ctrl/Cmd-Z)",  editor.getActionFactory().redo());  //LineAwesomeLolid.REDO
 
         //toolbars
-
-        kbdSelectorToolbar = new ToolBar();
-        kbdSelectorToolbar.setStyle("-fx-spacing: 10");
-        kbdSelectorToolbar.setPrefHeight(38);
-        kbdSelectorToolbar.getItems().setAll(
-                keyboardSelector,
-                new Label("Size"),
-                fontSize,
-               wideSeparator(1)
-        );
-
-        kbdDiaToolbar = new ToolBar();
-        kbdDiaToolbar.setStyle("-fx-spacing: 10");
-        kbdDiaToolbar.getItems().setAll(keyboardDiagramButton, new Label("  "));
-
-        editToolbar = new ToolBar();
-        editToolbar.setStyle("-fx-spacing: 12");
-        editToolbar.getItems().setAll(
-                actionButton("\uf0c4", "Cut (Ctrl/Cmd-X)",   editor.getActionFactory().cut()),  //LineAwesomeSolid.CUT
-                actionButton("\uf0c5", "Copy (Ctrl/Cmd-C)",  editor.getActionFactory().copy()), //LineAwesomeSolid.COPY
-                actionButton("\uf0ea", "Paste (Ctrl/Cmd-V)", editor.getActionFactory().paste()), //LineAwesomeSolid.PASTE
-                actionButton("\uf0e2", "Undo (Ctrl/Cmd-Z)",  editor.getActionFactory().undo()),  //LineAwesomeSolid.UNDO
-                actionButton("\uf01e", "Redo (Shift-Ctrl/Cmd-Z)",  editor.getActionFactory().redo()),  //LineAwesomeLolid.REDO
-
-                wideSeparator(0),
-
-                unicodeField,
-                textForeground,
-                textBackground,
-
-                wideSeparator(0),
-
-                createToggleButton("\uf0cc", "Strikethrough", property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
-                createToggleButton("\uf0cd", "Underline (Ctrl/Cmd-U)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build())),
-                overlineButton,
-                createToggleButton("\uf12b", "Superscript (PgUp)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).transSuperscript(false).transSubscript(false).build())),
-                createColoredToggleButton("\uf12b", "Shifted superscript (Shift-PgUp)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
-                createToggleButton("\uf12c", "Subscript (PgDn)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).transSuperscript(false).transSubscript(false).build())),
-                createColoredToggleButton("\uf12c", "Shifted Subscript (Shift-PgDn)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build()))
-                );
 
         paragraphToolbar = new ToolBar();
         paragraphToolbar.setStyle("-fx-spacing: 10");
@@ -293,27 +273,79 @@ public class DecoratedRTA {
                 createToggleButton("\uf038", "Align Right", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.RIGHT, (builder, a) -> builder.alignment(a ? TextAlignment.RIGHT : TextAlignment.LEFT).build())),
                 createToggleButton("\uf039", "Justify", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getAlignment() == TextAlignment.JUSTIFY, (builder, a) -> builder.alignment(a ? TextAlignment.JUSTIFY : TextAlignment.LEFT).build())),
 
-                createJumpSpinner("Spacing", "Space for wrapped lines (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getSpacing(), (builder, a) -> builder.spacing(a).build())),
                 wideSeparator(2),
-                createToggleButton("\uf0cb", "Numbered List", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == NUMBERED_LIST, (builder, a) -> builder.graphicType(a ? NUMBERED_LIST : NONE).build())),
-                createToggleButton("\uf0ca", "Unordered List/Outline", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == BULLETED_LIST, (builder, a) -> builder.graphicType(a ? BULLETED_LIST : NONE).build())),
+
+                createJumpSpinner("Spacing", "Space for wrapped lines (point value)", p -> new ParagraphDecorateAction<>(editor, p, v -> (int) v.getSpacing(), (builder, a) -> builder.spacing(a).build())),
                 createSpinner("Indent", "Indent Level", p -> new ParagraphDecorateAction<>(editor, p, ParagraphDecoration::getIndentationLevel, (builder, a) -> builder.indentationLevel(a).build())),
+                new Label("Size"),
+                fontSize,
 
                 wideSeparator(3),
 
+                createToggleButton("\uf0cb", "Numbered List", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == NUMBERED_LIST, (builder, a) -> builder.graphicType(a ? NUMBERED_LIST : NONE).build())),
+                createToggleButton("\uf0ca", "Unordered List/Outline", property -> new ParagraphDecorateAction<>(editor, property, d -> d.getGraphicType() == BULLETED_LIST, (builder, a) -> builder.graphicType(a ? BULLETED_LIST : NONE).build())),
                 actionImage("\uf03e", "Insert Image"),
                 actionEmoji("Insert Emoji"),
                 actionHyperlink("\uf0c1", "Insert Hyperlink on selected text"),
-                actionTable("\uf0ce", "Insert Table", td -> editor.getActionFactory().insertTable(td)),
+                actionTable("\uf0ce", "Insert Table", td -> editor.getActionFactory().insertTable(td))
+        );
 
-                wideSeparator(4),
+        fontsToolbar = new ToolBar();
+        fontsToolbar.setStyle("-fx-spacing: 12");
+        fontsToolbar.getItems().setAll(
+                textForeground,
+                textBackground,
 
+                createToggleButton("\uf12b", "Superscript (PgUp)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSuperscript, (builder, a) -> builder.superscript(a).subscript(false).transSuperscript(false).transSubscript(false).build())),
+                createColoredToggleButton("\uf12b", "Shifted superscript (Shift-PgUp)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSuperscript, (builder, a) -> builder.transSuperscript(a).transSubscript(false).subscript(false).superscript(false).build())),
+                createToggleButton("\uf12c", "Subscript (PgDn)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isSubscript, (builder, a) -> builder.subscript(a).superscript(false).transSuperscript(false).transSubscript(false).build())),
+                createColoredToggleButton("\uf12c", "Shifted Subscript (Shift-PgDn)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isTransSubscript, (builder, a) -> builder.transSubscript(a).transSuperscript(false).superscript(false).subscript(false).build())),
                 createToggleButton("\uf032", "Bold - not for symbol fonts (Ctrl/Cmd-B)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontWeight() == BOLD, (builder, a) -> builder.fontWeight(a ? BOLD : NORMAL).build())),
-                createToggleButton("\uf033", "Italic - not for symbol fonts (Ctrl/Cmd-I)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build()))
+                createToggleButton("\uf033", "Italic - not for symbol fonts (Ctrl/Cmd-I)", property -> new TextDecorateAction<>(editor, property, d -> d.getFontPosture() == ITALIC, (builder, a) -> builder.fontPosture(a ? ITALIC : REGULAR).build())),
+                createToggleButton("\uf0cc", "Strikethrough", property -> new TextDecorateAction<>(editor, property, TextDecoration::isStrikethrough, (builder, a) -> builder.strikethrough(a).build())),
+                createToggleButton("\uf0cd", "Underline (Ctrl/Cmd-U)", property -> new TextDecorateAction<>(editor, property, TextDecoration::isUnderline, (builder, a) -> builder.underline(a).build()))
 
-                //LineAwesomeSolid ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT, ALIGN_JUSTIFY, LIST_OL, LIST_UL, IMAGE, LINK, TABLE, BOLD, ITALIC
-            );
+
+
+
+        );
+
+
+        editToolbar = new ToolBar();
+        editToolbar.setStyle("-fx-spacing: 12");
+        editToolbar.getItems().setAll(
+                overlineButton,
+
+                wideSeparator(1),
+
+                cutButton,
+                copyButton,
+                pasteButton,
+                undoButton,
+                redoButton
+        );
+
+
+
+
+        kbdSelectorToolbar = new ToolBar();
+        kbdSelectorToolbar.setStyle("-fx-spacing: 10");
+        kbdSelectorToolbar.setPrefHeight(38);
+        kbdSelectorToolbar.getItems().setAll(
+                keyboardSelector,
+                unicodeField,
+
+               wideSeparator(1)
+        );
+
+        kbdDiaToolbar = new ToolBar();
+        kbdDiaToolbar.setStyle("-fx-spacing: 10");
+        kbdDiaToolbar.getItems().setAll(keyboardDiagramButton, new Label("  "));
+
+
+
         setRtaListeners();
+
     }
 
     /*
@@ -337,7 +369,8 @@ public class DecoratedRTA {
         editor.applyCss();
         editor.layout();
         overlineButton.selectedProperty().bindBidirectional(((RichTextAreaSkin) editor.getSkin()).overlineOnProperty());
-        overlineButton.selectedProperty().addListener((v, ov, nv) -> editor.requestFocus());
+//        overlineButton.selectedProperty().addListener((v, ov, nv) -> editor.requestFocus());
+
         keyboardSelector.valueProperty().bindBidirectional(((RichTextAreaSkin) editor.getSkin()).keyMapStateProperty());
         keyboardSelector.getSelectionModel().selectedItemProperty().addListener((v, ov, nv) -> {
             ((RichTextAreaSkin) editor.getSkin()).setMaps(nv);
@@ -382,6 +415,7 @@ public class DecoratedRTA {
         button.setTooltip(new Tooltip(tooltip));
         button.disableProperty().bind(action.disabledProperty());
         button.setOnAction(action::execute);
+        button.setFocusTraversable(false);
         return button;
     }
 
@@ -770,6 +804,10 @@ public class DecoratedRTA {
     public ToolBar getKbdDiaToolbar() {
         return kbdDiaToolbar;
     }
+
+    public ToolBar getFontsToolbar() { return fontsToolbar; }
+
+    public TextField getUnicodeField() {return unicodeField; }
 
 
 }

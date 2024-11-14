@@ -18,6 +18,8 @@ package slapp.editor.derivation;
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -354,7 +356,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         flow.setMouseTransparent(false);
         flow.setMinWidth(100);
         flow.setMaxHeight(20);
-        flow.setPadding(new Insets(0,0,0,3));
+        flow.setPadding(new Insets(0,0,0,5));
         flow.setOnMouseClicked(e -> flow.requestFocus());
         flow.focusedProperty().addListener((ob, ov, nv) -> {
             if (nv) {
@@ -388,7 +390,10 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         justificationClickFilter = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (!inHierarchy(event.getPickResult().getIntersectedNode(), rta)) {
+                boolean clickOther = !inHierarchy(event.getPickResult().getIntersectedNode(), rta);
+                boolean clickTopBox = inHierarchy(event.getPickResult().getIntersectedNode(), mainWindow.getMainView().getTopBox());
+
+                if (clickOther && !clickTopBox) {
                     if (editJustification) {
                         editJustification = false;
                         saveJustificationRTA(rta, rowIndex);
@@ -397,18 +402,23 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             }
         };
 
-        rta.focusedProperty().addListener((o, ov, nv) -> {
-            if (nv) {
-                editJustification = true;
-                mainView.getMainScene().addEventFilter(MouseEvent.MOUSE_PRESSED, justificationClickFilter);
-            }
-            else {
-                if (editJustification) {
-                    editJustification = false;
-                    saveJustificationRTA(rta, rowIndex);
+        ChangeListener<Boolean> focusListener = new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ob, Boolean ov, Boolean nv) {
+                if (nv) {
+                    editJustification = true;
+                    mainView.getMainScene().addEventFilter(MouseEvent.MOUSE_PRESSED, justificationClickFilter);
+                }
+                else {
+                    if (editJustification && mainView.getMainScene().getFocusOwner() != drta.getUnicodeField()) {
+                        editJustification = false;
+                        saveJustificationRTA(rta, rowIndex);
+                    }
                 }
             }
-        });
+        };
+        rta.focusedProperty().addListener(focusListener);
+
 
         rta.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
             KeyCode code = e.getCode();
@@ -442,7 +452,7 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         derivationView.getGrid().getChildren().remove(flow);
         derivationView.getGrid().add(rta, 22, rowIndex);
         rta.requestFocus();
-        mainView.editorInFocus(drta, ControlType.STATEMENT);
+        mainView.editorInFocus(drta, ControlType.JUSTIFICATION);
     }
 
     /**
@@ -484,7 +494,9 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
         //removing the RTA from the grid seems to rewrite the grid, causing focus to jump.  Here we simply
         //blank the RTA (until the grid is next rewritten) so that it does not appear on top of new content
         rta.getActionFactory().newDocumentNow().execute(new ActionEvent());
+
         derivationView.setJustificationFlowOnGrid(rowIndex);
+        derivationView.setGridFromViewLines();
 
         if (modified) {
             pushUndoRedo();

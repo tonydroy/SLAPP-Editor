@@ -585,6 +585,7 @@ public class VerticalTreeABExpCreate {
             keyboardDiagram.updateAndShow();
         }
 
+        /*
         ToolBar editToolbar = decoratedRTA.getKbdSelectorToolbar();
         ToolBar fontsToolbar = decoratedRTA.getEditToolbar();
         ToolBar paragraphToolbar = decoratedRTA.getParagraphToolbar();
@@ -611,9 +612,52 @@ public class VerticalTreeABExpCreate {
         editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
         editAndKbdBox.layout();
 
+         */
+        ToolBar paragraphToolbar = decoratedRTA.getParagraphToolbar();
+        paragraphToolbar.setMinWidth(870);
+
+        ToolBar fontsToolbar = decoratedRTA.getFontsToolbar();
+        fontsToolbar.setMinWidth(520);
+
+        ToolBar editToolbar = decoratedRTA.getEditToolbar();
+        editToolbar.setMinWidth(300);
+
+        ToolBar kbdSelectorToolBar = decoratedRTA.getKbdSelectorToolbar();
+        ToolBar kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
 
 
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, fieldsBox);
+        editToolbar.setPrefHeight(38);
+        fontsToolbar.setPrefHeight(38);
+        kbdDiaToolBar.setPrefHeight(38);
+
+        //this "cascades" disable requests starting from the control type -- so if NONE, all are disabled, etc.
+        switch (control) {
+            case NONE: {
+                kbdDiaToolBar.setDisable(true);
+            }
+            case STATEMENT: {
+                editToolbar.setDisable(true);
+                kbdSelectorToolBar.setDisable(true);
+            }
+            case JUSTIFICATION: {
+                fontsToolbar.setDisable(true);
+            }
+            case FIELD: {
+                paragraphToolbar.setDisable(true);
+            }
+            case AREA: { }
+        }
+        sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
+
+
+        HBox fontsAndEditBox = new HBox(fontsToolbar, editToolbar);
+        HBox kbdBox = new HBox(kbdSelectorToolBar, kbdDiaToolBar, sizeToolBar);
+
+        fontsAndEditBox.setHgrow(editToolbar, Priority.ALWAYS);
+        kbdBox.setHgrow(sizeToolBar, Priority.ALWAYS);
+
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsAndEditBox, kbdBox, fieldsBox);
+
         borderPane.topProperty().setValue(topBox);
     }
 

@@ -483,18 +483,33 @@ public class ABcreate {
             keyboardDiagram.updateAndShow();
         }
 
-        ToolBar editToolbar = decoratedRTA.getKbdSelectorToolbar();
-        ToolBar fontsToolbar = decoratedRTA.getEditToolbar();
         ToolBar paragraphToolbar = decoratedRTA.getParagraphToolbar();
+        paragraphToolbar.setMinWidth(870);
+
+        ToolBar fontsToolbar = decoratedRTA.getFontsToolbar();
+        fontsToolbar.setMinWidth(520);
+
+        ToolBar editToolbar = decoratedRTA.getEditToolbar();
+        editToolbar.setMinWidth(300);
+
+        ToolBar kbdSelectorToolBar = decoratedRTA.getKbdSelectorToolbar();
         ToolBar kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
+
+
+        editToolbar.setPrefHeight(38);
+        fontsToolbar.setPrefHeight(38);
         kbdDiaToolBar.setPrefHeight(38);
 
+        //this "cascades" disable requests starting from the control type -- so if NONE, all are disabled, etc.
         switch (control) {
             case NONE: {
                 kbdDiaToolBar.setDisable(true);
             }
             case STATEMENT: {
                 editToolbar.setDisable(true);
+                kbdSelectorToolBar.setDisable(true);
+            }
+            case JUSTIFICATION: {
                 fontsToolbar.setDisable(true);
             }
             case FIELD: {
@@ -504,11 +519,15 @@ public class ABcreate {
         }
         sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
 
-        HBox editAndKbdBox = new HBox(editToolbar, sizeToolBar, kbdDiaToolBar);
-        editAndKbdBox.setHgrow(kbdDiaToolBar, Priority.ALWAYS);
-        editAndKbdBox.layout();
 
-        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox, textFieldsPromptBox);
+        HBox fontsAndEditBox = new HBox(fontsToolbar, editToolbar);
+        HBox kbdBox = new HBox(kbdSelectorToolBar, kbdDiaToolBar, sizeToolBar);
+
+        fontsAndEditBox.setHgrow(editToolbar, Priority.ALWAYS);
+        kbdBox.setHgrow(sizeToolBar, Priority.ALWAYS);
+
+        VBox topBox = new VBox(menuBar, paragraphToolbar, fontsAndEditBox, kbdBox, textFieldsPromptBox);
+
         borderPane.topProperty().setValue(topBox);
     }
 

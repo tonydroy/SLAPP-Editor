@@ -24,12 +24,15 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.geometry.*;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
@@ -57,6 +60,7 @@ public class MainWindowView {
     private ToolBar paragraphToolbar = new ToolBar();
     private ToolBar insertToolbar = new ToolBar();
     private ToolBar kbdDiaToolBar = new ToolBar();
+    private ToolBar kbdSelectorToolBar = new ToolBar();
     private ToolBar sizeToolBar = new ToolBar();
     private double scale = 1.0;
     MenuBar menuBar;
@@ -126,6 +130,8 @@ public class MainWindowView {
     private MenuItem horizontalTreeItem;
     private MenuItem truthTableItem;
     private MenuItem derivationItem;
+    private MenuItem keyboardDiagramItem;
+    private MenuItem keyboardShortcutsItem;
     private MenuItem instructorInfoItem;
     private MenuItem reportItem;
     Menu previousExerciseMenu = new Menu();
@@ -191,9 +197,22 @@ public class MainWindowView {
         Text textItemGraphic2 = new Text("\uf15c");
         textItemGraphic2.setStyle("-fx-font-family: la-solid-900");
         contextualTextItem = new MenuItem("Contextual", textItemGraphic2);
+
+        Text textItemGraphic4 = new Text("\uf15c");
+        textItemGraphic4.setStyle("-fx-font-family: la-solid-900");
+        keyboardDiagramItem = new MenuItem("Keyboard Diagram", textItemGraphic4);
+
+        Text textItemGraphic5 = new Text("\uf15c");
+        textItemGraphic5.setStyle("-fx-font-family: la-solid-900");
+        keyboardShortcutsItem = new MenuItem("Keyboard Shortcuts", textItemGraphic5);
+
         Text textItemGraphic3 = new Text("\uf15c");
         textItemGraphic3.setStyle("-fx-font-family: la-solid-900");
         aboutItem = new MenuItem("About", textItemGraphic3);
+
+
+
+
 
         Text reportItemGraphic = new Text("\uf4ad");
         reportItemGraphic.setStyle("-fx-font-family: la-solid-900");
@@ -205,7 +224,7 @@ public class MainWindowView {
         exerciseMenu.getItems().addAll(saveExerciseItem, saveAsExerciseItem, openExerciseItem, clearExerciseItem, closeExerciseItem, printExerciseItem, exportToPDFExerciseItem, createRevisedExerciseItem, createNewExerciseItem);
         assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, closeAssignmentItem, printAssignmentItem, exportAssignmentToPDFItem, createRevisedAssignmentItem, createNewAssignmentItem);
         printMenu.getItems().addAll(printExerciseItemPM, exportExerciseToPDFItemPM, printAssignmentItemPM, exportAssignmentToPDFItemPM, exportSetupItem, pageSetupItem, scaleSetupItem);
-        helpMenu.getItems().addAll(quickStartItem, slappEditorItem, verticalTreeItem, truthTableItem, horizontalTreeItem, derivationItem, instructorInfoItem, commonElementsTextItem, contextualTextItem, aboutItem, reportItem);
+        helpMenu.getItems().addAll(quickStartItem, slappEditorItem, verticalTreeItem, truthTableItem, horizontalTreeItem, derivationItem, instructorInfoItem, commonElementsTextItem, contextualTextItem, keyboardDiagramItem, keyboardShortcutsItem, aboutItem, reportItem);
 /*
         if (EditorMain.os.startsWith("Mac")) {
             menuBar.setUseSystemMenuBar(true);
@@ -260,7 +279,7 @@ public class MainWindowView {
 
         sizeToolBar.setStyle("-fx-spacing: 10");
         sizeToolBar.getItems().addAll(zoomLabel, zoomSpinner, new Label(" T Ht:"), txtHeightIndicator,  new Label("V Sz:"), verticalSizeSpinner,
-                new Label("H Sz:"), horizontalSizeSpinner, new Label(" "), saveButton, progressIndicator);
+                new Label("H Sz:"), horizontalSizeSpinner, saveButton, progressIndicator);
         sizeToolBar.setPrefHeight(38);
 
 
@@ -420,6 +439,7 @@ public class MainWindowView {
         this.contentNode = currentExerciseView.getExerciseContentNode();
         this.commentDecoratedRTA = currentExerciseView.getExerciseComment();
         this.commentNode = commentDecoratedRTA.getEditor();
+
         this.leftControlNode = currentExerciseView.getExerciseControl();
         this.rightControlNode = currentExerciseView.getRightControl();
 
@@ -534,11 +554,21 @@ public class MainWindowView {
             keyboardDiagram.updateAndShow();
         }
 
-        editToolbar = decoratedRTA.getKbdSelectorToolbar();
-        fontsToolbar = decoratedRTA.getEditToolbar();
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
+        paragraphToolbar.setMinWidth(minStageWidth);
+
+        fontsToolbar = decoratedRTA.getFontsToolbar();
+        fontsToolbar.setMinWidth(520);
+
+        editToolbar = decoratedRTA.getEditToolbar();
+        editToolbar.setMinWidth(300);
+
+        kbdSelectorToolBar = decoratedRTA.getKbdSelectorToolbar();
         kbdDiaToolBar = decoratedRTA.getKbdDiaToolbar();
+
+
         editToolbar.setPrefHeight(38);
+        fontsToolbar.setPrefHeight(38);
         kbdDiaToolBar.setPrefHeight(38);
 
         //this "cascades" disable requests starting from the control type -- so if NONE, all are disabled, etc.
@@ -548,6 +578,9 @@ public class MainWindowView {
             }
             case STATEMENT: {
                 editToolbar.setDisable(true);
+                kbdSelectorToolBar.setDisable(true);
+            }
+            case JUSTIFICATION: {
                 fontsToolbar.setDisable(true);
             }
             case FIELD: {
@@ -557,9 +590,14 @@ public class MainWindowView {
         }
         sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
 
-        HBox editAndKbdBox = new HBox(editToolbar, kbdDiaToolBar, sizeToolBar);
-        editAndKbdBox.setHgrow(sizeToolBar, Priority.ALWAYS);
-        topBox = new VBox(menuBar, paragraphToolbar, fontsToolbar, editAndKbdBox);
+
+        HBox fontsAndEditBox = new HBox(fontsToolbar, editToolbar);
+        HBox kbdBox = new HBox(kbdSelectorToolBar, kbdDiaToolBar, sizeToolBar);
+
+        fontsAndEditBox.setHgrow(editToolbar, Priority.ALWAYS);
+        kbdBox.setHgrow(sizeToolBar, Priority.ALWAYS);
+
+        topBox = new VBox(menuBar, paragraphToolbar, fontsAndEditBox, kbdBox);
         topBox.layout();
 
         borderPane.topProperty().setValue(topBox);
@@ -867,6 +905,14 @@ public class MainWindowView {
         return commonElementsTextItem;
     }
 
+    MenuItem getKeyboardDiagramItem() {
+        return keyboardDiagramItem;
+    }
+
+    MenuItem getKeyboardShortcutsItem() {
+        return keyboardShortcutsItem;
+    }
+
     /**
      * Menu item to
      *
@@ -1035,6 +1081,12 @@ public class MainWindowView {
      * @return the scale property
      */
     public DoubleProperty scalePageWidthProperty() {    return scalePageWidth;  }
+
+    DecoratedRTA getLastFocusedDRTA() {
+        return lastFocusedDRTA;
+    }
+
+    public VBox getTopBox() {return topBox;}
 
 
 

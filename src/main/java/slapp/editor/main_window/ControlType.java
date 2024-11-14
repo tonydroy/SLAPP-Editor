@@ -32,6 +32,11 @@ public enum ControlType {
     STATEMENT("statement"),
 
     /**
+     * Controls appropriate for RTA produced string (for derivation Justification)
+     */
+    JUSTIFICATION("justification"),
+
+    /**
      * Controls appropriate to a one-line field active
      */
     FIELD("field"),

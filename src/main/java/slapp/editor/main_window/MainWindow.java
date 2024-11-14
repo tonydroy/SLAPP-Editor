@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License along with SLA
 package slapp.editor.main_window;
 
 import com.gluonhq.richtextarea.model.Document;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -45,6 +46,7 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import slapp.editor.*;
+import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.front_page.FrontPageExercise;
 import slapp.editor.main_window.assignment.*;
 import slapp.editor.main_window.media_player.MediaViewer;
@@ -164,24 +166,11 @@ public class MainWindow {
         mainView.getDerivationItem().setOnAction(e -> videoHelp("https://www.slappservices.net/derivations/derivations_player.html", 700, 774));
         mainView.getInstructorInfoItem().setOnAction(e -> videoHelp("https://www.slappservices.net/instructor/instructor_player.html", 900, 537));
 
-        /*
-        mainView.getQuickStartItem().setOnAction(e -> videoHelp("https://www.slappservices.net/quick_start.mp4", 900, 580));  //650
-        mainView.getSlappEditorItem().setOnAction(e -> videoHelp("https://www.slappservices.net/slapp_editor.mp4", 800, 661));
-        mainView.getVerticalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/vertical_trees.mp4", 600, 849));
-        mainView.getHorizontalTreeItem().setOnAction(e -> videoHelp("https://www.slappservices.net/horizontal_trees.mp4", 600, 834.8));
-        mainView.getTruthTableItem().setOnAction(e -> videoHelp("https://www.slappservices.net/truth_tables.mp4", 600, 746.4));
-        mainView.getDerivationItem().setOnAction(e -> videoHelp("https://www.slappservices.net/derivations.mp4", 700, 774));
-        mainView.getInstructorInfoItem().setOnAction(e -> videoHelp("https://www.slappservices.net/instructor_info.mp4", 900, 536.9));
-         */
-
-
-
-
-
-
         mainView.getCommonElementsTextItem().setOnAction(e -> generalTextHelp());
         mainView.getAboutItem().setOnAction(e -> aboutTextHelp());
         mainView.getContextualTextItem().setOnAction(e -> contextualTextHelp());
+        mainView.getKeyboardDiagramItem().setOnAction(e -> keyboardDiagramHelp());
+        mainView.getKeyboardShortcutsItem().setOnAction(e -> keyboardShortcutsTextHelp());
         mainView.getReportItem().setOnAction(e -> makeReport());
         mainView.getSaveButton().setOnAction(e -> saveAction());
 
@@ -873,6 +862,8 @@ public class MainWindow {
         TextHelpPopup.helpAbout();
     }
 
+    private void keyboardShortcutsTextHelp() {TextHelpPopup.helpKeyboardShortcut(); }
+
     /*
      * Open help video
      * @param urlString - video location
@@ -942,6 +933,16 @@ public class MainWindow {
     private void contextualTextHelp() {
         TextHelpPopup.helpContextual(((ExerciseModel) (currentExercise.getExerciseModel())).getExerciseType());
     }
+
+    private void keyboardDiagramHelp() {
+        KeyboardDiagram kbd = KeyboardDiagram.getInstance();
+        if (!kbd.isShowing()) {
+            kbd.initialize(mainView.getLastFocusedDRTA());
+            kbd.updateAndShow();
+        }
+    }
+
+
 
     /*
      * Open native mail client to report an issue

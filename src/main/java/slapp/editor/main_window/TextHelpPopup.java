@@ -49,6 +49,7 @@ import java.awt.Desktop;
 public class TextHelpPopup {
 
     private static String about;
+    private static String keyboardShortcuts;
     private static String commonElements;
     private static String simpleEdit;
     private static String verticalTrees;
@@ -63,9 +64,9 @@ static {
             "<h2><p style=\"text-align: center;\">Symbolic Logic Application (SLAPP)</p></h2>" +
             "<p style = \"text-align: center;\">Version 1.01&#x03b1</p>" +
             "<p style=\"text-align: center;\">Copyright (c) 2024, Tony Roy</p>" +
-            "<p>This program (SLAPP) is open-source and free software.  An executable install package may be downloaded from <a href=\"https://tonyroyphilosophy.net/slapp\">tonyroyphilosophy.net/slapp</a>.  Source code is available at <a href=\"https://github.com\">github.com/xxx</a>.  You may redistribute the software and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.  For the license, see <a href=\"https://www.gnu.org/licenses/licenses.html\">www.gnu.org/licenses.html</a>.</p>" +
+            "<p>This program (SLAPP) is open-source and free software.  An executable install package may be downloaded from <a href=\"https://tonyroyphilosophy.net/slapp\">tonyroyphilosophy.net/slapp</a>.  Source code is available on <a href=\"https://www.github.com/tonydroy/Symbolic-Logic-APPlication\">GitHub</a>.  You may redistribute the software and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.  For the license, see <a href=\"https://www.gnu.org/licenses/licenses.html\">www.gnu.org/licenses.html</a>.</p>" +
             "<p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. </p>" +
-            "In this preliminary version, every user becomes an evaluator and tester.  Comments are much appreciated.  You may submit comments and error reports by email <a href=\"mailto:messaging@slappservices.net?subject=SLAPP: (your issue)&body=Please be as specific as you can about your concern; if you are reporting an error, include information about the version of SLAPP and of your operating system, and (if possible) whether and how the problem may be repeated (ok to delete this line).\"> here </a>and by the 'comment / report' help menu item.  Those who are technically adept may submit through the <a href=\"https://github.com\">github.com/xxx</a> issues section.  Reviews and other items that deserve public discussion may be submitted through the <a href=\"https://tonyroyphilosophy.net/textbook-blog/\">Symbolic Logic Blog</a>.</p>"
+            "In this preliminary version, every user becomes an evaluator and tester.  Comments are much appreciated.  You may submit comments and error reports by email <a href=\"mailto:messaging@slappservices.net?subject=SLAPP: (your issue)&body=Please be as specific as you can about your concern; if you are reporting an error, include information about the version of SLAPP and of your operating system, and (if possible) whether and how the problem may be repeated (ok to delete this line).\"> here </a>and by the 'comment / report' help menu item.  Those who are technically adept may submit through the <a href=\"https://www.github.com/tonydroy/Symbolic-Logic-APPlication\">GitHub</a> issues section.  Reviews and other items that deserve public discussion may be submitted through the <a href=\"https://tonyroyphilosophy.net/textbook-blog/\">Symbolic Logic Blog</a>.</p>"
             ;
 
     commonElements = "<body style=\"margin-left:10; margin-right: 20\">" +
@@ -194,6 +195,35 @@ static {
             "<li>SLAPP will attempt to link and adjust any number that is part of a justification.  In the vast majority of cases, this is just what you want.  But, in some cases, you want a justification to include a fixed number (as for a theorm or axiom number, as T6.15 or A8).  Then the fixed number must be distinct from that of any line.  Since line numbers are always whole numbers, this happens automatically if the justification number contains a 'point'.  If there is no natural point in the justification number, you can distinguish the justification number from the line numbers by adding a leading point or zero (A.8 or A08).</li></ol>"
             ;
 
+    keyboardShortcuts = "<body style=\"margin-left:10; margin-right: 20\">" +
+            "<p><h3>Editor Keyboard Shortcuts:</h3></p>" +
+            "<ul>" +
+            "<li>F1 Base/Italic keyboard     </li>" +
+            "<li>F2 Base/Script keyboard    </li>" +
+            "<li>F3 Base/Sans keyboard    </li>" +
+            "<li>F4 Italic/Sans keyboard     </li>" +
+            "<li>F5 Italic/Blackboard keyboard     </li>" +
+            "<li>F6 Script/Italic keyboard     </li>" +
+            "<li>F7 Script/Sans keyboard     </li>" +
+            "<li>F8 Greek/Fraktur keyboard     </li>" +
+            "<li>F9 Toggle to previous keyboard     </li>" +
+            "<li>PgUp Toggle superscript on/off    </li>" +
+            "<li>Shift-PgUp Toggle shifted superscript on/off    </li>" +
+            "<li>PgDn Toggle subscript on/off    </li>" +
+            "<li>Shift-PgDn Toggle shifted subscript on/off    </li>" +
+            "<li>Ctrl/Cmd-B Toggle bold on/off   </li>" +
+            "<li>Ctrl/Cmd-I Toggle italic on/off    </li>" +
+            "<li>Ctrl/Cmd-U Toggle underline on/off   </li>" +
+            "<li>Ctrl/Cmd-0 (zero) Toggle overline on/off    </li>" +
+            "<li>Ctrl/Cmd-A Select all    </li>" +
+            "<li>Ctrl/Cmd-C Copy    </li>" +
+            "<li>Ctrl/Cmd-X Cut    </li>" +
+            "<li>Ctrl/Cmd-V Paste    </li>" +
+            "<li>Ctrl/Cmd-Z Undo    </li>" +
+            "<li>Shift-Ctrl/Cmd-Z Redo    </li>" +
+            "</ul>"
+            ;
+
 }
 
     /**
@@ -209,6 +239,8 @@ static {
     public static void helpCommonElements() {
         showHelp(commonElements);
     }
+
+    public static void helpKeyboardShortcut() {showHelp(keyboardShortcuts); }
 
     /**
      * Show help relevant to current exercise type.

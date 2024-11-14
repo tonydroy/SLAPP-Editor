@@ -20,6 +20,8 @@ import com.gluonhq.richtextarea.RichTextAreaSkin;
 import com.gluonhq.richtextarea.model.Document;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -376,7 +378,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         flow.setMinWidth(100);
 //        flow.setMaxWidth(100);
         flow.setMaxHeight(20);
-        flow.setPadding(new Insets(0,0,0,3));
+        flow.setPadding(new Insets(0,0,0,5));
         flow.setOnMouseClicked(e -> flow.requestFocus());
 
         flow.focusedProperty().addListener((ob, ov, nv) -> {
@@ -408,34 +410,75 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         rta.applyCss();
         rta.layout();
 
-        rta.focusedProperty().addListener((o, ov, nv) -> {
-            if (nv) {
-                editJustification = true;
-                justificationClickFilter = new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        if (!inHierarchy(event.getPickResult().getIntersectedNode(), rta)) {
-                            if (editJustification) {
-                                editJustification = false;
-                                saveJustificationRTA(rta, rowIndex);
-                            }
-                        }
+        justificationClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                boolean clickOther = !inHierarchy(event.getPickResult().getIntersectedNode(), rta);
+                boolean clickTopBox = inHierarchy(event.getPickResult().getIntersectedNode(), mainWindow.getMainView().getTopBox());
+
+                if (clickOther && !clickTopBox) {
+                    if (editJustification) {
+                        editJustification = false;
+                        saveJustificationRTA(rta, rowIndex);
                     }
-                };
-                mainView.getMainScene().addEventFilter(MouseEvent.MOUSE_PRESSED, justificationClickFilter);
-            }
-            else {
-                if (editJustification) {
-                    editJustification = false;
-                    saveJustificationRTA(rta, rowIndex);
                 }
             }
-        });
+        };
+
+        ChangeListener<Boolean> focusListener = new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ob, Boolean ov, Boolean nv) {
+                if (nv) {
+                    editJustification = true;
+                    mainView.getMainScene().addEventFilter(MouseEvent.MOUSE_PRESSED, justificationClickFilter);
+                }
+                else {
+                    if (editJustification && mainView.getMainScene().getFocusOwner() != drta.getUnicodeField()) {
+                        editJustification = false;
+                        saveJustificationRTA(rta, rowIndex);
+                    }
+                }
+            }
+        };
+        rta.focusedProperty().addListener(focusListener);
+
+        /*
+        justificationClickFilter = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                boolean clickOther = !inHierarchy(event.getPickResult().getIntersectedNode(), rta);
+                boolean clickKbdSel = inHierarchy(event.getPickResult().getIntersectedNode(), drta.getKeyboardSelector());
+
+                if (clickOther && !clickKbdSel) {
+                    if (editJustification) {
+                        editJustification = false;
+                        saveJustificationRTA(rta, rowIndex);
+                    }
+                }
+            }
+        };
+
+        ChangeListener<Boolean> focusListener = new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ob, Boolean ov, Boolean nv) {
+                if (nv) {
+                    editJustification = true;
+                    mainView.getMainScene().addEventFilter(MouseEvent.MOUSE_PRESSED, justificationClickFilter);
+                }
+                else {
+                    if (editJustification) {
+                        editJustification = false;
+                        saveJustificationRTA(rta, rowIndex);
+                    }
+                }
+            }
+        };
+        rta.focusedProperty().addListener(focusListener);
+
+         */
 
         rta.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
-
             KeyCode code = e.getCode();
-
 
             int row = drvtnExpView.getGrid().getRowIndex(rta);
 
@@ -466,7 +509,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
         drvtnExpView.getGrid().getChildren().remove(flow);
         drvtnExpView.getGrid().add(rta, 22, rowIndex);
         rta.requestFocus();
-        mainView.editorInFocus(drta, ControlType.STATEMENT);
+        mainView.editorInFocus(drta, ControlType.JUSTIFICATION);
     }
 
     /*
@@ -507,6 +550,7 @@ public class DrvtnExpExercise implements Exercise<DrvtnExpModel, DrvtnExpView> {
 
         rta.getActionFactory().newDocumentNow().execute(new ActionEvent());
         drvtnExpView.setJustificationFlowOnGrid(rowIndex);
+        drvtnExpView.setGridFromViewLines();
 
         if (modified) {
             pushUndoRedo();
