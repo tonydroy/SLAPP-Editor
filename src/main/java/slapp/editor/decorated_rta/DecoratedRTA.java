@@ -252,7 +252,7 @@ public class DecoratedRTA {
         keyboardSelector = new ChoiceBox<>();
         keyboardSelector.getItems().setAll(RichTextAreaSkin.KeyMapValue.values());
         keyboardSelector.setValue(RichTextAreaSkin.KeyMapValue.BASE);
-        keyboardSelector.setTooltip(new Tooltip("Select Keyboard"));
+        keyboardSelector.setTooltip(new Tooltip("Select Keyboard (F1 - F8, same order as dropdown)"));
         keyboardSelector.setPrefWidth(120);
         keyboardSelector.setFocusTraversable(false);
 
@@ -808,6 +808,8 @@ public class DecoratedRTA {
     public ToolBar getFontsToolbar() { return fontsToolbar; }
 
     public TextField getUnicodeField() {return unicodeField; }
+
+    public Button getKeyboardDiagramButton() {return keyboardDiagramButton; }
 
 
 }

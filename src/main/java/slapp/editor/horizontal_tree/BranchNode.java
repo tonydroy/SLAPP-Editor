@@ -252,14 +252,14 @@ public class BranchNode extends HBox {
         rta.setMinHeight(formulaBoxHeight);
 
         RichTextAreaSkin rtaSkin = (RichTextAreaSkin) rta.getSkin();
-        rta.prefWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 5), 12));
+        rta.prefWidthProperty().bind(Bindings.max(Bindings.add(rtaSkin.nodesWidthProperty(), 8), 12));
         rta.prefWidthProperty().addListener((ob, ov, nv) -> {
             horizontalTreeView.refreshTreePanes();
         });
         rta.addEventFilter(KeyEvent.ANY, e -> {
             if (e.getCode() == KeyCode.ENTER) e.consume();
         });
-        rta.getStylesheets().add("RichTExtField.css");
+        rta.getStylesheets().add("RichTextField.css");
         rta.setPromptText("");
         return boxedDRTA;
     }

@@ -45,6 +45,7 @@ import slapp.editor.EditorAlerts;
 import slapp.editor.PrintUtilities;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
+import slapp.editor.decorated_rta.KeyboardDiagram;
 import slapp.editor.main_window.*;
 
 import java.util.ArrayList;
@@ -391,9 +392,14 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
             @Override
             public void handle(MouseEvent event) {
                 boolean clickOther = !inHierarchy(event.getPickResult().getIntersectedNode(), rta);
-                boolean clickTopBox = inHierarchy(event.getPickResult().getIntersectedNode(), mainWindow.getMainView().getTopBox());
+                boolean clickParaToolbarBox = inHierarchy(event.getPickResult().getIntersectedNode(), mainWindow.getMainView().getParaToolbarBox());
+                boolean clickFontsAndEditBox = inHierarchy(event.getPickResult().getIntersectedNode(), mainWindow.getMainView().getFontsAndEditBox());
+                boolean clickKbdSel = inHierarchy(event.getPickResult().getIntersectedNode(), drta.getKeyboardSelector());
+                boolean clickUnicode = inHierarchy(event.getPickResult().getIntersectedNode(), drta.getUnicodeField());
 
-                if (clickOther && !clickTopBox) {
+               boolean clickRestricted = clickParaToolbarBox || clickFontsAndEditBox || clickKbdSel || clickUnicode ;
+
+                if (clickOther && !clickRestricted) {
                     if (editJustification) {
                         editJustification = false;
                         saveJustificationRTA(rta, rowIndex);
@@ -410,7 +416,13 @@ public class DerivationExercise implements Exercise<DerivationModel, DerivationV
                     mainView.getMainScene().addEventFilter(MouseEvent.MOUSE_PRESSED, justificationClickFilter);
                 }
                 else {
-                    if (editJustification && mainView.getMainScene().getFocusOwner() != drta.getUnicodeField()) {
+                    Node focusOwner = mainView.getMainScene().getFocusOwner();
+                    boolean focusUnicode = focusOwner == drta.getUnicodeField();
+                    boolean focusKbdDia = focusOwner == drta.getKeyboardDiagramButton();
+
+                    boolean restrictedFocus = focusUnicode || focusKbdDia ;
+
+                    if (editJustification && !restrictedFocus ) {
                         editJustification = false;
                         saveJustificationRTA(rta, rowIndex);
                     }

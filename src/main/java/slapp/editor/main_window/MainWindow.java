@@ -169,7 +169,7 @@ public class MainWindow {
         mainView.getCommonElementsTextItem().setOnAction(e -> generalTextHelp());
         mainView.getAboutItem().setOnAction(e -> aboutTextHelp());
         mainView.getContextualTextItem().setOnAction(e -> contextualTextHelp());
-        mainView.getKeyboardDiagramItem().setOnAction(e -> keyboardDiagramHelp());
+ //       mainView.getKeyboardDiagramItem().setOnAction(e -> keyboardDiagramHelp());
         mainView.getKeyboardShortcutsItem().setOnAction(e -> keyboardShortcutsTextHelp());
         mainView.getReportItem().setOnAction(e -> makeReport());
         mainView.getSaveButton().setOnAction(e -> saveAction());
@@ -934,6 +934,8 @@ public class MainWindow {
         TextHelpPopup.helpContextual(((ExerciseModel) (currentExercise.getExerciseModel())).getExerciseType());
     }
 
+
+    /*
     private void keyboardDiagramHelp() {
         KeyboardDiagram kbd = KeyboardDiagram.getInstance();
         if (!kbd.isShowing()) {
@@ -941,6 +943,10 @@ public class MainWindow {
             kbd.updateAndShow();
         }
     }
+
+     */
+
+
 
 
 

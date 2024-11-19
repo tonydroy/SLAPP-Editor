@@ -130,7 +130,7 @@ public class MainWindowView {
     private MenuItem horizontalTreeItem;
     private MenuItem truthTableItem;
     private MenuItem derivationItem;
-    private MenuItem keyboardDiagramItem;
+//    private MenuItem keyboardDiagramItem;
     private MenuItem keyboardShortcutsItem;
     private MenuItem instructorInfoItem;
     private MenuItem reportItem;
@@ -143,6 +143,9 @@ public class MainWindowView {
     public static TextField txtHeightIndicator;
     DoubleProperty scalePageHeight = new SimpleDoubleProperty();
     DoubleProperty scalePageWidth = new SimpleDoubleProperty();
+
+    HBox paraToolbarBox;
+    HBox fontsAndEditBox;
 
 
     /**
@@ -197,10 +200,12 @@ public class MainWindowView {
         Text textItemGraphic2 = new Text("\uf15c");
         textItemGraphic2.setStyle("-fx-font-family: la-solid-900");
         contextualTextItem = new MenuItem("Contextual", textItemGraphic2);
-
+/*
         Text textItemGraphic4 = new Text("\uf15c");
         textItemGraphic4.setStyle("-fx-font-family: la-solid-900");
         keyboardDiagramItem = new MenuItem("Keyboard Diagram", textItemGraphic4);
+
+ */
 
         Text textItemGraphic5 = new Text("\uf15c");
         textItemGraphic5.setStyle("-fx-font-family: la-solid-900");
@@ -224,7 +229,7 @@ public class MainWindowView {
         exerciseMenu.getItems().addAll(saveExerciseItem, saveAsExerciseItem, openExerciseItem, clearExerciseItem, closeExerciseItem, printExerciseItem, exportToPDFExerciseItem, createRevisedExerciseItem, createNewExerciseItem);
         assignmentMenu.getItems().addAll(saveAssignmentItem, saveAsAssignmentItem, openAssignmentItem, closeAssignmentItem, printAssignmentItem, exportAssignmentToPDFItem, createRevisedAssignmentItem, createNewAssignmentItem);
         printMenu.getItems().addAll(printExerciseItemPM, exportExerciseToPDFItemPM, printAssignmentItemPM, exportAssignmentToPDFItemPM, exportSetupItem, pageSetupItem, scaleSetupItem);
-        helpMenu.getItems().addAll(quickStartItem, slappEditorItem, verticalTreeItem, truthTableItem, horizontalTreeItem, derivationItem, instructorInfoItem, commonElementsTextItem, contextualTextItem, keyboardDiagramItem, keyboardShortcutsItem, aboutItem, reportItem);
+        helpMenu.getItems().addAll(quickStartItem, slappEditorItem, verticalTreeItem, truthTableItem, horizontalTreeItem, derivationItem, instructorInfoItem, commonElementsTextItem, contextualTextItem, keyboardShortcutsItem, aboutItem, reportItem);
 /*
         if (EditorMain.os.startsWith("Mac")) {
             menuBar.setUseSystemMenuBar(true);
@@ -557,8 +562,12 @@ public class MainWindowView {
         paragraphToolbar = decoratedRTA.getParagraphToolbar();
         paragraphToolbar.setMinWidth(minStageWidth);
 
+        paraToolbarBox = new HBox(paragraphToolbar);
+        HBox.setHgrow(paragraphToolbar, Priority.ALWAYS);
+
         fontsToolbar = decoratedRTA.getFontsToolbar();
         fontsToolbar.setMinWidth(520);
+
 
         editToolbar = decoratedRTA.getEditToolbar();
         editToolbar.setMinWidth(300);
@@ -591,13 +600,15 @@ public class MainWindowView {
         sizeToolBar.setDisable(kbdDiaToolBar.isDisable());
 
 
-        HBox fontsAndEditBox = new HBox(fontsToolbar, editToolbar);
+        fontsAndEditBox = new HBox(fontsToolbar, editToolbar);
         HBox kbdBox = new HBox(kbdSelectorToolBar, kbdDiaToolBar, sizeToolBar);
 
         fontsAndEditBox.setHgrow(editToolbar, Priority.ALWAYS);
         kbdBox.setHgrow(sizeToolBar, Priority.ALWAYS);
 
-        topBox = new VBox(menuBar, paragraphToolbar, fontsAndEditBox, kbdBox);
+        topBox = new VBox(menuBar, paraToolbarBox, fontsAndEditBox, kbdBox);
+
+   //     topBox = new VBox(menuBar, paragraphToolbar, fontsAndEditBox, kbdBox);
         topBox.layout();
 
         borderPane.topProperty().setValue(topBox);
@@ -905,9 +916,12 @@ public class MainWindowView {
         return commonElementsTextItem;
     }
 
+    /*
     MenuItem getKeyboardDiagramItem() {
         return keyboardDiagramItem;
     }
+    
+     */
 
     MenuItem getKeyboardShortcutsItem() {
         return keyboardShortcutsItem;
@@ -1088,6 +1102,11 @@ public class MainWindowView {
 
     public VBox getTopBox() {return topBox;}
 
+    public HBox getParaToolbarBox() { return paraToolbarBox; }
+
+    public HBox getFontsAndEditBox() {return fontsAndEditBox; }
+
+    public Spinner getZoomSpinner() {return zoomSpinner; }
 
 
 }
