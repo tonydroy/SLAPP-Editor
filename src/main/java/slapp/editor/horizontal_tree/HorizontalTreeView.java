@@ -57,7 +57,6 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
     private String explainPrompt = "";
     private VBox controlBox = new VBox(15);
     private double statementPrefHeight = 80;
-    private boolean annotationModified = false;
     private double commentPrefHeight = 0;
     private double explainPrefHeight = 0;
     private Spinner<Double> statementHeightSpinner;
@@ -995,18 +994,6 @@ public class HorizontalTreeView implements ExerciseView<DecoratedRTA> {
      * @return the list
      */
     List<TreePane> getTreePanes() { return treePanes;   }
-
-    /**
-     * True if an annotation field on a branch node is modified, and otherwise false
-     * @return the boolean value
-     */
-    boolean isAnnotationModified() {    return annotationModified;  }
-
-    /**
-     * True if an annotation field on a branch node is modified, and otherwise false
-     * @param annotationModified the boolean value
-     */
-    void setAnnotationModified(boolean annotationModified) {      this.annotationModified = annotationModified;  }
 
     /**
      * The preferred height of the comment field

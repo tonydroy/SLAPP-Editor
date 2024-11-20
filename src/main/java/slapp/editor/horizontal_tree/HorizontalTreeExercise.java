@@ -149,7 +149,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         horizontalTreeView.initializeViewDetails();
 
         refreshViewFromModel();
-        horizontalTreeView.setAnnotationModified(false);
+ //       horizontalTreeView.setAnnotationModified(false);
     }
 
     /*
@@ -202,7 +202,8 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         branchNode.setIndefiniteNode(branchModel.isIndefiniteNumBranch());
         branchNode.setDotDivider(branchModel.isDotDivider());
         branchNode.setRoot(branchModel.isRootBranch());
-        branchNode.getAnnotationField().setText(branchModel.getAnnotationText());
+
+        branchNode.getAnnotationField().getRTA().getActionFactory().open(new Document(branchModel.getAnnotationText())).execute(new ActionEvent());
 
         RichTextArea formulaRTA = branchNode.getFormulaBoxedDRTA().getRTA();
         formulaRTA.getActionFactory().open(branchModel.getFormulaDoc()).execute(new ActionEvent());
@@ -293,7 +294,6 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         boolean success = DiskUtilities.saveExercise(saveAs, getHorizontalTreeModelFromView());
         if (success) {
             exerciseModified = false;
-            horizontalTreeView.setAnnotationModified(false);
         }
     }
 
@@ -375,7 +375,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
                         BranchNode branchNode = (BranchNode) paneNode;
                         branchNode.getFormulaBoxedDRTA().getRTA().setStyle("-fx-border-color: transparent");
                         branchNode.getConnectorBoxedDRTA().getRTA().setStyle("-fx-border-color: transparent");
-                        branchNode.getAnnotationField().setStyle("-fx-background-color: transparent");
+                        branchNode.getAnnotationField().getRTA().setStyle("-fx-border-color: transparent");
                     }
                 }
             }
@@ -443,9 +443,7 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
      * @return true if exercise is modified, and otherwise false
      */
     @Override
-    public boolean isExerciseModified() {
-        return exerciseModified || horizontalTreeView.isAnnotationModified();
-    }
+    public boolean isExerciseModified() {      return exerciseModified;  }
 
     /**
      * Exercise is modified if it is changed relative to last save
@@ -499,7 +497,10 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
                         BranchNode branchNode = (BranchNode) paneNode;
                         branchNode.getFormulaBoxedDRTA().getRTA().setStyle("-fx-border-color: transparent");
                         branchNode.getConnectorBoxedDRTA().getRTA().setStyle("-fx-border-color: transparent");
-                        branchNode.getAnnotationField().setStyle("-fx-background-color: transparent");
+
+                        branchNode.getAnnotationField().getRTA().setStyle("-fx-border-color: transparent");
+
+                     //   branchNode.getAnnotationField().setStyle("-fx-background-color: transparent");
                     }
                 }
             }
@@ -590,7 +591,9 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         model.setDotDivider(node.isDotDivider());
         model.setRootBranch(node.isRoot());
         model.setAnnotation(node.isAnnotation());
-        model.setAnnotationText(node.getAnnotationField().getText());
+
+        node.getAnnotationField().getRTA().getActionFactory().saveNow().execute(new ActionEvent());
+        model.setAnnotationText(node.getAnnotationField().getRTA().getDocument().getText());
 
         RichTextArea formulaRTA = node.getFormulaBoxedDRTA().getRTA();
         formulaRTA.getActionFactory().saveNow().execute(new ActionEvent());

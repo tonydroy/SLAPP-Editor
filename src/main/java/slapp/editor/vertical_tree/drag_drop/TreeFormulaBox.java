@@ -17,6 +17,7 @@ package slapp.editor.vertical_tree.drag_drop;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
+import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -36,6 +37,7 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.transform.Scale;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.decorated_rta.BoxedDRTA;
@@ -80,7 +82,7 @@ public class TreeFormulaBox extends AnchorPane {
     private boolean starred = false;
     private boolean annotation = false;
     private boolean annotationChanged = false;
-    private TextField annotationField;
+    private BoxedDRTA annotationField;
     private Rectangle oval = new Rectangle();
     private EventHandler circleKeyFilter;
     private int circleStage = 0;
@@ -623,6 +625,37 @@ public class TreeFormulaBox extends AnchorPane {
         return boxedDRTA;
     }
 
+    private BoxedDRTA newAnnotationBoxedDRTA() {
+
+        BoxedDRTA annBDRTA = new BoxedDRTA();
+        RichTextArea annRTA = annBDRTA.getRTA();
+        annRTA.setPrefWidth(40);
+        annBDRTA.getBoxedRTA().setMaxHeight(20);
+        annBDRTA.getDRTA().getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.BASE_AND_SANS);
+        annRTA.addEventFilter(KeyEvent.ANY, e -> {
+            if (e.getCode() == KeyCode.ENTER) e.consume();
+        });
+        annRTA.getStylesheets().add("slappAnnotation.css");
+        annRTA.setPromptText("");
+
+        annRTA.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv)  verticalTreeView.getMainView().editorInFocus(annBDRTA.getDRTA(), ControlType.JUSTIFICATION);
+            else {
+                if (annRTA.isModified()) {
+                    verticalTreeView.setUndoRedoFlag(true);
+                    verticalTreeView.setUndoRedoFlag(false);
+                    annRTA.getActionFactory().saveNow().execute(new ActionEvent());
+                }
+
+            }
+        });
+        annBDRTA.getBoxedRTA().getTransforms().add(new Scale(.75,.75));
+
+        return annBDRTA;
+    }
+
+
+
     /**
      * Add or remove solid (box) outline
      * @param add true if add and otherwise false
@@ -695,7 +728,6 @@ public class TreeFormulaBox extends AnchorPane {
         if (add) {
             if (!annotation) {
                 addAnnotation();
-                setAnnotationTextListener();
                 verticalTreeView.setUndoRedoFlag(true);
                 verticalTreeView.setUndoRedoFlag(false);
             }
@@ -715,31 +747,15 @@ public class TreeFormulaBox extends AnchorPane {
      * Add annotation field without triggering push undo/redo
      */
     public void addAnnotation() {
-        annotationField = new TextField();
-        annotationField.setPrefWidth(28);
-        annotationField.setPrefHeight(15);
-        annotationField.setFont(new Font( "NotoSans",10));  // with 'Noto Sans' here font was all wrong
-        annotationField.setPadding(new Insets(0));
-        annotationField.focusedProperty().addListener((ob, ov, nv) -> {
-            if (nv) verticalTreeView.getMainView().textFieldInFocus();
-        });
-
+        annotationField = newAnnotationBoxedDRTA();
         mainBox.getChildren().clear();
-        mainBox.getChildren().addAll(labelPane, centerBox, annotationField);
-        mainBox.setMargin(annotationField, new Insets(8, 0, 0, 0));
+        mainBox.getChildren().addAll(labelPane, centerBox, annotationField.getBoxedRTA());
+        mainBox.setMargin(annotationField.getBoxedRTA(), new Insets(8, 0, 0, 0));
 
         annotation = true;
     }
 
-    /**
-     * Add change listener to annotation field
-     */
-    public void setAnnotationTextListener() {
-        annotationField.textProperty().addListener((ob, ov, nv) -> {
-            verticalTreeView.setUndoRedoFlag(true);
-            verticalTreeView.setUndoRedoFlag(false);
-        });
-    }
+
 
     /**
      * Set the text of the annotation field
@@ -747,7 +763,7 @@ public class TreeFormulaBox extends AnchorPane {
      */
     public void setAnnotationText(String text) {
         if (annotationField != null) {
-            annotationField.setText(text);
+            annotationField.getRTA().getActionFactory().open(new Document(text)).execute(new ActionEvent());
         }
     }
 
@@ -757,7 +773,8 @@ public class TreeFormulaBox extends AnchorPane {
      */
     public String getAnnotationText() {
         if (annotationField != null) {
-            return annotationField.getText();
+            annotationField.getRTA().getActionFactory().saveNow().execute(new ActionEvent());
+            return annotationField.getRTA().getDocument().getText();
         } else {
             return "";
         }
@@ -884,7 +901,7 @@ public class TreeFormulaBox extends AnchorPane {
      * The superscript annotation field
      * @return the annotation TextField
      */
-    public TextField getAnnotationField() {return annotationField; }
+    public BoxedDRTA getAnnotationField() {return annotationField; }
 
     /**
      * True if circle is on and otherwise false

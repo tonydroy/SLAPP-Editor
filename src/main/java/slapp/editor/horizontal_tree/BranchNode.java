@@ -17,7 +17,13 @@ package slapp.editor.horizontal_tree;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
+import com.gluonhq.richtextarea.action.TextDecorateAction;
+import com.gluonhq.richtextarea.model.ParagraphDecoration;
+import com.gluonhq.richtextarea.model.TextDecoration;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -33,6 +39,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
+import javafx.scene.transform.Scale;
 import slapp.editor.decorated_rta.BoxedDRTA;
 import slapp.editor.decorated_rta.DecoratedRTA;
 import slapp.editor.main_window.ControlType;
@@ -49,7 +56,11 @@ public class BranchNode extends HBox {
     HorizontalTreeView horizontalTreeView;
     BoxedDRTA formulaBoxedDRTA;
     BoxedDRTA connectorBoxedDRTA;
-    TextField annotationField = new TextField();
+ //   TextField annotationField = new TextField();
+
+    //***********
+    BoxedDRTA annotationField;
+
     ArrayList<BranchNode> dependents = new ArrayList<>();
     static double offsetY = 48;  //34
     static double leafPos = -48;
@@ -61,7 +72,7 @@ public class BranchNode extends HBox {
     boolean formulaNode = true;
     boolean indefiniteNode = false;
     boolean dotDivider;
-    double annotationWidth  = 28;
+    double annotationWidth  = 40;
     double rootBump = 0;
     double annBump = 0;
     double formulaBoxHeight = 22.5;
@@ -85,18 +96,30 @@ public class BranchNode extends HBox {
         self.setStyle("-fx-border-color: white white black white; -fx-border-width: 0 0 1.5 0");
         self.setPadding(new Insets(0, 4, 0, 2));
 
-        annotationField.setPrefWidth(annotationWidth);
-        annotationField.setPrefHeight(15);
-        annotationField.setFont(new Font("NotoSans", 10));
-        annotationField.setPadding(new Insets(0));
+        annotationField = new BoxedDRTA();
+        RichTextArea annRTA = annotationField.getRTA();
+        annRTA.setPrefWidth(annotationWidth);
+        annRTA.setPrefHeight(20);
+        annotationField.getDRTA().getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.BASE_AND_SANS);
+        annRTA.addEventFilter(KeyEvent.ANY, e -> {
+            if (e.getCode() == KeyCode.ENTER) e.consume();
+        });
+        annRTA.getStylesheets().add("slappAnnotation.css");
+        annRTA.setPromptText("");
 
-        annotationField.focusedProperty().addListener((ob, ov, nv) -> {
-            if (nv) horizontalTreeView.getMainView().textFieldInFocus();
+        annRTA.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv)  horizontalTreeView.getMainView().editorInFocus(annotationField.getDRTA(), ControlType.JUSTIFICATION);
             else {
-                horizontalTreeView.setUndoRedoFlag(true);
-                horizontalTreeView.setUndoRedoFlag(false);
+                if (annRTA.isModified()) {
+                    horizontalTreeView.setUndoRedoFlag(true);
+                    horizontalTreeView.setUndoRedoFlag(false);
+                    annRTA.getActionFactory().saveNow().execute(new ActionEvent());
+                }
+
             }
         });
+
+        annotationField.getBoxedRTA().getTransforms().add(new Scale(.75,.75));
 
         formulaFocusListener = new ChangeListener<Boolean>() {
             @Override
@@ -131,10 +154,6 @@ public class BranchNode extends HBox {
             }
         };
         connectorBoxedDRTA.getRTA().focusedProperty().addListener(connectorFocusListener);
-
-        annotationField.textProperty().addListener((ob, ov, nv) -> {
-            horizontalTreeView.setAnnotationModified(true);
-        });
     }
 
     /**
@@ -316,7 +335,7 @@ public class BranchNode extends HBox {
         }
         else {
             if (annotation) {
-                self.getChildren().remove(annotationField);
+                self.getChildren().remove(annotationField.getBoxedRTA());
                 annotation = false;
                 annBump = 0;
             }
@@ -328,8 +347,8 @@ public class BranchNode extends HBox {
      */
     void addAnnotation() {
         if (!annotation) {
-            self.getChildren().add(annotationField);
-            self.setMargin(annotationField, new Insets(0, 0, 8, 0));
+            self.getChildren().add(annotationField.getBoxedRTA());
+            self.setMargin(annotationField.getBoxedRTA(), new Insets(0, 0, .25 * 11.0, 0));
             annotation = true;
         }
     }
@@ -347,10 +366,10 @@ public class BranchNode extends HBox {
     void setAnnotation(boolean annotation) {   this.annotation = annotation; }
 
     /**
-     * The annotation text field
+     * The annotation boxed drta
      * @return the field
      */
-    TextField getAnnotationField() {    return annotationField;  }
+    BoxedDRTA getAnnotationField() {return annotationField; }
 
     /**
      * The width bump associated with the existence or not of an annotation field

@@ -102,6 +102,8 @@ public class DecoratedRTA {
     private Button undoButton;
     private Button redoButton;
 
+    private ComboBox<Double> fontSize;
+
     /**
      * Create the decoratedRTA with RTA editor as component.
      */
@@ -158,7 +160,7 @@ public class DecoratedRTA {
         });
 
         //font size box
-        final ComboBox<Double> fontSize = new ComboBox<>();
+        fontSize = new ComboBox<>();
         fontSize.setEditable(true);
         fontSize.setPrefWidth(60);
         fontSize.setTooltip(new Tooltip("Font Size"));
@@ -810,6 +812,12 @@ public class DecoratedRTA {
     public TextField getUnicodeField() {return unicodeField; }
 
     public Button getKeyboardDiagramButton() {return keyboardDiagramButton; }
+
+    public void setPrimaryFontSize(double size) {
+        primaryFontSize = size;
+        fontSize.setValue(primaryFontSize);
+
+    }
 
 
 }

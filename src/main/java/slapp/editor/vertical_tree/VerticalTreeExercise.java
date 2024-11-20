@@ -178,7 +178,6 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
             if (treeBoxMod.isAnnotation()) {
                 treeFormulaBox.addAnnotation();
                 treeFormulaBox.setAnnotationText(treeBoxMod.getAnnotationText());
-                treeFormulaBox.setAnnotationTextListener();
             }
             treeFormulaBox.setCircleXAnchors(treeBoxMod.getCircleXAnchors());
             treeFormulaBox.setRtaBoundsHeight(treeBoxMod.getRtaBoundsHeight());
@@ -407,7 +406,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
             if (node instanceof TreeFormulaBox) {
                 TreeFormulaBox treeBox = (TreeFormulaBox) node;
                 treeBox.getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");
-                if (treeBox.getAnnotationField() != null) treeBox.getAnnotationField().setStyle("-fx-background-color: transparent");
+                if (treeBox.getAnnotationField() != null) treeBox.getAnnotationField().getRTA().setStyle("-fx-border-color: transparent");
             }
             if (node instanceof MapFormulaBox) {
                 ((MapFormulaBox) node).getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");
@@ -492,7 +491,7 @@ public class VerticalTreeExercise implements Exercise<VerticalTreeModel, Vertica
             if (node instanceof TreeFormulaBox) {
                 TreeFormulaBox treeBox = (TreeFormulaBox) node;
                 treeBox.getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");
-                if (treeBox.getAnnotationField() != null) treeBox.getAnnotationField().setStyle("-fx-background-color: transparent");
+                if (treeBox.getAnnotationField() != null) treeBox.getAnnotationField().getRTA().setStyle("-fx-bprder-color: transparent");
             }
             if (node instanceof MapFormulaBox) {
                 ((MapFormulaBox) node).getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");

@@ -224,7 +224,6 @@ public class VerticalTreeABExpExercise implements Exercise<VerticalTreeABExpMode
             if (treeBoxMod.isAnnotation()) {
                 treeFormulaBox.addAnnotation();
                 treeFormulaBox.setAnnotationText(treeBoxMod.getAnnotationText());
-                treeFormulaBox.setAnnotationTextListener();
             }
             treeFormulaBox.setCircleXAnchors(treeBoxMod.getCircleXAnchors());
             treeFormulaBox.setRtaBoundsHeight(treeBoxMod.getRtaBoundsHeight());
@@ -452,7 +451,7 @@ public class VerticalTreeABExpExercise implements Exercise<VerticalTreeABExpMode
             if (node instanceof ABExpTreeFormulaBox) {
                 ABExpTreeFormulaBox treeBox = (ABExpTreeFormulaBox) node;
                 treeBox.getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");
-                if (treeBox.getAnnotationField() != null) treeBox.getAnnotationField().setStyle("-fx-background-color: transparent");
+                if (treeBox.getAnnotationField() != null) treeBox.getAnnotationField().getRTA().setStyle("-fx-border-color: transparent");
             }
             if (node instanceof ABExpMapFormulaBox) {
                 ((ABExpMapFormulaBox) node).getFormulaBox().getRTA().setStyle("-fx-border-color: transparent");

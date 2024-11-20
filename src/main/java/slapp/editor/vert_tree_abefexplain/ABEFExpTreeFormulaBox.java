@@ -17,6 +17,7 @@ package slapp.editor.vert_tree_abefexplain;
 
 import com.gluonhq.richtextarea.RichTextArea;
 import com.gluonhq.richtextarea.RichTextAreaSkin;
+import com.gluonhq.richtextarea.model.Document;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -35,6 +36,7 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.transform.Scale;
 import slapp.editor.EditorAlerts;
 import slapp.editor.EditorMain;
 import slapp.editor.decorated_rta.BoxedDRTA;
@@ -91,7 +93,7 @@ public class ABEFExpTreeFormulaBox extends AnchorPane {
     private boolean starred = false;
     private boolean annotation = false;
     private boolean annotationChanged = false;
-    private TextField annotationField;
+    private BoxedDRTA annotationField;
 
 
 
@@ -203,7 +205,6 @@ public class ABEFExpTreeFormulaBox extends AnchorPane {
         mainBox = new HBox(labelPane, centerBox);
         mainBox.setAlignment(Pos.TOP_CENTER);
         mainBox.setMargin(labelPane, new Insets(10, 0, 0, 0));
- //       mainBox.setMargin(annotationField, new Insets(0,0, 14, 0));
 
         self.getChildren().addAll(mainBox);
 //        self.setBottomAnchor(mainBox, 0.0);
@@ -703,6 +704,35 @@ public class ABEFExpTreeFormulaBox extends AnchorPane {
         return boxedDRTA;
     }
 
+    private BoxedDRTA newAnnotationBoxedDRTA() {
+
+        BoxedDRTA annBDRTA = new BoxedDRTA();
+        RichTextArea annRTA = annBDRTA.getRTA();
+        annRTA.setPrefWidth(40);
+        annBDRTA.getBoxedRTA().setMaxHeight(20);
+        annBDRTA.getDRTA().getKeyboardSelector().valueProperty().setValue(RichTextAreaSkin.KeyMapValue.BASE_AND_SANS);
+        annRTA.addEventFilter(KeyEvent.ANY, e -> {
+            if (e.getCode() == KeyCode.ENTER) e.consume();
+        });
+        annRTA.getStylesheets().add("slappAnnotation.css");
+        annRTA.setPromptText("");
+
+        annRTA.focusedProperty().addListener((ob, ov, nv) -> {
+            if (nv)  verticalTreeView.getMainView().editorInFocus(annBDRTA.getDRTA(), ControlType.JUSTIFICATION);
+            else {
+                if (annRTA.isModified()) {
+                    verticalTreeView.setUndoRedoFlag(true);
+                    verticalTreeView.setUndoRedoFlag(false);
+                    annRTA.getActionFactory().saveNow().execute(new ActionEvent());
+                }
+
+            }
+        });
+        annBDRTA.getBoxedRTA().getTransforms().add(new Scale(.75,.75));
+
+        return annBDRTA;
+    }
+
     public void processBoxRequest(boolean add) {
         if (add) {
             if (!boxed) {
@@ -758,7 +788,6 @@ public class ABEFExpTreeFormulaBox extends AnchorPane {
         if (add) {
             if (!annotation) {
                 addAnnotation();
-                setAnnotationTextListener();
                 verticalTreeView.setUndoRedoFlag(true);
                 verticalTreeView.setUndoRedoFlag(false);
             }
@@ -775,40 +804,24 @@ public class ABEFExpTreeFormulaBox extends AnchorPane {
     }
 
     public void addAnnotation() {
-        annotationField = new TextField();
-        annotationField.setPrefWidth(28);
-        annotationField.setPrefHeight(15);
-        annotationField.setFont(new Font("NotoSans", 10));
-        annotationField.setPadding(new Insets(0));
-        annotationField.focusedProperty().addListener((ob, ov, nv) -> {
-            if (nv) verticalTreeView.getMainView().textFieldInFocus();
-        });
-
+        annotationField = newAnnotationBoxedDRTA();
         mainBox.getChildren().clear();
-        mainBox.getChildren().addAll(labelPane, centerBox, annotationField);
-        mainBox.setMargin(annotationField, new Insets(8, 0, 0, 0));
+        mainBox.getChildren().addAll(labelPane, centerBox, annotationField.getBoxedRTA());
+        mainBox.setMargin(annotationField.getBoxedRTA(), new Insets(8, 0, 0, 0));
 
         annotation = true;
     }
 
-    public void setAnnotationTextListener() {
-        annotationField.textProperty().addListener((ob, ov, nv) -> {
-            verticalTreeView.setUndoRedoFlag(true);
-            verticalTreeView.setUndoRedoFlag(false);
-        });
-    }
-
-
-
     public void setAnnotationText(String text) {
         if (annotationField != null) {
-            annotationField.setText(text);
+            annotationField.getRTA().getActionFactory().open(new Document(text)).execute(new ActionEvent());
         }
     }
 
     public String getAnnotationText() {
         if (annotationField != null) {
-            return annotationField.getText();
+            annotationField.getRTA().getActionFactory().saveNow().execute(new ActionEvent());
+            return annotationField.getRTA().getDocument().getText();
         } else {
             return "";
         }
@@ -894,7 +907,7 @@ public class ABEFExpTreeFormulaBox extends AnchorPane {
         return annotation;
     }
 
-    public TextField getAnnotationField() {return annotationField; }
+    public BoxedDRTA getAnnotationField() {return annotationField; }
 
     public boolean isCircled() {
         return circled;

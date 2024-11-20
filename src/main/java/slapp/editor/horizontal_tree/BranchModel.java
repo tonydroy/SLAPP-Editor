@@ -30,10 +30,23 @@ class BranchModel implements Serializable {
     private boolean indefiniteNumBranch;
     private boolean dotDivider;
     private boolean rootBranch;
-    private String annotationText;
     private Document formulaDoc;
     private Document connectorDoc;
     private ArrayList<BranchModel> dependents = new ArrayList<>();
+
+    private String annotationText = "";
+    private Document annotationDoc;
+    private boolean annSwitched = false;
+
+    BranchModel() {
+        if (!annSwitched) {
+            annotationDoc = new Document(annotationText);
+            annotationText = null;
+            annSwitched = true;
+        }
+
+        System.out.println("doc: " + annotationDoc.getText());
+    }
 
 
     /**
