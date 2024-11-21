@@ -17,6 +17,9 @@ package slapp.editor.horizontal_tree;
 
 import com.gluonhq.richtextarea.model.Document;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -33,21 +36,50 @@ class BranchModel implements Serializable {
     private Document formulaDoc;
     private Document connectorDoc;
     private ArrayList<BranchModel> dependents = new ArrayList<>();
+    private Document annotationDoc = new Document();
 
-    private String annotationText = "";
-    private Document annotationDoc;
-    private boolean annSwitched = false;
 
-    BranchModel() {
-        if (!annSwitched) {
+//    private boolean annotationSwitch = false;
+//    private String annotationText = "";
+
+
+/*
+    private void readObject (ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        if (annotationSwitch == false) {
             annotationDoc = new Document(annotationText);
-            annotationText = null;
-            annSwitched = true;
+            annotationSwitch = true;
         }
-
         System.out.println("doc: " + annotationDoc.getText());
+
     }
 
+ */
+
+
+
+
+
+
+
+
+
+/*
+    void tripAnnotationSwitch() {
+        annotationSwitch = true;
+    }
+
+
+ */
+
+
+    public Document getAnnotationDoc() {
+        return annotationDoc;
+    }
+
+    public void setAnnotationDoc(Document annotationDoc) {
+        this.annotationDoc = annotationDoc;
+    }
 
     /**
      * The list of child nodes
@@ -119,13 +151,13 @@ class BranchModel implements Serializable {
      * Annotation text for this node (if there is an annotation)
      * @param annotationText the String text
      */
-    void setAnnotationText(String annotationText) {     this.annotationText = annotationText;   }
+ //   void setAnnotationText(String annotationText) {     this.annotationText = annotationText;   }
 
     /**
      * Annotation text for this node (if there is an annotation)
      * @return the string text
      */
-    String getAnnotationText() {    return annotationText;  }
+//    String getAnnotationText() {    return annotationText;  }
 
     /**
      * The Document for the formula or term at this node

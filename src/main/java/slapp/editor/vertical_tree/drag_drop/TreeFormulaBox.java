@@ -639,7 +639,7 @@ public class TreeFormulaBox extends AnchorPane {
         annRTA.setPromptText("");
 
         annRTA.focusedProperty().addListener((ob, ov, nv) -> {
-            if (nv)  verticalTreeView.getMainView().editorInFocus(annBDRTA.getDRTA(), ControlType.JUSTIFICATION);
+            if (nv)  verticalTreeView.getMainView().editorInFocus(annBDRTA.getDRTA(), ControlType.FIELD);
             else {
                 if (annRTA.isModified()) {
                     verticalTreeView.setUndoRedoFlag(true);
@@ -759,24 +759,24 @@ public class TreeFormulaBox extends AnchorPane {
 
     /**
      * Set the text of the annotation field
-     * @param text the string text
+     * @param doc the content document
      */
-    public void setAnnotationText(String text) {
+    public void setAnnotationDoc(Document doc) {
         if (annotationField != null) {
-            annotationField.getRTA().getActionFactory().open(new Document(text)).execute(new ActionEvent());
+            annotationField.getRTA().getActionFactory().open(doc).execute(new ActionEvent());
         }
     }
 
     /**
-     * Get the text of the annotation field
-     * @return the string text
+     * Get the contentt of the annotation field
+     * @return the content document
      */
-    public String getAnnotationText() {
+    public Document getAnnotationDoc() {
         if (annotationField != null) {
             annotationField.getRTA().getActionFactory().saveNow().execute(new ActionEvent());
-            return annotationField.getRTA().getDocument().getText();
+            return annotationField.getRTA().getDocument();
         } else {
-            return "";
+            return new Document();
         }
     }
 

@@ -86,11 +86,7 @@ public class CreateAssignment {
         this.assignment = assignment;
         this.mainWindow = mainWindow;
 
-        System.out.println("create assignment");
-
         setUpWindow();
-
-
     }
 
 
@@ -389,12 +385,13 @@ public class CreateAssignment {
         stage.initModality(Modality.APPLICATION_MODAL);
         //
 
+        System.out.println("setup");
         stage.setWidth(605);
-        stage.setHeight(675);
+   //     stage.setMinHeight(200);
 
         Rectangle2D bounds = MainWindowView.getCurrentScreenBounds();
         stage.setX(Math.min(EditorMain.mainStage.getX() + EditorMain.mainStage.getWidth(), bounds.getMaxX() - 605));
-        stage.setY(Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - 600));
+        stage.setY(Math.min(EditorMain.mainStage.getY() + 20, bounds.getMaxY() - 605));
         stage.setOnCloseRequest(e-> {
             e.consume();
             closeWindow();

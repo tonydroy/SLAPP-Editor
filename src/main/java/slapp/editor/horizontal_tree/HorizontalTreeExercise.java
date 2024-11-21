@@ -203,7 +203,8 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         branchNode.setDotDivider(branchModel.isDotDivider());
         branchNode.setRoot(branchModel.isRootBranch());
 
-        branchNode.getAnnotationField().getRTA().getActionFactory().open(new Document(branchModel.getAnnotationText())).execute(new ActionEvent());
+//        branchNode.getAnnotationField().getRTA().getActionFactory().open(new Document(branchModel.getAnnotationText())).execute(new ActionEvent());
+        branchNode.getAnnotationField().getRTA().getActionFactory().open(branchModel.getAnnotationDoc()).execute(new ActionEvent());
 
         RichTextArea formulaRTA = branchNode.getFormulaBoxedDRTA().getRTA();
         formulaRTA.getActionFactory().open(branchModel.getFormulaDoc()).execute(new ActionEvent());
@@ -592,8 +593,12 @@ public class HorizontalTreeExercise implements Exercise<HorizontalTreeModel, Hor
         model.setRootBranch(node.isRoot());
         model.setAnnotation(node.isAnnotation());
 
-        node.getAnnotationField().getRTA().getActionFactory().saveNow().execute(new ActionEvent());
-        model.setAnnotationText(node.getAnnotationField().getRTA().getDocument().getText());
+//        model.tripAnnotationSwitch();
+        RichTextArea annotationRTA = node.getAnnotationField().getRTA();
+        annotationRTA.getActionFactory().saveNow().execute(new ActionEvent());
+        model.setAnnotationDoc(annotationRTA.getDocument());
+
+//        model.setAnnotationText(node.getAnnotationField().getRTA().getDocument().getText());
 
         RichTextArea formulaRTA = node.getFormulaBoxedDRTA().getRTA();
         formulaRTA.getActionFactory().saveNow().execute(new ActionEvent());

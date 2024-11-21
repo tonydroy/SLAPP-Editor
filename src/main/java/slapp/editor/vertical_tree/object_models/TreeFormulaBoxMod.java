@@ -35,7 +35,9 @@ public class TreeFormulaBoxMod implements Serializable {
     boolean boxed;
     boolean starred;
     boolean annotation;
-    String annotationText;
+
+   Document annotationDoc;
+//    String annotationText;
     Double[] circleXAnchors;
     boolean circled;
     double rtaBoundsHeight;
@@ -143,13 +145,15 @@ public class TreeFormulaBoxMod implements Serializable {
      * The text for the annotation field
      * @return the String text
      */
-    public String getAnnotationText() {       return annotationText;   }
+ //   public String getAnnotationText() {       return annotationText;   }
+    public Document getAnnotationDoc() { return annotationDoc; }
 
     /**
      * The text for the annotation field
-     * @param annotationText the String text
+     * @param annotationDoc the String text
      */
-    public void setAnnotationText(String annotationText) {       this.annotationText = annotationText;   }
+//    public void setAnnotationText(String annotationText) {       this.annotationText = annotationText;   }
+    public void setAnnotationDoc(Document annotationDoc) { this.annotationDoc = annotationDoc; }
 
     /**
      * Anchor positions for the left and right edges of a circle

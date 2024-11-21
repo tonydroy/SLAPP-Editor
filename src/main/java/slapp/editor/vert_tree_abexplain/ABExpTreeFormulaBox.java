@@ -718,7 +718,7 @@ public class ABExpTreeFormulaBox extends AnchorPane {
         annRTA.setPromptText("");
 
         annRTA.focusedProperty().addListener((ob, ov, nv) -> {
-            if (nv)  verticalTreeView.getMainView().editorInFocus(annBDRTA.getDRTA(), ControlType.JUSTIFICATION);
+            if (nv)  verticalTreeView.getMainView().editorInFocus(annBDRTA.getDRTA(), ControlType.FIELD);
             else {
                 if (annRTA.isModified()) {
                     verticalTreeView.setUndoRedoFlag(true);
@@ -814,18 +814,18 @@ public class ABExpTreeFormulaBox extends AnchorPane {
     }
 
 
-    public void setAnnotationText(String text) {
+    public void setAnnotationDoc(Document doc) {
         if (annotationField != null) {
-            annotationField.getRTA().getActionFactory().open(new Document(text)).execute(new ActionEvent());
+            annotationField.getRTA().getActionFactory().open(doc).execute(new ActionEvent());
         }
     }
 
-    public String getAnnotationText() {
+    public Document getAnnotationDoc() {
         if (annotationField != null) {
             annotationField.getRTA().getActionFactory().saveNow().execute(new ActionEvent());
-            return annotationField.getRTA().getDocument().getText();
+            return annotationField.getRTA().getDocument();
         } else {
-            return "";
+            return new Document();
         }
     }
 

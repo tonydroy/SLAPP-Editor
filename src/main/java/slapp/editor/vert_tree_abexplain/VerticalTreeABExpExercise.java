@@ -223,7 +223,7 @@ public class VerticalTreeABExpExercise implements Exercise<VerticalTreeABExpMode
             if (treeBoxMod.isStarred()) treeFormulaBox.addStar();
             if (treeBoxMod.isAnnotation()) {
                 treeFormulaBox.addAnnotation();
-                treeFormulaBox.setAnnotationText(treeBoxMod.getAnnotationText());
+                treeFormulaBox.setAnnotationDoc(treeBoxMod.getAnnotationDoc());
             }
             treeFormulaBox.setCircleXAnchors(treeBoxMod.getCircleXAnchors());
             treeFormulaBox.setRtaBoundsHeight(treeBoxMod.getRtaBoundsHeight());
@@ -610,7 +610,7 @@ public class VerticalTreeABExpExercise implements Exercise<VerticalTreeABExpMode
                 newTreeMod.setBoxed(originalTreeBox.isBoxed());
                 newTreeMod.setStarred(originalTreeBox.isStarred());
                 newTreeMod.setAnnotation(originalTreeBox.isAnnotation());
-                newTreeMod.setAnnotationText(originalTreeBox.getAnnotationText());
+                newTreeMod.setAnnotationDoc(originalTreeBox.getAnnotationDoc());
                 newTreeMod.setCircled(originalTreeBox.isCircled());
                 newTreeMod.setCircleXAnchors(originalTreeBox.getCircleXAnchors());
                 newTreeMod.setRtaBoundsHeight(originalTreeBox.getRtaBoundsHeight());

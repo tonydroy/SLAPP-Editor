@@ -108,7 +108,7 @@ public class BranchNode extends HBox {
         annRTA.setPromptText("");
 
         annRTA.focusedProperty().addListener((ob, ov, nv) -> {
-            if (nv)  horizontalTreeView.getMainView().editorInFocus(annotationField.getDRTA(), ControlType.JUSTIFICATION);
+            if (nv)  horizontalTreeView.getMainView().editorInFocus(annotationField.getDRTA(), ControlType.FIELD);
             else {
                 if (annRTA.isModified()) {
                     horizontalTreeView.setUndoRedoFlag(true);
